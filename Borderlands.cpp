@@ -42,6 +42,7 @@
 
 //other libraries
 #include <iostream>
+#include <sys/stat.h>
 #include <vector>
 #include <string.h>
 #include <stdio.h>
@@ -49,6 +50,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <sstream>
+#include <dirent.h>
 
 //audio related
 #include "MyRtAudio.h"
@@ -60,6 +62,10 @@
 
 //graphics and audio related
 #include "GrainCluster.h"
+ 
+#ifndef WIN32
+    #include <sys/types.h>
+#endif
 
 
 using namespace std;
@@ -87,7 +93,12 @@ struct pt3d
 //audio system
 MyRtAudio * theAudio = NULL;
 //library path
-string g_audioPath = "./loops/";
+//string g_audioPath = "./loops/";
+string g_audioPath = "";
+string g_repUser = getenv("HOME");
+string g_programPathUser = g_repUser + "/.Borderlands/";
+string g_audioPathUser = g_repUser + "/.Borderlands/loops/";
+string g_audioPathDefault = "/usr/share/Borderlands/loops/";
 //parameter string
 string paramString = "";
 //desired audio buffer size 
@@ -560,6 +571,12 @@ void printUsage(){
     glColor4f(insColor,insColor,insColor,theA);
     //key info
     draw_string(screenWidth/2.0f + 0.2f*(float)screenWidth+10.0,(float)screenHeight/2.0f + 50.0, 0.5f,"ESCAPE TO QUIT",(float)screenWidth*0.04f);
+
+    theA = 0.6f + 0.2*sin(1.1*PI*GTime::instance().sec);
+    insColor = theA*0.4f;
+    glColor4f(insColor,insColor,insColor,theA);
+    //key info
+    draw_string(screenWidth/2.0f + 0.2f*(float)screenWidth+10.0,(float)screenHeight/2.0f + 70.0, 0.5f,"PUT THE SAMPLES IN ~/.Borderlands/loops",(float)screenWidth*0.04f);
     
 }
 
@@ -1563,6 +1580,22 @@ int main (int argc, char ** argv)
     
     
     // load sounds
+
+    mkdir(g_programPathUser.c_str(), 01777);
+    mkdir(g_audioPathUser.c_str(), 01777);
+
+    DIR* rep = NULL;
+    struct dirent* fichierLu = NULL; /* Declaration of a pointer to the dirent structure. */
+    g_audioPath = g_audioPathUser;
+    rep = opendir(g_audioPathUser.c_str());
+
+    fichierLu = readdir(rep); /* We read the first directory of the folder (.) */
+    fichierLu = readdir(rep); /* We read the second directory of the folder (..) */
+    if ((fichierLu = readdir(rep)) == NULL) {
+        cout << "No sample in the user directory, loading the default sounds" << endl;
+        g_audioPath = g_audioPathDefault;
+        }
+
     AudioFileSet newFileMgr;
     
     if (newFileMgr.loadFileSet(g_audioPath) == 1){
