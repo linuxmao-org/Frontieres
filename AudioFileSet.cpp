@@ -192,6 +192,8 @@ int AudioFileSet::loadFileSet(string localPath)
         perror ("");
         return 1;
     }
+
+    return 0;
 }
 
 
