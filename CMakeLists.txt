@@ -20,12 +20,12 @@ add_executable(Borderlands
   Window.cpp
   GrainVoice.cpp
   GrainCluster.cpp
-  Stk.cpp
   Thread.cpp
-  RtAudio.cpp
-  RtMidi.cpp)
+  libraries/Stk.cpp
+  libraries/RtAudio.cpp
+  libraries/RtMidi.cpp)
 target_include_directories(Borderlands
-  PRIVATE ".")
+  PRIVATE "." PRIVATE "libraries")
 
 include(FindPkgConfig)
 

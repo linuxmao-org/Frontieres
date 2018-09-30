@@ -33,7 +33,6 @@
 
 
 #include "RtAudio.h"
-#include "RtError.h"
 #include <cstdio>
 #include <stdio.h>
 #include <cstdlib>
