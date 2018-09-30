@@ -49,6 +49,9 @@
 #include <cstdio>
 #include <cstdlib>
 #include <sstream>
+#include <dirent.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 //audio related
 #include "MyRtAudio.h"
@@ -560,7 +563,12 @@ void printUsage(){
     glColor4f(insColor,insColor,insColor,theA);
     //key info
     draw_string(screenWidth/2.0f + 0.2f*(float)screenWidth+10.0,(float)screenHeight/2.0f + 50.0, 0.5f,"ESCAPE TO QUIT",(float)screenWidth*0.04f);
-    
+
+    theA = 0.6f + 0.2*sin(1.1*PI*GTime::instance().sec);
+    insColor = theA*0.4f;
+    glColor4f(insColor,insColor,insColor,theA);
+    //key info
+    draw_string(screenWidth/2.0f + 0.2f*(float)screenWidth+10.0,(float)screenHeight/2.0f + 70.0, 0.5f,"PUT THE SAMPLES IN ~/.Borderlands/loops",(float)screenWidth*0.04f);
 }
 
 
@@ -1563,6 +1571,23 @@ int main (int argc, char ** argv)
     
     
     // load sounds
+    string homeUser = getenv("HOME");
+    string programPathUser = homeUser + "/.Borderlands/";
+    string audioPathUser = homeUser + "/.Borderlands/loops/";
+    string audioPathDefault = INSTALL_PREFIX "/share/Borderlands/loops/";
+    mkdir(programPathUser.c_str(), 0755);
+    mkdir(audioPathUser.c_str(), 0755);
+
+    bool audioPathUserEmpty = true;
+    if (DIR *rep = opendir(audioPathUser.c_str())) {
+        struct dirent *ent;
+        while (audioPathUserEmpty && (ent = readdir(rep)))
+            audioPathUserEmpty =
+                strcmp(ent->d_name, ".") && strcmp(ent->d_name, "..");
+        closedir(rep);
+    }
+    g_audioPath = audioPathUserEmpty ? audioPathDefault : audioPathUser;
+
     AudioFileSet newFileMgr;
     
     if (newFileMgr.loadFileSet(g_audioPath) == 1){

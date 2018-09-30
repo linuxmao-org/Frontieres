@@ -4,6 +4,10 @@ cmake_minimum_required(VERSION 3.3)
 
 project(Borderlands LANGUAGES C CXX)
 
+enable_language(C)
+enable_language(CXX)
+include(GNUInstallDirs)
+
 # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 
@@ -26,7 +30,8 @@ target_include_directories(Borderlands
 include(FindPkgConfig)
 
 target_compile_definitions(Borderlands
-  PRIVATE "__LINUX_ALSASEQ__=" "__UNIX_JACK__=")
+  PRIVATE "__LINUX_ALSASEQ__=" "__UNIX_JACK__="
+  PRIVATE "INSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\"")
 
 set(OpenGL_GL_PREFERENCE "GLVND")
 find_package(OpenGL REQUIRED)
@@ -41,3 +46,5 @@ target_link_libraries(Borderlands
   PRIVATE ${GLUT_LIBRARIES} ${OPENGL_LIBRARIES} ${JACK_LIBRARIES} ${ALSA_LIBRARIES} "${SNDFILE_LIBRARY}" "${CMAKE_THREAD_LIBS_INIT}")
 target_include_directories(Borderlands
   PRIVATE ${GLUT_INCLUDE_DIRS} "${OPENGL_INCLUDE_DIR}" ${JACK_INCLUDE_DIRS} ${ALSA_INCLUDE_DIRS})
+
+install(TARGETS Borderlands DESTINATION "${CMAKE_INSTALL_BINDIR}")
