@@ -57,7 +57,7 @@ find_package(Gettext REQUIRED)
 target_link_libraries(Borderlands PRIVATE ${Intl_LIBRARIES})
 foreach(translation ${I18N_TRANSLATIONS})
   gettext_process_po_files("${translation}" ALL
-    INSTALL_DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/locale"
+    INSTALL_DESTINATION "${CMAKE_INSTALL_LOCALEDIR}"
     PO_FILES
     "po/${translation}/Borderlands.po")
 endforeach()
@@ -71,3 +71,18 @@ install(FILES
   loops/hidden_mechanics_stems_borderlands_stereo.wav
   loops/pretty_rhodes_delay.wav
   DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/Borderlands/loops")
+install(FILES
+  resources/borderlands.desktop
+  DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/applications")
+install(FILES
+  resources/borderlands.png
+  DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/pixmaps")
+install(FILES
+  resources/Borderlands.1
+  DESTINATION "${CMAKE_INSTALL_MANDIR}/man1")
+set(MAN_TRANSLATIONS "fr")
+foreach(translation ${MAN_TRANSLATIONS})
+  install(FILES
+    "resources/Borderlands.${translation}.1"
+    DESTINATION "${CMAKE_INSTALL_MANDIR}/fr/man1")
+endforeach()
