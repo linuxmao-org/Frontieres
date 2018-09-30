@@ -40,7 +40,7 @@ MyRtAudio::~MyRtAudio()
     //cerr << "rtaudio cleanup reached " << endl;
 }
 
-MyRtAudio::MyRtAudio(unsigned int numIns, unsigned int numOuts, unsigned int srate, unsigned int * bufferSize,  RtAudioFormat format,bool showWarnings)
+MyRtAudio::MyRtAudio(unsigned int numIns, unsigned int numOuts, unsigned int * bufferSize,  RtAudioFormat format,bool showWarnings)
 {
     //configure RtAudio
     //create pointer to RtAudio object
@@ -64,6 +64,8 @@ MyRtAudio::MyRtAudio(unsigned int numIns, unsigned int numOuts, unsigned int sra
         cout << "No Audio Devices Found!" << endl;
         exit( 1 );
     }
+    const RtAudio::DeviceInfo &info = audio->getDeviceInfo( audio->getDefaultOutputDevice() );
+
     
     //allow RtAudio to print msgs to stderr
     audio->showWarnings( showWarnings );
@@ -72,7 +74,7 @@ MyRtAudio::MyRtAudio(unsigned int numIns, unsigned int numOuts, unsigned int sra
     myBufferSize = bufferSize;
     
     //set sample rate;
-    mySRate = srate;
+    mySRate = info.preferredSampleRate;
     
     //set format
     myFormat = format;
@@ -86,6 +88,7 @@ void MyRtAudio::openStream( RtAudioCallback callback){
     
     //create stream options
     RtAudio::StreamOptions options;
+    options.streamName = "Borderlands";
     
     RtAudio::StreamParameters iParams, oParams;
     //i/o params
@@ -100,6 +103,12 @@ void MyRtAudio::openStream( RtAudioCallback callback){
     audio->openStream( &oParams, &iParams, RTAUDIO_FLOAT64, mySRate, myBufferSize, callback, NULL, &options); 
 
         
+}
+
+//report the current sample rate
+unsigned int MyRtAudio::getSampleRate()
+{
+    return mySRate;
 }
 
 

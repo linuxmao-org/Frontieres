@@ -48,11 +48,14 @@ public:
     virtual ~MyRtAudio();
     
     //constructor - args = 
-    MyRtAudio(unsigned int numIns, unsigned int numOuts, unsigned int srate, unsigned int * bufferSize,  RtAudioFormat format,bool showWarnings);
+    MyRtAudio(unsigned int numIns, unsigned int numOuts, unsigned int * bufferSize,  RtAudioFormat format,bool showWarnings);
     
     
     //set the audio callback and start the audio stream
     void openStream( RtAudioCallback callback);
+    
+    //report the current sample rate
+    unsigned int getSampleRate();
     
     //report the current buffer size
     unsigned int getBufferSize();

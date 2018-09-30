@@ -30,6 +30,8 @@
 
 #include "GrainVoice.h"
 
+extern unsigned int samp_rate;
+
 //-------------------AUDIO----------------------------------------------------//
 
 //-----------------------------------------------------------------------------
@@ -143,7 +145,7 @@ GrainVoice::GrainVoice(vector<AudioFile *> * soundSet,float durationMs,float the
     winReader = 0.0; //0 idx
     
     //get duration in samples (fractional)
-    winDurationSamps = ceil(duration * MY_SRATE * (double) 0.001);
+    winDurationSamps = ceil(duration * ::samp_rate * (double) 0.001);
     winInc = (double)WINDOW_LEN / winDurationSamps; 
     
 }
@@ -292,7 +294,7 @@ void GrainVoice::updateParams()
     window = Window::Instance().getWindow(windowType);
 
     //double value, but eliminate fractional component - 
-    winDurationSamps = ceil(duration * MY_SRATE * (double) 0.001);
+    winDurationSamps = ceil(duration * ::samp_rate * (double) 0.001);
     
     //how far should we advance through windowing function each sample
     winInc = (double)WINDOW_LEN / winDurationSamps; 

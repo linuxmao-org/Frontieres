@@ -28,6 +28,10 @@
 //
 
 #include "AudioFileSet.h"
+#include <soxr.h>
+#include <math.h>
+
+extern unsigned int samp_rate;
 
 //---------------------------------------------------------------------------
 // Destructor
@@ -125,8 +129,8 @@ int AudioFileSet::loadFileSet(string localPath)
             cout << "  Format: " << sfinfo.format << endl;
             
             //warn about sampling rate incompatibility
-            if (sfinfo.samplerate != MY_SRATE){
-                printf("\nWARNING: '%s' is sampled at a different rate from the current sample rate of %i\n",theFileName.c_str(),MY_SRATE);
+            if (sfinfo.samplerate != ::samp_rate){
+                printf("'%s' is sampled at a different rate from the current sample rate of %i\n",theFileName.c_str(),::samp_rate);
             }
             
             //MONO CONVERSION SET ASIDE FOR NOW...  number of channels for each file is dealt with 
@@ -177,6 +181,12 @@ int AudioFileSet::loadFileSet(string localPath)
                 }
                 
             } while(!empty);
+
+            if (sfinfo.samplerate != ::samp_rate){
+                printf("Resample to %i\n",::samp_rate);
+                fileSet->at(fileCounter)->resampleTo(::samp_rate);
+            }
+
             cout << counter << endl;
             //increment the file counter
             fileCounter++;
@@ -196,8 +206,34 @@ int AudioFileSet::loadFileSet(string localPath)
     return 0;
 }
 
+void AudioFile::resampleTo(unsigned int newRate)
+{
+    unsigned channels = this->channels;
 
+    unsigned oldFrames = frames;
+    unsigned oldRate = sampleRate;
+    SAMPLE *oldWave = wave;
 
+    unsigned newFrames = ceil((double)oldRate * newRate / oldRate);
+    SAMPLE *newWave = new SAMPLE[channels * newFrames];
 
+    soxr_io_spec_t io_spec = soxr_io_spec(MY_RESAMPLER_FORMAT_I, MY_RESAMPLER_FORMAT_I);
+    soxr_quality_spec_t quality_spec = soxr_quality_spec(SOXR_VHQ, 0);
+    soxr_runtime_spec_t runtime_spec = soxr_runtime_spec(2);
 
+    size_t idone = 0;
+    size_t odone = 0;
+    soxr_error_t err = soxr_oneshot(
+        oldRate, newRate, channels,
+        oldWave, oldFrames, &idone,
+        newWave, newFrames, &odone,
+        &io_spec, &quality_spec, &runtime_spec);
+    if (err)
+        throw std::runtime_error("could not resample: libsoxr error");
+    newFrames = odone;
 
+    delete[] wave;
+    wave = newWave;
+    frames = newFrames;
+    sampleRate = newRate;
+}

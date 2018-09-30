@@ -28,7 +28,7 @@
 
 #include "GrainCluster.h"
 
-
+extern unsigned int samp_rate;
 
 
 //Destructor
@@ -128,7 +128,7 @@ GrainCluster::GrainCluster(vector<AudioFile*> * soundSet, float theNumVoices)
 //    setDirection(RANDOM_DIR);
     
     //initialize trigger time (samples)
-    bang_time = duration * MY_SRATE * (double) 0.001 / overlap;    
+    bang_time = duration * ::samp_rate * (double) 0.001 / overlap;    
 
     //load grains
     for (int i = 0; i < myGrains->size(); i++){
@@ -244,7 +244,7 @@ void GrainCluster::setDurationMs(float theDur)
 
 //update internal grain trigger time
 void GrainCluster::updateBangTime(){
-    bang_time = duration * MY_SRATE * (double) 0.001 / overlap;
+    bang_time = duration * ::samp_rate * (double) 0.001 / overlap;
     //cout << "duration: " << duration << ", new bang time " << bang_time << endl;
     
 }

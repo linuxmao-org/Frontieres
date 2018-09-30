@@ -106,9 +106,12 @@ vector<GrainClusterVis *> * grainCloudVis;
 //cloud counter
 unsigned int numClouds = 0;
 
+//sample rate - Hz
+unsigned int samp_rate = 0;
+
 //global time increment - samples per second
 //global time is incremented in audio callback
-const double samp_time_sec = (double) 1.0 / (double)MY_SRATE;
+double samp_time_sec = 0;
 
 
 //Initial camera movement vars
@@ -1557,6 +1560,36 @@ int main (int argc, char ** argv)
     //init random number generator
     srand(time(NULL));
     //start time
+
+    //-------------Audio Configuration-----------//
+    
+    //configure RtAudio
+    //create the object
+    try {
+        theAudio = new MyRtAudio(1,MY_CHANNELS, &g_buffSize, MY_FORMAT,true);
+    } catch (RtError & err) {
+        err.printMessage();
+        exit(1);
+    }    
+    try
+    {
+        unsigned sampleRate = theAudio->getSampleRate();
+        ::samp_rate = sampleRate;
+        ::samp_time_sec = 1.0 / sampleRate;
+        Stk::setSampleRate(sampleRate);
+        //open audio stream/assign callback
+        theAudio->openStream(&audioCallback);
+        //get new buffer size
+        g_buffSize = theAudio->getBufferSize();
+        //report latency
+        theAudio->reportStreamLatency();        
+        
+    }catch (RtError & err )
+    {
+        err.printMessage();
+        cleaningFunction();
+        exit(1);
+    }
     
     //-------------Graphics Initialization--------//
     
@@ -1613,32 +1646,9 @@ int main (int argc, char ** argv)
     
     
     
-    //-------------Audio Configuration-----------//
-    
-    //configure RtAudio
-    //create the object
-    try {
-        theAudio = new MyRtAudio(1,MY_CHANNELS, MY_SRATE, &g_buffSize, MY_FORMAT,true);
-    } catch (RtError & err) {
-        err.printMessage();
-        exit(1);
-    }    
-    try
-    {
-        //open audio stream/assign callback
-        theAudio->openStream(&audioCallback);
-        //get new buffer size
-        g_buffSize = theAudio->getBufferSize();
-        //start audio stream
-        theAudio->startStream();
-        //report latency
-        theAudio->reportStreamLatency();        
-        
-    }catch (RtError & err )
-    {
-        err.printMessage();
-        goto cleanup;
-    }
+
+    //start audio stream
+    theAudio->startStream();
     
     
     

@@ -50,7 +50,6 @@ struct AudioFile{
         this->name = myName;
         this->path = thePath;
         this->frames = numFrames;
-        this->lengthSamps = numFrames * numChan;
         this->channels = numChan;
         this->sampleRate = srate;
         this->wave = theWave;
@@ -62,12 +61,13 @@ struct AudioFile{
             delete [] wave;
         }
     }
-    
+
+    void resampleTo(unsigned int newRate);
+
     string name;
     string path;
     SAMPLE * wave;
     unsigned long frames;
-    unsigned long lengthSamps;
     unsigned int channels;
     unsigned int sampleRate;
 };

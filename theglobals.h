@@ -40,8 +40,8 @@
 #define SAMPLE double
 //create rtaudio format
 #define MY_FORMAT RTAUDIO_FLOAT64
-//set the sample rate
-#define MY_SRATE 44100
+//create soxr format
+#define MY_RESAMPLER_FORMAT_I SOXR_FLOAT64_I
 //number of output channels
 #define MY_CHANNELS 2
 
