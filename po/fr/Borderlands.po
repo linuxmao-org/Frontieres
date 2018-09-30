@@ -1,15 +1,16 @@
 # French translations for PACKAGE package.
 # Copyright (C) 2018 THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-#  <jp-dev@inbox.ru>, 2018.
+#  Jean Pierre Cimalando <jp-dev@inbox.ru>, 2018.
+#  Olivier Humbert <trebmuh@tuxfamily.org>, 2018.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: 0.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-09-30 03:39+0200\n"
 "PO-Revision-Date: 2018-09-30 03:39+0200\n"
-"Last-Translator: Jean Pierre Cimalando <jp-dev@inbox.ru>\n"
+"Last-Translator: Olivier Humbert <trebmuh@tuxfamily.org>\n"
 "Language-Team: French\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
@@ -50,7 +51,7 @@ msgstr "Chevauchement : "
 #. key info
 #: Borderlands.cpp:577
 msgid "PUT THE SAMPLES IN ~/.Borderlands/loops"
-msgstr "PLACEZ LES ECHANTILLONS SOUS ~/.Borderlands/loops"
+msgstr "PLACEZ LES ECHANTILLONS DANS ~/.Borderlands/loops"
 
 #: Borderlands.cpp:739
 msgid "Pitch LFO Amount: "
@@ -94,27 +95,27 @@ msgstr "Volume (dB) : "
 
 #: Borderlands.cpp:623
 msgid "Window: EXPDEC"
-msgstr "Enveloppe : EXPDEC"
+msgstr "Fenêtre : EXPDEC"
 
 #: Borderlands.cpp:614
 msgid "Window: HANNING"
-msgstr "Enveloppe : HANNING"
+msgstr "Fenêtre : HANNING"
 
 #: Borderlands.cpp:629
 msgid "Window: RANDOM_WIN"
-msgstr "Enveloppe : RANDOM_WIN"
+msgstr "Fenêtre : RANDOM_WIN"
 
 #: Borderlands.cpp:620
 msgid "Window: REXPDEC"
-msgstr "Enveloppe : REXPDEC"
+msgstr "Fenêtre : REXPDEC"
 
 #: Borderlands.cpp:626
 msgid "Window: SINC"
-msgstr "Enveloppe : SINC"
+msgstr "Fenêtre : SINC"
 
 #: Borderlands.cpp:617
 msgid "Window: TRIANGLE"
-msgstr "Enveloppe : TRIANGLE"
+msgstr "Fenêtre : TRIANGLE"
 
 #: Borderlands.cpp:651
 msgid "X,Y: "
