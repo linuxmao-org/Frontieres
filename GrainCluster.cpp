@@ -27,6 +27,8 @@
 //
 
 #include "GrainCluster.h"
+#include "MyGLApplication.h"
+#include "MyGLWindow.h"
 
 extern unsigned int samp_rate;
 
@@ -595,8 +597,9 @@ GrainClusterVis::GrainClusterVis(float x, float y, unsigned int numVoices,
                                  vector<SoundRect *> *rects)
 {
     // get screen width and height
-    screenWidth = glutGet(GLUT_SCREEN_WIDTH);
-    screenHeight = glutGet(GLUT_SCREEN_HEIGHT);
+    MyGLScreen *screen = theApplication->GLwindow()->screen();
+    screenWidth = screen->width();
+    screenHeight = screen->height();
 
     startTime = GTime::instance().sec;
     // cout << "cluster started at : " << startTime << " sec " << endl;

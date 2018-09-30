@@ -11,7 +11,7 @@ include(GNUInstallDirs)
 # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 
-add_executable(Borderlands
+add_executable(Borderlands WIN32
   Borderlands.cpp
   SoundRect.cpp
   GTime.cpp
@@ -21,11 +21,14 @@ add_executable(Borderlands
   GrainVoice.cpp
   GrainCluster.cpp
   Thread.cpp
+  MyGLApplication.cpp
+  MyGLWindow.cpp
+  libraries/QtFont3D/QtFont3D.cpp
   libraries/Stk.cpp
   libraries/RtAudio.cpp
   libraries/RtMidi.cpp)
 target_include_directories(Borderlands
-  PRIVATE "." PRIVATE "libraries")
+  PRIVATE "." PRIVATE "libraries" PRIVATE "libraries/QtFont3D")
 
 include(FindPkgConfig)
 
@@ -36,7 +39,6 @@ target_compile_definitions(Borderlands
 
 set(OpenGL_GL_PREFERENCE "GLVND")
 find_package(OpenGL REQUIRED)
-find_package(GLUT REQUIRED)
 pkg_check_modules(JACK jack REQUIRED)
 find_package(ALSA REQUIRED)
 find_package(Threads REQUIRED)
@@ -46,9 +48,17 @@ find_library(SOXR_LIBRARY soxr)
 message(STATUS "Soxr: ${SOXR_LIBRARY}")
 
 target_link_libraries(Borderlands
-  PRIVATE ${GLUT_LIBRARIES} ${OPENGL_LIBRARIES} ${JACK_LIBRARIES} ${ALSA_LIBRARIES} "${SNDFILE_LIBRARY}" "${SOXR_LIBRARY}" "${CMAKE_THREAD_LIBS_INIT}")
+  PRIVATE ${OPENGL_LIBRARIES} ${JACK_LIBRARIES} ${ALSA_LIBRARIES} "${SNDFILE_LIBRARY}" "${SOXR_LIBRARY}" "${CMAKE_THREAD_LIBS_INIT}")
 target_include_directories(Borderlands
-  PRIVATE ${GLUT_INCLUDE_DIRS} "${OPENGL_INCLUDE_DIR}" ${JACK_INCLUDE_DIRS} ${ALSA_INCLUDE_DIRS})
+  PRIVATE "${OPENGL_INCLUDE_DIR}" ${JACK_INCLUDE_DIRS} ${ALSA_INCLUDE_DIRS})
+
+# Qt
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+find_package(Qt5Widgets CONFIG REQUIRED)
+find_package(Qt5OpenGL CONFIG REQUIRED)
+target_link_libraries(Borderlands PRIVATE Qt5::Widgets Qt5::OpenGL)
 
 # I18n
 set(I18N_TRANSLATIONS "fr")

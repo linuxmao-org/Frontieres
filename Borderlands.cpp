@@ -30,14 +30,14 @@
 
 // my includes
 #include "theglobals.h"
+#include "Borderlands.h"
 
 // graphics includes
 #ifdef __MACOSX_CORE__
-#include <GLUT/glut.h>
+#include <OpenGL/OpenGL.h>
 #else
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include <GL/glut.h>
 #endif
 
 // other libraries
@@ -67,25 +67,14 @@
 // internationalization
 #include "I18n.h"
 
+// Qt application
+#include "MyGLApplication.h"
+#include "MyGLWindow.h"
+#include <QtFont3D.h>
+
 
 using namespace std;
 
-unsigned int screenWidth, screenHeight;
-
-
-//-----------------------------------------------------------------------------
-// Defines a point in a 3D space (coords x, y and z)
-//-----------------------------------------------------------------------------
-struct pt3d {
-    pt3d(GLfloat _x, GLfloat _y, GLfloat _z)
-        : x(_x)
-        , y(_y)
-        , z(_z){};
-
-    float x;
-    float y;
-    float z;
-};
 
 
 //-----------------------------------------------------------------------------
@@ -124,9 +113,6 @@ pt3d position(0.0, 0.0, 0.0f);
 
 
 // ENUMS
-// user selection mode
-enum { RECT, CLOUD };
-enum { MOVE, RESIZE };
 // default selection mode
 int selectionMode = CLOUD;
 int dragMode = MOVE;
@@ -144,23 +130,6 @@ int selectedRect = -1;
 bool menuFlag = true;
 int selectionIndex = 0;
 
-// cloud parameter changing
-enum {
-    NUMGRAINS,
-    DURATION,
-    WINDOW,
-    MOTIONX,
-    MOTIONY,
-    MOTIONXY,
-    DIRECTION,
-    OVERLAP,
-    PITCH,
-    ANIMATE,
-    P_LFO_FREQ,
-    P_LFO_AMT,
-    SPATIALIZE,
-    VOLUME
-};
 // flag indicating parameter change
 bool paramChanged = false;
 unsigned int currentParam = NUMGRAINS;
@@ -171,35 +140,22 @@ double tempParamVal = -1.0;
 // mouse coordinate initialization
 int mouseX = -1;
 int mouseY = -1;
-long veryHighNumber = 50000000;
 long lastDragX = veryHighNumber;
 long lastDragY = veryHighNumber;
+
+// text renderer
+QtFont3D *text_renderer = NULL;
 
 
 //--------------------------------------------------------------------------------
 // FUNCTION PROTOTYPES
 //--------------------------------------------------------------------------------
 
-void idleFunc();
-void displayFunc();
-void reshape(int w, int h);
-void specialFunc(int key, int x, int y);
-void keyboardFunc(unsigned char key, int x, int y);
-void keyUpFunc(unsigned char key, int x, int y);
-void deselect(int mode);
-
-void mouseFunc(int button, int state, int x, int y);
-void mouseDrag(int x, int y);
-void mousePassiveMotion(int x, int y);
 void updateMouseCoords(int x, int y);
-void initialize();
 void draw_string(GLfloat x, GLfloat y, GLfloat z, const char *str, GLfloat scale);
-void printUsage();
-void printParam();
 void drawAxis();
 int audioCallback(void *outputBuffer, void *inputBuffer, unsigned int numFrames,
                   double streamTime, RtAudioStreamStatus status, void *userData);
-void cleaningFunction();
 
 
 //--------------------------------------------------------------------------------
@@ -233,6 +189,9 @@ void cleaningFunction()
     if (selectionIndices != NULL) {
         delete selectionIndices;
     }
+    if (text_renderer != NULL) {
+        delete text_renderer;
+    }
 }
 
 
@@ -261,238 +220,8 @@ int audioCallback(void *outputBuffer, void *inputBuffer, unsigned int numFrames,
 
 
 //================================================================================
-//   GRAPHICS/GLUT
+//   GRAPHICS/QT OPENGL
 //================================================================================
-
-void windowInit()
-{
-    // assign glut function calls
-    glutIdleFunc(idleFunc);
-    glutReshapeFunc(reshape);
-    glutDisplayFunc(displayFunc);
-    glutMouseFunc(mouseFunc);
-    glutMotionFunc(mouseDrag);
-    glutPassiveMotionFunc(mousePassiveMotion);
-    glutKeyboardFunc(keyboardFunc);
-    glutKeyboardUpFunc(keyUpFunc);
-    // set the special function - called on special keys events (fn, arrows, pgDown, etc)
-    glutSpecialFunc(specialFunc);
-}
-
-
-void toggleFullScreen()
-{
-    static bool isFullScreen = true;
-
-
-    if (isFullScreen) {
-
-        glutReshapeWindow(0.6 * screenWidth, 0.6 * screenHeight);
-        glutPositionWindow(screenWidth * 0.1, 100);
-        isFullScreen = false;
-        /*
-        glutLeaveGameMode();
-        cout << "left game mode" << endl;
-        windowInit();
-        glutMainLoop();
-        */
-    }
-    else {
-
-        /*
-        //glutFullScreen();
-        string res;
-        char buffer[33];
-        screenWidth = glutGet(GLUT_SCREEN_WIDTH);
-        sprintf(buffer, "%d", screenWidth);
-        res.append(buffer);
-        res.append("x");
-        char buffer2[33];
-        screenHeight = glutGet(GLUT_SCREEN_HEIGHT);
-        sprintf(buffer2,"%d",screenHeight);
-        res.append(buffer2);
-        res.append(":32@75");
-        cout << res.c_str() << endl;
-
-        //presentation view
-        //set resolution/refresh rate
-        glutGameModeString(res.c_str());
-        glutEnterGameMode();
-        cout << "entered game mode" << endl;
-
-                windowInit();
-        glutMainLoop();
-        */
-        glutFullScreen();
-
-        isFullScreen = true;
-    }
-
-    // glutDisplayFunc(displayFunc);
-}
-
-
-//-----------------------------------------------------------
-//  GLUT Initialization
-//-----------------------------------------------------------
-
-void initialize()
-{
-
-
-    // initial window settings
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-
-
-    screenWidth = glutGet(GLUT_SCREEN_WIDTH);
-    screenHeight = glutGet(GLUT_SCREEN_HEIGHT);
-    glutInitWindowSize(screenWidth, screenHeight);
-    glutInitWindowPosition(0, 0);
-    glutCreateWindow("Borderlands");
-
-
-    /*
-    //Game Mode
-    string res;
-    char buffer[33];
-    screenWidth = glutGet(GLUT_SCREEN_WIDTH);
-    sprintf(buffer, "%d", screenWidth);
-    res.append(buffer);
-    res.append("x");
-    char buffer2[33];
-    screenHeight = glutGet(GLUT_SCREEN_HEIGHT);
-    sprintf(buffer2,"%d",screenHeight);
-    res.append(buffer2);
-    res.append(":32@75");
-    cout << res.c_str() << endl;
-
-    //presentation view
-    //set resolution/refresh rate
-    glutGameModeString(res.c_str());
-    glutEnterGameMode();
-
-    */
-
-    // full screen end
-
-    // initial state
-    glClearColor(0.15, 0.15, 0.15, 1.0f);
-    // enable depth buffer updates
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LEQUAL);
-    // set polys with counterclockwise winding to be front facing
-    // this is gl default anyway
-    glFrontFace(GL_CCW);
-    // set fill mode
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_POLYGON_SMOOTH);
-    // enable transparency
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    // antialias lines and points
-    glEnable(GL_LINE_SMOOTH);
-    glEnable(GL_POINT_SMOOTH);
-    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-    glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-    glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
-
-    // assign glut function calls
-    glutIdleFunc(idleFunc);
-    glutReshapeFunc(reshape);
-    glutDisplayFunc(displayFunc);
-    glutMouseFunc(mouseFunc);
-    glutMotionFunc(mouseDrag);
-    glutPassiveMotionFunc(mousePassiveMotion);
-    glutKeyboardFunc(keyboardFunc);
-    glutKeyboardUpFunc(keyUpFunc);
-    // set the special function - called on special keys events (fn, arrows, pgDown, etc)
-    glutSpecialFunc(specialFunc);
-
-    glutFullScreen();
-}
-
-
-//------------------------------------------------------------------------------
-// GLUT display function
-//------------------------------------------------------------------------------
-void displayFunc()
-{
-    // clear color and depth buffers
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glClearDepth(1.0);
-
-    ////PUSH //save current transform
-    glPushMatrix();
-
-    glLoadIdentity();
-
-    // update viewer position
-    glTranslatef(-position.x, -position.y, -position.z);  // translate the screen to the position of our camera
-    if (menuFlag == false) {
-        // render rectangles
-        if (soundViews) {
-            for (int i = 0; i < soundViews->size(); i++) {
-                soundViews->at(i)->draw();
-            }
-        }
-
-        // render grain clouds if they exist
-        if (grainCloudVis) {
-            for (int i = 0; i < grainCloudVis->size(); i++) {
-                grainCloudVis->at(i)->draw();
-            }
-        }
-
-        // print current param if editing
-        if ((selectedCloud >= 0) || (selectedRect >= 0))
-            printParam();
-    }
-    else {
-        printUsage();
-    }
-
-
-    // printUsage();
-
-    // POP ---//restore state
-    glPopMatrix();
-
-    // flush and swap
-    glFlush();  // renders and empties buffers
-    glutSwapBuffers();  // brings hidden buffer to the front (using double buffering for smoother graphics)
-}
-
-
-//------------------------------------------------------------------------------
-// GLUT reshape function
-//------------------------------------------------------------------------------
-void reshape(int w, int h)
-{
-    glViewport(0, 0, (GLsizei)w, (GLsizei)h);
-    screenWidth = w;
-    screenHeight = h;
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(0.0, (GLdouble)screenWidth, 0.0, (GLdouble)screenHeight, -10.0, 10.0);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glTranslatef(-position.x, -position.y, -position.z);  // translate the screen to the position of our camera
-    // request redisplay
-    glutPostRedisplay();
-}
-
-
-//-----------------------------------------------------------------------------
-// GlUT idle function
-//-----------------------------------------------------------------------------
-
-void idleFunc()
-{
-    // render the scene
-    glutPostRedisplay();
-}
 
 
 ///-----------------------------------------------------------------------------
@@ -501,6 +230,11 @@ void idleFunc()
 //-----------------------------------------------------------------------------
 void drawAxis()
 {
+    // get screen width and height
+    MyGLScreen *screen = theApplication->GLwindow()->screen();
+    int screenWidth = screen->width();
+    int screenHeight = screen->height();
+
     // PUSH -- //store state
     glPushMatrix();
 
@@ -536,16 +270,13 @@ void drawAxis()
 //-----------------------------------------------------------------------------
 void draw_string(GLfloat x, GLfloat y, GLfloat z, const char *str, GLfloat scale = 1.0f)
 {
-    GLint len = strlen(str), i;
+    // get screen width and height
+    MyGLScreen *screen = theApplication->GLwindow()->screen();
+    int screenHeight = screen->height();
 
-    glPushMatrix();
-    glTranslatef(x, screenHeight - y, z);
-    glScalef(.001f * scale, .001f * scale, .001f * scale);
-
-    for (i = 0; i < len; i++)
-        glutStrokeCharacter(GLUT_STROKE_MONO_ROMAN, str[i]);
-
-    glPopMatrix();
+    text_renderer->print(
+        str, QVector3D(x, screenHeight - y, z), Qt::AlignLeft,
+        scale * (1.0 / text_fontScaleDown));
 }
 
 
@@ -554,6 +285,11 @@ void draw_string(GLfloat x, GLfloat y, GLfloat z, const char *str, GLfloat scale
 //-----------------------------------------------------------------------------
 void printUsage()
 {
+    // get screen width and height
+    MyGLScreen *screen = theApplication->GLwindow()->screen();
+    int screenWidth = screen->width();
+    int screenHeight = screen->height();
+
     float smallSize = 0.03f;
     float mediumSize = 0.04f;
     glLineWidth(2.0f);
@@ -590,6 +326,10 @@ void printUsage()
 
 void printParam()
 {
+    // get screen width and height
+    MyGLScreen *screen = theApplication->GLwindow()->screen();
+    int screenHeight = screen->height();
+
     if ((numClouds > 0) && (selectedCloud >= 0)) {
         GrainClusterVis *theCloudVis = grainCloudVis->at(selectedCloud);
         GrainCluster *theCloud = grainCloud->at(selectedCloud);
@@ -784,606 +524,19 @@ void printParam()
 
 
 //================================================================================
-//   INTERACTION/GLUT
+//   INTERACTION
 //================================================================================
 
 
 // update mouse coords based on mousemovement
 void updateMouseCoords(int x, int y)
 {
+    // get screen width and height
+    MyGLScreen *screen = theApplication->GLwindow()->screen();
+    int screenHeight = screen->height();
+
     mouseX = x + position.x;
     mouseY = (screenHeight - (y - position.y));
-}
-
-
-//-----------------------------------------------------------------------------
-// Handle special function keys (arrows, etc)
-//-----------------------------------------------------------------------------
-void specialFunc(int key, int x, int y)
-{
-    static float sidewaysMoveSpeed = 10.0f;
-    static float upDownMoveSpeed = 10.0f;
-    // cout << "special key" << key <<endl;
-
-    switch (key) {
-    case GLUT_KEY_LEFT:
-        // move to the left
-        position.x -= sidewaysMoveSpeed;
-        mouseX -= sidewaysMoveSpeed;
-        break;
-    case GLUT_KEY_RIGHT:
-        // move to the right
-        position.x += sidewaysMoveSpeed;
-        mouseX += sidewaysMoveSpeed;
-        break;
-    case GLUT_KEY_DOWN:
-        // move backward
-        position.y -= upDownMoveSpeed;
-        mouseY += sidewaysMoveSpeed;
-
-        break;
-    case GLUT_KEY_UP:
-        // move forward
-        position.y += upDownMoveSpeed;
-        mouseY -= sidewaysMoveSpeed;
-        break;
-
-    case 14:
-        // cout << "shift down" << endl;
-        break;
-    case 15:  // shift in
-        // cout << "shift up" << endl;
-
-        break;
-
-    default:
-        break;
-    }
-    // request redisplay
-    glutPostRedisplay();
-}
-
-
-//-----------------------------------------------------------------------------
-// Handle key up events (other than special keys)
-//-----------------------------------------------------------------------------
-
-void keyUpFunc(unsigned char key, int x, int y)
-{
-    // cout << key << endl;
-    switch (key) {
-    case 'a':
-        break;
-    case 'R':
-    case 'r':
-        dragMode = MOVE;
-        lastDragX = veryHighNumber;
-        lastDragY = veryHighNumber;
-        break;
-    default:
-        break;
-    }
-    glutPostRedisplay();
-}
-
-
-//-----------------------------------------------------------------------------
-// Handle key down events (other than special keys)
-//-----------------------------------------------------------------------------
-void keyboardFunc(unsigned char key, int x, int y)
-{
-    static bool negativeFlag = false;  // for negative value entry
-    int modkey = glutGetModifiers();
-    // cout << "key pressed " << key << endl;
-    switch (key) {
-
-    case 9:  // tab key
-
-        if (selectionIndices->size() > 1) {
-            soundViews->at(selectedRect)->setSelectState(false);
-            selectionIndex++;
-            if (selectionIndex >= selectionIndices->size()) {
-                selectionIndex = 0;
-            }
-            selectedRect = selectionIndices->at(selectionIndex);
-            soundViews->at(selectedRect)->setSelectState(true);
-        }
-        break;
-    case '1':
-        paramString.push_back('1');
-        if (currentParam == WINDOW) {
-            if (selectedCloud >= 0) {
-                grainCloud->at(selectedCloud)->setWindowType(0);
-            }
-        }
-
-        break;
-    case '2':
-        paramString.push_back('2');
-        if (currentParam == WINDOW) {
-            if (selectedCloud >= 0) {
-                grainCloud->at(selectedCloud)->setWindowType(1);
-            }
-        }
-        break;
-    case '3':
-        paramString.push_back('3');
-        if (currentParam == WINDOW) {
-            if (selectedCloud >= 0) {
-                grainCloud->at(selectedCloud)->setWindowType(2);
-            }
-        }
-        break;
-
-    case '4':
-        paramString.push_back('4');
-        if (currentParam == WINDOW) {
-            if (selectedCloud >= 0) {
-                grainCloud->at(selectedCloud)->setWindowType(3);
-            }
-        }
-        break;
-    case '5':
-        paramString.push_back('5');
-        if (currentParam == WINDOW) {
-            if (selectedCloud >= 0) {
-                grainCloud->at(selectedCloud)->setWindowType(4);
-            }
-        }
-        break;
-    case '6':
-        paramString.push_back('6');
-        if (currentParam == WINDOW) {
-            if (selectedCloud >= 0) {
-                grainCloud->at(selectedCloud)->setWindowType(5);
-            }
-        }
-        break;
-    case '7':
-        paramString.push_back('7');
-        break;
-    case '8':
-        paramString.push_back('8');
-        break;
-    case '9':
-        paramString.push_back('9');
-        break;
-    case '0':
-        paramString.push_back('0');
-        break;
-    case '.':
-        paramString.push_back('.');
-        break;
-
-    case 13:  // enter key - for saving param string
-        if (paramString != "") {
-            float value = atof(paramString.c_str());
-
-            // cout << "value received " << value << endl;
-            switch (currentParam) {
-            case DURATION:
-                if (selectedCloud >= 0) {
-                    if (value < 1.0) {
-                        value = 1.0;
-                    }
-                    grainCloud->at(selectedCloud)->setDurationMs(value);
-                }
-                break;
-            case OVERLAP:
-                if (selectedCloud >= 0) {
-                    grainCloud->at(selectedCloud)->setOverlap(value);
-                }
-                break;
-            case PITCH:
-                if (selectedCloud >= 0) {
-                    grainCloud->at(selectedCloud)->setPitch(value);
-                }
-                break;
-            case P_LFO_FREQ:
-                if (selectedCloud >= 0) {
-                    grainCloud->at(selectedCloud)->setPitchLFOFreq(value);
-                }
-                break;
-            case P_LFO_AMT:
-                if (selectedCloud >= 0) {
-                    grainCloud->at(selectedCloud)->setPitchLFOAmount(value);
-                }
-                break;
-
-            case VOLUME:
-                if (selectedCloud >= 0) {
-                    grainCloud->at(selectedCloud)->setVolumeDb(value);
-                }
-            default:
-                break;
-            }
-            paramString = "";
-        }
-        // cout << "enter key caught" << endl;
-        break;
-
-
-    case 27:  // esc key
-        cleaningFunction();
-        exit(1);
-        break;
-
-    case 'Q':  // spatialization
-    case 'q':
-        break;
-
-    case 'O':
-    case 'o':
-        toggleFullScreen();
-        break;
-
-    case 'T':
-    case 't':
-        paramString = "";
-        if (selectedCloud >= 0) {
-            if (currentParam != SPATIALIZE) {
-                currentParam = SPATIALIZE;
-            }
-            else {
-                if (modkey == GLUT_ACTIVE_SHIFT) {
-                    if (selectedCloud >= 0) {
-                        int theSpat = grainCloud->at(selectedCloud)->getSpatialMode();
-                        grainCloud->at(selectedCloud)->setSpatialMode(theSpat - 1, -1);
-                    }
-                }
-                else {
-                    if (selectedCloud >= 0) {
-                        int theSpat = grainCloud->at(selectedCloud)->getSpatialMode();
-                        grainCloud->at(selectedCloud)->setSpatialMode(theSpat + 1, -1);
-                    }
-                }
-            }
-        }
-        break;
-
-    case 'S':  // overlap control
-    case 's':
-        paramString = "";
-        if (currentParam != OVERLAP) {
-            currentParam = OVERLAP;
-        }
-        else {
-            if (modkey == GLUT_ACTIVE_SHIFT) {
-                if (selectedCloud >= 0) {
-                    float theOver = grainCloud->at(selectedCloud)->getOverlap();
-                    grainCloud->at(selectedCloud)->setOverlap(theOver - 0.01f);
-                }
-            }
-            else {
-                if (selectedCloud >= 0) {
-                    float theOver = grainCloud->at(selectedCloud)->getOverlap();
-                    grainCloud->at(selectedCloud)->setOverlap(theOver + 0.01f);
-                }
-            }
-        }
-        break;
-    case 'R':
-    case 'r':
-        if (selectedCloud >= 0) {
-            currentParam = MOTIONXY;
-        }
-        // toggle selection modes
-        dragMode = RESIZE;
-        break;
-    case 'F':  // direction
-    case 'f':
-        paramString = "";
-        if (selectedCloud >= 0) {
-            if (currentParam != DIRECTION) {
-                currentParam = DIRECTION;
-            }
-            else {
-                if (modkey == GLUT_ACTIVE_SHIFT) {
-                    if (selectedCloud >= 0) {
-                        int theDir = grainCloud->at(selectedCloud)->getDirection();
-                        grainCloud->at(selectedCloud)->setDirection(theDir - 1);
-                    }
-                }
-                else {
-                    if (selectedCloud >= 0) {
-                        int theDir = grainCloud->at(selectedCloud)->getDirection();
-                        grainCloud->at(selectedCloud)->setDirection(theDir + 1);
-                    }
-                }
-            }
-        }
-        if (selectedRect >= 0) {
-            soundViews->at(selectedRect)->toggleOrientation();
-        }
-        // cerr << "Looking from the front" << endl;
-        break;
-    case 'P':  // waveform display on/off
-    case 'p':
-
-        //            for (int i = 0; i < soundViews->size();i++){
-        //                soundViews->at(i)->toggleWaveDisplay();
-        //            }
-        break;
-    case 'W':  // window editing for grain
-    case 'w':
-        paramString = "";
-        if (currentParam != WINDOW) {
-            currentParam = WINDOW;
-        }
-        else {
-            if (modkey == GLUT_ACTIVE_SHIFT) {
-                if (selectedCloud >= 0) {
-                    int theWin = grainCloud->at(selectedCloud)->getWindowType();
-                    grainCloud->at(selectedCloud)->setWindowType(theWin - 1);
-                }
-            }
-            else {
-                if (selectedCloud >= 0) {
-                    int theWin = grainCloud->at(selectedCloud)->getWindowType();
-                    grainCloud->at(selectedCloud)->setWindowType(theWin + 1);
-                }
-            }
-        }
-
-        break;
-
-    case 'B':
-    case 'b':
-        // cloud volume
-        paramString = "";
-        if (currentParam != VOLUME) {
-            currentParam = VOLUME;
-        }
-        else {
-            if (modkey == GLUT_ACTIVE_SHIFT) {
-                if (selectedCloud >= 0) {
-                    float theVol = grainCloud->at(selectedCloud)->getVolumeDb();
-                    grainCloud->at(selectedCloud)->setVolumeDb(theVol - 0.5f);
-                }
-            }
-            else {
-                if (selectedCloud >= 0) {
-                    float theVol = grainCloud->at(selectedCloud)->getVolumeDb();
-                    grainCloud->at(selectedCloud)->setVolumeDb(theVol + 0.5f);
-                }
-            }
-        }
-
-
-        break;
-
-    case '/':  // switch to menu view
-    case '?':
-        menuFlag = !menuFlag;
-
-        break;
-    case 'G':
-    case 'g':
-        paramString = "";
-        deselect(RECT);
-        if (grainCloud != NULL) {
-            if (modkey == GLUT_ACTIVE_SHIFT) {
-                if (grainCloud->size() > 0) {
-                    grainCloud->pop_back();
-                    grainCloudVis->pop_back();
-                    numClouds -= 1;
-                    // cout << "cloud removed" << endl;
-                }
-                if (numClouds == 0) {
-                    selectedCloud = -1;
-                }
-                else {
-                    // still have a cloud so select
-                    selectedCloud = numClouds - 1;
-                    grainCloudVis->at(selectedCloud)->setSelectState(true);
-                }
-                break;
-            }
-            else {
-                int numVoices = 8;  // initial number of voices
-                int idx = grainCloud->size();
-                if (selectedCloud >= 0) {
-                    if (numClouds > 0) {
-                        grainCloudVis->at(selectedCloud)->setSelectState(false);
-                    }
-                }
-                selectedCloud = idx;
-                // create audio
-                grainCloud->push_back(new GrainCluster(mySounds, numVoices));
-                // create visualization
-                grainCloudVis->push_back(
-                    new GrainClusterVis(mouseX, mouseY, numVoices, soundViews));
-                // select new cloud
-                grainCloudVis->at(idx)->setSelectState(true);
-                // register visualization with audio
-                grainCloud->at(idx)->registerVis(grainCloudVis->at(idx));
-                // grainCloud->at(idx)->toggleActive();
-                numClouds += 1;
-            }
-            //                        cout << "cloud added" << endl;
-            // grainControl->newCluster(mouseX,mouseY,1);
-        }
-
-        break;
-    case 'V':  // grain voices (add, delete)
-    case 'v':
-        paramString = "";
-        if (currentParam != NUMGRAINS) {
-            currentParam = NUMGRAINS;
-        }
-        else {
-            if (modkey == GLUT_ACTIVE_SHIFT) {
-                if (selectedCloud >= 0) {
-                    if (grainCloud)
-                        grainCloud->at(selectedCloud)->removeGrain();
-                    // cout << "grain removed" << endl;
-                }
-            }
-            else {
-                if (selectedCloud >= 0) {
-                    if (grainCloud)
-                        grainCloud->at(selectedCloud)->addGrain();
-                    // cout << "grain added" << endl;
-                }
-            }
-        }
-        break;
-
-    case 'D':
-    case 'd':
-        paramString = "";
-        if (currentParam != DURATION) {
-            currentParam = DURATION;
-        }
-        else {
-            if (modkey == GLUT_ACTIVE_SHIFT) {
-                if (selectedCloud >= 0) {
-                    float theDur = grainCloud->at(selectedCloud)->getDurationMs();
-                    grainCloud->at(selectedCloud)->setDurationMs(theDur - 5.0f);
-                }
-            }
-            else {
-                if (selectedCloud >= 0) {
-                    float theDur = grainCloud->at(selectedCloud)->getDurationMs();
-                    grainCloud->at(selectedCloud)->setDurationMs(theDur + 5.0f);
-                }
-            }
-        }
-        break;
-    case 'I':
-    case 'i':
-        break;
-
-
-    case 'L':
-    case 'l':
-        paramString = "";
-        if (currentParam != P_LFO_FREQ) {
-            currentParam = P_LFO_FREQ;
-        }
-        else {
-            if (modkey == GLUT_ACTIVE_SHIFT) {
-                if (selectedCloud >= 0) {
-                    float theLFOFreq = grainCloud->at(selectedCloud)->getPitchLFOFreq();
-                    grainCloud->at(selectedCloud)->setPitchLFOFreq(theLFOFreq - 0.01f);
-                }
-            }
-            else {
-                if (selectedCloud >= 0) {
-                    float theLFOFreq = grainCloud->at(selectedCloud)->getPitchLFOFreq();
-                    grainCloud->at(selectedCloud)->setPitchLFOFreq(theLFOFreq + 0.01f);
-                }
-            }
-        }
-        break;
-
-    case 'K':
-    case 'k':
-        paramString = "";
-        if (currentParam != P_LFO_AMT) {
-            currentParam = P_LFO_AMT;
-        }
-        else {
-            if (modkey == GLUT_ACTIVE_SHIFT) {
-                if (selectedCloud >= 0) {
-                    float theLFOAmt = grainCloud->at(selectedCloud)->getPitchLFOAmount();
-                    grainCloud->at(selectedCloud)->setPitchLFOAmount(theLFOAmt - 0.001f);
-                }
-            }
-            else {
-                if (selectedCloud >= 0) {
-                    float theLFOAmnt = grainCloud->at(selectedCloud)->getPitchLFOAmount();
-                    grainCloud->at(selectedCloud)->setPitchLFOAmount(theLFOAmnt + 0.001f);
-                }
-            }
-        }
-        break;
-    case 'H':
-    case 'h':
-        break;
-    case ' ':  // add delete
-
-        break;
-
-    case 'X':
-    case 'x':
-        paramString = "";
-        if (selectedCloud >= 0) {
-            currentParam = MOTIONX;
-        }
-        break;
-    case 'Y':
-    case 'y':
-        paramString = "";
-        if (selectedCloud >= 0) {
-            currentParam = MOTIONY;
-        }
-        break;
-
-    case 'Z':
-    case 'z':
-        paramString = "";
-        if (currentParam != PITCH) {
-            currentParam = PITCH;
-        }
-        else {
-            if (modkey == GLUT_ACTIVE_SHIFT) {
-                if (selectedCloud >= 0) {
-                    float thePitch = grainCloud->at(selectedCloud)->getPitch();
-                    grainCloud->at(selectedCloud)->setPitch(thePitch - 0.01f);
-                }
-            }
-            else {
-                if (selectedCloud >= 0) {
-                    float thePitch = grainCloud->at(selectedCloud)->getPitch();
-                    grainCloud->at(selectedCloud)->setPitch(thePitch + 0.01f);
-                }
-            }
-        }
-        break;
-
-    case '-':
-    case '_':
-        paramString.insert(0, "-");
-        break;
-    case 127:  // delete selected
-        if (paramString == "") {
-            if (selectedCloud >= 0) {
-                grainCloud->erase(grainCloud->begin() + selectedCloud);
-                grainCloudVis->erase(grainCloudVis->begin() + selectedCloud);
-                selectedCloud = -1;
-                numClouds -= 1;
-            }
-        }
-        else {
-            if (paramString.size() > 0)
-                paramString.resize(paramString.size() - 1);
-        }
-
-        break;
-    case 'A':
-    case 'a':
-        paramString = "";
-        if (selectedCloud >= 0) {
-            grainCloud->at(selectedCloud)->toggleActive();
-        }
-        break;
-    case '=':
-    case '+':
-
-
-        break;
-    case ',':
-    case '<':
-        break;
-    case '>':
-        break;
-
-    default:
-        // cout << "key pressed " << key << endl;
-        break;
-    }
-    glutPostRedisplay();
 }
 
 
@@ -1413,73 +566,6 @@ void deselect(int shapeType)
     }
 }
 
-
-// mouse clicks
-void mouseFunc(int button, int state, int x, int y)
-{
-    // cout << "button " << button << endl;
-
-    // look for selections if button is down
-    if ((button == GLUT_LEFT_BUTTON) || (button == GLUT_RIGHT_BUTTON) && (state == GLUT_DOWN)) {
-
-        paramString = "";
-
-        // hide menu
-        if (menuFlag == true)
-            menuFlag = false;
-
-        deselect(CLOUD);
-        // deselect existing selections
-        deselect(RECT);
-        // exit parameter editing
-        currentParam = -1;
-
-        lastDragX = veryHighNumber;
-        lastDragY = veryHighNumber;
-        // first check grain clouds to see if we have selection
-        for (int i = 0; i < grainCloudVis->size(); i++) {
-            if (grainCloudVis->at(i)->select(mouseX, mouseY) == true) {
-                grainCloudVis->at(i)->setSelectState(true);
-                selectedCloud = i;
-                break;
-            }
-        }
-
-
-        // clear selection buffer
-        if (selectionIndices)
-            delete selectionIndices;
-        // allocate new buffer
-        selectionIndices = new vector<int>;
-        selectionIndex = 0;
-        // if grain cloud is not selected - search for rectangle selection
-        if (selectedCloud < 0) {
-            // search for selections
-            resizeDir = false;  // set resize direction to horizontal
-            for (int i = 0; i < soundViews->size(); i++) {
-                if (soundViews->at(i)->select(mouseX, mouseY) == true) {
-                    selectionIndices->push_back(i);
-                    // soundViews->at(i)->setSelectState(true);
-                    // selectedRect = i;
-                    // break;
-                }
-            }
-
-            if (selectionIndices->size() > 0) {
-                selectedRect = selectionIndices->at(0);
-                soundViews->at(selectedRect)->setSelectState(true);
-            }
-        }
-    }
-
-
-    //    //handle button up
-    //    if ((button == GLUT_LEFT_BUTTON) && (state == GLUT_UP)){
-    //        lastDragX = -1;
-    //        lastDragY = -1;
-    //        dragMode = MOVE;
-    //    }
-}
 
 //-----------------------------------------------------------------------------
 // Handle mouse movement during button press (drag)
@@ -1641,11 +727,14 @@ int main(int argc, char **argv)
 
     //-------------Graphics Initialization--------//
 
-    // initialize GLUT
-    glutInit(&argc, argv);
+    // init Qt application
+    MyGLApplication app(argc, argv);
 
     // initialize graphics
-    initialize();
+    MyGLWindow *GLwindow = app.GLwindow();
+    text_renderer = new QtFont3D;
+    GLwindow->initialize();
+    app.startIdleCallback();
 
 
     // load sounds
@@ -1693,10 +782,9 @@ int main(int argc, char **argv)
 
 
     // start graphics
-    // let GLUT handle the current thread from here
-    glutMainLoop();
-
-    cout << _("Something went wrong...shouldn't be here") << endl;
+    // let Qt handle the current thread from here
+    GLwindow->show();
+    return app.exec();
 
 
     // cleanup routine

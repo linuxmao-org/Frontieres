@@ -31,6 +31,8 @@
 // TODO:  set and show name implementation
 
 #include "SoundRect.h"
+#include "MyGLApplication.h"
+#include "MyGLWindow.h"
 
 
 // destructor
@@ -43,9 +45,10 @@ SoundRect::~SoundRect()
 // constructor
 SoundRect::SoundRect()
 {
-
-    screenWidth = glutGet(GLUT_SCREEN_WIDTH);
-    screenHeight = glutGet(GLUT_SCREEN_HEIGHT);
+    // get screen width and height
+    MyGLScreen *screen = theApplication->GLwindow()->screen();
+    screenWidth = screen->width();
+    screenHeight = screen->height();
 
     // initializtion
     init();
