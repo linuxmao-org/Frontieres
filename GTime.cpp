@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
-// BORDERLANDS:  An interactive granular sampler.  
+// BORDERLANDS:  An interactive granular sampler.
 //------------------------------------------------------------------------------
-// More information is available at 
+// More information is available at
 //     http::/ccrma.stanford.edu/~carlsonc/256a/Borderlands/index.html
 //
 //
@@ -28,21 +28,20 @@
 //
 
 #include "GTime.h"
-    
-GTime::~GTime(){
 
+GTime::~GTime()
+{
 }
 
-GTime::GTime(){
-    sec  = (double) 0.0;
-
+GTime::GTime()
+{
+    sec = (double)0.0;
 }
 
-GTime & GTime::instance(){
-    static GTime * theInst = NULL;
+GTime &GTime::instance()
+{
+    static GTime *theInst = NULL;
     if (theInst == NULL)
         theInst = new GTime();
     return *theInst;
-    
 }
-double sec;

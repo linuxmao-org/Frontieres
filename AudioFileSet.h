@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
-// BORDERLANDS:  An interactive granular sampler.  
+// BORDERLANDS:  An interactive granular sampler.
 //------------------------------------------------------------------------------
-// More information is available at 
+// More information is available at
 //     http::/ccrma.stanford.edu/~carlsonc/256a/Borderlands/index.html
 //
 //
@@ -35,16 +35,17 @@
 #include <string>
 #include "sndfile.h"
 #include "dirent.h"
-#include  <iostream>
+#include <iostream>
 #include "theglobals.h"
 using namespace std;
 
 
-//basic encapsulation of an audio file
-struct AudioFile{
-    
-    //constructor
-    AudioFile(string myName,string thePath,unsigned int numChan, unsigned long numFrames,unsigned int srate, SAMPLE * theWave)
+// basic encapsulation of an audio file
+struct AudioFile {
+
+    // constructor
+    AudioFile(string myName, string thePath, unsigned int numChan,
+              unsigned long numFrames, unsigned int srate, SAMPLE *theWave)
     {
         cout << numFrames << endl;
         this->name = myName;
@@ -53,12 +54,12 @@ struct AudioFile{
         this->channels = numChan;
         this->sampleRate = srate;
         this->wave = theWave;
-
     }
-    //destructor
-    ~AudioFile(){
-        if (wave != NULL){
-            delete [] wave;
+    // destructor
+    ~AudioFile()
+    {
+        if (wave != NULL) {
+            delete[] wave;
         }
     }
 
@@ -66,37 +67,33 @@ struct AudioFile{
 
     string name;
     string path;
-    SAMPLE * wave;
+    SAMPLE *wave;
     unsigned long frames;
     unsigned int channels;
     unsigned int sampleRate;
 };
 
 
+class AudioFileSet {
 
-class AudioFileSet
-{
-    
 public:
     virtual ~AudioFileSet();
-    
-    //constructor
+
+    // constructor
     AudioFileSet();
-    
-    //read in all audio files contained in 
+
+    // read in all audio files contained in
     int loadFileSet(string path);
-    
-    //return the audio vector- note, the intension is for the files to be
-    //read only.  if write access is needed in the future - thread safety will
-    //need to be considered
-    vector<AudioFile *> * getFileVector();
-    
-    
-private:    
-    vector<AudioFile *> * fileSet;
 
+    // return the audio vector- note, the intension is for the files to be
+    // read only.  if write access is needed in the future - thread safety will
+    // need to be considered
+    vector<AudioFile *> *getFileVector();
+
+
+private:
+    vector<AudioFile *> *fileSet;
 };
-
 
 
 #endif

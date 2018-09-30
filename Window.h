@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
-// BORDERLANDS:  An interactive granular sampler.  
+// BORDERLANDS:  An interactive granular sampler.
 //------------------------------------------------------------------------------
-// More information is available at 
+// More information is available at
 //     http::/ccrma.stanford.edu/~carlsonc/256a/Borderlands/index.html
 //
 //
@@ -41,45 +41,41 @@
 
 using namespace std;
 
-enum {HANNING, TRIANGLE, EXPDEC, REXPDEC, SINC, RANDOM_WIN};
+enum { HANNING, TRIANGLE, EXPDEC, REXPDEC, SINC, RANDOM_WIN };
 
-class Window
-{
+class Window {
 public:
-    static Window & Instance();
+    static Window &Instance();
 
-    
-    //return window
-    double * getWindow(unsigned int windowType);
-    //resize windows - future possibility, but probably not needed
-    //void resizeWindows(unsigned long length);
+
+    // return window
+    double *getWindow(unsigned int windowType);
+    // resize windows - future possibility, but probably not needed
+    // void resizeWindows(unsigned long length);
 
     int numWindows();
-protected:
 
-    //generate windows
+protected:
+    // generate windows
     void generateWindows(unsigned long length);
     // window function prototypes
-    void hanning( double * window, unsigned long length );
-    //void trapezoid( double * window, unsigned long length );
-    void triangle( double * window, unsigned long length );
-    void expdec( double * forWin,double* revWin, unsigned long length );
-    void sinc( double * window, unsigned long length, int numZeroCross = 6);
+    void hanning(double *window, unsigned long length);
+    // void trapezoid( double * window, unsigned long length );
+    void triangle(double *window, unsigned long length);
+    void expdec(double *forWin, double *revWin, unsigned long length);
+    void sinc(double *window, unsigned long length, int numZeroCross = 6);
 
-    
-    
+
 private:
     ~Window();
     Window(unsigned long length = 2048);
-    double * hanningWin;
-    //double * trapWin;
-    double * triWin;
-    double * expDecWin;
-    double * rexpDecWin;
-    double * sincWin;
- 
+    double *hanningWin;
+    // double * trapWin;
+    double *triWin;
+    double *expDecWin;
+    double *rexpDecWin;
+    double *sincWin;
 };
-
 
 
 #endif

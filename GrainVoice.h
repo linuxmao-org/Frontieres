@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
-// BORDERLANDS:  An interactive granular sampler.  
+// BORDERLANDS:  An interactive granular sampler.
 //------------------------------------------------------------------------------
-// More information is available at 
+// More information is available at
 //     http::/ccrma.stanford.edu/~carlsonc/256a/Borderlands/index.html
 //
 //
@@ -48,138 +48,132 @@
 #endif
 
 
-//forward declarations
+// forward declarations
 class GrainVoice;
 class GrainVis;
 
 
+// AUDIO CLASS
+class GrainVoice {
 
-//AUDIO CLASS
-class GrainVoice
-{
-    
 public:
-    //destructor
+    // destructor
     virtual ~GrainVoice();
-    
-    // constructor
-    GrainVoice(vector<AudioFile *> * soundSet,float durationMs,float thePitch);
-    
-    //dump samples into next buffer
-    void nextBuffer(double * accumBuff,unsigned int numFrames,unsigned int bufferPos, int name);
-    
-    
-    //set on
-    bool playMe(double * startPositions,double * startVols);
 
-    //report state
+    // constructor
+    GrainVoice(vector<AudioFile *> *soundSet, float durationMs, float thePitch);
+
+    // dump samples into next buffer
+    void nextBuffer(double *accumBuff, unsigned int numFrames,
+                    unsigned int bufferPos, int name);
+
+
+    // set on
+    bool playMe(double *startPositions, double *startVols);
+
+    // report state
     bool isPlaying();
-    
-    //queue up params for next grain
+
+    // queue up params for next grain
     void setDurationMs(float dur);
-    
-    //set/get playback rate
+
+    // set/get playback rate
     void setPitch(float newPitch);
-    
-    //get playback rate
-    float getPitch();    
-    
-    //volume
+
+    // get playback rate
+    float getPitch();
+
+    // volume
     void setVolume(float theVolNormed);
     float getVolume();
-    
-    //set spatialization
-    void setChannelMultipliers(double* multipliers);
-    
-    //set playback direction
+
+    // set spatialization
+    void setChannelMultipliers(double *multipliers);
+
+    // set playback direction
     void setDirection(float thedir);
-    
-    //change window type
+
+    // change window type
     void setWindow(unsigned int windowType);
-    
-    
+
+
 protected:
-    //makes temp  params permanent
+    // makes temp  params permanent
     void updateParams();
-    
+
 private:
-    
-    //pointer to all audio file buffers
-    vector <AudioFile *> *theSounds;
-    //status
+    // pointer to all audio file buffers
+    vector<AudioFile *> *theSounds;
+    // status
     bool playingState;
-    //param update required flag
+    // param update required flag
     bool newParam;
-    
-    //numsounds
+
+    // numsounds
     unsigned int numSounds;
-    
-    //grain parameters
+
+    // grain parameters
     float duration, queuedDuration;
     double winDurationSamps;
-    double pitch,queuedPitch;
-    double direction, queuedDirection; 
+    double pitch, queuedPitch;
+    double direction, queuedDirection;
     double playInc;
-    
-    //local volume (set by user)
+
+    // local volume (set by user)
     float localAtten;
     float queuedLocalAtten;
-    
-    //panning values
-    double * chanMults;
-    double * queuedChanMults;
-    
-    //audio files being sampled
-    vector<int> * activeSounds;
-    
-    //window type
-    unsigned int windowType,queuedWindowType;
-    
-    //window reading params
+
+    // panning values
+    double *chanMults;
+    double *queuedChanMults;
+
+    // audio files being sampled
+    vector<int> *activeSounds;
+
+    // window type
+    unsigned int windowType, queuedWindowType;
+
+    // window reading params
     double winInc;
     double winReader;
-    
-    //pointer to audio window (hanning, triangle, etc.)
-    double * window;
-    
-    
-    //array of position values (in frames, not samples)
+
+    // pointer to audio window (hanning, triangle, etc.)
+    double *window;
+
+
+    // array of position values (in frames, not samples)
     //-1 means not in current soundfile
-    double * playPositions;
-    double * playVols;
+    double *playPositions;
+    double *playVols;
 };
 
 
-
-
-//GRAPHICS CLASS
-//handle display, picking.  
-//register selection listener
-class GrainVis{
+// GRAPHICS CLASS
+// handle display, picking.
+// register selection listener
+class GrainVis {
 public:
-    //destructor
+    // destructor
     ~GrainVis();
-    //constructor
+    // constructor
     GrainVis(float x, float y);
     void draw();
-    //position update function
+    // position update function
     void moveTo(float x, float y);
     float getX();
     float getY();
     void trigger(float theDur);
+
 private:
-    bool isOn,firstTrigger;
+    bool isOn, firstTrigger;
     double startTime;
     double triggerTime;
-    float gX,gY;
-    float colR,colG,colB,colA;
+    float gX, gY;
+    float colR, colG, colB, colA;
     float defG, defB;
-    float mySize,defSize,onSize;//GL point size
+    float mySize, defSize, onSize;  // GL point size
     float durSec;
-    
 };
-
-
 
 
 #endif

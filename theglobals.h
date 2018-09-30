@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
-// BORDERLANDS:  An interactive granular sampler.  
+// BORDERLANDS:  An interactive granular sampler.
 //------------------------------------------------------------------------------
-// More information is available at 
+// More information is available at
 //     http::/ccrma.stanford.edu/~carlsonc/256a/Borderlands/index.html
 //
 //
@@ -33,36 +33,34 @@
 
 
 #include <stdlib.h>
-#include <GTime.h>
+#include "GTime.h"
 
 
-//create sample datatype
+// create sample datatype
 #define SAMPLE double
-//create rtaudio format
+// create rtaudio format
 #define MY_FORMAT RTAUDIO_FLOAT64
-//create soxr format
+// create soxr format
 #define MY_RESAMPLER_FORMAT_I SOXR_FLOAT64_I
-//number of output channels
+// number of output channels
 #define MY_CHANNELS 2
 
-//window length
+// window length
 #define WINDOW_LEN 2048
-//graphics picking
+// graphics picking
 #define NAMEINCREMENT 100
 
-//function to produce a random float
-#define randf() ( (float)rand()/RAND_MAX )
+// function to produce a random float
+#define randf() ((float)rand() / RAND_MAX)
 
-#define randd() ( (double)rand()/RAND_MAX )
+#define randd() ((double)rand() / RAND_MAX)
 
 
-//global attenuation to prevent clipping
+// global attenuation to prevent clipping
 static const double globalAtten = 0.5;
 
 
-
-
-//osc local port
+// osc local port
 //#define LOCAL_PORT 10001
 //#define OUTPUT_BUFFER_SIZE 1024
 
@@ -71,11 +69,11 @@ static const double globalAtten = 0.5;
 //// Defines a point in a 2D space (coords x, y)
 ////-----------------------------------------------------------------------------
 
-//NOW A CLASS INSTEAD - see pt2d.h and pt2d.cpp
-//struct pt2d
-//{ 
+// NOW A CLASS INSTEAD - see pt2d.h and pt2d.cpp
+// struct pt2d
+//{
 //    pt2d( float _x, float _y ) : x(_x), y(_y) {};
-//    
+//
 //    float x;
 //    float y;
 //};

@@ -1,7 +1,7 @@
 //------------------------------------------------------------------------------
-// BORDERLANDS:  An interactive granular sampler.  
+// BORDERLANDS:  An interactive granular sampler.
 //------------------------------------------------------------------------------
-// More information is available at 
+// More information is available at
 //     http::/ccrma.stanford.edu/~carlsonc/256a/Borderlands/index.html
 //
 //
@@ -18,7 +18,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 
 
 //
@@ -40,48 +39,48 @@
 #include <cstdlib>
 #include <stdlib.h>
 
-class MyRtAudio{
+class MyRtAudio {
 
 public:
-    
-    //destructor
+    // destructor
     virtual ~MyRtAudio();
-    
-    //constructor - args = 
-    MyRtAudio(unsigned int numIns, unsigned int numOuts, unsigned int * bufferSize,  RtAudioFormat format,bool showWarnings);
-    
-    
-    //set the audio callback and start the audio stream
-    void openStream( RtAudioCallback callback);
-    
-    //report the current sample rate
+
+    // constructor - args =
+    MyRtAudio(unsigned int numIns, unsigned int numOuts,
+              unsigned int *bufferSize, RtAudioFormat format, bool showWarnings);
+
+
+    // set the audio callback and start the audio stream
+    void openStream(RtAudioCallback callback);
+
+    // report the current sample rate
     unsigned int getSampleRate();
-    
-    //report the current buffer size
+
+    // report the current buffer size
     unsigned int getBufferSize();
-    
-    //start audio stream
+
+    // start audio stream
     void startStream();
-    
-    //stop audio stream
+
+    // stop audio stream
     void stopStream();
-    
-    //close audio stream
+
+    // close audio stream
     void closeStream();
-    
-    //report the stream latency
+
+    // report the stream latency
     void reportStreamLatency();
-    
-       
+
+
 private:
-    //rtaudio pointer
-    RtAudio * audio;
+    // rtaudio pointer
+    RtAudio *audio;
     unsigned int numInputs;
     unsigned int numOutputs;
-    
-    //buffer size, sample rate, rt audio format
-    //note: buffer size is handled as pointer to unsigned int passed in externally.  this allows shared access, but is risky.
-    unsigned int * myBufferSize;
+
+    // buffer size, sample rate, rt audio format
+    // note: buffer size is handled as pointer to unsigned int passed in externally. this allows shared access, but is risky.
+    unsigned int *myBufferSize;
     unsigned int mySRate;
     RtAudioFormat myFormat;
 };
