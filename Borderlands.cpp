@@ -1607,7 +1607,7 @@ int main (int argc, char ** argv)
     string homeUser = getenv("HOME");
     string programPathUser = homeUser + "/.Borderlands/";
     string audioPathUser = homeUser + "/.Borderlands/loops/";
-    string audioPathDefault = INSTALL_PREFIX "/share/Borderlands/loops/";
+    string audioPathDefault = DATA_ROOT_DIR "/Borderlands/loops/";
     mkdir(programPathUser.c_str(), 0755);
     mkdir(audioPathUser.c_str(), 0755);
 

@@ -31,7 +31,8 @@ include(FindPkgConfig)
 
 target_compile_definitions(Borderlands
   PRIVATE "__LINUX_ALSASEQ__=" "__UNIX_JACK__="
-  PRIVATE "INSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\"")
+  PRIVATE "INSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\""
+  PRIVATE "DATA_ROOT_DIR=\"${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_DATAROOTDIR}\"")
 
 set(OpenGL_GL_PREFERENCE "GLVND")
 find_package(OpenGL REQUIRED)
@@ -50,3 +51,9 @@ target_include_directories(Borderlands
   PRIVATE ${GLUT_INCLUDE_DIRS} "${OPENGL_INCLUDE_DIR}" ${JACK_INCLUDE_DIRS} ${ALSA_INCLUDE_DIRS})
 
 install(TARGETS Borderlands DESTINATION "${CMAKE_INSTALL_BINDIR}")
+install(FILES
+  loops/2_rhodes_high_2.wav
+  loops/2_rhodes_refrain_2.wav
+  loops/hidden_mechanics_stems_borderlands_stereo.wav
+  loops/pretty_rhodes_delay.wav
+  DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/Borderlands/loops")
