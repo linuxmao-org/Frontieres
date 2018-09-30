@@ -40,11 +40,10 @@
 #include <Stk.h>
 
 #ifdef __MACOSX_CORE__
-#include <GLUT/glut.h>
+#include <OpenGL/OpenGL.h>
 #else
 #include <GL/gl.h>
 #include <GL/glu.h>
-#include <GL/glut.h>
 #endif
 
 
