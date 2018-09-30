@@ -8,6 +8,9 @@ enable_language(C)
 enable_language(CXX)
 include(GNUInstallDirs)
 
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 
@@ -26,7 +29,8 @@ add_executable(Borderlands WIN32
   libraries/QtFont3D/QtFont3D.cpp
   libraries/Stk.cpp
   libraries/RtAudio.cpp
-  libraries/RtMidi.cpp)
+  libraries/RtMidi.cpp
+  libraries/ring_buffer.cpp)
 target_include_directories(Borderlands
   PRIVATE "." PRIVATE "libraries" PRIVATE "libraries/QtFont3D")
 

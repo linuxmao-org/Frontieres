@@ -58,6 +58,10 @@
 #include "AudioFileSet.h"
 #include "Window.h"
 
+// midi related
+#include <RtMidi.h>
+#include <ring_buffer.h>
+
 // graphics related
 #include "SoundRect.h"
 
@@ -82,6 +86,10 @@ using namespace std;
 //-----------------------------------------------------------------------------
 // audio system
 MyRtAudio *theAudio = NULL;
+// midi system
+RtMidiIn *theMidiIn = NULL;
+// buffer of midi input messages
+Ring_Buffer *theMidiInBuffer = NULL;
 // library path
 string g_audioPath = "./loops/";
 // parameter string
@@ -156,6 +164,8 @@ void draw_string(GLfloat x, GLfloat y, GLfloat z, const char *str, GLfloat scale
 void drawAxis();
 int audioCallback(void *outputBuffer, void *inputBuffer, unsigned int numFrames,
                   double streamTime, RtAudioStreamStatus status, void *userData);
+void processMidiMessage(const unsigned char *message, unsigned length);
+void midiInCallback(double timeStamp, std::vector<unsigned char> *message, void *userData);
 
 
 //--------------------------------------------------------------------------------
@@ -164,17 +174,27 @@ int audioCallback(void *outputBuffer, void *inputBuffer, unsigned int numFrames,
 
 void cleaningFunction()
 {
-    try {
-        theAudio->stopStream();
-        theAudio->closeStream();
+    if (theAudio != NULL) {
+        try {
+            theAudio->stopStream();
+            theAudio->closeStream();
+        }
+        catch (RtAudioError &err) {
+            err.printMessage();
+        }
+        delete theAudio;
     }
-    catch (RtAudioError &err) {
-        err.printMessage();
+    if (theMidiIn != NULL) {
+        try {
+            theMidiIn->closePort();
+        }
+        catch (RtAudioError &err) {
+            err.printMessage();
+        }
+        delete theMidiIn;
     }
     if (mySounds != NULL)
         delete mySounds;
-    if (theAudio != NULL)
-        delete theAudio;
 
     if (grainCloud != NULL) {
         delete grainCloud;
@@ -203,6 +223,17 @@ void cleaningFunction()
 int audioCallback(void *outputBuffer, void *inputBuffer, unsigned int numFrames,
                   double streamTime, RtAudioStreamStatus status, void *userData)
 {
+    // process the midi messages
+    unsigned char midiMessageSize;
+    unsigned char midiMessageBuffer[256];
+    while (theMidiInBuffer->peek(midiMessageSize) &&
+           theMidiInBuffer->size_used() >= 1 + midiMessageSize)  // must check the message is available in full
+    {
+        theMidiInBuffer->discard(1);  // the header that was peeked
+        theMidiInBuffer->get(midiMessageBuffer, midiMessageSize);
+        processMidiMessage(midiMessageBuffer, midiMessageSize);
+    }
+
     // cast audio buffers
     SAMPLE *out = (SAMPLE *)outputBuffer;
     SAMPLE *in = (SAMPLE *)inputBuffer;
@@ -218,6 +249,71 @@ int audioCallback(void *outputBuffer, void *inputBuffer, unsigned int numFrames,
     return 0;
 }
 
+// midi processing routine
+void processMidiMessage(const unsigned char *message, unsigned length)
+{
+    if (length < 2)
+        return;  // valid midi length is at least 2
+
+    unsigned status = message[0] & 0xf0; // the type of message
+    unsigned channel = message[0] & 0x0f; // the channel on which it arrives
+
+    int data1 = message[1] & 0x7f;  // data bytes
+    int data2 = (length > 2) ? (message[2] & 0x7f) : 0;
+
+    if (status == 0x90 && data2 == 0)
+        status = 0x80;  // a note-on with velocity 0 means note-off
+
+    //fprintf(stderr, "MIDI[%02u] %02X %02X %02X\n", channel + 1, status, data1, data2);
+
+    switch (status) {
+    case 0x80:  // note on, 1=key number, 2=velocity
+        /* do something */
+        break;
+
+    case 0x90:  // note off, 1=key number, 2=velocity
+        /* do something */
+        break;
+
+    case 0xb0:  // control change, 1=control number, 2=value
+        switch (data1) {
+            /* do something */
+        }
+        break;
+
+    case 0xc0:  // program change, 1=program number
+        /* do something */
+        break;
+
+    case 0xe0:  // pitch bend, (2,1)=bend value (14 bit)
+    {
+        int bend = ((data2 << 7) | data1) - 8192;
+        /* do something */
+        break;
+    }
+    }
+}
+
+//================================================================================
+//   Midi Input Callback
+//================================================================================
+
+void midiInCallback(double, std::vector<unsigned char> *message, void *)
+{
+    size_t size = message->size();
+    if (size >= 256)
+        return;  // drop large messages
+
+    // send the midi into a buffer the audio thread will process from
+
+    if (theMidiInBuffer->size_free() < 1 + size)
+        return;  // check if the buffer can take the message, if not drop
+
+    // write the message header, a 8bit size field
+    theMidiInBuffer->put((unsigned char)size);
+    // write the message body
+    theMidiInBuffer->put(message->data(), size);
+}
 
 //================================================================================
 //   GRAPHICS/QT OPENGL
@@ -705,6 +801,7 @@ int main(int argc, char **argv)
     }
     catch (RtAudioError &err) {
         err.printMessage();
+        cleaningFunction();
         exit(1);
     }
     try {
@@ -720,6 +817,19 @@ int main(int argc, char **argv)
         theAudio->reportStreamLatency();
     }
     catch (RtAudioError &err) {
+        err.printMessage();
+        cleaningFunction();
+        exit(1);
+    }
+
+    //-------------Midi Configuration-----------//
+    theMidiInBuffer = new Ring_Buffer(1024);
+    try {
+        theMidiIn = new RtMidiIn(RtMidi::UNSPECIFIED, "Borderlands", theMidiInBuffer->capacity());
+        theMidiIn->setCallback(&midiInCallback);
+        theMidiIn->openVirtualPort();
+    }
+    catch (RtMidiError &err) {
         err.printMessage();
         cleaningFunction();
         exit(1);
