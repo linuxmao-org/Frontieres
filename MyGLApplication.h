@@ -28,7 +28,7 @@ public:
     MyGLApplication(int &argc, char *argv[]);
     ~MyGLApplication();
     MyGLWindow *GLwindow();
-    void startIdleCallback();
+    void startIdleCallback(double fps);
 
 private:
     struct Impl;

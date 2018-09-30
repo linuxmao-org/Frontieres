@@ -46,11 +46,11 @@ MyGLWindow *MyGLApplication::GLwindow()
     return P->window;
 }
 
-void MyGLApplication::startIdleCallback()
+void MyGLApplication::startIdleCallback(double fps)
 {
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, [this]{ P->onIdle(); });
-    timer->start(0);
+    timer->start(1e3 / fps);
 }
 
 void MyGLApplication::Impl::onIdle()

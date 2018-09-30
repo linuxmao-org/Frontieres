@@ -734,7 +734,9 @@ int main(int argc, char **argv)
     MyGLWindow *GLwindow = app.GLwindow();
     text_renderer = new QtFont3D;
     GLwindow->initialize();
-    app.startIdleCallback();
+
+    double fps = 50;
+    app.startIdleCallback(fps);
 
 
     // load sounds
