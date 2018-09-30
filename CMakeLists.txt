@@ -50,6 +50,20 @@ target_link_libraries(Borderlands
 target_include_directories(Borderlands
   PRIVATE ${GLUT_INCLUDE_DIRS} "${OPENGL_INCLUDE_DIR}" ${JACK_INCLUDE_DIRS} ${ALSA_INCLUDE_DIRS})
 
+# I18n
+set(I18N_TRANSLATIONS "fr")
+find_package(Intl REQUIRED)
+find_package(Gettext REQUIRED)
+target_link_libraries(Borderlands PRIVATE ${Intl_LIBRARIES})
+foreach(translation ${I18N_TRANSLATIONS})
+  gettext_process_po_files("${translation}" ALL
+    INSTALL_DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/locale"
+    PO_FILES
+    "po/${translation}/Borderlands.po")
+endforeach()
+
+
+# Install
 install(TARGETS Borderlands DESTINATION "${CMAKE_INSTALL_BINDIR}")
 install(FILES
   loops/2_rhodes_high_2.wav
