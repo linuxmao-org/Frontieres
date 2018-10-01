@@ -46,15 +46,15 @@ find_package(OpenGL REQUIRED)
 pkg_check_modules(JACK jack REQUIRED)
 find_package(ALSA REQUIRED)
 find_package(Threads REQUIRED)
-find_library(SNDFILE_LIBRARY sndfile)
-message(STATUS "Sndfile: ${SNDFILE_LIBRARY}")
-find_library(SOXR_LIBRARY soxr)
-message(STATUS "Soxr: ${SOXR_LIBRARY}")
+
+include(FindPkgConfig)
+pkg_check_modules(SNDFILE sndfile REQUIRED)
+pkg_check_modules(SOXR soxr REQUIRED)
 
 target_link_libraries(Borderlands
-  PRIVATE ${OPENGL_LIBRARIES} ${JACK_LIBRARIES} ${ALSA_LIBRARIES} "${SNDFILE_LIBRARY}" "${SOXR_LIBRARY}" "${CMAKE_THREAD_LIBS_INIT}")
+  PRIVATE ${OPENGL_LIBRARIES} ${JACK_LIBRARIES} ${ALSA_LIBRARIES} ${SNDFILE_LIBRARIES} ${SOXR_LIBRARIES} "${CMAKE_THREAD_LIBS_INIT}")
 target_include_directories(Borderlands
-  PRIVATE "${OPENGL_INCLUDE_DIR}" ${JACK_INCLUDE_DIRS} ${ALSA_INCLUDE_DIRS})
+  PRIVATE "${OPENGL_INCLUDE_DIR}" ${JACK_INCLUDE_DIRS} ${ALSA_INCLUDE_DIRS} ${SNDFILE_INCLUDE_DIRS} ${SOXR_INCLUDE_DIRS})
 
 # Qt
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
