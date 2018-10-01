@@ -28,6 +28,7 @@
 //
 
 #include "AudioFileSet.h"
+#include <stdexcept>
 #include <soxr.h>
 #include <math.h>
 
