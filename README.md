@@ -2,7 +2,7 @@
 
 Ceci est une reprise non-officielle de la version 0.4 libre du logiciel [Borderlands](http://borderlands-granular.com/).
 
-Vous trouverez des tas de notes concernant le logiciel originel en version 0.4 dans le fichier [README.txt](README.txt).
+Vous trouverez des tas de notes concernant le logiciel originel en version 0.4 dans les fichiers [README.txt](README.txt) et [README-2.txt](README-2.txt).
 
 
 # Construction
