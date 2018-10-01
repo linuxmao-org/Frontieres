@@ -160,7 +160,7 @@ QtFont3D *text_renderer = NULL;
 //--------------------------------------------------------------------------------
 
 void updateMouseCoords(int x, int y);
-void draw_string(GLfloat x, GLfloat y, GLfloat z, const char *str, GLfloat scale);
+void draw_string(GLfloat x, GLfloat y, GLfloat z, const QString &str, GLfloat scale);
 void drawAxis();
 int audioCallback(void *outputBuffer, void *inputBuffer, unsigned int numFrames,
                   double streamTime, RtAudioStreamStatus status, void *userData);
@@ -364,7 +364,7 @@ void drawAxis()
 // Display simple string
 // desc: from sndpeek source - Ge Wang, et al
 //-----------------------------------------------------------------------------
-void draw_string(GLfloat x, GLfloat y, GLfloat z, const char *str, GLfloat scale = 1.0f)
+void draw_string(GLfloat x, GLfloat y, GLfloat z, const QString &str, GLfloat scale = 1.0f)
 {
     // get screen width and height
     MyGLScreen *screen = theApplication->GLwindow()->screen();
@@ -399,7 +399,7 @@ void printUsage()
     glColor4f(insColor, insColor, insColor, theA);
     // key info
     draw_string(screenWidth / 2.0f + 0.2f * (float)screenWidth + 10.0,
-                (float)screenHeight / 2.0f + 30.0, 0.5f, _("CLICK TO START"),
+                (float)screenHeight / 2.0f + 30.0, 0.5f, _Q("", "CLICK TO START"),
                 (float)screenWidth * 0.04f);
 
     theA = 0.6f + 0.2 * sin(1.0 * PI * GTime::instance().sec);
@@ -407,7 +407,7 @@ void printUsage()
     glColor4f(insColor, insColor, insColor, theA);
     // key info
     draw_string(screenWidth / 2.0f + 0.2f * (float)screenWidth + 10.0,
-                (float)screenHeight / 2.0f + 50.0, 0.5f, _("ESCAPE TO QUIT"),
+                (float)screenHeight / 2.0f + 50.0, 0.5f, _Q("", "ESCAPE TO QUIT"),
                 (float)screenWidth * 0.04f);
 
     theA = 0.6f + 0.2 * sin(1.1 * PI * GTime::instance().sec);
@@ -416,7 +416,7 @@ void printUsage()
     // key info
     draw_string(screenWidth / 2.0f + 0.2f * (float)screenWidth + 10.0,
                 (float)screenHeight / 2.0f + 70.0, 0.5f,
-                _("PUT THE SAMPLES IN ~/.Borderlands/loops"), (float)screenWidth * 0.04f);
+                _Q("", "PUT THE SAMPLES IN ~/.Borderlands/loops"), (float)screenWidth * 0.04f);
 }
 
 
@@ -439,14 +439,14 @@ void printParam()
 
         switch (currentParam) {
         case NUMGRAINS:
-            myValue = _("Voices: ");
+            myValue = _S("", "Voices: ");
             sinput << theCloud->getNumVoices();
             myValue = myValue + sinput.str();
             draw_string((GLfloat)mouseX, (GLfloat)(screenHeight - mouseY), 0.0,
                         myValue.c_str(), 100.0f);
             break;
         case DURATION:
-            myValue = _("Duration: ");
+            myValue = _S("", "Duration: ");
             if (paramString == "") {
                 sinput << theCloud->getDurationMs();
                 myValue = myValue + sinput.str() + " ms";
@@ -461,22 +461,22 @@ void printParam()
         case WINDOW:
             switch (theCloud->getWindowType()) {
             case HANNING:
-                myValue = _("Window: HANNING");
+                myValue = _S("", "Window: HANNING");
                 break;
             case TRIANGLE:
-                myValue = _("Window: TRIANGLE");
+                myValue = _S("", "Window: TRIANGLE");
                 break;
             case REXPDEC:
-                myValue = _("Window: REXPDEC");
+                myValue = _S("", "Window: REXPDEC");
                 break;
             case EXPDEC:
-                myValue = _("Window: EXPDEC");
+                myValue = _S("", "Window: EXPDEC");
                 break;
             case SINC:
-                myValue = _("Window: SINC");
+                myValue = _S("", "Window: SINC");
                 break;
             case RANDOM_WIN:
-                myValue = _("Window: RANDOM_WIN");
+                myValue = _S("", "Window: RANDOM_WIN");
                 break;
             default:
                 myValue = "";
@@ -487,21 +487,21 @@ void printParam()
                         myValue.c_str(), 100.0f);
             break;
         case MOTIONX:
-            myValue = _("X: ");
+            myValue = _S("", "X: ");
             sinput << theCloudVis->getXRandExtent();
             myValue = myValue + sinput.str();
             draw_string((GLfloat)mouseX, (GLfloat)(screenHeight - mouseY), 0.0,
                         myValue.c_str(), 100.0f);
             break;
         case MOTIONY:
-            myValue = _("Y: ");
+            myValue = _S("", "Y: ");
             sinput << theCloudVis->getYRandExtent();
             myValue = myValue + sinput.str();
             draw_string((GLfloat)mouseX, (GLfloat)(screenHeight - mouseY), 0.0,
                         myValue.c_str(), 100.0f);
             break;
         case MOTIONXY:
-            myValue = _("X,Y: ");
+            myValue = _S("", "X,Y: ");
             sinput << theCloudVis->getXRandExtent();
             myValue = myValue + sinput.str() + ", ";
             sinput2 << theCloudVis->getYRandExtent();
@@ -513,13 +513,13 @@ void printParam()
         case DIRECTION:
             switch (theCloud->getDirection()) {
             case FORWARD:
-                myValue = _("Direction: FORWARD");
+                myValue = _S("", "Direction: FORWARD");
                 break;
             case BACKWARD:
-                myValue = _("Direction: BACKWARD");
+                myValue = _S("", "Direction: BACKWARD");
                 break;
             case RANDOM_DIR:
-                myValue = _("Direction: RANDOM");
+                myValue = _S("", "Direction: RANDOM");
                 break;
             default:
                 myValue = "";
@@ -532,13 +532,13 @@ void printParam()
         case SPATIALIZE:
             switch (theCloud->getSpatialMode()) {
             case UNITY:
-                myValue = _("Spatial Mode: UNITY");
+                myValue = _S("", "Spatial Mode: UNITY");
                 break;
             case STEREO:
-                myValue = _("Spatial Mode: STEREO");
+                myValue = _S("", "Spatial Mode: STEREO");
                 break;
             case AROUND:
-                myValue = _("Spatial Mode: AROUND");
+                myValue = _S("", "Spatial Mode: AROUND");
                 break;
             default:
                 myValue = "";
@@ -548,7 +548,7 @@ void printParam()
                         myValue.c_str(), 100.0f);
             break;
         case VOLUME:
-            myValue = _("Volume (dB): ");
+            myValue = _S("", "Volume (dB): ");
             if (paramString == "") {
                 sinput << theCloud->getVolumeDb();
                 myValue = myValue + sinput.str();
@@ -560,7 +560,7 @@ void printParam()
                         myValue.c_str(), 100.0f);
             break;
         case OVERLAP:
-            myValue = _("Overlap: ");
+            myValue = _S("", "Overlap: ");
             if (paramString == "") {
                 sinput << theCloud->getOverlap();
                 myValue = myValue + sinput.str();
@@ -573,7 +573,7 @@ void printParam()
             //            myValue = "Duration (ms): " + theCloud->getDurationMs();
             break;
         case PITCH:
-            myValue = _("Pitch: ");
+            myValue = _S("", "Pitch: ");
             if (paramString == "") {
                 sinput << theCloud->getPitch();
                 myValue = myValue + sinput.str();
@@ -587,7 +587,7 @@ void printParam()
             break;
 
         case P_LFO_FREQ:
-            myValue = _("Pitch LFO Freq: ");
+            myValue = _S("", "Pitch LFO Freq: ");
             if (paramString == "") {
                 sinput << theCloud->getPitchLFOFreq();
                 myValue = myValue + sinput.str();
@@ -600,7 +600,7 @@ void printParam()
             //            myValue = "Duration (ms): " + theCloud->getDurationMs();
             break;
         case P_LFO_AMT:
-            myValue = _("Pitch LFO Amount: ");
+            myValue = _S("", "Pitch LFO Amount: ");
             if (paramString == "") {
                 sinput << theCloud->getPitchLFOAmount();
                 myValue = myValue + sinput.str();
@@ -783,11 +783,6 @@ void mousePassiveMotion(int x, int y)
 //-----------------------------------------------------------------------------//
 int main(int argc, char **argv)
 {
-    // init internationalization
-    setlocale(LC_ALL, "");
-    bindtextdomain("Borderlands", DATA_ROOT_DIR "/locale/");
-    textdomain("Borderlands");
-
     // init random number generator
     srand(time(NULL));
     // start time
@@ -878,7 +873,7 @@ int main(int argc, char **argv)
     }
 
     mySounds = newFileMgr.getFileVector();
-    cout << _("Sounds loaded successfully...") << endl;
+    cout << _S("", "Sounds loaded successfully...") << endl;
 
 
     // create visual representation of sounds

@@ -72,7 +72,11 @@ MyGLScreen::MyGLScreen(QWidget *parent)
 
 void MyGLScreen::initializeGL()
 {
-    text_renderer->setFont(QFont("Monospace", text_fontSize, QFont::Normal));
+    float glyphThickness = 1;
+    int numGlyphs = 256;  // glyph space for accented characters
+    QFont font("Monospace", text_fontSize, QFont::Normal);
+    font.setStyleHint(QFont::Monospace);
+    text_renderer->setFont(font, glyphThickness, numGlyphs);
 
     // initial state
     glClearColor(0.15, 0.15, 0.15, 1.0f);

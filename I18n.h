@@ -21,13 +21,18 @@
 
 #pragma once
 
+#include <QCoreApplication>
+
 #if !defined(BORDERLANDS_DISABLE_I18N)
 
-#include <libintl.h>
-#define _(x) ((const char *)gettext(x))
+// translate to QString
+#define _Q(c, x) (QCoreApplication::translate(c, x))
+// translate to std::string
+#define _S(c, x) (_Q(c, x).toStdString())
 
 #else  // !defined(BORDERLANDS_DISABLE_I18N)
 
-#define _(x) x
+#define _Q(c, x) QString(x)
+#define _S(c, x) std::string(x)
 
 #endif  // !defined(BORDERLANDS_DISABLE_I18N)
