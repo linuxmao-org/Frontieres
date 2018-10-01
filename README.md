@@ -14,8 +14,8 @@ Le système de construction est cmake, et le cadriciel visuel est Qt5.
 
 ## Debian Stretch
  
-Vous aurez besoin des paquets suivants : `cmake, build-essential, libasound2-dev, libglu1-mesa-dev, libjack-jackd2-dev ou libjack-dev, libsndfile1-dev, libsoxr-dev, mesa-common-dev, et pkg-config`.
+Vous aurez besoin des paquets suivants : `cmake, build-essential, libasound2-dev, libglu1-mesa-dev, libjack-jackd2-dev ou libjack-dev, libsndfile1-dev, libsoxr-dev, mesa-common-dev,` et `pkg-config`.
 
-Ainsi que des paquets Qt5 suivant : `libqt5opengl5-dev, libqt5x11extras5-dev, qtbase5-dev, qttools5-dev, et qttools5-dev-tools`.
+Ainsi que des paquets Qt5 suivant : `libqt5opengl5-dev, libqt5x11extras5-dev, qtbase5-dev, qttools5-dev,` et `qttools5-dev-tools`.
 
 _(note : certains sont peut être non-nécessaires)_
