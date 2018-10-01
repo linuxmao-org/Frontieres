@@ -17,6 +17,7 @@
 #include <QList>
 #include <QPainter>
 #include <QRectF>
+#include <QDebug>
 
 void QtFont3D::setFont(const QFont &font, float glyphThickness, int numGlyphs)
 {
@@ -69,7 +70,8 @@ void QtFont3D::print(const QString &text, const QVector3D &position, int flags, 
     glScalef(scale, scale, scale);
     glPushAttrib(GL_LIST_BIT);
     glListBase(_displayListBase);
-    glCallLists(text.length(), GL_UNSIGNED_BYTE, text.toLocal8Bit());
+    QVector<uint> ucs4 = text.toUcs4();
+    glCallLists(ucs4.length(), GL_UNSIGNED_INT, ucs4.data());
     glPopAttrib(); // GL_LIST_BIT
     glPopMatrix();
 }
@@ -77,7 +79,7 @@ void QtFont3D::print(const QString &text, const QVector3D &position, int flags, 
 void QtFont3D::_buildGlyph(int glyph, GLuint displayListBase, const QFont &font, QFontMetricsF *fontMetrics, float glyphThickness)
 {
     QPainterPath path;
-    path.addText(QPointF(0, 0), font, QString(static_cast<char>(glyph)));
+    path.addText(QPointF(0, 0), font, QString::fromUcs4((const uint *)&glyph, 1));
     QList<QPolygonF> polygons = path.toSubpathPolygons();
     // Set up the tesselation.
     GLUtriangulatorObj *tesselator = gluNewTess();
