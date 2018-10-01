@@ -65,17 +65,13 @@ find_package(Qt5OpenGL CONFIG REQUIRED)
 target_link_libraries(Borderlands PRIVATE Qt5::Widgets Qt5::OpenGL)
 
 # I18n
-set(I18N_TRANSLATIONS "fr")
-find_package(Intl REQUIRED)
-find_package(Gettext REQUIRED)
-target_link_libraries(Borderlands PRIVATE ${Intl_LIBRARIES})
-foreach(translation ${I18N_TRANSLATIONS})
-  gettext_process_po_files("${translation}" ALL
-    INSTALL_DESTINATION "${CMAKE_INSTALL_LOCALEDIR}"
-    PO_FILES
-    "po/${translation}/Borderlands.po")
-endforeach()
-
+find_package(Qt5LinguistTools REQUIRED)
+qt5_add_translation(TRANSLATIONS
+  "translations/Borderlands_fr_FR.ts")
+add_custom_target(Borderlands_translations ALL
+  DEPENDS ${TRANSLATIONS})
+install(FILES ${TRANSLATIONS}
+  DESTINATION "${CMAKE_INSTALL_DATAROOTDIR}/Borderlands/translations")
 
 # Install
 install(TARGETS Borderlands DESTINATION "${CMAKE_INSTALL_BINDIR}")
