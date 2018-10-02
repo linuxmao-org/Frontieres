@@ -5,7 +5,7 @@
 
 # Construction
 
-[![Build Status](https://semaphoreci.com/api/v1/jpcima/borderlands/branches/master/badge.svg)](https://semaphoreci.com/jpcima/borderlands)
+[![Build Status](https://semaphoreci.com/api/v1/jpcima/frontieres/branches/master/badge.svg)](https://semaphoreci.com/jpcima/frontieres)
 
 ## Généralités
 
