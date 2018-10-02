@@ -39,7 +39,7 @@ Thank you for downloading Borderlands!
 Version 0.04
 -Independent volume control for clouds in dB, controlled by b key (with number entry or shift modification as described in usage instructions)
 -Full screen/windowed toggle mode - press o key
--Bug fix - selected grain duration was not being applied to newly added grains (due to missing break in a switch statementï¿½)
+-Bug fix - selected grain duration was not being applied to newly added grains (due to missing break in a switch statementÉ)
 
 
 Version 0.03
@@ -53,7 +53,7 @@ Version 0.02
  -Some platforms may have problems displaying the grains - they may appear as squares
   instead of circles. This is due to lack of support for GL_POINT_SMOOTH on the 
   user's graphics card.  A version that uses gluDisc to render the grains is 
-  available at the project site.  It is lower quality, but it worksï¿½  Squares are nice too...
+  available at the project site.  It is lower quality, but it worksÉ  Squares are nice too...
 
 Version 0.01 
  -First version, produced for Music 256a at Stanford. OSX only.
@@ -89,7 +89,7 @@ Once Homebrew is installed, type:
 
 brew install libsndfile
 
-If libsndfile installs correctly, continue installing Borderlands as described below. If the libsndfile install wonï¿½t run (or requires admin privileges, try
+If libsndfile installs correctly, continue installing Borderlands as described below. If the libsndfile install wonÕt run (or requires admin privileges, try
 
 sudo brew install libsndfile
 
@@ -98,7 +98,7 @@ sudo brew install libsndfile
 
 Once libsndfile has successfully installed, navigate to the Borderlands_v0X/Borderlands directory in Terminal, and type make. 
 
-Note - if you donï¿½t understand what is meant by ï¿½navigate to the Borderlands directory,ï¿½ follow these steps (if you are on a Mac):
+Note - if you donÕt understand what is meant by Ònavigate to the Borderlands directory,Ó follow these steps (if you are on a Mac):
 
 -Open Terminal
 -Type cd and add a space
@@ -112,7 +112,7 @@ If all goes well, the source should compile. You may see a number of warnings ab
 
 
 //------------------------------------------------------------------------
-// Before runningï¿½
+// Before runningÉ
 //------------------------------------------------------------------------
 
 Put your favorite .wav and .aif files into the loops directory contained in the distribution. 
@@ -121,7 +121,7 @@ These will be automatically loaded when you launch Borderlands.
 
 
 //------------------------------------------------------------------------
-// To launch the softwareï¿½
+// To launch the softwareÉ
 //------------------------------------------------------------------------
 
 Type ./Borderlands from the source directory in terminal. The screen will be black for 

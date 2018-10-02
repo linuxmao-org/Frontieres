@@ -55,12 +55,12 @@ Once Homebrew is installed, type:
 
 brew install libsndfile
 
-If libsndfile installs correctly, continue installing the necessary libraries to run Borderlands as described below. If the libsndfile install wonï¿½t run (or requires admin privileges, try
+If libsndfile installs correctly, continue installing the necessary libraries to run Borderlands as described below. If the libsndfile install wonÕt run (or requires admin privileges, try
 
 sudo brew install libsndfile
 
 
-ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ÑÑÑÑÑÑÑ
 
 If you haven't already, download the source from http://ccrma.stanford.edu/~carlsonc/256a/Borderlands/index.html, unzip it, 
 navigate to the Borderlands directory in Terminal, and type make. 
@@ -71,7 +71,7 @@ If you get error messages, please email me at carlsonc AT ccrma DOT stanford DOT
 
 
 //------------------------------------------------------------------------
-// Before runningï¿½
+// Before runningÉ
 //------------------------------------------------------------------------
 
 Put your favorite .wav and .aif files into the loops directory contained in the distribution. 
@@ -80,7 +80,7 @@ These will be automatically loaded when you launch Borderlands.
 
 
 //------------------------------------------------------------------------
-// To launch the softwareï¿½
+// To launch the softwareÉ
 //------------------------------------------------------------------------
 
 Type ./Borderlands from the source directory in terminal. The screen will be black for 
