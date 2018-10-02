@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Borderlands
+Comment=Interactive Granular Sampler
+Comment[fr]=Échantillonneur granulaire interactif
+Exec=Borderlands
+Terminal=false
+Icon=borderlands
+Type=Application
+Categories=AudioVideo;Audio;
+Name[fr_FR]=Frontieres

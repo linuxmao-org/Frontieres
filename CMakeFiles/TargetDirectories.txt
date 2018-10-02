@@ -1,0 +1,8 @@
+/home/olivier/mao/borderlands/Borderlands/CMakeFiles/install/strip.dir
+/home/olivier/mao/borderlands/Borderlands/CMakeFiles/install/local.dir
+/home/olivier/mao/borderlands/Borderlands/CMakeFiles/install.dir
+/home/olivier/mao/borderlands/Borderlands/CMakeFiles/list_install_components.dir
+/home/olivier/mao/borderlands/Borderlands/CMakeFiles/Frontieres_translations.dir
+/home/olivier/mao/borderlands/Borderlands/CMakeFiles/edit_cache.dir
+/home/olivier/mao/borderlands/Borderlands/CMakeFiles/Frontieres.dir
+/home/olivier/mao/borderlands/Borderlands/CMakeFiles/rebuild_cache.dir
