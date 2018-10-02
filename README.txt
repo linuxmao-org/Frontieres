@@ -1,6 +1,6 @@
 //------------------------------------------------------------------------------
 //
-//     BORDERLANDS:  An interactive granular sampler.  
+//     FRONTIERES:  An interactive granular sampler.  
 //          Version 0.04
 //------------------------------------------------------------------------------
 //  Project website:
@@ -29,7 +29,7 @@
 
 
 
-Thank you for downloading Borderlands! 
+Thank you for downloading Frontieres! 
 
 
 //------------------------------------------------------------------------
@@ -63,7 +63,7 @@ Version 0.01
 // Installation:
 //------------------------------------------------------------------------
 
-Borderlands has only been tested on OSX 10.6.8. 
+Frontieres has only been tested on OSX 10.6.8. 
 
 Please make sure the following libraries are installed on your system.
 
@@ -89,23 +89,23 @@ Once Homebrew is installed, type:
 
 brew install libsndfile
 
-If libsndfile installs correctly, continue installing Borderlands as described below. If the libsndfile install won’t run (or requires admin privileges, try
+If libsndfile installs correctly, continue installing Frontieres as described below. If the libsndfile install won’t run (or requires admin privileges, try
 
 sudo brew install libsndfile
 
 
 
 
-Once libsndfile has successfully installed, navigate to the Borderlands_v0X/Borderlands directory in Terminal, and type make. 
+Once libsndfile has successfully installed, navigate to the Frontieres_v0X/Frontieres directory in Terminal, and type make. 
 
-Note - if you don’t understand what is meant by “navigate to the Borderlands directory,” follow these steps (if you are on a Mac):
+Note - if you don’t understand what is meant by “navigate to the Frontieres directory,” follow these steps (if you are on a Mac):
 
 -Open Terminal
 -Type cd and add a space
--Open the Borderlands_v04 directory in Finder
--Drag the Borderlands folder into the Terminal window next to cd (should now look like cd Users/you/blah/etc/Borderlands_v04/Borderlands). 
+-Open the Frontieres_v04 directory in Finder
+-Drag the Frontieres folder into the Terminal window next to cd (should now look like cd Users/you/blah/etc/Frontieres_v04/Frontieres). 
 -Hit enter to change directories. 
--Now type   make  and press enter. Borderlands should start compiling.
+-Now type   make  and press enter. Frontieres should start compiling.
 
 
 If all goes well, the source should compile. You may see a number of warnings about glut functions being deprecated if you are on Mavericks. Please ignore these unless you get any errors that prevent compiling from completing. If you see errors, please email me at carlsonc AT ccrma DOT stanford DOT edu and I will try to help resolve any issues quickly!
@@ -116,7 +116,7 @@ If all goes well, the source should compile. You may see a number of warnings ab
 //------------------------------------------------------------------------
 
 Put your favorite .wav and .aif files into the loops directory contained in the distribution. 
-These will be automatically loaded when you launch Borderlands.
+These will be automatically loaded when you launch Frontieres.
 
 
 
@@ -124,7 +124,7 @@ These will be automatically loaded when you launch Borderlands.
 // To launch the software…
 //------------------------------------------------------------------------
 
-Type ./Borderlands from the source directory in terminal. The screen will be black for 
+Type ./Frontieres from the source directory in terminal. The screen will be black for 
 a bit while your audio files load, and then you will see a title screen with instructions.
 
 
@@ -192,7 +192,7 @@ B key (+ shift)	  Adjust cloud volume in dB
 // Acknowledgement
 //------------------------------------------------------------------------
 
-Libraries included in Borderlands:
+Libraries included in Frontieres:
 Synthesis Toolkit
 https://ccrma.stanford.edu/software/stk/
 

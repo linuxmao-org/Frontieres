@@ -22,7 +22,7 @@ INC_PATH = -I./
 
 
 # executable
-TARGET = Borderlands
+TARGET = Frontieres
 
 
 # build binaries from sources in all these directories
@@ -32,7 +32,7 @@ VPATH = osc ip ip/posix
 # the binary objects to compile 
 # (only the first one should contain a main() )
 OBJ_FILES = \
-	Borderlands.o \
+	Frontieres.o \
     SoundRect.o \
     GTime.o\
     AudioFileSet.o \

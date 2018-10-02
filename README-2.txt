@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// BORDERLANDS:  An interactive granular sampler.  
+// FRONTIERES:  An interactive granular sampler.  
 //------------------------------------------------------------------------------
 //  Project website:
 //     http::/ccrma.stanford.edu/~carlsonc/256a/Borderlands/index.html
@@ -26,13 +26,13 @@
 
 
 
-Thank you for downloading Borderlands! 
+Thank you for downloading Frontieres! 
 
 //------------------------------------------------------------------------
 // Installation:
 //------------------------------------------------------------------------
 
-Borderlands has been tested on Mavericks. 
+Frontieres has been tested on Mavericks. 
 
 Please make sure the following libraries are installed on your system.
 
@@ -55,7 +55,7 @@ Once Homebrew is installed, type:
 
 brew install libsndfile
 
-If libsndfile installs correctly, continue installing the necessary libraries to run Borderlands as described below. If the libsndfile install won’t run (or requires admin privileges, try
+If libsndfile installs correctly, continue installing the necessary libraries to run Frontieres as described below. If the libsndfile install won’t run (or requires admin privileges, try
 
 sudo brew install libsndfile
 
@@ -63,7 +63,7 @@ sudo brew install libsndfile
 ———————
 
 If you haven't already, download the source from http://ccrma.stanford.edu/~carlsonc/256a/Borderlands/index.html, unzip it, 
-navigate to the Borderlands directory in Terminal, and type make. 
+navigate to the Frontieres directory in Terminal, and type make. 
 
 If all goes well, the source should compile. Note, on Mavericks, there may be a number of warnings due to glut functions being deprecated. If there are no error messages and only warnings, this should be fine. 
 
@@ -75,7 +75,7 @@ If you get error messages, please email me at carlsonc AT ccrma DOT stanford DOT
 //------------------------------------------------------------------------
 
 Put your favorite .wav and .aif files into the loops directory contained in the distribution. 
-These will be automatically loaded when you launch Borderlands.
+These will be automatically loaded when you launch Frontieres.
 
 
 
@@ -83,7 +83,7 @@ These will be automatically loaded when you launch Borderlands.
 // To launch the software…
 //------------------------------------------------------------------------
 
-Type ./Borderlands from the source directory in terminal. The screen will be black for 
+Type ./Frontieres from the source directory in terminal. The screen will be black for 
 a bit while your audio files load, and then you will see a title screen with instructions.
 
 

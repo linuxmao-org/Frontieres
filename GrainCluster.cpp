@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// BORDERLANDS:  An interactive granular sampler.
+// FRONTIERES:  An interactive granular sampler.
 //------------------------------------------------------------------------------
 // More information is available at
 //     http::/ccrma.stanford.edu/~carlsonc/256a/Borderlands/index.html
@@ -21,7 +21,7 @@
 
 //
 //  GrainCluster.cpp
-//  Borderlands
+//  Frontieres
 //
 //  Created by Christopher Carlson on 11/23/11.
 //
