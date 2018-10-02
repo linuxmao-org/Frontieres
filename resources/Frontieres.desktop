@@ -1,9 +1,9 @@
 [Desktop Entry]
-Name=Borderlands
+Name=Frontières
 Comment=Interactive Granular Sampler
 Comment[fr]=Échantillonneur granulaire interactif
-Exec=Borderlands
+Exec=Frontieres
 Terminal=false
-Icon=borderlands
+Icon=Frontieres
 Type=Application
 Categories=AudioVideo;Audio;

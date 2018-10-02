@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// BORDERLANDS:  An interactive granular sampler.
+// FRONTIERES:  An interactive granular sampler.
 //------------------------------------------------------------------------------
 // More information is available at
 //     http::/ccrma.stanford.edu/~carlsonc/256a/Borderlands/index.html
@@ -23,16 +23,16 @@
 
 #include <QCoreApplication>
 
-#if !defined(BORDERLANDS_DISABLE_I18N)
+#if !defined(FRONTIERES_DISABLE_I18N)
 
 // translate to QString
 #define _Q(c, x) (QCoreApplication::translate(c, x))
 // translate to std::string
 #define _S(c, x) (_Q(c, x).toStdString())
 
-#else  // !defined(BORDERLANDS_DISABLE_I18N)
+#else  // !defined(FRONTIERES_DISABLE_I18N)
 
 #define _Q(c, x) QString(x)
 #define _S(c, x) std::string(x)
 
-#endif  // !defined(BORDERLANDS_DISABLE_I18N)
+#endif  // !defined(FRONTIERES_DISABLE_I18N)

@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// BORDERLANDS:  An interactive granular sampler.
+// FRONTIERES:  An interactive granular sampler.
 //------------------------------------------------------------------------------
 // More information is available at
 //     http::/ccrma.stanford.edu/~carlsonc/256a/Borderlands/index.html
@@ -20,7 +20,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "MyGLWindow.h"
-#include "Borderlands.h"
+#include "Frontieres.h"
 #include "SoundRect.h"
 #include "GrainCluster.h"
 #include <QtFont3D.h>
@@ -47,7 +47,7 @@ void MyGLWindow::initialize()
     P->screen = screen;
 
     resize(800, 600);
-    setWindowTitle("Borderlands");
+    setWindowTitle("Frontieres");
     setCentralWidget(screen);
 
     // initial window settings

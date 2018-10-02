@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// BORDERLANDS:  An interactive granular sampler.
+// FRONTIERES:  An interactive granular sampler.
 //------------------------------------------------------------------------------
 // More information is available at
 //     http::/ccrma.stanford.edu/~carlsonc/256a/Borderlands/index.html
@@ -88,7 +88,7 @@ void MyRtAudio::openStream(RtAudioCallback callback)
 
     // create stream options
     RtAudio::StreamOptions options;
-    options.streamName = "Borderlands";
+    options.streamName = "Frontieres";
 
     RtAudio::StreamParameters iParams, oParams;
     // i/o params

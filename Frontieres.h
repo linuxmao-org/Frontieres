@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// BORDERLANDS:  An interactive granular sampler.
+// FRONTIERES:  An interactive granular sampler.
 //------------------------------------------------------------------------------
 // More information is available at
 //     http::/ccrma.stanford.edu/~carlsonc/256a/Borderlands/index.html
@@ -19,8 +19,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef BORDERLANDS_H
-#define BORDERLANDS_H
+#ifndef FRONTIERES_H
+#define FRONTIERES_H
 
 #include <string>
 #include <vector>
@@ -134,4 +134,4 @@ void printParam();
 
 void cleaningFunction();
 
-#endif  // BORDERLANDS_H
+#endif  // FRONTIERES_H

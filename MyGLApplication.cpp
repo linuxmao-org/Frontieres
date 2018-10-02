@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// BORDERLANDS:  An interactive granular sampler.
+// FRONTIERES:  An interactive granular sampler.
 //------------------------------------------------------------------------------
 // More information is available at
 //     http::/ccrma.stanford.edu/~carlsonc/256a/Borderlands/index.html
@@ -58,7 +58,7 @@ MyGLApplication::MyGLApplication(int &argc, char *argv[])
     // set up the translations
     QString language = QLocale::system().name();
     P->qtTranslator.load("qt_" + language, qtTranslationDir);
-    P->appTranslator.load("Borderlands_" + language, appTranslationDir);
+    P->appTranslator.load("Frontieres_" + language, appTranslationDir);
 
     // init graphic components
     MyGLWindow *window = new MyGLWindow;
@@ -107,6 +107,6 @@ QString MyGLApplication::Impl::getAppTranslationDir() const
     return getQtTranslationDir();
 #else
     // search in the shared data path
-    return DATA_ROOT_DIR "/Borderlands/translations";
+    return DATA_ROOT_DIR "/Frontieres/translations";
 #endif
 }

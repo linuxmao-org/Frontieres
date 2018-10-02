@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// BORDERLANDS:  An interactive granular sampler.
+// FRONTIERES:  An interactive granular sampler.
 //------------------------------------------------------------------------------
 // More information is available at
 //     http::/ccrma.stanford.edu/~carlsonc/256a/Borderlands/index.html
@@ -22,7 +22,7 @@
 
 //
 //  main.cpp
-//  Borderlands
+//  Frontieres
 //
 //  Created by Christopher Carlson on 11/13/11.
 //
@@ -30,7 +30,7 @@
 
 // my includes
 #include "theglobals.h"
-#include "Borderlands.h"
+#include "Frontieres.h"
 
 // graphics includes
 #ifdef __MACOSX_CORE__
@@ -392,7 +392,7 @@ void printUsage()
     float theA = 0.6f + 0.2 * sin(0.8 * PI * GTime::instance().sec);
     glColor4f(theA, theA, theA, theA);
     draw_string(screenWidth / 2.0f + 0.2f * (float)screenWidth, (float)screenHeight / 2.0f,
-                0.5f, "BORDERLANDS", (float)screenWidth * 0.1f);
+                0.5f, "FRONTIERES", (float)screenWidth * 0.1f);
 
     theA = 0.6f + 0.2 * sin(0.9 * PI * GTime::instance().sec);
     float insColor = theA * 0.4f;
@@ -416,7 +416,7 @@ void printUsage()
     // key info
     draw_string(screenWidth / 2.0f + 0.2f * (float)screenWidth + 10.0,
                 (float)screenHeight / 2.0f + 70.0, 0.5f,
-                _Q("", "PUT THE SAMPLES IN ~/.Borderlands/loops"), (float)screenWidth * 0.04f);
+                _Q("", "PUT THE SAMPLES IN ~/.Frontieres/loops"), (float)screenWidth * 0.04f);
 }
 
 
@@ -820,7 +820,7 @@ int main(int argc, char **argv)
     //-------------Midi Configuration-----------//
     theMidiInBuffer = new Ring_Buffer(1024);
     try {
-        theMidiIn = new RtMidiIn(RtMidi::UNSPECIFIED, "Borderlands", theMidiInBuffer->capacity());
+        theMidiIn = new RtMidiIn(RtMidi::UNSPECIFIED, "Frontieres", theMidiInBuffer->capacity());
         theMidiIn->setCallback(&midiInCallback);
         theMidiIn->openVirtualPort();
     }
@@ -846,9 +846,9 @@ int main(int argc, char **argv)
 
     // load sounds
     string homeUser = getenv("HOME");
-    string programPathUser = homeUser + "/.Borderlands/";
-    string audioPathUser = homeUser + "/.Borderlands/loops/";
-    string audioPathDefault = DATA_ROOT_DIR "/Borderlands/loops/";
+    string programPathUser = homeUser + "/.Frontieres/";
+    string audioPathUser = homeUser + "/.Frontieres/loops/";
+    string audioPathDefault = DATA_ROOT_DIR "/Frontieres/loops/";
     mkdir(programPathUser.c_str(), 0755);
     mkdir(audioPathUser.c_str(), 0755);
 
