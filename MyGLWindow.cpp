@@ -47,7 +47,7 @@ void MyGLWindow::initialize()
     P->screen = screen;
 
     resize(800, 600);
-    setWindowTitle("Frontières");
+    setWindowTitle(u8"Frontières");
     setCentralWidget(screen);
 
     // initial window settings
