@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// FRONTIERES:  An interactive granular sampler.
+// FRONTIÈRES:  An interactive granular sampler.
 //------------------------------------------------------------------------------
 // More information is available at
 //     http::/ccrma.stanford.edu/~carlsonc/256a/Borderlands/index.html
@@ -22,7 +22,7 @@
 
 //
 //  SoundRect.cpp
-//  Frontieres
+//  Frontières
 //
 //  Created by Christopher Carlson on 11/30/11.
 //
