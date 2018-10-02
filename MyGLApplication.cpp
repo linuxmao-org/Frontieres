@@ -58,7 +58,7 @@ MyGLApplication::MyGLApplication(int &argc, char *argv[])
     // set up the translations
     QString language = QLocale::system().name();
     P->qtTranslator.load("qt_" + language, qtTranslationDir);
-    P->appTranslator.load("Frontieres" + language, appTranslationDir);
+    P->appTranslator.load("Frontieres_" + language, appTranslationDir);
 
     // init graphic components
     MyGLWindow *window = new MyGLWindow;
