@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// FRONTIERES:  An interactive granular sampler.
+// FRONTIÈRES:  An interactive granular sampler.
 //------------------------------------------------------------------------------
 // More information is available at
 //     http::/ccrma.stanford.edu/~carlsonc/256a/Borderlands/index.html
@@ -22,7 +22,7 @@
 
 //
 //  main.cpp
-//  Frontieres
+//  Frontières
 //
 //  Created by Christopher Carlson on 11/13/11.
 //
@@ -392,7 +392,7 @@ void printUsage()
     float theA = 0.6f + 0.2 * sin(0.8 * PI * GTime::instance().sec);
     glColor4f(theA, theA, theA, theA);
     draw_string(screenWidth / 2.0f + 0.2f * (float)screenWidth, (float)screenHeight / 2.0f,
-                0.5f, "FRONTIERES", (float)screenWidth * 0.1f);
+                0.5f, "FRONTIÈRES", (float)screenWidth * 0.1f);
 
     theA = 0.6f + 0.2 * sin(0.9 * PI * GTime::instance().sec);
     float insColor = theA * 0.4f;

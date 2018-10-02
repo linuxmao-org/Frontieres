@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// FRONTIERES:  An interactive granular sampler.
+// FRONTIÈRES:  An interactive granular sampler.
 //------------------------------------------------------------------------------
 // More information is available at
 //     http::/ccrma.stanford.edu/~carlsonc/256a/Borderlands/index.html
@@ -22,7 +22,7 @@
 
 //
 //  Window.h
-//  Frontieres
+//  Frontières
 //
 //  Contains elements of chuck_fft by Ge Wang and Perry Cook
 //  Created by Christopher Carlson on 11/13/11.

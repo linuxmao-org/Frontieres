@@ -1,5 +1,5 @@
 //------------------------------------------------------------------------------
-// FRONTIERES:  An interactive granular sampler.
+// FRONTIÈRES:  An interactive granular sampler.
 //------------------------------------------------------------------------------
 // More information is available at
 //     http::/ccrma.stanford.edu/~carlsonc/256a/Borderlands/index.html
@@ -47,7 +47,7 @@ void MyGLWindow::initialize()
     P->screen = screen;
 
     resize(800, 600);
-    setWindowTitle("Frontieres");
+    setWindowTitle("Frontières");
     setCentralWidget(screen);
 
     // initial window settings
