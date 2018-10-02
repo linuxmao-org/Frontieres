@@ -4,6 +4,6 @@ Comment=Interactive Granular Sampler
 Comment[fr]=Échantillonneur granulaire interactif
 Exec=Borderlands
 Terminal=false
-Icon=borderlands
+Icon=Frontieres
 Type=Application
 Categories=AudioVideo;Audio;
