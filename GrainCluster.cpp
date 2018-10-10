@@ -45,8 +45,6 @@ GrainCluster::~GrainCluster()
 
     if (myVis)
         delete myVis;
-    if (myLock)
-        delete myLock;
     if (channelMults)
         delete[] channelMults;
 }
@@ -55,8 +53,6 @@ GrainCluster::~GrainCluster()
 // Constructor
 GrainCluster::GrainCluster(vector<AudioFile *> *soundSet, float theNumVoices)
 {
-    // initialize mutext
-    myLock = new Mutex();
     // cluster id
     myId = ++clusterId;
 
@@ -388,7 +384,7 @@ void GrainCluster::nextBuffer(double *accumBuff, unsigned int numFrames)
     }
 
     if (removeFlag == true) {
-        myLock->lock();
+        std::lock_guard<std::mutex> lock(myLock);
         if (myGrains->size() > 1) {
             if (nextGrain >= myGrains->size() - 1) {
                 nextGrain = 0;
@@ -397,7 +393,6 @@ void GrainCluster::nextBuffer(double *accumBuff, unsigned int numFrames)
             setOverlap(overlapNorm);
         }
         removeFlag = false;
-        myLock->unlock();
     }
 
     if (isActive == true) {

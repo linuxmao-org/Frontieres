@@ -34,6 +34,7 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include <mutex>
 #include <cstdlib>
 #include <time.h>
 #include <ctime>
@@ -42,7 +43,6 @@
 #include "GrainVoice.h"
 #include "theglobals.h"
 #include "Window.h"
-#include "Thread.h"
 #include "SoundRect.h"
 
 // direction modes
@@ -162,7 +162,7 @@ private:
 
 
     // thread safety
-    Mutex *myLock;
+    std::mutex myLock;
 
     // registered visualization
     GrainClusterVis *myVis;
