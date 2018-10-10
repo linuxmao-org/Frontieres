@@ -35,12 +35,12 @@
 
 class GTime {
 public:
-    static GTime &instance();
-    double sec;
+    static GTime &instance() { return theInstance; }
+    double sec = 0.0;
 
 private:
-    ~GTime();
-    GTime();
+    GTime() {}
+    static GTime theInstance;
 };
 
 #endif
