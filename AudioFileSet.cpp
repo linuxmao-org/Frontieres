@@ -40,11 +40,8 @@ extern unsigned int samp_rate;
 AudioFileSet::~AudioFileSet()
 {
     // delete each audio file object (and corresponding buffer, etc.)
-    if (fileSet != NULL) {
-        for (int i = 0; i < fileSet->size(); i++) {
-            delete fileSet->at(i);
-        }
-    }
+    for (AudioFile * audioFile : fileSet)
+        delete audioFile;
 }
 
 //---------------------------------------------------------------------------
@@ -52,8 +49,6 @@ AudioFileSet::~AudioFileSet()
 //---------------------------------------------------------------------------
 AudioFileSet::AudioFileSet()
 {
-    // init fileset
-    fileSet = new vector<AudioFile *>;
 }
 
 //---------------------------------------------------------------------------
@@ -61,7 +56,7 @@ AudioFileSet::AudioFileSet()
 //---------------------------------------------------------------------------
 vector<AudioFile *> *AudioFileSet::getFileVector()
 {
-    return this->fileSet;
+    return &this->fileSet;
 }
 
 
@@ -156,9 +151,10 @@ int AudioFileSet::loadFileSet(string localPath)
             // length corresponds to the number of frames * number of channels (1 frame contains L, R pair or chans 1,2,3...)
             unsigned long fullSize = sfinfo.frames * sfinfo.channels;
 
-            fileSet->push_back(new AudioFile(theFileName, myPath, sfinfo.channels,
-                                             sfinfo.frames, sfinfo.samplerate,
-                                             new double[fullSize]));
+            AudioFile *audioFile = new AudioFile(theFileName, myPath, sfinfo.channels,
+                                                 sfinfo.frames, sfinfo.samplerate,
+                                                 new double[fullSize]);
+            fileSet.push_back(audioFile);
 
 
             // accumulate the samples
@@ -172,7 +168,7 @@ int AudioFileSet::loadFileSet(string localPath)
                 for (int i = 0; i < buffSize; i++) {
                     if (counter < fullSize) {
                         // if ((i % sfinfo.channels) == 0){
-                        fileSet->at(fileCounter)->wave[counter] = stereoBuff[i] * globalAtten;
+                        audioFile->wave[counter] = stereoBuff[i] * globalAtten;
                         counter++;
                     }
                 }
@@ -185,7 +181,7 @@ int AudioFileSet::loadFileSet(string localPath)
 
             if (sfinfo.samplerate != ::samp_rate) {
                 printf("Resample to %i\n", ::samp_rate);
-                fileSet->at(fileCounter)->resampleTo(::samp_rate);
+                audioFile->resampleTo(::samp_rate);
             }
 
             cout << counter << endl;

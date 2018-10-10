@@ -117,17 +117,13 @@ void MyGLScreen::paintGL()
     glTranslatef(-position.x, -position.y, -position.z);  // translate the screen to the position of our camera
     if (menuFlag == false) {
         // render rectangles
-        if (soundViews) {
-            for (int i = 0; i < soundViews->size(); i++) {
-                soundViews->at(i)->draw();
-            }
+        for (int i = 0; i < soundViews.size(); i++) {
+            soundViews[i]->draw();
         }
 
         // render grain clouds if they exist
-        if (grainCloudVis) {
-            for (int i = 0; i < grainCloudVis->size(); i++) {
-                grainCloudVis->at(i)->draw();
-            }
+        for (int i = 0; i < grainCloudVis.size(); i++) {
+            grainCloudVis[i]->draw();
         }
 
         // print current param if editing
@@ -183,9 +179,9 @@ void MyGLScreen::mousePressEvent(QMouseEvent *event)
         lastDragX = veryHighNumber;
         lastDragY = veryHighNumber;
         // first check grain clouds to see if we have selection
-        for (int i = 0; i < grainCloudVis->size(); i++) {
-            if (grainCloudVis->at(i)->select(mouseX, mouseY) == true) {
-                grainCloudVis->at(i)->setSelectState(true);
+        for (int i = 0; i < grainCloudVis.size(); i++) {
+            if (grainCloudVis[i]->select(mouseX, mouseY) == true) {
+                grainCloudVis[i]->setSelectState(true);
                 selectedCloud = i;
                 break;
             }
@@ -193,27 +189,25 @@ void MyGLScreen::mousePressEvent(QMouseEvent *event)
 
 
         // clear selection buffer
-        if (selectionIndices)
-            delete selectionIndices;
+        selectionIndices.clear();
         // allocate new buffer
-        selectionIndices = new vector<int>;
         selectionIndex = 0;
         // if grain cloud is not selected - search for rectangle selection
         if (selectedCloud < 0) {
             // search for selections
             resizeDir = false;  // set resize direction to horizontal
-            for (int i = 0; i < soundViews->size(); i++) {
-                if (soundViews->at(i)->select(mouseX, mouseY) == true) {
-                    selectionIndices->push_back(i);
+            for (int i = 0; i < soundViews.size(); i++) {
+                if (soundViews[i]->select(mouseX, mouseY) == true) {
+                    selectionIndices.push_back(i);
                     // soundViews->at(i)->setSelectState(true);
                     // selectedRect = i;
                     // break;
                 }
             }
 
-            if (selectionIndices->size() > 0) {
-                selectedRect = selectionIndices->at(0);
-                soundViews->at(selectedRect)->setSelectState(true);
+            if (selectionIndices.size() > 0) {
+                selectedRect = selectionIndices[0];
+                soundViews[selectedRect]->setSelectState(true);
             }
         }
     }
@@ -242,7 +236,7 @@ void MyGLScreen::mouseMoveEvent(QMouseEvent *event)
     int yDiff = 0;
 
     if (selectedCloud >= 0) {
-        grainCloudVis->at(selectedCloud)->updateCloudPosition(mouseX, mouseY);
+        grainCloudVis[selectedCloud]->updateCloudPosition(mouseX, mouseY);
     }
     else {
 
@@ -251,7 +245,7 @@ void MyGLScreen::mouseMoveEvent(QMouseEvent *event)
             if ((lastDragX != veryHighNumber) && (lastDragY != veryHighNumber)) {
 
                 if (selectedRect >= 0) {  // movement case
-                    soundViews->at(selectedRect)->move(mouseX - lastDragX, mouseY - lastDragY);
+                    soundViews[selectedRect]->move(mouseX - lastDragX, mouseY - lastDragY);
                 }
             }
             lastDragX = mouseX;
@@ -267,8 +261,8 @@ void MyGLScreen::mouseMoveEvent(QMouseEvent *event)
                     xDiff = x - lastDragX;
                     yDiff = y - lastDragY;
                     // get width and height
-                    float newWidth = soundViews->at(selectedRect)->getWidth();
-                    float newHeight = soundViews->at(selectedRect)->getHeight();
+                    float newWidth = soundViews[selectedRect]->getWidth();
+                    float newHeight = soundViews[selectedRect]->getHeight();
 
                     int thresh = 0;
                     // check motion mag
@@ -292,7 +286,7 @@ void MyGLScreen::mouseMoveEvent(QMouseEvent *event)
                     }
 
                     // update width and height
-                    soundViews->at(selectedRect)->setWidthHeight(newWidth, newHeight);
+                    soundViews[selectedRect]->setWidthHeight(newWidth, newHeight);
                 }
             }
             lastDragX = x;
@@ -314,13 +308,13 @@ void MyGLScreen::mousePassiveMoveEvent(QMouseEvent *event)
     if (selectedCloud >= 0) {
         switch (currentParam) {
         case MOTIONX:
-            grainCloudVis->at(selectedCloud)->setXRandExtent(mouseX);
+            grainCloudVis[selectedCloud]->setXRandExtent(mouseX);
             break;
         case MOTIONY:
-            grainCloudVis->at(selectedCloud)->setYRandExtent(mouseY);
+            grainCloudVis[selectedCloud]->setYRandExtent(mouseY);
             break;
         case MOTIONXY:
-            grainCloudVis->at(selectedCloud)->setRandExtent(mouseX, mouseY);
+            grainCloudVis[selectedCloud]->setRandExtent(mouseX, mouseY);
             break;
         default:
             break;
@@ -336,8 +330,8 @@ void MyGLScreen::mousePassiveMoveEvent(QMouseEvent *event)
     //        }
     //    }
     // process rectangles
-    //    for (int i = 0; i < soundViews->size(); i++)
-    //        soundViews->at(i)->procMovement(x, y);
+    //    for (int i = 0; i < soundViews.size(); i++)
+    //        soundViews[i]->procMovement(x, y);
     //
 }
 
@@ -355,21 +349,21 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
 
     case Qt::Key_Tab:  // tab key
 
-        if (selectionIndices->size() > 1) {
-            soundViews->at(selectedRect)->setSelectState(false);
+        if (selectionIndices.size() > 1) {
+            soundViews[selectedRect]->setSelectState(false);
             selectionIndex++;
-            if (selectionIndex >= selectionIndices->size()) {
+            if (selectionIndex >= selectionIndices.size()) {
                 selectionIndex = 0;
             }
-            selectedRect = selectionIndices->at(selectionIndex);
-            soundViews->at(selectedRect)->setSelectState(true);
+            selectedRect = selectionIndices[selectionIndex];
+            soundViews[selectedRect]->setSelectState(true);
         }
         break;
     case Qt::Key_1:
         paramString.push_back('1');
         if (currentParam == WINDOW) {
             if (selectedCloud >= 0) {
-                grainCloud->at(selectedCloud)->setWindowType(0);
+                grainCloud[selectedCloud]->setWindowType(0);
             }
         }
 
@@ -378,7 +372,7 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
         paramString.push_back('2');
         if (currentParam == WINDOW) {
             if (selectedCloud >= 0) {
-                grainCloud->at(selectedCloud)->setWindowType(1);
+                grainCloud[selectedCloud]->setWindowType(1);
             }
         }
         break;
@@ -386,7 +380,7 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
         paramString.push_back('3');
         if (currentParam == WINDOW) {
             if (selectedCloud >= 0) {
-                grainCloud->at(selectedCloud)->setWindowType(2);
+                grainCloud[selectedCloud]->setWindowType(2);
             }
         }
         break;
@@ -395,7 +389,7 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
         paramString.push_back('4');
         if (currentParam == WINDOW) {
             if (selectedCloud >= 0) {
-                grainCloud->at(selectedCloud)->setWindowType(3);
+                grainCloud[selectedCloud]->setWindowType(3);
             }
         }
         break;
@@ -403,7 +397,7 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
         paramString.push_back('5');
         if (currentParam == WINDOW) {
             if (selectedCloud >= 0) {
-                grainCloud->at(selectedCloud)->setWindowType(4);
+                grainCloud[selectedCloud]->setWindowType(4);
             }
         }
         break;
@@ -411,7 +405,7 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
         paramString.push_back('6');
         if (currentParam == WINDOW) {
             if (selectedCloud >= 0) {
-                grainCloud->at(selectedCloud)->setWindowType(5);
+                grainCloud[selectedCloud]->setWindowType(5);
             }
         }
         break;
@@ -442,33 +436,33 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
                     if (value < 1.0) {
                         value = 1.0;
                     }
-                    grainCloud->at(selectedCloud)->setDurationMs(value);
+                    grainCloud[selectedCloud]->setDurationMs(value);
                 }
                 break;
             case OVERLAP:
                 if (selectedCloud >= 0) {
-                    grainCloud->at(selectedCloud)->setOverlap(value);
+                    grainCloud[selectedCloud]->setOverlap(value);
                 }
                 break;
             case PITCH:
                 if (selectedCloud >= 0) {
-                    grainCloud->at(selectedCloud)->setPitch(value);
+                    grainCloud[selectedCloud]->setPitch(value);
                 }
                 break;
             case P_LFO_FREQ:
                 if (selectedCloud >= 0) {
-                    grainCloud->at(selectedCloud)->setPitchLFOFreq(value);
+                    grainCloud[selectedCloud]->setPitchLFOFreq(value);
                 }
                 break;
             case P_LFO_AMT:
                 if (selectedCloud >= 0) {
-                    grainCloud->at(selectedCloud)->setPitchLFOAmount(value);
+                    grainCloud[selectedCloud]->setPitchLFOAmount(value);
                 }
                 break;
 
             case VOLUME:
                 if (selectedCloud >= 0) {
-                    grainCloud->at(selectedCloud)->setVolumeDb(value);
+                    grainCloud[selectedCloud]->setVolumeDb(value);
                 }
             default:
                 break;
@@ -502,14 +496,14 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
             else {
                 if (modkey == Qt::ShiftModifier) {
                     if (selectedCloud >= 0) {
-                        int theSpat = grainCloud->at(selectedCloud)->getSpatialMode();
-                        grainCloud->at(selectedCloud)->setSpatialMode(theSpat - 1, -1);
+                        int theSpat = grainCloud[selectedCloud]->getSpatialMode();
+                        grainCloud[selectedCloud]->setSpatialMode(theSpat - 1, -1);
                     }
                 }
                 else {
                     if (selectedCloud >= 0) {
-                        int theSpat = grainCloud->at(selectedCloud)->getSpatialMode();
-                        grainCloud->at(selectedCloud)->setSpatialMode(theSpat + 1, -1);
+                        int theSpat = grainCloud[selectedCloud]->getSpatialMode();
+                        grainCloud[selectedCloud]->setSpatialMode(theSpat + 1, -1);
                     }
                 }
             }
@@ -524,14 +518,14 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
         else {
             if (modkey == Qt::ShiftModifier) {
                 if (selectedCloud >= 0) {
-                    float theOver = grainCloud->at(selectedCloud)->getOverlap();
-                    grainCloud->at(selectedCloud)->setOverlap(theOver - 0.01f);
+                    float theOver = grainCloud[selectedCloud]->getOverlap();
+                    grainCloud[selectedCloud]->setOverlap(theOver - 0.01f);
                 }
             }
             else {
                 if (selectedCloud >= 0) {
-                    float theOver = grainCloud->at(selectedCloud)->getOverlap();
-                    grainCloud->at(selectedCloud)->setOverlap(theOver + 0.01f);
+                    float theOver = grainCloud[selectedCloud]->getOverlap();
+                    grainCloud[selectedCloud]->setOverlap(theOver + 0.01f);
                 }
             }
         }
@@ -552,27 +546,27 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
             else {
                 if (modkey == Qt::ShiftModifier) {
                     if (selectedCloud >= 0) {
-                        int theDir = grainCloud->at(selectedCloud)->getDirection();
-                        grainCloud->at(selectedCloud)->setDirection(theDir - 1);
+                        int theDir = grainCloud[selectedCloud]->getDirection();
+                        grainCloud[selectedCloud]->setDirection(theDir - 1);
                     }
                 }
                 else {
                     if (selectedCloud >= 0) {
-                        int theDir = grainCloud->at(selectedCloud)->getDirection();
-                        grainCloud->at(selectedCloud)->setDirection(theDir + 1);
+                        int theDir = grainCloud[selectedCloud]->getDirection();
+                        grainCloud[selectedCloud]->setDirection(theDir + 1);
                     }
                 }
             }
         }
         if (selectedRect >= 0) {
-            soundViews->at(selectedRect)->toggleOrientation();
+            soundViews[selectedRect]->toggleOrientation();
         }
         // cerr << "Looking from the front" << endl;
         break;
     case Qt::Key_P:  // waveform display on/off
 
-        //            for (int i = 0; i < soundViews->size();i++){
-        //                soundViews->at(i)->toggleWaveDisplay();
+        //            for (int i = 0; i < soundViews.size();i++){
+        //                soundViews[i]->toggleWaveDisplay();
         //            }
         break;
     case Qt::Key_W:  // window editing for grain
@@ -583,14 +577,14 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
         else {
             if (modkey == Qt::ShiftModifier) {
                 if (selectedCloud >= 0) {
-                    int theWin = grainCloud->at(selectedCloud)->getWindowType();
-                    grainCloud->at(selectedCloud)->setWindowType(theWin - 1);
+                    int theWin = grainCloud[selectedCloud]->getWindowType();
+                    grainCloud[selectedCloud]->setWindowType(theWin - 1);
                 }
             }
             else {
                 if (selectedCloud >= 0) {
-                    int theWin = grainCloud->at(selectedCloud)->getWindowType();
-                    grainCloud->at(selectedCloud)->setWindowType(theWin + 1);
+                    int theWin = grainCloud[selectedCloud]->getWindowType();
+                    grainCloud[selectedCloud]->setWindowType(theWin + 1);
                 }
             }
         }
@@ -606,14 +600,14 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
         else {
             if (modkey == Qt::ShiftModifier) {
                 if (selectedCloud >= 0) {
-                    float theVol = grainCloud->at(selectedCloud)->getVolumeDb();
-                    grainCloud->at(selectedCloud)->setVolumeDb(theVol - 0.5f);
+                    float theVol = grainCloud[selectedCloud]->getVolumeDb();
+                    grainCloud[selectedCloud]->setVolumeDb(theVol - 0.5f);
                 }
             }
             else {
                 if (selectedCloud >= 0) {
-                    float theVol = grainCloud->at(selectedCloud)->getVolumeDb();
-                    grainCloud->at(selectedCloud)->setVolumeDb(theVol + 0.5f);
+                    float theVol = grainCloud[selectedCloud]->getVolumeDb();
+                    grainCloud[selectedCloud]->setVolumeDb(theVol + 0.5f);
                 }
             }
         }
@@ -629,48 +623,46 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
     case Qt::Key_G:
         paramString = "";
         deselect(RECT);
-        if (grainCloud != NULL) {
-            if (modkey == Qt::ShiftModifier) {
-                if (grainCloud->size() > 0) {
-                    grainCloud->pop_back();
-                    grainCloudVis->pop_back();
-                    numClouds -= 1;
-                    // cout << "cloud removed" << endl;
-                }
-                if (numClouds == 0) {
-                    selectedCloud = -1;
-                }
-                else {
-                    // still have a cloud so select
-                    selectedCloud = numClouds - 1;
-                    grainCloudVis->at(selectedCloud)->setSelectState(true);
-                }
-                break;
+        if (modkey == Qt::ShiftModifier) {
+            if (grainCloud.size() > 0) {
+                grainCloud.pop_back();
+                grainCloudVis.pop_back();
+                numClouds -= 1;
+                // cout << "cloud removed" << endl;
+            }
+            if (numClouds == 0) {
+                selectedCloud = -1;
             }
             else {
-                int numVoices = 8;  // initial number of voices
-                int idx = grainCloud->size();
-                if (selectedCloud >= 0) {
-                    if (numClouds > 0) {
-                        grainCloudVis->at(selectedCloud)->setSelectState(false);
-                    }
-                }
-                selectedCloud = idx;
-                // create audio
-                grainCloud->push_back(new GrainCluster(mySounds, numVoices));
-                // create visualization
-                grainCloudVis->push_back(
-                    new GrainClusterVis(mouseX, mouseY, numVoices, soundViews));
-                // select new cloud
-                grainCloudVis->at(idx)->setSelectState(true);
-                // register visualization with audio
-                grainCloud->at(idx)->registerVis(grainCloudVis->at(idx));
-                // grainCloud->at(idx)->toggleActive();
-                numClouds += 1;
+                // still have a cloud so select
+                selectedCloud = numClouds - 1;
+                grainCloudVis[selectedCloud]->setSelectState(true);
             }
-            //                        cout << "cloud added" << endl;
-            // grainControl->newCluster(mouseX,mouseY,1);
+            break;
         }
+        else {
+            int numVoices = 8;  // initial number of voices
+            int idx = grainCloud.size();
+            if (selectedCloud >= 0) {
+                if (numClouds > 0) {
+                    grainCloudVis[selectedCloud]->setSelectState(false);
+                }
+            }
+            selectedCloud = idx;
+            // create audio
+            grainCloud.push_back(new GrainCluster(mySounds, numVoices));
+            // create visualization
+            grainCloudVis.push_back(
+                new GrainClusterVis(mouseX, mouseY, numVoices, &soundViews));
+            // select new cloud
+            grainCloudVis.at(idx)->setSelectState(true);
+            // register visualization with audio
+            grainCloud.at(idx)->registerVis(grainCloudVis.at(idx));
+            // grainCloud->at(idx)->toggleActive();
+            numClouds += 1;
+        }
+        //                        cout << "cloud added" << endl;
+        // grainControl->newCluster(mouseX,mouseY,1);
 
         break;
     case Qt::Key_V:  // grain voices (add, delete)
@@ -681,15 +673,13 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
         else {
             if (modkey == Qt::ShiftModifier) {
                 if (selectedCloud >= 0) {
-                    if (grainCloud)
-                        grainCloud->at(selectedCloud)->removeGrain();
+                    grainCloud[selectedCloud]->removeGrain();
                     // cout << "grain removed" << endl;
                 }
             }
             else {
                 if (selectedCloud >= 0) {
-                    if (grainCloud)
-                        grainCloud->at(selectedCloud)->addGrain();
+                    grainCloud[selectedCloud]->addGrain();
                     // cout << "grain added" << endl;
                 }
             }
@@ -704,14 +694,14 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
         else {
             if (modkey == Qt::ShiftModifier) {
                 if (selectedCloud >= 0) {
-                    float theDur = grainCloud->at(selectedCloud)->getDurationMs();
-                    grainCloud->at(selectedCloud)->setDurationMs(theDur - 5.0f);
+                    float theDur = grainCloud[selectedCloud]->getDurationMs();
+                    grainCloud[selectedCloud]->setDurationMs(theDur - 5.0f);
                 }
             }
             else {
                 if (selectedCloud >= 0) {
-                    float theDur = grainCloud->at(selectedCloud)->getDurationMs();
-                    grainCloud->at(selectedCloud)->setDurationMs(theDur + 5.0f);
+                    float theDur = grainCloud[selectedCloud]->getDurationMs();
+                    grainCloud[selectedCloud]->setDurationMs(theDur + 5.0f);
                 }
             }
         }
@@ -725,14 +715,14 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
         else {
             if (modkey == Qt::ShiftModifier) {
                 if (selectedCloud >= 0) {
-                    float theLFOFreq = grainCloud->at(selectedCloud)->getPitchLFOFreq();
-                    grainCloud->at(selectedCloud)->setPitchLFOFreq(theLFOFreq - 0.01f);
+                    float theLFOFreq = grainCloud[selectedCloud]->getPitchLFOFreq();
+                    grainCloud[selectedCloud]->setPitchLFOFreq(theLFOFreq - 0.01f);
                 }
             }
             else {
                 if (selectedCloud >= 0) {
-                    float theLFOFreq = grainCloud->at(selectedCloud)->getPitchLFOFreq();
-                    grainCloud->at(selectedCloud)->setPitchLFOFreq(theLFOFreq + 0.01f);
+                    float theLFOFreq = grainCloud[selectedCloud]->getPitchLFOFreq();
+                    grainCloud[selectedCloud]->setPitchLFOFreq(theLFOFreq + 0.01f);
                 }
             }
         }
@@ -746,14 +736,14 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
         else {
             if (modkey == Qt::ShiftModifier) {
                 if (selectedCloud >= 0) {
-                    float theLFOAmt = grainCloud->at(selectedCloud)->getPitchLFOAmount();
-                    grainCloud->at(selectedCloud)->setPitchLFOAmount(theLFOAmt - 0.001f);
+                    float theLFOAmt = grainCloud[selectedCloud]->getPitchLFOAmount();
+                    grainCloud[selectedCloud]->setPitchLFOAmount(theLFOAmt - 0.001f);
                 }
             }
             else {
                 if (selectedCloud >= 0) {
-                    float theLFOAmnt = grainCloud->at(selectedCloud)->getPitchLFOAmount();
-                    grainCloud->at(selectedCloud)->setPitchLFOAmount(theLFOAmnt + 0.001f);
+                    float theLFOAmnt = grainCloud[selectedCloud]->getPitchLFOAmount();
+                    grainCloud[selectedCloud]->setPitchLFOAmount(theLFOAmnt + 0.001f);
                 }
             }
         }
@@ -780,14 +770,14 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
         else {
             if (modkey == Qt::ShiftModifier) {
                 if (selectedCloud >= 0) {
-                    float thePitch = grainCloud->at(selectedCloud)->getPitch();
-                    grainCloud->at(selectedCloud)->setPitch(thePitch - 0.01f);
+                    float thePitch = grainCloud[selectedCloud]->getPitch();
+                    grainCloud[selectedCloud]->setPitch(thePitch - 0.01f);
                 }
             }
             else {
                 if (selectedCloud >= 0) {
-                    float thePitch = grainCloud->at(selectedCloud)->getPitch();
-                    grainCloud->at(selectedCloud)->setPitch(thePitch + 0.01f);
+                    float thePitch = grainCloud[selectedCloud]->getPitch();
+                    grainCloud[selectedCloud]->setPitch(thePitch + 0.01f);
                 }
             }
         }
@@ -800,8 +790,8 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Delete:  // delete selected
         if (paramString == "") {
             if (selectedCloud >= 0) {
-                grainCloud->erase(grainCloud->begin() + selectedCloud);
-                grainCloudVis->erase(grainCloudVis->begin() + selectedCloud);
+                grainCloud.erase(grainCloud.begin() + selectedCloud);
+                grainCloudVis.erase(grainCloudVis.begin() + selectedCloud);
                 selectedCloud = -1;
                 numClouds -= 1;
             }
@@ -815,7 +805,7 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
     case Qt::Key_A:
         paramString = "";
         if (selectedCloud >= 0) {
-            grainCloud->at(selectedCloud)->toggleActive();
+            grainCloud[selectedCloud]->toggleActive();
         }
         break;
 

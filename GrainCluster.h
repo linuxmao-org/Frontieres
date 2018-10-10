@@ -176,7 +176,7 @@ private:
     float volumeDb, normedVol;
 
     // vector of grains
-    vector<GrainVoice *> *myGrains;
+    vector<GrainVoice *> myGrains;
 
     // number of grains in this cluster
     unsigned int numVoices;
@@ -245,7 +245,7 @@ private:
     unsigned int numGrains;
 
     // grain voice visualizations
-    vector<GrainVis *> *myGrainsV;
+    vector<GrainVis *> myGrainsV;
     // registered sound rectangles
     vector<SoundRect *> *theLandscape;
 };

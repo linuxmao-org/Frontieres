@@ -63,22 +63,19 @@ extern int selectionMode;
 extern int dragMode;
 extern bool resizeDir;  // for rects
 
-// audio file visualization objects
-extern std::vector<SoundRect *> *soundViews;
-
 // audio files
 extern std::vector<AudioFile *> *mySounds;
 // audio file visualization objects
-extern std::vector<SoundRect *> *soundViews;
+extern std::vector<SoundRect *> soundViews;
 // grain cloud audio objects
-extern std::vector<GrainCluster *> *grainCloud;
+extern std::vector<GrainCluster *> grainCloud;
 // grain cloud visualization objects
-extern std::vector<GrainClusterVis *> *grainCloudVis;
+extern std::vector<GrainClusterVis *> grainCloudVis;
 // cloud counter
 extern unsigned int numClouds;
 
 // not used yet - for multiple selection
-extern std::vector<int> *selectionIndices;
+extern std::vector<int> selectionIndices;
 
 // selection helper vars
 extern int selectedCloud;
