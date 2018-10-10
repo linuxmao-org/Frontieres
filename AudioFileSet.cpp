@@ -100,7 +100,7 @@ int AudioFileSet::loadFileSet(string localPath)
 
 
             // construct path
-            string myPath = localPath + theFileName;
+            string myPath = localPath + '/' + theFileName;
 
 
             // temp struct that will hold the details of the file being read (sample rate, num channels. etc.)

@@ -23,10 +23,15 @@
 #include "MyGLWindow.h"
 #include <QTranslator>
 #include <QLibraryInfo>
+#include <QStandardPaths>
+#include <QDir>
 #include <QTimer>
 #include <QDebug>
 
 struct MyGLApplication::Impl {
+    // location of user files
+    QString userDataPath;
+
     // translator of the internal parts of Qt
     QTranslator qtTranslator;
     // translator of the application itself
@@ -45,6 +50,9 @@ MyGLApplication::MyGLApplication(int &argc, char *argv[])
     : QApplication(argc, argv),
       P(new Impl)
 {
+    // find the user directories
+    P->userDataPath = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+
     // init internationalization
     installTranslator(&P->qtTranslator);
     installTranslator(&P->appTranslator);
@@ -79,6 +87,11 @@ void MyGLApplication::startIdleCallback(double fps)
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, [this]{ P->onIdle(); });
     timer->start(1e3 / fps);
+}
+
+const QString &MyGLApplication::getUserDataPath()
+{
+    return P->userDataPath;
 }
 
 void MyGLApplication::Impl::onIdle()

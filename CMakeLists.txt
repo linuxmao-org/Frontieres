@@ -38,8 +38,11 @@ include(FindPkgConfig)
 
 target_compile_definitions(Frontieres
   PRIVATE "__LINUX_ALSASEQ__=" "__UNIX_JACK__="
-  PRIVATE "INSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\""
-  PRIVATE "DATA_ROOT_DIR=\"${CMAKE_INSTALL_FULL_DATAROOTDIR}\"")
+  PRIVATE "INSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\"")
+if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
+  target_compile_definitions(Frontieres
+    PRIVATE "DATA_ROOT_DIR=\"${CMAKE_INSTALL_FULL_DATAROOTDIR}\"")
+endif()
 
 set(OpenGL_GL_PREFERENCE "GLVND")
 find_package(OpenGL REQUIRED)

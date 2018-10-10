@@ -75,6 +75,7 @@
 #include "MyGLApplication.h"
 #include "MyGLWindow.h"
 #include <QtFont3D.h>
+#include <QDir>
 
 
 using namespace std;
@@ -90,8 +91,10 @@ MyRtAudio *theAudio = NULL;
 RtMidiIn *theMidiIn = NULL;
 // buffer of midi input messages
 Ring_Buffer *theMidiInBuffer = NULL;
-// library path
-string g_audioPath = "./loops/";
+// effective library path
+string g_audioPath;
+// user library path
+string g_userAudioPath;
 // parameter string
 string paramString = "";
 // desired audio buffer size
@@ -416,7 +419,8 @@ void printUsage()
     // key info
     draw_string(screenWidth / 2.0f + 0.2f * (float)screenWidth + 10.0,
                 (float)screenHeight / 2.0f + 70.0, 0.5f,
-                _Q("", "PUT THE SAMPLES IN ~/.Frontieres/loops"), (float)screenWidth * 0.04f);
+                _Q("", "PUT THE SAMPLES IN %0").arg(QString::fromStdString(g_userAudioPath)),
+                (float)screenWidth * 0.04f);
 }
 
 
@@ -779,6 +783,19 @@ void mousePassiveMotion(int x, int y)
 
 
 //-----------------------------------------------------------------------------//
+// UTILITY
+//-----------------------------------------------------------------------------//
+bool isDirEmpty(const QDir &dir)
+{
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 9, 0))
+    return dir.isEmpty();
+#else
+    return dir.entryList(QDir::AllEntries | QDir::NoDotAndDotDot).isEmpty();
+#endif
+}
+
+
+//-----------------------------------------------------------------------------//
 // MAIN
 //-----------------------------------------------------------------------------//
 int main(int argc, char **argv)
@@ -834,6 +851,8 @@ int main(int argc, char **argv)
 
     // init Qt application
     MyGLApplication app(argc, argv);
+    app.setApplicationName("Frontieres");
+    app.setApplicationDisplayName(u8"Frontières");
 
     // initialize graphics
     MyGLWindow *GLwindow = app.GLwindow();
@@ -845,35 +864,61 @@ int main(int argc, char **argv)
 
 
     // load sounds
-    string homeUser = getenv("HOME");
-    string programPathUser = homeUser + "/.Frontieres/";
-    string audioPathUser = homeUser + "/.Frontieres/loops/";
-    string audioPathDefault = DATA_ROOT_DIR "/Frontieres/loops/";
-    mkdir(programPathUser.c_str(), 0755);
-    mkdir(audioPathUser.c_str(), 0755);
+    QString userDataPath = app.getUserDataPath();
+    QString userAudioPath = QDir(userDataPath).filePath("loops");
+    // create user directories if not existing
+    QDir(userAudioPath).mkpath(".");
 
-    bool audioPathUserEmpty = true;
-    if (DIR *rep = opendir(audioPathUser.c_str())) {
-        struct dirent *ent;
-            fprintf(stderr, "Coucou(1)\n");
-        while (audioPathUserEmpty && (ent = readdir(rep)))
-            audioPathUserEmpty = !strcmp(ent->d_name, ".") || !strcmp(ent->d_name, "..");
-        closedir(rep);
+#ifdef DATA_ROOT_DIR
+    QString audioPathDefault = DATA_ROOT_DIR "/Frontieres/loops/";
+#endif
+
+    if (!isDirEmpty(userAudioPath)) {
+        cout << _S("", "The directory of user loops is not empty.") << endl;
+        g_audioPath = userAudioPath.toStdString();
     }
-    g_audioPath = audioPathUserEmpty ? audioPathDefault : audioPathUser;
+#ifdef DATA_ROOT_DIR
+    else if (!isDirEmpty(audioPathDefault)) {
+        cout << _S("", "The directory of system loops is not empty.") << endl;
+        g_audioPath = audioPathDefault.toStdString();
+    }
+#endif
+    else {
+        QDir programDir = QFileInfo(app.applicationFilePath()).dir();
+        QVector<QString> relativePaths;
+        relativePaths.push_back(programDir.filePath("loops"));
+        relativePaths.push_back(programDir.filePath("../loops"));
 
-    cout << "Audio path of user: " << audioPathUser << "\n";
-    cout << "Audio path of system: " << audioPathDefault << "\n";
+        QString path = relativePaths.front();
+        bool found = false;
+        for (size_t i = 0; !found && i < relativePaths.size(); ++i) {
+            const QString &currPath = relativePaths[i];
+            cout << "Search audio files in: " << currPath.toStdString() << "\n";
+            if ((found = !isDirEmpty(currPath)))
+                path = currPath;
+        }
+
+        g_audioPath = path.toStdString();
+        cout << "Audio path of program: " << g_audioPath << "\n";
+    }
+    g_userAudioPath = userAudioPath.toStdString();
+
+    cout << "Audio path of user: " << userAudioPath.toStdString() << "\n";
+#ifdef DATA_ROOT_DIR
+    cout << "Audio path of system: " << audioPathDefault.toStdString() << "\n";
+#endif
     cout << "Audio path used: " << g_audioPath << "\n";
 
     AudioFileSet newFileMgr;
 
-    if (newFileMgr.loadFileSet(g_audioPath) == 1) {
-        goto cleanup;
+    if (newFileMgr.loadFileSet(g_audioPath) != 0) {
+        cout << _S("", "Could not find any sounds.") << endl;
+        // goto cleanup;
     }
+    else
+        cout << _S("", "Sounds loaded successfully...") << endl;
 
     mySounds = newFileMgr.getFileVector();
-    cout << _S("", "Sounds loaded successfully...") << endl;
 
 
     // create visual representation of sounds

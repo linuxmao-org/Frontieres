@@ -30,6 +30,8 @@ public:
     MyGLWindow *GLwindow();
     void startIdleCallback(double fps);
 
+    const QString &getUserDataPath();
+
 private:
     struct Impl;
     std::unique_ptr<Impl> P;
