@@ -855,7 +855,6 @@ int main(int argc, char **argv)
     bool audioPathUserEmpty = true;
     if (DIR *rep = opendir(audioPathUser.c_str())) {
         struct dirent *ent;
-            fprintf(stderr, "Coucou(1)\n");
         while (audioPathUserEmpty && (ent = readdir(rep)))
             audioPathUserEmpty = !strcmp(ent->d_name, ".") || !strcmp(ent->d_name, "..");
         closedir(rep);
