@@ -274,7 +274,6 @@ void processMidiMessage(const unsigned char *message, unsigned length)
     case 0x90:  // note off, 1=key number, 2=velocity
         /* do something */
         break;
-
     case 0xb0:  // control change, 1=control number, 2=value
         switch (data1) {
             /* do something */
@@ -845,13 +844,14 @@ int main(int argc, char **argv)
 
 
     // load sounds
-    string homeUser = getenv("HOME");
-    string programPathUser = homeUser + "/.Frontieres/";
-    string audioPathUser = homeUser + "/.Frontieres/loops/";
+    QString captionPath = "Frontières : choix du répertoire des échantillons";
+    string separateurPath = "/";
+    QString homeUser = getenv("HOME");
     string audioPathDefault = DATA_ROOT_DIR "/Frontieres/loops/";
-    mkdir(programPathUser.c_str(), 0755);
-    mkdir(audioPathUser.c_str(), 0755);
-
+    QString qaudioPathDefault = DATA_ROOT_DIR "/Frontieres/loops/";
+    string audioPathUser = QFileDialog::getExistingDirectory(nullptr, captionPath, qaudioPathDefault,
+                                                        QFileDialog::ShowDirsOnly
+                                                        | QFileDialog::DontResolveSymlinks).toUtf8().constData() + separateurPath ;
     bool audioPathUserEmpty = true;
     if (DIR *rep = opendir(audioPathUser.c_str())) {
         struct dirent *ent;

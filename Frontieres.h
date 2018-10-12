@@ -24,6 +24,9 @@
 
 #include <string>
 #include <vector>
+#include <QApplication>
+#include <QDialog>
+#include <QFileDialog>
 class SoundRect;
 class GrainCluster;
 class GrainClusterVis;
