@@ -24,6 +24,10 @@
 
 #include <string>
 #include <vector>
+#include <QApplication>
+#include <QDialog>
+#include <QFileDialog>
+#include <QMessageBox>
 class SoundRect;
 class GrainCluster;
 class GrainClusterVis;

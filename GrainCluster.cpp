@@ -153,6 +153,11 @@ void GrainCluster::toggleActive()
     isActive = !isActive;
 }
 
+void GrainCluster::setActiveState(bool activateState)
+{
+    isActive = activateState;
+}
+
 bool GrainCluster::getActiveState()
 {
     return isActive;
@@ -736,13 +741,26 @@ void GrainClusterVis::getTriggerPos(unsigned int idx, double *playPos,
 
 
 // rand cluster size
+void GrainClusterVis::setFixedXRandExtent(float X)
+{
+    xRandExtent = X;
+}
+
+void GrainClusterVis::setFixedYRandExtent(float Y)
+{
+    yRandExtent = Y;
+}
+void GrainClusterVis::setFixedRandExtent(float X, float Y)
+{
+    setFixedXRandExtent(X);
+    setFixedYRandExtent(Y);
+}
 void GrainClusterVis::setXRandExtent(float mouseX)
 {
     xRandExtent = fabs(mouseX - gcX);
     if (xRandExtent < 2.0f)
         xRandExtent = 0.0f;
 }
-
 void GrainClusterVis::setYRandExtent(float mouseY)
 {
     yRandExtent = fabs(mouseY - gcY);

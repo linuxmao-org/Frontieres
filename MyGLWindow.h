@@ -22,6 +22,10 @@
 #include <QMainWindow>
 #include <QOpenGLWidget>
 #include <memory>
+#include <Scene.h>
+
+extern string g_audioPath;
+
 class MyGLScreen;
 
 class MyGLWindow : public QMainWindow {
@@ -40,7 +44,8 @@ private:
 class MyGLScreen : public QOpenGLWidget {
 public:
     MyGLScreen(QWidget *parent = nullptr);
-
+private:
+    Scene sceneCurrent;
 protected:
     void initializeGL() override;
     void paintGL() override;

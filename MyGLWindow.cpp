@@ -27,6 +27,7 @@
 #include <QMouseEvent>
 #include <QKeyEvent>
 #include <QDebug>
+#include <Scene.h>
 
 struct MyGLWindow::Impl {
     MyGLScreen *screen = nullptr;
@@ -839,6 +840,79 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
         position.y += upDownMoveSpeed;
         mouseY -= sidewaysMoveSpeed;
         break;
+    case Qt::Key_M:{
+        // record scene
+        string nameSceneFile = sceneCurrent.askNameScene(true);
+        if (nameSceneFile.length() != 0) {
+            QFile sceneFile (QString::fromStdString(nameSceneFile));
+            sceneFile.open(QIODevice::WriteOnly | QIODevice::Text);
+            QTextStream sceneFlux(&sceneFile);
+            // audio path
+            cout << "record scene " << nameSceneFile << endl;
+            cout << "audio path : " << g_audioPath << endl;
+            sceneFlux << QString::fromStdString(g_audioPath) << endl;
+            // samples
+            cout << mySounds->size() << "samples : " << endl;
+            sceneFlux << QString::number(mySounds->size()) << endl;
+            for (int i = 0; i < mySounds->size(); ++i) {
+                cout << "name : " << mySounds->at(i)->name << endl;
+                cout << "orientation : " << soundViews->at(i)->getOrientation() << endl;
+                cout << "height : " << soundViews->at(i)->getHeight() << endl;
+                cout << "width : " << soundViews->at(i)->getWidth() << endl;
+                cout << "X : " << soundViews->at(i)->getX() << endl;
+                cout << "Y : " << soundViews->at(i)->getY() << endl;
+                sceneFlux << QString::fromStdString(mySounds->at(i)->name) << endl;
+                sceneFlux << QString::number(soundViews->at(i)->getOrientation()) << endl;
+                sceneFlux << QString::number(soundViews->at(i)->getHeight()) << endl;
+                sceneFlux << QString::number(soundViews->at(i)->getWidth()) << endl;
+                sceneFlux << QString::number(soundViews->at(i)->getX()) << endl;
+                sceneFlux << QString::number(soundViews->at(i)->getY()) << endl;
+                sceneFlux << "---" << endl;
+                }
+            // grainclouds
+            cout << grainCloud->size() << " clouds : " << endl;
+            sceneFlux << QString::number(grainCloud->size()) << endl;
+            for (int i = 0; i < grainCloud->size(); i++) {
+                cout << "duration : " << grainCloud->at(i)->getDurationMs() << endl;
+                cout << "overlap : " << grainCloud->at(i)->getOverlap() << endl;
+                cout << "pitch : " << grainCloud->at(i)->getPitch() << endl;
+                cout << "pitch LFO Freq : " << grainCloud->at(i)->getPitchLFOFreq() << endl;
+                cout << "pitch LFO Amount : " << grainCloud->at(i)->getPitchLFOAmount() << endl;
+                cout << "direction : " << grainCloud->at(i)->getDirection() << endl;
+                cout << "window type : " << grainCloud->at(i)->getWindowType() << endl;
+                cout << "spatial mode : " << grainCloud->at(i)->getSpatialMode() << endl;
+                cout << "spatial chanel : " << grainCloud->at(i)->getSpatialChannel() << endl;
+                cout << "volume DB : " << grainCloud->at(i)->getVolumeDb() << endl;
+                cout << "number of voices : " << grainCloud->at(i)->getNumVoices() << endl;
+                cout << "active : " << grainCloud->at(i)->getActiveState() << endl;
+                cout << "X : " << grainCloudVis->at(i)->getX() << endl;
+                cout << "Y : " << grainCloudVis->at(i)->getY() << endl;
+                cout << "X extend : " << grainCloudVis->at(i)->getXRandExtent() << endl;
+                cout << "Y extend : " << grainCloudVis->at(i)->getYRandExtent() << endl;
+
+                sceneFlux << QString::number(grainCloud->at(i)->getDurationMs()) << endl;
+                sceneFlux << QString::number(grainCloud->at(i)->getOverlap()) << endl;
+                sceneFlux << QString::number(grainCloud->at(i)->getPitch()) << endl;
+                sceneFlux << QString::number(grainCloud->at(i)->getPitchLFOFreq()) << endl;
+                sceneFlux << QString::number(grainCloud->at(i)->getPitchLFOAmount()) << endl;
+                sceneFlux << QString::number(grainCloud->at(i)->getDirection()) << endl;
+                sceneFlux << QString::number(grainCloud->at(i)->getWindowType()) << endl;
+                sceneFlux << QString::number(grainCloud->at(i)->getSpatialMode()) << endl;
+                sceneFlux << QString::number(grainCloud->at(i)->getSpatialChannel()) << endl;
+                sceneFlux << QString::number(grainCloud->at(i)->getVolumeDb()) << endl;
+                sceneFlux << QString::number(grainCloud->at(i)->getNumVoices()) << endl;
+                sceneFlux << QString::number(grainCloud->at(i)->getActiveState()) << endl;
+                sceneFlux << QString::number(grainCloudVis->at(i)->getX()) << endl;
+                sceneFlux << QString::number(grainCloudVis->at(i)->getY()) << endl;
+                sceneFlux << QString::number(grainCloudVis->at(i)->getXRandExtent()) << endl;
+                sceneFlux << QString::number(grainCloudVis->at(i)->getYRandExtent()) << endl;
+                sceneFlux << "---" << endl;
+                }
+            sceneFile.close();
+            }
+        break;
+        }
+
     default:
         break;
     }

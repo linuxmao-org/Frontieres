@@ -130,6 +130,7 @@ public:
 
     // turn on/off
     void toggleActive();
+    void setActiveState(bool activateState);
     bool getActiveState();
 
 
@@ -226,6 +227,9 @@ public:
     void setXRandExtent(float mouseX);
     void setYRandExtent(float mouseY);
     void setRandExtent(float mouseX, float mouseY);
+    void setFixedXRandExtent(float X);
+    void setFixedYRandExtent(float Y);
+    void setFixedRandExtent(float X, float Y);
 
     // set the pulse duration (which determines the frequency of the pulse)
     void setDuration(float dur);

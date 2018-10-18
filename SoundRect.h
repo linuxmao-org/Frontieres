@@ -71,9 +71,11 @@ public:
 
     // properties
     void setWidthHeight(float width, float height);
-
+    void setXY(float x, float y);
     float getHeight();
     float getWidth();
+    float getX();
+    float getY();
     bool getOrientation();
 
     // process mouse drag

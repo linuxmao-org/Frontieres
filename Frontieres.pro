@@ -53,7 +53,8 @@ SOURCES += \
   libraries/Stk.cpp \
   libraries/RtAudio.cpp \
   libraries/RtMidi.cpp \
-  libraries/ring_buffer.cpp
+  libraries/ring_buffer.cpp \
+  Scene.cpp
 
 HEADERS += \
   MyGLApplication.h \
@@ -74,4 +75,5 @@ HEADERS += \
   Window.h \
   MyRtAudio.h \
   GrainVoice.h \
-  Thread.h
+  Thread.h \
+  scene.h

@@ -151,6 +151,12 @@ void SoundRect::move(float xDiff, float yDiff)
     updateCorners(rWidth, rHeight);
 }
 
+void SoundRect::setXY(float x, float y)
+{
+    rX = x;
+    rY = y;
+    updateCorners(rWidth, rHeight);
+}
 
 bool SoundRect::getOrientation()
 {
@@ -231,6 +237,17 @@ float SoundRect::getWidth()
 float SoundRect::getHeight()
 {
     return rHeight;
+}
+
+// getters for X and Y
+float SoundRect::getX()
+{
+    return rX;
+}
+
+float SoundRect::getY()
+{
+    return rY;
 }
 
 // update box corners with new width values
