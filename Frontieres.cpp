@@ -862,13 +862,12 @@ int main(int argc, char **argv)
             sceneFile.open(QIODevice::ReadOnly | QIODevice::Text);
             QTextStream sceneFlux(&sceneFile);
             // audio path
-            cout << "load scene " << nameSceneFile << endl;
             audioPathUser = sceneFlux.readLine().toUtf8().constData();
             cout << "audio path user : " << audioPathUser << endl;
             sceneFile.close();
             }
         }
-    else{
+    if (nameSceneFile.length() == 0) {
         QString captionPath = qApp->translate("window to choose working directory",
                                               "Frontieres : select sample's directory");
         string separateurPath = "/";
@@ -917,7 +916,7 @@ int main(int argc, char **argv)
     // start audio stream
     theAudio->startStream();
 
-    if (replyLoadScene == QMessageBox::Yes){ // load scene
+    if (replyLoadScene == QMessageBox::Yes && nameSceneFile.length() != 0){ // load scene
         cout << "Loading scene " << nameSceneFile << endl;
         QFile sceneFileRead (QString::fromStdString(nameSceneFile));
         sceneFileRead.open(QIODevice::ReadOnly | QIODevice::Text);

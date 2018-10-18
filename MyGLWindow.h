@@ -19,10 +19,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#include "Scene.h"
 #include <QMainWindow>
 #include <QOpenGLWidget>
 #include <memory>
-#include <Scene.h>
 
 extern string g_audioPath;
 

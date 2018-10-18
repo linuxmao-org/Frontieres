@@ -25,16 +25,22 @@ string Scene::askNameScene(bool direction)
     if (g_audioPath == g_audioPathDefault)
         pathScene = QStandardPaths::displayName(QStandardPaths::HomeLocation).toUtf8().constData();
     string nameSceneFile = "";
-    if (direction == true)
+    if (direction == true){
         nameSceneFile = QFileDialog::getSaveFileName(nullptr, captionPath, pathScene, filterExtensionScene ).toUtf8().constData();
-    else
-        nameSceneFile = QFileDialog::getOpenFileName(nullptr, captionPath, pathScene, filterExtensionScene ).toUtf8().constData();
-    if (nameSceneFile.length() != 0)
-        {
-        if (nameSceneFile.substr(nameSceneFile.size()-4, nameSceneFile.size()) != g_extensionScene.toUtf8().constData()) {
-            nameSceneFile = nameSceneFile + g_extensionScene.toUtf8().constData();
+        if (nameSceneFile.length() != 0) {
+            if (nameSceneFile.substr(nameSceneFile.size()-4, nameSceneFile.size()) != g_extensionScene.toUtf8().constData())
+                nameSceneFile = nameSceneFile + g_extensionScene.toUtf8().constData();
+            cout << "save scene " << nameSceneFile << endl;
         }
-    cout << "record scene in " + nameSceneFile << endl;
-    return nameSceneFile;
+        else
+            cout << "save scene aborted" << endl;
     }
+    else {
+        nameSceneFile = QFileDialog::getOpenFileName(nullptr, captionPath, pathScene, filterExtensionScene ).toUtf8().constData();
+        if (nameSceneFile.length() != 0)
+            cout << "load scene " << nameSceneFile << endl;
+        else
+            cout << "load scene aborted" << endl;
+    }
+    return nameSceneFile;
 }
