@@ -27,7 +27,8 @@
 #include <QMouseEvent>
 #include <QKeyEvent>
 #include <QDebug>
-#include <Scene.h>
+
+extern string g_audioPath;
 
 struct MyGLWindow::Impl {
     MyGLScreen *screen = nullptr;

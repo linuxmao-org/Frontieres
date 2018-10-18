@@ -24,8 +24,6 @@
 #include <QOpenGLWidget>
 #include <memory>
 
-extern string g_audioPath;
-
 class MyGLScreen;
 
 class MyGLWindow : public QMainWindow {
