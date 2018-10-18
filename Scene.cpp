@@ -23,7 +23,7 @@ string Scene::askNameScene(bool direction)
     QString filterExtensionScene = "*" + g_extensionScene;
     QString pathScene = QString::fromStdString(g_audioPath);
     if (g_audioPath == g_audioPathDefault)
-        pathScene = getenv("HOME");
+        pathScene = QStandardPaths::displayName(QStandardPaths::HomeLocation).toUtf8().constData();
     string nameSceneFile = "";
     if (direction == true)
         nameSceneFile = QFileDialog::getSaveFileName(nullptr, captionPath, pathScene, filterExtensionScene ).toUtf8().constData();

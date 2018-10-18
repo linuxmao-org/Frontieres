@@ -76,4 +76,4 @@ HEADERS += \
   MyRtAudio.h \
   GrainVoice.h \
   Thread.h \
-  scene.h
+  Scene.h

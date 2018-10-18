@@ -10,6 +10,7 @@
 #include <QIODevice>
 #include <QTextStream>
 #include <iostream>
+#include <QStandardPaths>
 class SoundRect;
 class GrainCluster;
 class GrainClusterVis;
