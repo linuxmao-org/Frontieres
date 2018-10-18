@@ -30,7 +30,8 @@ add_executable(Frontieres WIN32
   libraries/Stk.cpp
   libraries/RtAudio.cpp
   libraries/RtMidi.cpp
-  libraries/ring_buffer.cpp)
+  libraries/ring_buffer.cpp
+  Scene.cpp)
 target_include_directories(Frontieres
   PRIVATE "." PRIVATE "libraries" PRIVATE "libraries/QtFont3D")
 
