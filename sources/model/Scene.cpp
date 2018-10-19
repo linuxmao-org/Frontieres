@@ -93,9 +93,11 @@ bool Scene::load(QFile &sceneFile)
     if (jsonParseError.error != QJsonParseError::NoError)
         return false;
 
-    QString lineScene = doc["audio-path"].toString(); // path
+    QJsonObject docRoot = doc.object();
+
+    QString lineScene = docRoot["audio-path"].toString(); // path
     cout << "scene path : " << lineScene.toStdString() << "\n";
-    for (const QJsonValue &jsonElement : doc["sounds"].toArray()) { // samples
+    for (const QJsonValue &jsonElement : docRoot["sounds"].toArray()) { // samples
         QJsonObject objSound = jsonElement.toObject();
         int nSample = -1;
         lineScene = objSound["name"].toString(); // sample
@@ -127,7 +129,7 @@ bool Scene::load(QFile &sceneFile)
     }
 
     int cloudCurrent = 0;
-    for (const QJsonValue &jsonElement : doc["clouds"].toArray()) { // samples
+    for (const QJsonValue &jsonElement : docRoot["clouds"].toArray()) { // samples
         QJsonObject objGrain = jsonElement.toObject();
         double cloudDuration = objGrain["duration"].toDouble();
         double cloudOverlap = objGrain["overlap"].toDouble();

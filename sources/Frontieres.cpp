@@ -82,6 +82,7 @@
 #include <QtFont3D.h>
 #include <QApplication>
 #include <QJsonDocument>
+#include <QJsonObject>
 #include <QStandardPaths>
 
 using namespace std;
@@ -862,7 +863,8 @@ int main(int argc, char **argv)
         if (jsonParseError.error == QJsonParseError::NoError) {
             // TODO ne pas charger les fichiers de cette manière.. se débrouiller autrement
             // audio path
-            audioPathUser = doc["audio-path"].toString().toStdString();
+            QJsonObject docRoot = doc.object();
+            audioPathUser = docRoot["audio-path"].toString().toStdString();
             cout << "audio path user : " << audioPathUser << endl;
         }
     }
