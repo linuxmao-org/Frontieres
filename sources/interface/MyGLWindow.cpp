@@ -51,6 +51,9 @@ void MyGLWindow::initialize()
     P->ui.setupUi(this);
     MyGLScreen *screen = this->screen();
 
+    connect(P->ui.action_Quit, &QAction::triggered,
+            qApp, &QApplication::quit);
+
     // initial window settings
     QSurfaceFormat format = QSurfaceFormat::defaultFormat();
     format.setDepthBufferSize(24);
