@@ -15,24 +15,24 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 
 add_executable(Frontieres WIN32
-  Frontieres.cpp
-  SoundRect.cpp
-  GTime.cpp
-  AudioFileSet.cpp
-  MyRtAudio.cpp
-  Window.cpp
-  GrainVoice.cpp
-  GrainCluster.cpp
-  MyGLApplication.cpp
-  MyGLWindow.cpp
+  sources/Frontieres.cpp
+  sources/SoundRect.cpp
+  sources/GTime.cpp
+  sources/AudioFileSet.cpp
+  sources/MyRtAudio.cpp
+  sources/Window.cpp
+  sources/GrainVoice.cpp
+  sources/GrainCluster.cpp
+  sources/MyGLApplication.cpp
+  sources/MyGLWindow.cpp
+  sources/Scene.cpp
   libraries/QtFont3D/QtFont3D.cpp
   libraries/Stk.cpp
   libraries/RtAudio.cpp
   libraries/RtMidi.cpp
-  libraries/ring_buffer.cpp
-  Scene.cpp)
+  libraries/ring_buffer.cpp)
 target_include_directories(Frontieres
-  PRIVATE "." PRIVATE "libraries" PRIVATE "libraries/QtFont3D")
+  PRIVATE "sources" PRIVATE "libraries" PRIVATE "libraries/QtFont3D")
 
 include(FindPkgConfig)
 

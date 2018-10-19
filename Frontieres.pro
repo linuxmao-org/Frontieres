@@ -3,7 +3,7 @@ CONFIG += c++11
 
 TEMPLATE = app
 TARGET = Frontieres
-INCLUDEPATH += $$PWD
+INCLUDEPATH += $$PWD/sources
 INCLUDEPATH += $$PWD/libraries
 
 DEFINES += __LINUX_ALSASEQ__
@@ -39,41 +39,39 @@ linux: {
 LIBS += -lsndfile -lsoxr
 
 SOURCES += \
-  Frontieres.cpp \
-  SoundRect.cpp \
-  GTime.cpp \
-  AudioFileSet.cpp \
-  MyRtAudio.cpp \
-  Window.cpp \
-  GrainVoice.cpp \
-  GrainCluster.cpp \
-  Thread.cpp \
-  MyGLApplication.cpp \
-  MyGLWindow.cpp \
+  sources/Frontieres.cpp \
+  sources/SoundRect.cpp \
+  sources/GTime.cpp \
+  sources/AudioFileSet.cpp \
+  sources/MyRtAudio.cpp \
+  sources/Window.cpp \
+  sources/GrainVoice.cpp \
+  sources/GrainCluster.cpp \
+  sources/MyGLApplication.cpp \
+  sources/MyGLWindow.cpp \
+  sources/Scene.cpp \
   libraries/Stk.cpp \
   libraries/RtAudio.cpp \
   libraries/RtMidi.cpp \
-  libraries/ring_buffer.cpp \
-  Scene.cpp
+  libraries/ring_buffer.cpp
 
 HEADERS += \
-  MyGLApplication.h \
-  theglobals.h \
+  sources/MyGLApplication.h \
+  sources/theglobals.h \
+  sources/I18n.h \
+  sources/SoundRect.h \
+  sources/GrainCluster.h \
+  sources/Frontieres.h \
+  sources/MyGLWindow.h \
+  sources/gpl-3.0-standalone.html \
+  sources/GTime.h \
+  sources/AudioFileSet.h \
+  sources/Window.h \
+  sources/MyRtAudio.h \
+  sources/GrainVoice.h \
+  sources/Scene.h \
   libraries/RtMidi.h \
   libraries/RtAudio.h \
   libraries/Stk.h \
   libraries/ring_buffer.h \
   libraries/ring_buffer.tcc \
-  I18n.h \
-  SoundRect.h \
-  GrainCluster.h \
-  Frontieres.h \
-  MyGLWindow.h \
-  gpl-3.0-standalone.html \
-  GTime.h \
-  AudioFileSet.h \
-  Window.h \
-  MyRtAudio.h \
-  GrainVoice.h \
-  Thread.h \
-  Scene.h
