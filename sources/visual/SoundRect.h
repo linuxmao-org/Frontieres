@@ -44,11 +44,8 @@
 
 #include <iostream>
 #include <math.h>
-#include <GTime.h>
 #include <algorithm>
 #include <Stk.h>
-
-using namespace std;
 
 
 // id for this class, which is incremented for each instance

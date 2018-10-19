@@ -43,7 +43,6 @@
 #include "GrainVoice.h"
 #include "theglobals.h"
 #include "Window.h"
-#include "SoundRect.h"
 
 // direction modes
 enum { FORWARD, BACKWARD, RANDOM_DIR };
@@ -191,73 +190,5 @@ private:
     // audio files
     vector<AudioFile *> *theSounds;
 };
-
-
-// VISUALIZATION/CONTROLLER
-class GrainClusterVis {
-public:
-    // destructor
-    ~GrainClusterVis();
-
-    // constructor (takes center position (x,y), number of voices, sound rectangles)
-    GrainClusterVis(float x, float y, unsigned int numVoices, vector<SoundRect *> *rects);
-
-    // render
-    void draw();
-    // get playback position in registered rectangles and return to grain cloud
-    void getTriggerPos(unsigned int idx, double *playPos, double *playVols, float dur);
-    // move grains
-    void updateCloudPosition(float x, float y);
-    void updateGrainPosition(int idx, float x, float y);
-    void setState(int idx, bool on);
-    // add grain
-    void addGrain();
-    // remove grain element from visualization
-    void removeGrain();
-    // set selection (highlight)
-    void setSelectState(bool state);
-    // determine if mouse click is in selection range
-    bool select(float x, float y);
-    // get my x coordinate
-    float getX();
-    // get my y coordinate
-    float getY();
-
-    // randomness params for grain positions
-    float getXRandExtent();
-    float getYRandExtent();
-    void setXRandExtent(float mouseX);
-    void setYRandExtent(float mouseY);
-    void setRandExtent(float mouseX, float mouseY);
-    void setFixedXRandExtent(float X);
-    void setFixedYRandExtent(float Y);
-    void setFixedRandExtent(float X, float Y);
-
-    // set the pulse duration (which determines the frequency of the pulse)
-    void setDuration(float dur);
-
-    // print information
-    void describe(std::ostream &out);
-
-protected:
-private:
-    bool isOn, isSelected;
-    bool addFlag, removeFlag;
-    double startTime;
-    unsigned int screenWidth, screenHeight;
-
-    float xRandExtent, yRandExtent;
-
-    float freq;
-    float gcX, gcY;
-    float selRad, lambda, maxSelRad, minSelRad, targetRad;
-    unsigned int numGrains;
-
-    // grain voice visualizations
-    vector<GrainVis *> myGrainsV;
-    // registered sound rectangles
-    vector<SoundRect *> *theLandscape;
-};
-
 
 #endif

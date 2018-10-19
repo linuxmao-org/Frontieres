@@ -63,10 +63,14 @@
 #include <ring_buffer.h>
 
 // graphics related
-#include "SoundRect.h"
+#include "visual/SoundRect.h"
+#include "visual/GrainClusterVis.h"
 
-// graphics and audio related
+// audio related
 #include "GrainCluster.h"
+
+// time
+#include "utility/GTime.h"
 
 // internationalization
 #include "I18n.h"
@@ -74,9 +78,8 @@
 // Qt application
 #include "MyGLApplication.h"
 #include "MyGLWindow.h"
-#include <QtFont3D.h>
 #include "Scene.h"
-
+#include <QtFont3D.h>
 #include <QApplication>
 #include <QJsonDocument>
 #include <QStandardPaths>

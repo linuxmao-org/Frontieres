@@ -33,7 +33,6 @@
 
 
 #include <stdlib.h>
-#include "GTime.h"
 
 
 // create sample datatype

@@ -40,8 +40,6 @@ LIBS += -lsndfile -lsoxr
 
 SOURCES += \
   sources/Frontieres.cpp \
-  sources/SoundRect.cpp \
-  sources/GTime.cpp \
   sources/AudioFileSet.cpp \
   sources/MyRtAudio.cpp \
   sources/Window.cpp \
@@ -50,6 +48,10 @@ SOURCES += \
   sources/MyGLApplication.cpp \
   sources/MyGLWindow.cpp \
   sources/Scene.cpp \
+  sources/visual/GrainVis.cpp \
+  sources/visual/GrainClusterVis.cpp \
+  sources/visual/SoundRect.cpp \
+  sources/utility/GTime.cpp \
   libraries/Stk.cpp \
   libraries/RtAudio.cpp \
   libraries/RtMidi.cpp \
@@ -59,17 +61,18 @@ HEADERS += \
   sources/MyGLApplication.h \
   sources/theglobals.h \
   sources/I18n.h \
-  sources/SoundRect.h \
   sources/GrainCluster.h \
   sources/Frontieres.h \
   sources/MyGLWindow.h \
-  sources/gpl-3.0-standalone.html \
-  sources/GTime.h \
   sources/AudioFileSet.h \
   sources/Window.h \
   sources/MyRtAudio.h \
   sources/GrainVoice.h \
   sources/Scene.h \
+  sources/visual/GrainVis.h \
+  sources/visual/GrainClusterVis.h \
+  sources/visual/SoundRect.h \
+  sources/utility/GTime.h \
   libraries/RtMidi.h \
   libraries/RtAudio.h \
   libraries/Stk.h \

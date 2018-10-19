@@ -21,16 +21,19 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Scene.h"
-#include "SoundRect.h"
 #include "GrainCluster.h"
 #include "GrainVoice.h"
 #include "AudioFileSet.h"
 #include "I18n.h"
+#include "visual/SoundRect.h"
 #include <QStandardPaths>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QDebug>
+
+// TODO arrange this later
+#include "visual/GrainClusterVis.h"
 
 //-----------------------------------------------------------------------------
 // Destructor

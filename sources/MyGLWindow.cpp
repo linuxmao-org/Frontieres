@@ -21,9 +21,10 @@
 
 #include "MyGLWindow.h"
 #include "Frontieres.h"
-#include "SoundRect.h"
 #include "GrainCluster.h"
 #include "Scene.h"
+#include "visual/GrainClusterVis.h"
+#include "visual/SoundRect.h"
 #include <QtFont3D.h>
 #include <QMouseEvent>
 #include <QKeyEvent>

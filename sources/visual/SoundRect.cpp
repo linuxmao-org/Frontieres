@@ -33,7 +33,7 @@
 #include "SoundRect.h"
 #include "MyGLApplication.h"
 #include "MyGLWindow.h"
-
+#include "utility/GTime.h"
 
 // destructor
 SoundRect::~SoundRect()

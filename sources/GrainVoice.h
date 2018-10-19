@@ -146,33 +146,4 @@ private:
     double *playVols;
 };
 
-
-// GRAPHICS CLASS
-// handle display, picking.
-// register selection listener
-class GrainVis {
-public:
-    // destructor
-    ~GrainVis();
-    // constructor
-    GrainVis(float x, float y);
-    void draw();
-    // position update function
-    void moveTo(float x, float y);
-    float getX();
-    float getY();
-    void trigger(float theDur);
-
-private:
-    bool isOn, firstTrigger;
-    double startTime;
-    double triggerTime;
-    float gX, gY;
-    float colR, colG, colB, colA;
-    float defG, defB;
-    float mySize, defSize, onSize;  // GL point size
-    float durSec;
-};
-
-
 #endif

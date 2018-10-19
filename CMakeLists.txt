@@ -16,8 +16,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(Frontieres WIN32
   sources/Frontieres.cpp
-  sources/SoundRect.cpp
-  sources/GTime.cpp
   sources/AudioFileSet.cpp
   sources/MyRtAudio.cpp
   sources/Window.cpp
@@ -26,6 +24,10 @@ add_executable(Frontieres WIN32
   sources/MyGLApplication.cpp
   sources/MyGLWindow.cpp
   sources/Scene.cpp
+  sources/visual/GrainVis.cpp
+  sources/visual/GrainClusterVis.cpp
+  sources/visual/SoundRect.cpp
+  sources/utility/GTime.cpp
   libraries/QtFont3D/QtFont3D.cpp
   libraries/Stk.cpp
   libraries/RtAudio.cpp
