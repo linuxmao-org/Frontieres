@@ -559,3 +559,13 @@ bool SoundRect::getNormedPosition(double *positionsX, double *positionsY,
 void SoundRect::setName(char *name)
 {
 }
+
+// print information
+void SoundRect::describe(std::ostream &out)
+{
+    out << "- orientation : " << getOrientation() << "\n";
+    out << "- height : " << getHeight() << "\n";
+    out << "- width : " << getWidth() << "\n";
+    out << "- X : " << getX() << "\n";
+    out << "- Y : " << getY() << "\n";
+}

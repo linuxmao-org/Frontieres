@@ -100,6 +100,8 @@ public:
     // set name
     void setName(char *name);
 
+    // print information
+    void describe(std::ostream &out);
 
 protected:
     // set upsampling for waveform display (based on rect size/orientation)

@@ -177,26 +177,28 @@ bool Scene::load(QFile &sceneFile)
         cout << "X extent = " << cloudXRandExtent << endl;
         cout << "Y extent = " << cloudYRandExtent << endl;
         // create audio
-        grainCloud->push_back(new GrainCluster(mySounds, cloudNumVoices));
+        GrainCluster *gc = new GrainCluster(mySounds, cloudNumVoices);
+        grainCloud->push_back(gc);
         // create visualization
-        grainCloudVis->push_back(new GrainClusterVis(cloudX, cloudY, cloudNumVoices, soundViews));
+        GrainClusterVis *gv = new GrainClusterVis(cloudX, cloudY, cloudNumVoices, soundViews);
+        grainCloudVis->push_back(gv);
         // register visualization with audio
-        grainCloudVis->at(i)->setSelectState(true);
-        grainCloud->at(i)->registerVis(grainCloudVis->at(i));
+        gv->setSelectState(true);
+        gc->registerVis(gv);
 
-        grainCloud->at(i)->setDurationMs(cloudDuration);
-        grainCloud->at(i)->setOverlap(cloudOverlap);
-        grainCloud->at(i)->setPitch(cloudPitch);
-        grainCloud->at(i)->setPitchLFOFreq(cloudPitchLFOFreq);
-        grainCloud->at(i)->setPitchLFOAmount(cloudPitchLFOAmount);
-        grainCloud->at(i)->setDirection(cloudDirection);
-        grainCloud->at(i)->setWindowType(cloudWindowType);
-        grainCloud->at(i)->setSpatialMode(cloudSpatialMode,cloudSpatialChanel);
-        grainCloud->at(i)->setVolumeDb(cloudVolumeDb);
-        grainCloud->at(i)->setActiveState(cloudActivateState);
-        grainCloudVis->at(i)->setFixedXRandExtent(cloudXRandExtent);
-        grainCloudVis->at(i)->setFixedYRandExtent(cloudYRandExtent);
-        grainCloudVis->at(i)->setSelectState(false);
+        gc->setDurationMs(cloudDuration);
+        gc->setOverlap(cloudOverlap);
+        gc->setPitch(cloudPitch);
+        gc->setPitchLFOFreq(cloudPitchLFOFreq);
+        gc->setPitchLFOAmount(cloudPitchLFOAmount);
+        gc->setDirection(cloudDirection);
+        gc->setWindowType(cloudWindowType);
+        gc->setSpatialMode(cloudSpatialMode,cloudSpatialChanel);
+        gc->setVolumeDb(cloudVolumeDb);
+        gc->setActiveState(cloudActivateState);
+        gv->setFixedXRandExtent(cloudXRandExtent);
+        gv->setFixedYRandExtent(cloudYRandExtent);
+        gv->setSelectState(false);
 
         numClouds += 1;
     }
@@ -222,12 +224,13 @@ bool Scene::save(QFile &sceneFile)
     for (int i = 0; i < mySounds->size(); ++i) {
         AudioFile *af = mySounds->at(i);
         SoundRect *sv = soundViews->at(i);
-        cout << "name : " << af->name << endl;
-        cout << "orientation : " << sv->getOrientation() << endl;
-        cout << "height : " << sv->getHeight() << endl;
-        cout << "width : " << sv->getWidth() << endl;
-        cout << "X : " << sv->getX() << endl;
-        cout << "Y : " << sv->getY() << endl;
+
+        std::ostream &out = std::cout;
+        out << "Audio file " << i << ":";
+        af->describe(out);
+        out << "Sound rect " << i << ":";
+        sv->describe(out);
+
         sceneFlux << QString::fromStdString(af->name) << endl;
         sceneFlux << QString::number(sv->getOrientation()) << endl;
         sceneFlux << QString::number(sv->getHeight()) << endl;
@@ -242,22 +245,12 @@ bool Scene::save(QFile &sceneFile)
     for (int i = 0; i < grainCloud->size(); i++) {
         GrainCluster *gc = grainCloud->at(i);
         GrainClusterVis *gv = grainCloudVis->at(i);
-        cout << "duration : " << gc->getDurationMs() << endl;
-        cout << "overlap : " << gc->getOverlap() << endl;
-        cout << "pitch : " << gc->getPitch() << endl;
-        cout << "pitch LFO Freq : " << gc->getPitchLFOFreq() << endl;
-        cout << "pitch LFO Amount : " << gc->getPitchLFOAmount() << endl;
-        cout << "direction : " << gc->getDirection() << endl;
-        cout << "window type : " << gc->getWindowType() << endl;
-        cout << "spatial mode : " << gc->getSpatialMode() << endl;
-        cout << "spatial chanel : " << gc->getSpatialChannel() << endl;
-        cout << "volume DB : " << gc->getVolumeDb() << endl;
-        cout << "number of voices : " << gc->getNumVoices() << endl;
-        cout << "active : " << gc->getActiveState() << endl;
-        cout << "X : " << gv->getX() << endl;
-        cout << "Y : " << gv->getY() << endl;
-        cout << "X extend : " << gv->getXRandExtent() << endl;
-        cout << "Y extend : " << gv->getYRandExtent() << endl;
+
+        std::ostream &out = std::cout;
+        out << "Grain Cluster " << i << ":";
+        gc->describe(out);
+        out << "Grain Vis " << i << ":";
+        gv->describe(out);
 
         sceneFlux << QString::number(gc->getDurationMs()) << endl;
         sceneFlux << QString::number(gc->getOverlap()) << endl;

@@ -137,6 +137,8 @@ public:
     // return number of voices
     unsigned int getNumVoices();
 
+    // print information
+    void describe(std::ostream &out);
 
 protected:
     // update internal trigger point
@@ -233,6 +235,9 @@ public:
 
     // set the pulse duration (which determines the frequency of the pulse)
     void setDuration(float dur);
+
+    // print information
+    void describe(std::ostream &out);
 
 protected:
 private:

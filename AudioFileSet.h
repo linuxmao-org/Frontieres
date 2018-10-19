@@ -65,6 +65,9 @@ struct AudioFile {
 
     void resampleTo(unsigned int newRate);
 
+    // print information
+    void describe(std::ostream &out);
+
     string name;
     string path;
     SAMPLE *wave;

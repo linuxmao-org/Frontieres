@@ -359,6 +359,23 @@ unsigned int GrainCluster::getNumVoices()
     return myGrains->size();
 }
 
+// print information
+void GrainCluster::describe(std::ostream &out)
+{
+    out << "- duration : " << getDurationMs() << "\n";
+    out << "- overlap : " << getOverlap() << "\n";
+    out << "- pitch : " << getPitch() << "\n";
+    out << "- pitch LFO Freq : " << getPitchLFOFreq() << "\n";
+    out << "- pitch LFO Amount : " << getPitchLFOAmount() << "\n";
+    out << "- direction : " << getDirection() << "\n";
+    out << "- window type : " << getWindowType() << "\n";
+    out << "- spatial mode : " << getSpatialMode() << "\n";
+    out << "- spatial chanel : " << getSpatialChannel() << "\n";
+    out << "- volume DB : " << getVolumeDb() << "\n";
+    out << "- number of voices : " << getNumVoices() << "\n";
+    out << "- active : " << getActiveState() << "\n";
+}
+
 
 // compute audio
 void GrainCluster::nextBuffer(double *accumBuff, unsigned int numFrames)
@@ -652,6 +669,15 @@ GrainClusterVis::GrainClusterVis(float x, float y, unsigned int numVoices,
 void GrainClusterVis::setDuration(float dur)
 {
     freq = 1000.0 / dur;
+}
+
+// print information
+void GrainClusterVis::describe(std::ostream &out)
+{
+    out << "- X : " << getX() << "\n";
+    out << "- Y : " << getY() << "\n";
+    out << "- X extent : " << getXRandExtent() << "\n";
+    out << "- Y extent : " << getYRandExtent() << "\n";
 }
 
 // return cluster x

@@ -237,3 +237,9 @@ void AudioFile::resampleTo(unsigned int newRate)
     frames = newFrames;
     sampleRate = newRate;
 }
+
+// print information
+void AudioFile::describe(std::ostream &out)
+{
+    out << "- name : " << this->name << "\n";
+}
