@@ -78,7 +78,8 @@
 #include "Scene.h"
 
 #include <QApplication>
-#include <QTextStream>
+#include <QJsonDocument>
+#include <QStandardPaths>
 
 using namespace std;
 
@@ -856,33 +857,32 @@ int main(int argc, char **argv)
                                   qApp->translate("message asking to load a scene or not",
                                                   "Welcome ! Do you want to load a recorded scene ?"),
                                   QMessageBox::Yes | QMessageBox::No);
-    string audioPathUser = "";
-    string nameSceneFile = "";
-    if (replyLoadScene == QMessageBox::Yes){
+    std::string audioPathUser;
+    std::string nameSceneFile;
+    if (replyLoadScene == QMessageBox::Yes) {
         nameSceneFile = scene.askNameScene(FileDirection::Load);
-        if (!nameSceneFile.empty()) {
-            QFile sceneFile (QString::fromStdString(nameSceneFile));
-            sceneFile.open(QIODevice::ReadOnly | QIODevice::Text);
-
+        QFile sceneFile(QString::fromStdString(nameSceneFile));
+        QJsonParseError jsonParseError;
+        QJsonDocument doc;
+        if (sceneFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
             // TODO structurer ce format de fichier
-
-            QTextStream sceneFlux(&sceneFile);
+            doc = QJsonDocument::fromJson(sceneFile.readAll(), &jsonParseError);
+        }
+        if (jsonParseError.error == QJsonParseError::NoError) {
+            // TODO ne pas charger les fichiers de cette manière.. se débrouiller autrement
             // audio path
-            audioPathUser = sceneFlux.readLine().toStdString();
+            audioPathUser = doc["audio-path"].toString().toStdString();
             cout << "audio path user : " << audioPathUser << endl;
-            sceneFile.close();
         }
     }
-    if (nameSceneFile.length() == 0) {
+    if (audioPathUser.empty() || !QDir(QString::fromStdString(audioPathUser)).exists()) {
         QString captionPath = qApp->translate("window to choose working directory",
                                               "Frontieres : select sample's directory");
         string separateurPath = "/";
-        QString homeUser = getenv("HOME");
+        QString homeUser = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
         audioPathUser = QFileDialog::getExistingDirectory(nullptr, captionPath, QString::fromStdString(g_audioPathDefault),
-                                                          QFileDialog::DontResolveSymlinks).toUtf8().constData() + separateurPath ;
-        }
-    if (audioPathUser == "/")
-       audioPathUser = g_audioPathDefault;
+                                                          QFileDialog::DontResolveSymlinks).toUtf8().constData() + separateurPath;
+    }
     cout << "path selected : " << audioPathUser << endl;
     bool audioPathUserEmpty = true;
     if (DIR *rep = opendir(audioPathUser.c_str())) {

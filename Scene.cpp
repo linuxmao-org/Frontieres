@@ -26,8 +26,10 @@
 #include "GrainVoice.h"
 #include "AudioFileSet.h"
 #include "I18n.h"
-#include <QTextStream>
 #include <QStandardPaths>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
@@ -78,107 +80,85 @@ string Scene::askNameScene(FileDirection direction)
 bool Scene::load(QFile &sceneFile)
 {
     // TODO structurer ce format de fichier
+    // TODO ne pas charger la scène en global
 
-    sceneFile.open(QIODevice::ReadOnly | QIODevice::Text);
-    QTextStream sceneFlux(&sceneFile);
-    string lineScene = sceneFlux.readLine().toUtf8().constData(); // path
-    cout << "scene path : " << lineScene << endl;
-    int nSamplesScene = sceneFlux.readLine().toInt(); // number of samples scene
-    cout << nSamplesScene << " samples" << endl;
-    int j = 0;
-    int nSample = -1;
-    int nCloud = -1;
-    float widthSample = 0;
-    float heightSample = 0;
-    float xSample = 0;
-    float ySample = 0;
-    bool orientationSample = true;
-    for (int i = 0; i < nSamplesScene ; i++) { // samples
-        nSample = -1;
-        lineScene = sceneFlux.readLine().toUtf8().constData(); // sample
-        cout << lineScene;
-        j = 0;
-        while ( j < mySounds->size()) {
-            if (mySounds->at(j)->name == lineScene) { // sample matching
+    if (!sceneFile.open(QIODevice::ReadOnly | QIODevice::Text))
+        return false;
+
+    QJsonParseError jsonParseError;
+    QJsonDocument doc = QJsonDocument::fromJson(sceneFile.readAll(), &jsonParseError);
+    if (jsonParseError.error != QJsonParseError::NoError)
+        return false;
+
+    QString lineScene = doc["audio-path"].toString(); // path
+    cout << "scene path : " << lineScene.toStdString() << "\n";
+    for (const QJsonValue &jsonElement : doc["sounds"].toArray()) { // samples
+        QJsonObject objSound = jsonElement.toObject();
+        int nSample = -1;
+        lineScene = objSound["name"].toString(); // sample
+        cout << lineScene.toStdString();
+        for (int j = 0; j < mySounds->size(); ++j) {
+            if (mySounds->at(j)->name.c_str() == lineScene) { // sample matching
                 nSample = j;
                 j = mySounds->size();
             }
-            j += 1;
         }
+
         if (nSample != -1) {
-            orientationSample = soundViews->at(nSample)->getOrientation();
-            if (!!sceneFlux.readLine().toInt() != soundViews->at(nSample)->getOrientation())
+            SoundRect *sv = soundViews->at(nSample);
+            if ((bool)objSound["orientation"].toInt() != sv->getOrientation())
                 soundViews->at(nSample)->toggleOrientation();
-            heightSample = sceneFlux.readLine().toFloat();
-            widthSample = sceneFlux.readLine().toFloat();
-            xSample = sceneFlux.readLine().toFloat();
-            ySample = sceneFlux.readLine().toFloat();
-            soundViews->at(nSample)->setWidthHeight(widthSample, heightSample);
-            soundViews->at(nSample)->setXY(xSample, ySample);
+            double heightSample = objSound["height"].toDouble();
+            double widthSample = objSound["width"].toDouble();
+            double xSample = objSound["x"].toDouble();
+            double ySample = objSound["y"].toDouble();
+            sv->setWidthHeight(widthSample, heightSample);
+            sv->setXY(xSample, ySample);
             cout << ", heigth : " << heightSample
                  << ", width : " << widthSample
                  << ", x : " << xSample
-                 << ", y : " << ySample << endl;
+                 << ", y : " << ySample << "\n";
         }
         else
-            cout << " not found" << endl;
-        lineScene = sceneFlux.readLine().toUtf8().constData(); // ---
+            cout << " not found" << "\n";
     }
-    int nCloudScene = sceneFlux.readLine().toInt(); // number of clouds scene
-    cout << nCloudScene << " clouds to create" << endl;
-    float cloudDuration = 0;
-    float cloudOverlap = 0;
-    float cloudPitch = 0;
-    float cloudPitchLFOFreq = 0;
-    float cloudPitchLFOAmount = 0;
-    int cloudDirection = 0;
-    int cloudWindowType = 0;
-    int cloudSpatialMode = 0;
-    int cloudSpatialChanel = 0;
-    float cloudVolumeDb = 0;
-    int cloudNumVoices = 0;
-    int cloudActivateState = 0;
-    float cloudX = 0;
-    float cloudY = 0;
-    float cloudXRandExtent = 0;
-    float cloudYRandExtent = 0;
+
     int cloudCurrent = 0;
-    for (int i = 0; i < nCloudScene ; i++) { // clouds
-        cloudCurrent = i + 1;
-        cloudDuration = sceneFlux.readLine().toFloat();
-        cloudOverlap = sceneFlux.readLine().toFloat();
-        cloudPitch = sceneFlux.readLine().toFloat();
-        cloudPitchLFOFreq = sceneFlux.readLine().toFloat();
-        cloudPitchLFOAmount = sceneFlux.readLine().toFloat();
-        cloudDirection = sceneFlux.readLine().toInt();
-        cloudWindowType = sceneFlux.readLine().toInt();
-        cloudSpatialMode = sceneFlux.readLine().toInt();
-        cloudSpatialChanel = sceneFlux.readLine().toInt();
-        cloudVolumeDb = sceneFlux.readLine().toFloat();
-        cloudNumVoices = sceneFlux.readLine().toInt();
-        cloudActivateState = sceneFlux.readLine().toInt();
-        cloudX = sceneFlux.readLine().toFloat();
-        cloudY = sceneFlux.readLine().toFloat();
-        cloudXRandExtent = sceneFlux.readLine().toFloat();
-        cloudYRandExtent = sceneFlux.readLine().toFloat();
-        lineScene = sceneFlux.readLine().toUtf8().constData(); // ---
-        cout << "cloud " << cloudCurrent << " :" << endl;
-        cout << "duration = " << cloudDuration << endl;
-        cout << "overlap = " << cloudOverlap << endl;
-        cout << "pitch = " << cloudPitch << endl;
-        cout << "pitchLFOFreq = " << cloudPitchLFOFreq << endl;
-        cout << "pitchLFOAmount = " << cloudPitchLFOAmount << endl;
-        cout << "direction = " << cloudDirection << endl;
-        cout << "window type = " << cloudWindowType << endl;
-        cout << "spatial mode = " << cloudSpatialMode << endl;
-        cout << "spatial chanel = " << cloudSpatialChanel << endl;
-        cout << "volume = " << cloudVolumeDb << endl;
-        cout << "voices = " << cloudNumVoices << endl;
-        cout << "active = " << cloudActivateState << endl;
-        cout << "X = " << cloudX << endl;
-        cout << "Y = " << cloudY << endl;
-        cout << "X extent = " << cloudXRandExtent << endl;
-        cout << "Y extent = " << cloudYRandExtent << endl;
+    for (const QJsonValue &jsonElement : doc["clouds"].toArray()) { // samples
+        QJsonObject objGrain = jsonElement.toObject();
+        double cloudDuration = objGrain["duration"].toDouble();
+        double cloudOverlap = objGrain["overlap"].toDouble();
+        double cloudPitch = objGrain["pitch"].toDouble();
+        double cloudPitchLFOFreq = objGrain["pitch-lfo-freq"].toDouble();
+        double cloudPitchLFOAmount = objGrain["pitch-lfo-amount"].toDouble();
+        int cloudDirection = objGrain["direction"].toInt();
+        int cloudWindowType = objGrain["window-type"].toInt();
+        int cloudSpatialMode = objGrain["spatial-mode"].toInt();
+        int cloudSpatialChanel = objGrain["spatial-channel"].toInt();
+        double cloudVolumeDb = objGrain["volume"].toDouble();
+        int cloudNumVoices = objGrain["num-voices"].toInt();
+        int cloudActiveState = objGrain["active-state"].toBool();
+        double cloudX = objGrain["x"].toDouble();
+        double cloudY = objGrain["y"].toDouble();
+        double cloudXRandExtent = objGrain["x-rand-extent"].toDouble();
+        double cloudYRandExtent = objGrain["y-rand-extent"].toDouble();
+        cout << "cloud " << (cloudCurrent + 1) << " :" << "\n";
+        cout << "duration = " << cloudDuration << "\n";
+        cout << "overlap = " << cloudOverlap << "\n";
+        cout << "pitch = " << cloudPitch << "\n";
+        cout << "pitchLFOFreq = " << cloudPitchLFOFreq << "\n";
+        cout << "pitchLFOAmount = " << cloudPitchLFOAmount << "\n";
+        cout << "direction = " << cloudDirection << "\n";
+        cout << "window type = " << cloudWindowType << "\n";
+        cout << "spatial mode = " << cloudSpatialMode << "\n";
+        cout << "spatial channel = " << cloudSpatialChanel << "\n";
+        cout << "volume = " << cloudVolumeDb << "\n";
+        cout << "voices = " << cloudNumVoices << "\n";
+        cout << "active = " << cloudActiveState << "\n";
+        cout << "X = " << cloudX << "\n";
+        cout << "Y = " << cloudY << "\n";
+        cout << "X extent = " << cloudXRandExtent << "\n";
+        cout << "Y extent = " << cloudYRandExtent << "\n";
         // create audio
         GrainCluster *gc = new GrainCluster(mySounds, cloudNumVoices);
         grainCloud->push_back(gc);
@@ -198,12 +178,12 @@ bool Scene::load(QFile &sceneFile)
         gc->setWindowType(cloudWindowType);
         gc->setSpatialMode(cloudSpatialMode,cloudSpatialChanel);
         gc->setVolumeDb(cloudVolumeDb);
-        gc->setActiveState(cloudActivateState);
+        gc->setActiveState(cloudActiveState);
         gv->setFixedXRandExtent(cloudXRandExtent);
         gv->setFixedYRandExtent(cloudYRandExtent);
         gv->setSelectState(false);
 
-        numClouds += 1;
+        ++cloudCurrent;
     }
 
     return true;
@@ -212,18 +192,21 @@ bool Scene::load(QFile &sceneFile)
 bool Scene::save(QFile &sceneFile)
 {
     // TODO structurer ce format de fichier
+    // TODO ne pas sauvegarder la scène globale
 
     if (!sceneFile.open(QIODevice::WriteOnly | QIODevice::Text))
         return false;
 
-    QTextStream sceneFlux(&sceneFile);
+    QJsonObject docRoot;
+
     // audio path
-    cout << "record scene " << sceneFile.fileName().toStdString() << endl;
-    cout << "audio path : " << g_audioPath << endl;
-    sceneFlux << QString::fromStdString(g_audioPath) << endl;
+    cout << "record scene " << sceneFile.fileName().toStdString() << "\n";
+    cout << "audio path : " << g_audioPath << "\n";
+    docRoot["audio-path"] = QString::fromStdString(g_audioPath);
+
     // samples
-    cout << mySounds->size() << "samples : " << endl;
-    sceneFlux << QString::number(mySounds->size()) << endl;
+    QJsonArray docSounds;
+    cout << mySounds->size() << "samples : " << "\n";
     for (int i = 0; i < mySounds->size(); ++i) {
         AudioFile *af = mySounds->at(i);
         SoundRect *sv = soundViews->at(i);
@@ -234,17 +217,19 @@ bool Scene::save(QFile &sceneFile)
         out << "Sound rect " << i << ":";
         sv->describe(out);
 
-        sceneFlux << QString::fromStdString(af->name) << endl;
-        sceneFlux << QString::number(sv->getOrientation()) << endl;
-        sceneFlux << QString::number(sv->getHeight()) << endl;
-        sceneFlux << QString::number(sv->getWidth()) << endl;
-        sceneFlux << QString::number(sv->getX()) << endl;
-        sceneFlux << QString::number(sv->getY()) << endl;
-        sceneFlux << "---" << endl;
+        QJsonObject objSound;
+        objSound["name"] = QString::fromStdString(af->name);
+        objSound["orientation"] = QString::number(sv->getOrientation());
+        objSound["height"] = sv->getHeight();
+        objSound["width"] = sv->getWidth();
+        objSound["x"] = sv->getX();
+        objSound["y"] = sv->getY();
+        docSounds.append(objSound);
     }
+
     // grainclouds
-    cout << grainCloud->size() << " clouds : " << endl;
-    sceneFlux << QString::number(grainCloud->size()) << endl;
+    QJsonArray docGrains;
+    cout << grainCloud->size() << " clouds : " << "\n";
     for (int i = 0; i < grainCloud->size(); i++) {
         GrainCluster *gc = grainCloud->at(i);
         GrainClusterVis *gv = grainCloudVis->at(i);
@@ -255,24 +240,34 @@ bool Scene::save(QFile &sceneFile)
         out << "Grain Vis " << i << ":";
         gv->describe(out);
 
-        sceneFlux << QString::number(gc->getDurationMs()) << endl;
-        sceneFlux << QString::number(gc->getOverlap()) << endl;
-        sceneFlux << QString::number(gc->getPitch()) << endl;
-        sceneFlux << QString::number(gc->getPitchLFOFreq()) << endl;
-        sceneFlux << QString::number(gc->getPitchLFOAmount()) << endl;
-        sceneFlux << QString::number(gc->getDirection()) << endl;
-        sceneFlux << QString::number(gc->getWindowType()) << endl;
-        sceneFlux << QString::number(gc->getSpatialMode()) << endl;
-        sceneFlux << QString::number(gc->getSpatialChannel()) << endl;
-        sceneFlux << QString::number(gc->getVolumeDb()) << endl;
-        sceneFlux << QString::number(gc->getNumVoices()) << endl;
-        sceneFlux << QString::number(gc->getActiveState()) << endl;
-        sceneFlux << QString::number(gv->getX()) << endl;
-        sceneFlux << QString::number(gv->getY()) << endl;
-        sceneFlux << QString::number(gv->getXRandExtent()) << endl;
-        sceneFlux << QString::number(gv->getYRandExtent()) << endl;
-        sceneFlux << "---" << endl;
+        QJsonObject objGrain;
+        objGrain["duration"] = gc->getDurationMs();
+        objGrain["overlap"] = gc->getOverlap();
+        objGrain["pitch"] = gc->getPitch();
+        objGrain["pitch-lfo-freq"] = gc->getPitchLFOFreq();
+        objGrain["pitch-lfo-amount"] = gc->getPitchLFOAmount();
+        objGrain["direction"] = gc->getDirection();
+        objGrain["window-type"] = gc->getWindowType();
+        objGrain["spatial-mode"] = gc->getSpatialMode();
+        objGrain["spatial-channel"] = gc->getSpatialChannel();
+        objGrain["volume"] = gc->getVolumeDb();
+        objGrain["num-voices"] = (int)gc->getNumVoices();
+        objGrain["active-state"] = gc->getActiveState();
+        objGrain["x"] = gv->getX();
+        objGrain["y"] = gv->getY();
+        objGrain["x-rand-extent"] = gv->getXRandExtent();
+        objGrain["y-rand-extent"] = gv->getYRandExtent();
+        docGrains.append(objGrain);
     }
+
+    docRoot["sounds"] = docSounds;
+    docRoot["clouds"] = docGrains;
+
+    QJsonDocument document;
+    document.setObject(docRoot);
+    sceneFile.write(document.toJson());
+    if (!sceneFile.flush())
+        return false;
 
     return true;
 }
