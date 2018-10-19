@@ -856,7 +856,7 @@ int main(int argc, char **argv)
     string audioPathUser = "";
     string nameSceneFile = "";
     if (replyLoadScene == QMessageBox::Yes){
-        nameSceneFile = sceneCurrent.askNameScene(false);
+        nameSceneFile = sceneCurrent.askNameScene(LOAD);
         if (nameSceneFile.length() != 0) {
             QFile sceneFile (QString::fromStdString(nameSceneFile));
             sceneFile.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -1033,6 +1033,7 @@ int main(int argc, char **argv)
              grainCloud->at(i)->setPitchLFOFreq(cloudPitchLFOFreq);
              grainCloud->at(i)->setPitchLFOAmount(cloudPitchLFOAmount);
              grainCloud->at(i)->setDirection(cloudDirection);
+             grainCloud->at(i)->setWindowType(cloudWindowType);
              grainCloud->at(i)->setSpatialMode(cloudSpatialMode,cloudSpatialChanel);
              grainCloud->at(i)->setVolumeDb(cloudVolumeDb);
              grainCloud->at(i)->setActiveState(cloudActivateState);

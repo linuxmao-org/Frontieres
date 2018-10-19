@@ -1,12 +1,10 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-#include <QApplication>
+#include "Frontieres.h"
 #include <QFile>
 #include <QString>
 #include <iostream>
-#include <QDialog>
-#include <QFileDialog>
 #include <QIODevice>
 #include <QTextStream>
 #include <iostream>
@@ -32,9 +30,9 @@ public:
     // constructor
     Scene();
 
-    // record
+    // window to choose a scene file
 
-    string askNameScene(bool direction);
+    string askNameScene(int direction);
 };
 
 #endif // SCENE_H

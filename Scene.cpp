@@ -13,9 +13,9 @@ Scene::Scene()
 {
 }
 //-----------------------------------------------------------------------------
-// record
-//----------------------------------------------------------------------------
-string Scene::askNameScene(bool direction)
+// window to chose scene
+//-----------------------------------------------------------------------------
+string Scene::askNameScene(int direction)
 {
 
     // choise file name and test extension
@@ -25,7 +25,7 @@ string Scene::askNameScene(bool direction)
     if (g_audioPath == g_audioPathDefault)
         pathScene = QStandardPaths::displayName(QStandardPaths::HomeLocation).toUtf8().constData();
     string nameSceneFile = "";
-    if (direction == true){
+    if (direction == SAVE){
         nameSceneFile = QFileDialog::getSaveFileName(nullptr, captionPath, pathScene, filterExtensionScene ).toUtf8().constData();
         if (nameSceneFile.length() != 0) {
             if (nameSceneFile.substr(nameSceneFile.size()-4, nameSceneFile.size()) != g_extensionScene.toUtf8().constData())

@@ -108,6 +108,12 @@ enum {
     VOLUME
 };
 
+// scenes files read/write direction
+enum {
+    LOAD,
+    SAVE
+};
+
 // flag indicating parameter change
 extern bool paramChanged;
 extern unsigned int currentParam;
