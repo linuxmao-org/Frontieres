@@ -34,6 +34,7 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include <mutex>
 #include <cstdlib>
 #include <time.h>
 #include <ctime>
@@ -42,7 +43,6 @@
 #include "GrainVoice.h"
 #include "theglobals.h"
 #include "Window.h"
-#include "Thread.h"
 #include "SoundRect.h"
 
 // direction modes
@@ -165,7 +165,7 @@ private:
 
 
     // thread safety
-    Mutex *myLock;
+    std::mutex myLock;
 
     // registered visualization
     GrainClusterVis *myVis;
@@ -179,7 +179,7 @@ private:
     float volumeDb, normedVol;
 
     // vector of grains
-    vector<GrainVoice *> *myGrains;
+    vector<GrainVoice *> myGrains;
 
     // number of grains in this cluster
     unsigned int numVoices;
@@ -254,7 +254,7 @@ private:
     unsigned int numGrains;
 
     // grain voice visualizations
-    vector<GrainVis *> *myGrainsV;
+    vector<GrainVis *> myGrainsV;
     // registered sound rectangles
     vector<SoundRect *> *theLandscape;
 };

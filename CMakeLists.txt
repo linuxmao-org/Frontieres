@@ -23,7 +23,6 @@ add_executable(Frontieres WIN32
   Window.cpp
   GrainVoice.cpp
   GrainCluster.cpp
-  Thread.cpp
   MyGLApplication.cpp
   MyGLWindow.cpp
   libraries/QtFont3D/QtFont3D.cpp

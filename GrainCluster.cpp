@@ -36,17 +36,12 @@ extern unsigned int samp_rate;
 // Destructor
 GrainCluster::~GrainCluster()
 {
-    if (myGrains != NULL) {
-        for (int i = 0; i < myGrains->size(); i++) {
-            delete myGrains->at(i);
-        }
-        delete myGrains;
+    for (int i = 0; i < myGrains.size(); i++) {
+        delete myGrains[i];
     }
 
     if (myVis)
         delete myVis;
-    if (myLock)
-        delete myLock;
     if (channelMults)
         delete[] channelMults;
 }
@@ -55,8 +50,6 @@ GrainCluster::~GrainCluster()
 // Constructor
 GrainCluster::GrainCluster(vector<AudioFile *> *soundSet, float theNumVoices)
 {
-    // initialize mutext
-    myLock = new Mutex();
     // cluster id
     myId = ++clusterId;
 
@@ -110,12 +103,9 @@ GrainCluster::GrainCluster(vector<AudioFile *> *soundSet, float theNumVoices)
 
     myDirMode = RANDOM_DIR;
 
-    // create grain voice vector
-    myGrains = new vector<GrainVoice *>;
-
     // populate grain cloud
     for (int i = 0; i < numVoices; i++) {
-        myGrains->push_back(new GrainVoice(theSounds, duration, pitch));
+        myGrains.push_back(new GrainVoice(theSounds, duration, pitch));
     }
 
     // set volume of cloud to unity
@@ -131,8 +121,8 @@ GrainCluster::GrainCluster(vector<AudioFile *> *soundSet, float theNumVoices)
     bang_time = duration * ::samp_rate * (double)0.001 / overlap;
 
     // load grains
-    for (int i = 0; i < myGrains->size(); i++) {
-        myGrains->at(i)->setDurationMs(duration);
+    for (int i = 0; i < myGrains.size(); i++) {
+        myGrains[i]->setDurationMs(duration);
     }
 
     // state - (user can remove cloud from "play" for editing)
@@ -174,16 +164,16 @@ void GrainCluster::setWindowType(int winType)
         windowType = Window::Instance().numWindows() - 1;
     }
     if (windowType == RANDOM_WIN) {
-        for (int i = 0; i < myGrains->size(); i++) {
-            myGrains->at(i)->setWindow(
+        for (int i = 0; i < myGrains.size(); i++) {
+            myGrains[i]->setWindow(
                 (int)floor(randf() * Window::Instance().numWindows() - 1));
         }
     }
     else {
 
-        for (int i = 0; i < myGrains->size(); i++) {
+        for (int i = 0; i < myGrains.size(); i++) {
             // cout << "windowtype " << windowType << endl;
-            myGrains->at(i)->setWindow(windowType);
+            myGrains[i]->setWindow(windowType);
         }
     }
 }
@@ -224,7 +214,7 @@ void GrainCluster::setOverlap(float target)
     overlapNorm = target;
     // oops wrong!//overlap = ((float)(myGrains->size()))*0.25f*exp(log(2.0f)*target);
 
-    float num = (float)myGrains->size();
+    float num = (float)myGrains.size();
 
     overlap = exp(log(num) * target);
 
@@ -242,8 +232,8 @@ void GrainCluster::setDurationMs(float theDur)
 {
     if (theDur >= 1.0f) {
         duration = theDur;
-        for (int i = 0; i < myGrains->size(); i++)
-            myGrains->at(i)->setDurationMs(duration);
+        for (int i = 0; i < myGrains.size(); i++)
+            myGrains[i]->setDurationMs(duration);
 
         updateBangTime();
 
@@ -268,8 +258,8 @@ void GrainCluster::setPitch(float targetPitch)
         targetPitch = 0.0001;
     }
     pitch = targetPitch;
-    for (int i = 0; i < myGrains->size(); i++)
-        myGrains->at(i)->setPitch(targetPitch);
+    for (int i = 0; i < myGrains.size(); i++)
+        myGrains[i]->setPitch(targetPitch);
 }
 
 float GrainCluster::getPitch()
@@ -297,8 +287,8 @@ void GrainCluster::setVolumeDb(float volDb)
     // convert to 0-1 representation
     normedVol = pow(10.0, volDb * 0.05);
 
-    for (int i = 0; i < myGrains->size(); i++)
-        myGrains->at(i)->setVolume(normedVol);
+    for (int i = 0; i < myGrains.size(); i++)
+        myGrains[i]->setVolume(normedVol);
 }
 
 float GrainCluster::getVolumeDb()
@@ -318,20 +308,20 @@ void GrainCluster::setDirection(int dirMode)
     switch (myDirMode) {
     case FORWARD:
         //      cout << "set for" << endl;
-        for (int i = 0; i < myGrains->size(); i++)
-            myGrains->at(i)->setDirection(1.0);
+        for (int i = 0; i < myGrains.size(); i++)
+            myGrains[i]->setDirection(1.0);
         break;
     case BACKWARD:
         //    cout << "set back" << endl;
-        for (int i = 0; i < myGrains->size(); i++)
-            myGrains->at(i)->setDirection(-1.0);
+        for (int i = 0; i < myGrains.size(); i++)
+            myGrains[i]->setDirection(-1.0);
         break;
     case RANDOM_DIR:
-        for (int i = 0; i < myGrains->size(); i++) {
+        for (int i = 0; i < myGrains.size(); i++) {
             if (randf() > 0.5)
-                myGrains->at(i)->setDirection(1.0);
+                myGrains[i]->setDirection(1.0);
             else
-                myGrains->at(i)->setDirection(-1.0);
+                myGrains[i]->setDirection(-1.0);
         }
 
     default:
@@ -356,7 +346,7 @@ float GrainCluster::getDurationMs()
 // return number of voices in this cloud
 unsigned int GrainCluster::getNumVoices()
 {
-    return myGrains->size();
+    return myGrains.size();
 }
 
 // print information
@@ -383,43 +373,42 @@ void GrainCluster::nextBuffer(double *accumBuff, unsigned int numFrames)
 
     if (addFlag == true) {
         addFlag = false;
-        myGrains->push_back(new GrainVoice(theSounds, duration, pitch));
-        int idx = myGrains->size() - 1;
-        myGrains->at(idx)->setWindow(windowType);
+        myGrains.push_back(new GrainVoice(theSounds, duration, pitch));
+        size_t idx = myGrains.size() - 1;
+        myGrains[idx]->setWindow(windowType);
         switch (myDirMode) {
         case FORWARD:
-            myGrains->at(idx)->setDirection(1.0);
+            myGrains[idx]->setDirection(1.0);
             break;
         case BACKWARD:
-            myGrains->at(idx)->setDirection(-1.0);
+            myGrains[idx]->setDirection(-1.0);
             break;
         case RANDOM_DIR:
             if (randf() > 0.5)
-                myGrains->at(idx)->setDirection(1.0);
+                myGrains[idx]->setDirection(1.0);
             else
-                myGrains->at(idx)->setDirection(-1.0);
+                myGrains[idx]->setDirection(-1.0);
             break;
 
         default:
             break;
         }
 
-        myGrains->at(idx)->setVolume(normedVol);
+        myGrains[idx]->setVolume(normedVol);
         numVoices += 1;
         setOverlap(overlapNorm);
     }
 
     if (removeFlag == true) {
-        myLock->lock();
-        if (myGrains->size() > 1) {
-            if (nextGrain >= myGrains->size() - 1) {
+        std::lock_guard<std::mutex> lock(myLock);
+        if (myGrains.size() > 1) {
+            if (nextGrain >= myGrains.size() - 1) {
                 nextGrain = 0;
             }
-            myGrains->pop_back();
+            myGrains.pop_back();
             setOverlap(overlapNorm);
         }
         removeFlag = false;
-        myLock->unlock();
     }
 
     if (isActive == true) {
@@ -463,16 +452,16 @@ void GrainCluster::nextBuffer(double *accumBuff, unsigned int numFrames)
                     float nextPitch =
                         fabs(pitch + pitchLFOAmount * sin(2 * PI * pitchLFOFreq *
                                                           GTime::instance().sec));
-                    myGrains->at(nextGrain)->setPitch(nextPitch);
+                    myGrains[nextGrain]->setPitch(nextPitch);
                 }
 
 
                 // update spatialization/get new channel multiplier set
                 updateSpatialization();
-                myGrains->at(nextGrain)->setChannelMultipliers(channelMults);
+                myGrains[nextGrain]->setChannelMultipliers(channelMults);
 
                 // trigger grain
-                awaitingPlay = myGrains->at(nextGrain)->playMe(playPositions, playVols);
+                awaitingPlay = myGrains[nextGrain]->playMe(playPositions, playVols);
 
                 // only advance if next grain is playable.  otherwise, cycle
                 // through again to wait for playback
@@ -480,7 +469,7 @@ void GrainCluster::nextBuffer(double *accumBuff, unsigned int numFrames)
                     // queue next grain for trigger
                     nextGrain++;
                     // wrap grain idx
-                    if (nextGrain >= myGrains->size())
+                    if (nextGrain >= myGrains.size())
                         nextGrain = 0;
                 }
                 else {
@@ -494,8 +483,8 @@ void GrainCluster::nextBuffer(double *accumBuff, unsigned int numFrames)
             // sample offset (1 sample at a time for now)
             nextFrame = j * frameSkip;
             // iterate over all grains
-            for (int k = 0; k < myGrains->size(); k++) {
-                myGrains->at(k)->nextBuffer(accumBuff, frameSkip, nextFrame, k);
+            for (int k = 0; k < myGrains.size(); k++) {
+                myGrains[k]->nextBuffer(accumBuff, frameSkip, nextFrame, k);
             }
         }
     }
@@ -611,8 +600,8 @@ void GrainCluster::updateSpatialization()
 
 GrainClusterVis::~GrainClusterVis()
 {
-    if (myGrainsV)
-        delete myGrainsV;
+    for (GrainVis *vis : myGrainsV)
+        delete vis;
 }
 
 GrainClusterVis::GrainClusterVis(float x, float y, unsigned int numVoices,
@@ -649,10 +638,8 @@ GrainClusterVis::GrainClusterVis(float x, float y, unsigned int numVoices,
     // pointer to landscape visualization objects
     theLandscape = rects;
 
-    myGrainsV = new vector<GrainVis *>;
-
     for (int i = 0; i < numVoices; i++) {
-        myGrainsV->push_back(new GrainVis(gcX, gcY));
+        myGrainsV.push_back(new GrainVis(gcX, gcY));
     }
 
     numGrains = numVoices;
@@ -719,7 +706,7 @@ void GrainClusterVis::draw()
     //
     //    for (int i = 0; i < numGrains; i++){
     //        glPushMatrix();
-    //        myGrainsV->at(i)->draw(mode);
+    //        myGrainsV[i]->draw(mode);
     //        glPopMatrix();
     //    }
 
@@ -730,7 +717,7 @@ void GrainClusterVis::draw()
     // update grain motion;
     // Individual voices
     for (int i = 0; i < numGrains; i++) {
-        myGrainsV->at(i)->draw();
+        myGrainsV[i]->draw();
     }
     glPopMatrix();
 
@@ -744,8 +731,8 @@ void GrainClusterVis::getTriggerPos(unsigned int idx, double *playPos,
 {
     bool trigger = false;
     SoundRect *theRect = NULL;
-    if (idx < myGrainsV->size()) {
-        GrainVis *theGrain = myGrainsV->at(idx);
+    if (idx < myGrainsV.size()) {
+        GrainVis *theGrain = myGrainsV[idx];
         // TODO: motion models
         // updateGrainPosition(idx,gcX + randf()*50.0 + randf()*(-50.0),gcY + randf()*50.0 + randf()*(-50.0));
         updateGrainPosition(idx, gcX + (randf() * xRandExtent - randf() * xRandExtent),
@@ -814,17 +801,17 @@ void GrainClusterVis::updateCloudPosition(float x, float y)
     float yDiff = y - gcY;
     gcX = x;
     gcY = y;
-    for (int i = 0; i < myGrainsV->size(); i++) {
-        float newGrainX = myGrainsV->at(i)->getX() + xDiff;
-        float newGrainY = myGrainsV->at(i)->getY() + yDiff;
-        myGrainsV->at(i)->moveTo(newGrainX, newGrainY);
+    for (int i = 0; i < myGrainsV.size(); i++) {
+        float newGrainX = myGrainsV[i]->getX() + xDiff;
+        float newGrainY = myGrainsV[i]->getY() + yDiff;
+        myGrainsV[i]->moveTo(newGrainX, newGrainY);
     }
 }
 
 void GrainClusterVis::updateGrainPosition(int idx, float x, float y)
 {
     if (idx < numGrains)
-        myGrainsV->at(idx)->moveTo(x, y);
+        myGrainsV[idx]->moveTo(x, y);
 }
 
 
@@ -848,8 +835,8 @@ void GrainClusterVis::setSelectState(bool selectState)
 void GrainClusterVis::addGrain()
 {
     //    addFlag = true;
-    myGrainsV->push_back(new GrainVis(gcX, gcY));
-    numGrains = myGrainsV->size();
+    myGrainsV.push_back(new GrainVis(gcX, gcY));
+    numGrains = myGrainsV.size();
 }
 
 // remove a grain from the cloud (visualization only)
@@ -858,7 +845,7 @@ void GrainClusterVis::removeGrain()
     //    removeFlag = true;
     if (numGrains > 1) {
         // delete object
-        myGrainsV->pop_back();
-        numGrains = myGrainsV->size();
+        myGrainsV.pop_back();
+        numGrains = myGrainsV.size();
     }
 }

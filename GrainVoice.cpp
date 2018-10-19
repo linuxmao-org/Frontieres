@@ -51,9 +51,6 @@ GrainVoice::~GrainVoice()
     if (window != NULL)
         delete[] window;
 
-    if (activeSounds != NULL)
-        delete activeSounds;
-
     if (chanMults)
         delete[] chanMults;
 
@@ -75,9 +72,6 @@ GrainVoice::GrainVoice(vector<AudioFile *> *soundSet, float durationMs, float th
 
     // get number of loaded sounds
     numSounds = (unsigned int)soundSet->size();
-
-    // no active sounds on instantiation
-    activeSounds = NULL;
 
     // set play positions to -1 for all
     // note - will have to handle files being added at runtime later if it becomes a feature
@@ -169,14 +163,11 @@ bool GrainVoice::playMe(double *startPositions, double *startVols)
 
         // convert relative start positions to sample locations
 
-        if (activeSounds != NULL)
-            delete activeSounds;
-
-        activeSounds = new vector<int>;
+        activeSounds.clear();
 
         for (int i = 0; i < numSounds; i++) {
             if (startPositions[i] != -1) {
-                activeSounds->push_back(i);
+                activeSounds.push_back(i);
                 playPositions[i] =
                     floor(startPositions[i] * (theSounds->at(i)->frames - 1));
                 playVols[i] = startVols[i];
@@ -407,9 +398,9 @@ void GrainVoice::nextBuffer(double *accumBuff, unsigned int numFrames,
 
             // Get next audio frame data (accumulate from each sound under grain)
             //-- REMEMBER - playPositions are in frames, not samples
-            for (int j = 0; j < activeSounds->size(); j++) {
+            for (int j = 0; j < activeSounds.size(); j++) {
 
-                nextSound = activeSounds->at(j);
+                nextSound = activeSounds[j];
                 pos = playPositions[nextSound];  // get start position
                 atten = playVols[nextSound];  // get volume relative to rect
 

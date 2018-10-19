@@ -104,11 +104,11 @@ unsigned int g_buffSize = 1024;
 // audio files
 vector<AudioFile *> *mySounds = NULL;
 // audio file visualization objects
-vector<SoundRect *> *soundViews = NULL;
+vector<SoundRect *> soundViews;
 // grain cloud audio objects
-vector<GrainCluster *> *grainCloud = NULL;
+vector<GrainCluster *> grainCloud;
 // grain cloud visualization objects
-vector<GrainClusterVis *> *grainCloudVis;
+vector<GrainClusterVis *> grainCloudVis;
 // cloud counter
 unsigned int numClouds = 0;
 
@@ -135,7 +135,7 @@ int rb_anchor_x = -1;
 int rb_anchor_y = -1;
 
 // not used yet - for multiple selection
-vector<int> *selectionIndices = new vector<int>;
+vector<int> selectionIndices;
 
 // selection helper vars
 int selectedCloud = -1;
@@ -199,22 +199,7 @@ void cleaningFunction()
         }
         delete theMidiIn;
     }
-    if (mySounds != NULL)
-        delete mySounds;
 
-    if (grainCloud != NULL) {
-        delete grainCloud;
-    }
-
-    if (grainCloudVis != NULL) {
-        delete grainCloudVis;
-    }
-    if (soundViews != NULL) {
-        delete soundViews;
-    }
-    if (selectionIndices != NULL) {
-        delete selectionIndices;
-    }
     if (text_renderer != NULL) {
         delete text_renderer;
     }
@@ -246,8 +231,8 @@ int audioCallback(void *outputBuffer, void *inputBuffer, unsigned int numFrames,
 
     memset(out, 0, sizeof(SAMPLE) * numFrames * MY_CHANNELS);
     if (menuFlag == false) {
-        for (int i = 0; i < grainCloud->size(); i++) {
-            grainCloud->at(i)->nextBuffer(out, numFrames);
+        for (int i = 0; i < grainCloud.size(); i++) {
+            grainCloud[i]->nextBuffer(out, numFrames);
         }
     }
     GTime::instance().sec += numFrames * samp_time_sec;
@@ -432,8 +417,8 @@ void printParam()
     int screenHeight = screen->height();
 
     if ((numClouds > 0) && (selectedCloud >= 0)) {
-        GrainClusterVis *theCloudVis = grainCloudVis->at(selectedCloud);
-        GrainCluster *theCloud = grainCloud->at(selectedCloud);
+        GrainClusterVis *theCloudVis = grainCloudVis[selectedCloud];
+        GrainCluster *theCloud = grainCloud[selectedCloud];
         float cloudX = theCloudVis->getX();
         float cloudY = theCloudVis->getY();
         string myValue;
@@ -652,7 +637,7 @@ void deselect(int shapeType)
     switch (shapeType) {
     case CLOUD:
         if (selectedCloud >= 0) {
-            grainCloudVis->at(selectedCloud)->setSelectState(false);
+            grainCloudVis[selectedCloud]->setSelectState(false);
             // reset selected cloud
             selectedCloud = -1;
             // cout << "deselecting cloud" <<endl;
@@ -661,7 +646,7 @@ void deselect(int shapeType)
     case RECT:
         if (selectedRect >= 0) {
             // cout << "deselecting rect" << endl;
-            soundViews->at(selectedRect)->setSelectState(false);
+            soundViews[selectedRect]->setSelectState(false);
             selectedRect = -1;
         }
     }
@@ -680,7 +665,7 @@ void mouseDrag(int x, int y)
     int yDiff = 0;
 
     if (selectedCloud >= 0) {
-        grainCloudVis->at(selectedCloud)->updateCloudPosition(mouseX, mouseY);
+        grainCloudVis[selectedCloud]->updateCloudPosition(mouseX, mouseY);
     }
     else {
 
@@ -689,7 +674,7 @@ void mouseDrag(int x, int y)
             if ((lastDragX != veryHighNumber) && (lastDragY != veryHighNumber)) {
 
                 if (selectedRect >= 0) {  // movement case
-                    soundViews->at(selectedRect)->move(mouseX - lastDragX, mouseY - lastDragY);
+                    soundViews[selectedRect]->move(mouseX - lastDragX, mouseY - lastDragY);
                 }
             }
             lastDragX = mouseX;
@@ -705,8 +690,8 @@ void mouseDrag(int x, int y)
                     xDiff = x - lastDragX;
                     yDiff = y - lastDragY;
                     // get width and height
-                    float newWidth = soundViews->at(selectedRect)->getWidth();
-                    float newHeight = soundViews->at(selectedRect)->getHeight();
+                    float newWidth = soundViews[selectedRect]->getWidth();
+                    float newHeight = soundViews[selectedRect]->getHeight();
 
                     int thresh = 0;
                     // check motion mag
@@ -730,7 +715,7 @@ void mouseDrag(int x, int y)
                     }
 
                     // update width and height
-                    soundViews->at(selectedRect)->setWidthHeight(newWidth, newHeight);
+                    soundViews[selectedRect]->setWidthHeight(newWidth, newHeight);
                 }
             }
             lastDragX = x;
@@ -755,13 +740,13 @@ void mousePassiveMotion(int x, int y)
     if (selectedCloud >= 0) {
         switch (currentParam) {
         case MOTIONX:
-            grainCloudVis->at(selectedCloud)->setXRandExtent(mouseX);
+            grainCloudVis[selectedCloud]->setXRandExtent(mouseX);
             break;
         case MOTIONY:
-            grainCloudVis->at(selectedCloud)->setYRandExtent(mouseY);
+            grainCloudVis[selectedCloud]->setYRandExtent(mouseY);
             break;
         case MOTIONXY:
-            grainCloudVis->at(selectedCloud)->setRandExtent(mouseX, mouseY);
+            grainCloudVis[selectedCloud]->setRandExtent(mouseX, mouseY);
             break;
         default:
             break;
@@ -777,8 +762,8 @@ void mousePassiveMotion(int x, int y)
     //        }
     //    }
     // process rectangles
-    //    for (int i = 0; i < soundViews->size(); i++)
-    //        soundViews->at(i)->procMovement(x, y);
+    //    for (int i = 0; i < soundViews.size(); i++)
+    //        soundViews[i]->procMovement(x, y);
     //
 }
 
@@ -788,6 +773,8 @@ void mousePassiveMotion(int x, int y)
 //-----------------------------------------------------------------------------//
 int main(int argc, char **argv)
 {
+    int exitCode = 0;
+
     // init random number generator
     srand(time(NULL));
     // start time
@@ -908,11 +895,10 @@ int main(int argc, char **argv)
 
 
     // create visual representation of sounds
-    soundViews = new vector<SoundRect *>;
     for (int i = 0; i < mySounds->size(); i++) {
-        soundViews->push_back(new SoundRect());
-        soundViews->at(i)->associateSound(mySounds->at(i)->wave, mySounds->at(i)->frames,
-                                          mySounds->at(i)->channels);
+        soundViews.push_back(new SoundRect());
+        soundViews[i]->associateSound(mySounds->at(i)->wave, mySounds->at(i)->frames,
+                                      mySounds->at(i)->channels);
     }
 
     // init grain cloud vector and corresponding view vector
@@ -930,7 +916,7 @@ int main(int argc, char **argv)
     // start graphics
     // let Qt handle the current thread from here
     GLwindow->show();
-    return app.exec();
+    exitCode = app.exec();
 
 
     // cleanup routine
@@ -938,5 +924,5 @@ cleanup:
     cleaningFunction();
 
     // done
-    return 0;
+    return exitCode;
 }

@@ -95,7 +95,7 @@ public:
 
 
 private:
-    vector<AudioFile *> *fileSet;
+    vector<AudioFile *> fileSet;
 };
 
 

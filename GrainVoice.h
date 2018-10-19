@@ -127,7 +127,7 @@ private:
     double *queuedChanMults;
 
     // audio files being sampled
-    vector<int> *activeSounds;
+    vector<int> activeSounds;
 
     // window type
     unsigned int windowType, queuedWindowType;
