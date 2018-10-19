@@ -19,7 +19,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "Scene.h"
 #include <QMainWindow>
 #include <QOpenGLWidget>
 #include <memory>
@@ -42,8 +41,8 @@ private:
 class MyGLScreen : public QOpenGLWidget {
 public:
     MyGLScreen(QWidget *parent = nullptr);
-private:
-    Scene sceneCurrent;
+    ~MyGLScreen();
+
 protected:
     void initializeGL() override;
     void paintGL() override;
@@ -54,4 +53,8 @@ protected:
     void mousePassiveMoveEvent(QMouseEvent *event);
     void keyPressEvent(QKeyEvent *event) override;
     void keyReleaseEvent(QKeyEvent *event) override;
+
+private:
+    struct Impl;
+    std::unique_ptr<Impl> P;
 };

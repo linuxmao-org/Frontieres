@@ -23,6 +23,7 @@
 #include "Frontieres.h"
 #include "SoundRect.h"
 #include "GrainCluster.h"
+#include "Scene.h"
 #include <QtFont3D.h>
 #include <QMouseEvent>
 #include <QKeyEvent>
@@ -65,11 +66,19 @@ MyGLScreen *MyGLWindow::screen() const
 }
 
 // the openGL screen
+struct MyGLScreen::Impl {
+    Scene sceneCurrent;
+};
+
 MyGLScreen::MyGLScreen(QWidget *parent)
-    : QOpenGLWidget(parent)
+    : QOpenGLWidget(parent), P(new Impl)
 {
     setMouseTracking(true);
     setFocusPolicy(Qt::StrongFocus);
+}
+
+MyGLScreen::~MyGLScreen()
+{
 }
 
 void MyGLScreen::initializeGL()
@@ -841,9 +850,10 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
         position.y += upDownMoveSpeed;
         mouseY -= sidewaysMoveSpeed;
         break;
-    case Qt::Key_M:{
+    case Qt::Key_M: {
         // record scene
-        string nameSceneFile = sceneCurrent.askNameScene(SAVE);
+        Scene &scene = P->sceneCurrent;
+        string nameSceneFile = scene.askNameScene(SAVE);
         if (nameSceneFile.length() != 0) {
             QFile sceneFile (QString::fromStdString(nameSceneFile));
             sceneFile.open(QIODevice::WriteOnly | QIODevice::Text);
