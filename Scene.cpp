@@ -105,9 +105,9 @@ bool Scene::load(QFile &sceneFile)
         }
 
         if (nSample != -1) {
-            SoundRect *sv = soundViews->at(nSample);
+            SoundRect *sv = soundViews[nSample];
             if ((bool)objSound["orientation"].toInt() != sv->getOrientation())
-                soundViews->at(nSample)->toggleOrientation();
+                sv->toggleOrientation();
             double heightSample = objSound["height"].toDouble();
             double widthSample = objSound["width"].toDouble();
             double xSample = objSound["x"].toDouble();
@@ -161,10 +161,10 @@ bool Scene::load(QFile &sceneFile)
         cout << "Y extent = " << cloudYRandExtent << "\n";
         // create audio
         GrainCluster *gc = new GrainCluster(mySounds, cloudNumVoices);
-        grainCloud->push_back(gc);
+        grainCloud.push_back(gc);
         // create visualization
-        GrainClusterVis *gv = new GrainClusterVis(cloudX, cloudY, cloudNumVoices, soundViews);
-        grainCloudVis->push_back(gv);
+        GrainClusterVis *gv = new GrainClusterVis(cloudX, cloudY, cloudNumVoices, &soundViews);
+        grainCloudVis.push_back(gv);
         // register visualization with audio
         gv->setSelectState(true);
         gc->registerVis(gv);
@@ -209,7 +209,7 @@ bool Scene::save(QFile &sceneFile)
     cout << mySounds->size() << "samples : " << "\n";
     for (int i = 0; i < mySounds->size(); ++i) {
         AudioFile *af = mySounds->at(i);
-        SoundRect *sv = soundViews->at(i);
+        SoundRect *sv = soundViews.at(i);
 
         std::ostream &out = std::cout;
         out << "Audio file " << i << ":";
@@ -229,10 +229,10 @@ bool Scene::save(QFile &sceneFile)
 
     // grainclouds
     QJsonArray docGrains;
-    cout << grainCloud->size() << " clouds : " << "\n";
-    for (int i = 0; i < grainCloud->size(); i++) {
-        GrainCluster *gc = grainCloud->at(i);
-        GrainClusterVis *gv = grainCloudVis->at(i);
+    cout << grainCloud.size() << " clouds : " << "\n";
+    for (int i = 0; i < grainCloud.size(); i++) {
+        GrainCluster *gc = grainCloud.at(i);
+        GrainClusterVis *gv = grainCloudVis.at(i);
 
         std::ostream &out = std::cout;
         out << "Grain Cluster " << i << ":";

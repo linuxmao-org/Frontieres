@@ -901,10 +901,6 @@ int main(int argc, char **argv)
                                       mySounds->at(i)->channels);
     }
 
-    // init grain cloud vector and corresponding view vector
-    grainCloud = new vector<GrainCluster *>;
-    grainCloudVis = new vector<GrainClusterVis *>;
-
     // start audio stream
     theAudio->startStream();
 
