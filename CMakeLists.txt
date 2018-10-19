@@ -61,9 +61,12 @@ target_include_directories(Frontieres
 # Qt
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTOUIC ON)
 find_package(Qt5Widgets CONFIG REQUIRED)
 find_package(Qt5OpenGL CONFIG REQUIRED)
+
+qt5_wrap_ui(Frontieres_UI_SOURCES
+  sources/interface/MyGLWindow.ui)
+target_sources(Frontieres PRIVATE ${Frontieres_UI_SOURCES})
 target_link_libraries(Frontieres PRIVATE Qt5::Widgets Qt5::OpenGL)
 
 # I18n

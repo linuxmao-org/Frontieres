@@ -19,6 +19,9 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#ifndef MYGLWINDOW_H
+#define MYGLWINDOW_H
+
 #include <QMainWindow>
 #include <QOpenGLWidget>
 #include <memory>
@@ -61,3 +64,5 @@ private:
     struct Impl;
     std::unique_ptr<Impl> P;
 };
+
+#endif

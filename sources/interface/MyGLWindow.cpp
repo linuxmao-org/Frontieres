@@ -19,12 +19,13 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "MyGLWindow.h"
-#include "Frontieres.h"
+#include "interface/MyGLWindow.h"
+#include "ui_MyGLWindow.h"
 #include "model/GrainCluster.h"
 #include "model/Scene.h"
 #include "visual/GrainClusterVis.h"
 #include "visual/SoundRect.h"
+#include "Frontieres.h"
 #include <QtFont3D.h>
 #include <QMouseEvent>
 #include <QKeyEvent>
@@ -33,7 +34,7 @@
 extern string g_audioPath;
 
 struct MyGLWindow::Impl {
-    MyGLScreen *screen = nullptr;
+    Ui::MyGLWindow ui;
 };
 
 MyGLWindow::MyGLWindow()
@@ -47,12 +48,8 @@ MyGLWindow::~MyGLWindow()
 
 void MyGLWindow::initialize()
 {
-    MyGLScreen *screen = new MyGLScreen;
-    P->screen = screen;
-
-    resize(800, 600);
-    setWindowTitle(u8"Frontières");
-    setCentralWidget(screen);
+    P->ui.setupUi(this);
+    MyGLScreen *screen = this->screen();
 
     // initial window settings
     QSurfaceFormat format = QSurfaceFormat::defaultFormat();
@@ -63,7 +60,7 @@ void MyGLWindow::initialize()
 
 MyGLScreen *MyGLWindow::screen() const
 {
-    return P->screen;
+    return P->ui.screen;
 }
 
 // the openGL screen

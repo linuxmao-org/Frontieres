@@ -78,3 +78,6 @@ HEADERS += \
   libraries/Stk.h \
   libraries/ring_buffer.h \
   libraries/ring_buffer.tcc \
+
+FORMS += \
+  sources/interface/MyGLWindow.ui

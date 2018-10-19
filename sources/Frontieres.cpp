@@ -834,6 +834,7 @@ int main(int argc, char **argv)
     MyGLWindow *GLwindow = app.GLwindow();
     text_renderer = new QtFont3D;
     GLwindow->initialize();
+    GLwindow->show();
 
     MyGLScreen *screen = GLwindow->screen();
     Scene &scene = screen->currentScene();
@@ -912,9 +913,7 @@ int main(int argc, char **argv)
         QFile sceneFile(QString::fromStdString(nameSceneFile));
         scene.load(sceneFile);
     }
-    // start graphics
     // let Qt handle the current thread from here
-    GLwindow->show();
     exitCode = app.exec();
 
 
