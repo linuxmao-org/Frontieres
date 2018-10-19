@@ -78,6 +78,7 @@
 #include "Scene.h"
 
 #include <QApplication>
+#include <QTextStream>
 
 using namespace std;
 
@@ -158,8 +159,7 @@ long lastDragY = veryHighNumber;
 QtFont3D *text_renderer = NULL;
 
 // scenes
-QString g_extensionScene = ".scn";
-Scene sceneCurrent;
+const char *g_extensionScene = ".scn";
 
 //--------------------------------------------------------------------------------
 // FUNCTION PROTOTYPES
@@ -859,7 +859,7 @@ int main(int argc, char **argv)
     string audioPathUser = "";
     string nameSceneFile = "";
     if (replyLoadScene == QMessageBox::Yes){
-        nameSceneFile = sceneCurrent.askNameScene(FileDirection::Load);
+        nameSceneFile = scene.askNameScene(FileDirection::Load);
         if (!nameSceneFile.empty()) {
             QFile sceneFile (QString::fromStdString(nameSceneFile));
             sceneFile.open(QIODevice::ReadOnly | QIODevice::Text);

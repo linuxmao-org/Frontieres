@@ -25,6 +25,8 @@
 #include "GrainCluster.h"
 #include "GrainVoice.h"
 #include "AudioFileSet.h"
+#include <QTextStream>
+#include <QStandardPaths>
 
 //-----------------------------------------------------------------------------
 // Destructor
@@ -45,7 +47,7 @@ string Scene::askNameScene(FileDirection direction)
 {
     // choise file name and test extension
     QString captionPath = qApp->translate("Frontieres","Frontieres : name of the scene");
-    QString filterExtensionScene = "*" + g_extensionScene;
+    QString filterExtensionScene = "*" + QString(g_extensionScene);
     QString pathScene = QString::fromStdString(g_audioPath);
     if (g_audioPath == g_audioPathDefault)
         pathScene = QStandardPaths::displayName(QStandardPaths::HomeLocation).toUtf8().constData();
@@ -53,8 +55,8 @@ string Scene::askNameScene(FileDirection direction)
     if (direction == FileDirection::Save) {
         nameSceneFile = QFileDialog::getSaveFileName(nullptr, captionPath, pathScene, filterExtensionScene ).toUtf8().constData();
         if (nameSceneFile.length() != 0) {
-            if (nameSceneFile.substr(nameSceneFile.size()-4, nameSceneFile.size()) != g_extensionScene.toUtf8().constData())
-                nameSceneFile = nameSceneFile + g_extensionScene.toUtf8().constData();
+            if (nameSceneFile.substr(nameSceneFile.size()-4, nameSceneFile.size()) != g_extensionScene)
+                nameSceneFile = nameSceneFile + g_extensionScene;
             cout << "save scene " << nameSceneFile << endl;
         }
         else

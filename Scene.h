@@ -24,24 +24,8 @@
 #define SCENE_H
 
 #include "Frontieres.h"
-#include <QFile>
-#include <QString>
-#include <iostream>
-#include <QIODevice>
-#include <QTextStream>
-#include <iostream>
-#include <QStandardPaths>
-class SoundRect;
-class GrainCluster;
-class GrainClusterVis;
-struct AudioFile;
-class QtFont3D;
-
-using namespace std;
-
-extern string g_audioPath;
-extern string g_audioPathDefault;
-extern QString g_extensionScene;
+#include <string>
+class QFile;
 
 class Scene
 {
@@ -53,7 +37,7 @@ public:
     Scene();
 
     // window to choose a scene file
-    string askNameScene(FileDirection direction);
+    static std::string askNameScene(FileDirection direction);
 
     bool load(QFile &sceneFile);
     bool save(QFile &sceneFile);

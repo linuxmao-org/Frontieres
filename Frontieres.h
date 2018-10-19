@@ -70,6 +70,10 @@ extern bool resizeDir;  // for rects
 // audio file visualization objects
 extern std::vector<SoundRect *> *soundViews;
 
+// library path
+extern std::string g_audioPath;
+extern std::string g_audioPathDefault;
+
 // audio files
 extern std::vector<AudioFile *> *mySounds;
 // audio file visualization objects
@@ -135,6 +139,9 @@ enum {
       //jpc: pour dessiner le texte à l'échelle en QtFont3D,
       //  j'ai mis un facteur qui donne à peu près comme le logiciel original.
 };
+
+// scenes
+extern const char *g_extensionScene;
 
 void updateMouseCoords(int x, int y);
 void deselect(int mode);
