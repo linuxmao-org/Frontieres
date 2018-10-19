@@ -55,8 +55,8 @@
 
 // audio related
 #include "MyRtAudio.h"
-#include "AudioFileSet.h"
-#include "Window.h"
+#include "model/AudioFileSet.h"
+#include "dsp/Window.h"
 
 // midi related
 #include <RtMidi.h>
@@ -67,7 +67,8 @@
 #include "visual/GrainClusterVis.h"
 
 // audio related
-#include "GrainCluster.h"
+#include "model/GrainCluster.h"
+#include "model/Scene.h"
 
 // time
 #include "utility/GTime.h"
@@ -76,9 +77,8 @@
 #include "I18n.h"
 
 // Qt application
-#include "MyGLApplication.h"
-#include "MyGLWindow.h"
-#include "Scene.h"
+#include "interface/MyGLApplication.h"
+#include "interface/MyGLWindow.h"
 #include <QtFont3D.h>
 #include <QApplication>
 #include <QJsonDocument>

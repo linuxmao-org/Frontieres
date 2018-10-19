@@ -31,9 +31,11 @@
 // TODO:  set and show name implementation
 
 #include "SoundRect.h"
-#include "MyGLApplication.h"
-#include "MyGLWindow.h"
 #include "utility/GTime.h"
+
+// TODO avoid this
+#include "interface/MyGLApplication.h"
+#include "interface/MyGLWindow.h"
 
 // destructor
 SoundRect::~SoundRect()

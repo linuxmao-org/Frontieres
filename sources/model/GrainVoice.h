@@ -30,9 +30,6 @@
 #ifndef GRAINVOICE_H
 #define GRAINVOICE_H
 
-#include "theglobals.h"
-#include "AudioFileSet.h"
-#include "Window.h"
 #include <vector>
 #include <math.h>
 #include <time.h>
@@ -48,6 +45,7 @@
 
 
 // forward declarations
+class AudioFile;
 class GrainVoice;
 class GrainVis;
 

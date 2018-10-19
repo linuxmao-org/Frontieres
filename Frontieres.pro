@@ -40,14 +40,14 @@ LIBS += -lsndfile -lsoxr
 
 SOURCES += \
   sources/Frontieres.cpp \
-  sources/AudioFileSet.cpp \
   sources/MyRtAudio.cpp \
-  sources/Window.cpp \
-  sources/GrainVoice.cpp \
-  sources/GrainCluster.cpp \
-  sources/MyGLApplication.cpp \
-  sources/MyGLWindow.cpp \
-  sources/Scene.cpp \
+  sources/interface/MyGLApplication.cpp \
+  sources/interface/MyGLWindow.cpp \
+  sources/dsp/Window.cpp \
+  sources/model/AudioFileSet.cpp \
+  sources/model/GrainVoice.cpp \
+  sources/model/GrainCluster.cpp \
+  sources/model/Scene.cpp \
   sources/visual/GrainVis.cpp \
   sources/visual/GrainClusterVis.cpp \
   sources/visual/SoundRect.cpp \
@@ -58,17 +58,17 @@ SOURCES += \
   libraries/ring_buffer.cpp
 
 HEADERS += \
-  sources/MyGLApplication.h \
   sources/theglobals.h \
   sources/I18n.h \
-  sources/GrainCluster.h \
   sources/Frontieres.h \
-  sources/MyGLWindow.h \
-  sources/AudioFileSet.h \
-  sources/Window.h \
   sources/MyRtAudio.h \
-  sources/GrainVoice.h \
-  sources/Scene.h \
+  sources/interface/MyGLApplication.h \
+  sources/interface/MyGLWindow.h \
+  sources/dsp/Window.h \
+  sources/model/AudioFileSet.h \
+  sources/model/GrainCluster.h \
+  sources/model/GrainVoice.h \
+  sources/model/Scene.h \
   sources/visual/GrainVis.h \
   sources/visual/GrainClusterVis.h \
   sources/visual/SoundRect.h \

@@ -27,7 +27,10 @@
 //  Created by Christopher Carlson on 11/20/11.
 //
 
-#include "GrainVoice.h"
+#include "model/GrainVoice.h"
+#include "model/AudioFileSet.h"
+#include "dsp/Window.h"
+#include "theglobals.h"
 
 extern unsigned int samp_rate;
 

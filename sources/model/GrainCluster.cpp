@@ -28,9 +28,8 @@
 
 #include "GrainCluster.h"
 #include "visual/GrainClusterVis.h"
+#include "dsp/Window.h"
 #include "utility/GTime.h"
-#include "MyGLApplication.h"
-#include "MyGLWindow.h"
 
 extern unsigned int samp_rate;
 

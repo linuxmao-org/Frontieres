@@ -16,14 +16,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_executable(Frontieres WIN32
   sources/Frontieres.cpp
-  sources/AudioFileSet.cpp
   sources/MyRtAudio.cpp
-  sources/Window.cpp
-  sources/GrainVoice.cpp
-  sources/GrainCluster.cpp
-  sources/MyGLApplication.cpp
-  sources/MyGLWindow.cpp
-  sources/Scene.cpp
+  sources/interface/MyGLApplication.cpp
+  sources/interface/MyGLWindow.cpp
+  sources/dsp/Window.cpp
+  sources/model/AudioFileSet.cpp
+  sources/model/GrainVoice.cpp
+  sources/model/GrainCluster.cpp
+  sources/model/Scene.cpp
   sources/visual/GrainVis.cpp
   sources/visual/GrainClusterVis.cpp
   sources/visual/SoundRect.cpp

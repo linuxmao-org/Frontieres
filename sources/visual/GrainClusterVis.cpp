@@ -33,8 +33,8 @@
 #include "utility/GTime.h"
 
 // TODO avoid this
-#include "MyGLApplication.h"
-#include "MyGLWindow.h"
+#include "interface/MyGLApplication.h"
+#include "interface/MyGLWindow.h"
 
 // graphics includes
 #ifdef __MACOSX_CORE__

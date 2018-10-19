@@ -39,10 +39,7 @@
 #include <time.h>
 #include <ctime>
 #include <Stk.h>
-
 #include "GrainVoice.h"
-#include "theglobals.h"
-#include "Window.h"
 
 // direction modes
 enum { FORWARD, BACKWARD, RANDOM_DIR };

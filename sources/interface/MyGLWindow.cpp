@@ -21,8 +21,8 @@
 
 #include "MyGLWindow.h"
 #include "Frontieres.h"
-#include "GrainCluster.h"
-#include "Scene.h"
+#include "model/GrainCluster.h"
+#include "model/Scene.h"
 #include "visual/GrainClusterVis.h"
 #include "visual/SoundRect.h"
 #include <QtFont3D.h>
