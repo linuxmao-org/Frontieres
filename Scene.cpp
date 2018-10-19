@@ -25,8 +25,10 @@
 #include "GrainCluster.h"
 #include "GrainVoice.h"
 #include "AudioFileSet.h"
+#include "I18n.h"
 #include <QTextStream>
 #include <QStandardPaths>
+#include <QDebug>
 
 //-----------------------------------------------------------------------------
 // Destructor
@@ -46,30 +48,31 @@ Scene::Scene()
 string Scene::askNameScene(FileDirection direction)
 {
     // choise file name and test extension
-    QString captionPath = qApp->translate("Frontieres","Frontieres : name of the scene");
-    QString filterExtensionScene = "*" + QString(g_extensionScene);
+    QString caption = _Q("","Frontieres : name of the scene");
+    QString filterExtensionScene = _Q("", "Scene files (*%1)").arg(g_extensionScene);
     QString pathScene = QString::fromStdString(g_audioPath);
+
     if (g_audioPath == g_audioPathDefault)
-        pathScene = QStandardPaths::displayName(QStandardPaths::HomeLocation).toUtf8().constData();
-    string nameSceneFile = "";
+        pathScene = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+
+    QFileDialog dlg(nullptr, caption, pathScene, filterExtensionScene);
+    dlg.setDefaultSuffix(g_extensionScene);
     if (direction == FileDirection::Save) {
-        nameSceneFile = QFileDialog::getSaveFileName(nullptr, captionPath, pathScene, filterExtensionScene ).toUtf8().constData();
-        if (nameSceneFile.length() != 0) {
-            if (nameSceneFile.substr(nameSceneFile.size()-4, nameSceneFile.size()) != g_extensionScene)
-                nameSceneFile = nameSceneFile + g_extensionScene;
-            cout << "save scene " << nameSceneFile << endl;
-        }
-        else
-            cout << "save scene aborted" << endl;
+        dlg.setAcceptMode(QFileDialog::AcceptSave);
     }
     else {
-        nameSceneFile = QFileDialog::getOpenFileName(nullptr, captionPath, pathScene, filterExtensionScene ).toUtf8().constData();
-        if (nameSceneFile.length() != 0)
-            cout << "load scene " << nameSceneFile << endl;
-        else
-            cout << "load scene aborted" << endl;
+        dlg.setAcceptMode(QFileDialog::AcceptOpen);
+        dlg.setFileMode(QFileDialog::ExistingFile);
     }
-    return nameSceneFile;
+
+    if (dlg.exec() != QDialog::Accepted)
+        return std::string();
+
+    QStringList selection = dlg.selectedFiles();
+    if (selection.size() != 1)
+        return std::string();
+
+    return selection.front().toStdString();
 }
 
 bool Scene::load(QFile &sceneFile)
