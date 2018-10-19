@@ -31,8 +31,10 @@ public:
     Scene();
 
     // window to choose a scene file
-
     string askNameScene(FileDirection direction);
+
+    bool load(QFile &sceneFile);
+    bool save(QFile &sceneFile);
 };
 
 #endif // SCENE_H

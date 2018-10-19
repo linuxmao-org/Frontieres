@@ -844,6 +844,9 @@ int main(int argc, char **argv)
     text_renderer = new QtFont3D;
     GLwindow->initialize();
 
+    MyGLScreen *screen = GLwindow->screen();
+    Scene &scene = screen->currentScene();
+
     double fps = 50;
     app.startIdleCallback(fps);
     // work path or scene file
@@ -857,16 +860,19 @@ int main(int argc, char **argv)
     string nameSceneFile = "";
     if (replyLoadScene == QMessageBox::Yes){
         nameSceneFile = sceneCurrent.askNameScene(FileDirection::Load);
-        if (nameSceneFile.length() != 0) {
+        if (!nameSceneFile.empty()) {
             QFile sceneFile (QString::fromStdString(nameSceneFile));
             sceneFile.open(QIODevice::ReadOnly | QIODevice::Text);
+
+            // TODO structurer ce format de fichier
+
             QTextStream sceneFlux(&sceneFile);
             // audio path
-            audioPathUser = sceneFlux.readLine().toUtf8().constData();
+            audioPathUser = sceneFlux.readLine().toStdString();
             cout << "audio path user : " << audioPathUser << endl;
             sceneFile.close();
-            }
         }
+    }
     if (nameSceneFile.length() == 0) {
         QString captionPath = qApp->translate("window to choose working directory",
                                               "Frontieres : select sample's directory");
@@ -916,135 +922,10 @@ int main(int argc, char **argv)
     // start audio stream
     theAudio->startStream();
 
-    if (replyLoadScene == QMessageBox::Yes && nameSceneFile.length() != 0){ // load scene
+    if (replyLoadScene == QMessageBox::Yes && !nameSceneFile.empty()) { // load scene
         cout << "Loading scene " << nameSceneFile << endl;
-        QFile sceneFileRead (QString::fromStdString(nameSceneFile));
-        sceneFileRead.open(QIODevice::ReadOnly | QIODevice::Text);
-        QTextStream sceneFlux(&sceneFileRead);
-        string lineScene = sceneFlux.readLine().toUtf8().constData(); // path
-        cout << "scene path : " << lineScene << endl;
-        int nSamplesScene = sceneFlux.readLine().toInt(); // number of samples scene
-        cout << nSamplesScene << " samples" << endl;
-        int j = 0;
-        int nSample = -1;
-        int nCloud = -1;
-        float widthSample =0;
-        float heightSample =0;
-        float xSample =0;
-        float ySample =0;
-        bool orientationSample = true;
-        for (int i = 0; i < nSamplesScene ; i++) { // samples
-            nSample = -1;
-            lineScene = sceneFlux.readLine().toUtf8().constData(); // sample
-            cout << lineScene;
-            j = 0;
-            while ( j < mySounds->size()) {
-                if (mySounds->at(j)->name == lineScene) { // sample matching
-                    nSample = j;
-                    j = mySounds->size();
-                }
-                j += 1;
-            }
-            if (nSample != -1) {
-                orientationSample = soundViews->at(nSample)->getOrientation();
-                if (!!sceneFlux.readLine().toInt() != soundViews->at(nSample)->getOrientation())
-                    soundViews->at(nSample)->toggleOrientation();
-                heightSample = sceneFlux.readLine().toFloat();
-                widthSample = sceneFlux.readLine().toFloat();
-                xSample = sceneFlux.readLine().toFloat();
-                ySample = sceneFlux.readLine().toFloat();
-                soundViews->at(nSample)->setWidthHeight(widthSample, heightSample);
-                soundViews->at(nSample)->setXY(xSample, ySample);
-                cout << ", heigth : " << heightSample
-                     << ", width : " << widthSample
-                     << ", x : " << xSample
-                     << ", y : " << ySample << endl;
-             }
-            else
-                cout << " not found" << endl;
-            lineScene = sceneFlux.readLine().toUtf8().constData(); // ---
-        }
-        int nCloudScene = sceneFlux.readLine().toInt(); // number of clouds scene
-        cout << nCloudScene << " clouds to create" << endl;
-        float cloudDuration = 0;
-        float cloudOverlap = 0;
-        float cloudPitch = 0;
-        float cloudPitchLFOFreq = 0;
-        float cloudPitchLFOAmount = 0;
-        int cloudDirection = 0;
-        int cloudWindowType = 0;
-        int cloudSpatialMode = 0;
-        int cloudSpatialChanel = 0;
-        float cloudVolumeDb = 0;
-        int cloudNumVoices = 0;
-        int cloudActivateState = 0;
-        float cloudX = 0;
-        float cloudY = 0;
-        float cloudXRandExtent = 0;
-        float cloudYRandExtent = 0;
-        int cloudCurrent = 0;
-        for (int i = 0; i < nCloudScene ; i++) { // clouds
-             cloudCurrent = i + 1;
-             cloudDuration = sceneFlux.readLine().toFloat();
-             cloudOverlap = sceneFlux.readLine().toFloat();
-             cloudPitch = sceneFlux.readLine().toFloat();
-             cloudPitchLFOFreq = sceneFlux.readLine().toFloat();
-             cloudPitchLFOAmount = sceneFlux.readLine().toFloat();
-             cloudDirection = sceneFlux.readLine().toInt();
-             cloudWindowType = sceneFlux.readLine().toInt();
-             cloudSpatialMode = sceneFlux.readLine().toInt();
-             cloudSpatialChanel = sceneFlux.readLine().toInt();
-             cloudVolumeDb = sceneFlux.readLine().toFloat();
-             cloudNumVoices = sceneFlux.readLine().toInt();
-             cloudActivateState = sceneFlux.readLine().toInt();
-             cloudX = sceneFlux.readLine().toFloat();
-             cloudY = sceneFlux.readLine().toFloat();
-             cloudXRandExtent = sceneFlux.readLine().toFloat();
-             cloudYRandExtent = sceneFlux.readLine().toFloat();
-             lineScene = sceneFlux.readLine().toUtf8().constData(); // ---
-             cout << "cloud " << cloudCurrent << " :" << endl;
-             cout << "duration = " << cloudDuration << endl;
-             cout << "overlap = " << cloudOverlap << endl;
-             cout << "pitch = " << cloudPitch << endl;
-             cout << "pitchLFOFreq = " << cloudPitchLFOFreq << endl;
-             cout << "pitchLFOAmount = " << cloudPitchLFOAmount << endl;
-             cout << "direction = " << cloudDirection << endl;
-             cout << "window type = " << cloudWindowType << endl;
-             cout << "spatial mode = " << cloudSpatialMode << endl;
-             cout << "spatial chanel = " << cloudSpatialChanel << endl;
-             cout << "volume = " << cloudVolumeDb << endl;
-             cout << "voices = " << cloudNumVoices << endl;
-             cout << "active = " << cloudActivateState << endl;
-             cout << "X = " << cloudX << endl;
-             cout << "Y = " << cloudY << endl;
-             cout << "X extent = " << cloudXRandExtent << endl;
-             cout << "Y extent = " << cloudYRandExtent << endl;
-             // create audio
-             grainCloud->push_back(new GrainCluster(mySounds, cloudNumVoices));
-             // create visualization
-             grainCloudVis->push_back(new GrainClusterVis(cloudX, cloudY, cloudNumVoices, soundViews));
-             // register visualization with audio
-             grainCloudVis->at(i)->setSelectState(true);
-             grainCloud->at(i)->registerVis(grainCloudVis->at(i));
-
-             grainCloud->at(i)->setDurationMs(cloudDuration);
-             grainCloud->at(i)->setOverlap(cloudOverlap);
-             grainCloud->at(i)->setPitch(cloudPitch);
-             grainCloud->at(i)->setPitchLFOFreq(cloudPitchLFOFreq);
-             grainCloud->at(i)->setPitchLFOAmount(cloudPitchLFOAmount);
-             grainCloud->at(i)->setDirection(cloudDirection);
-             grainCloud->at(i)->setWindowType(cloudWindowType);
-             grainCloud->at(i)->setSpatialMode(cloudSpatialMode,cloudSpatialChanel);
-             grainCloud->at(i)->setVolumeDb(cloudVolumeDb);
-             grainCloud->at(i)->setActiveState(cloudActivateState);
-             grainCloudVis->at(i)->setFixedXRandExtent(cloudXRandExtent);
-             grainCloudVis->at(i)->setFixedYRandExtent(cloudYRandExtent);
-             grainCloudVis->at(i)->setSelectState(false);
-
-             numClouds += 1;
-
-        }
-        sceneFileRead.close();
+        QFile sceneFile(QString::fromStdString(nameSceneFile));
+        scene.load(sceneFile);
     }
     // start graphics
     // let Qt handle the current thread from here
