@@ -852,8 +852,7 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
         break;
     case Qt::Key_M: {
         // record scene
-        Scene &scene = P->sceneCurrent;
-        string nameSceneFile = scene.askNameScene(SAVE);
+        string nameSceneFile = scene.askNameScene(FileDirection::Save);
         if (nameSceneFile.length() != 0) {
             QFile sceneFile (QString::fromStdString(nameSceneFile));
             sceneFile.open(QIODevice::WriteOnly | QIODevice::Text);

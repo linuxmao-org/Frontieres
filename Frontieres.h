@@ -109,9 +109,9 @@ enum {
 };
 
 // scenes files read/write direction
-enum {
-    LOAD,
-    SAVE
+enum class FileDirection {
+    Load,
+    Save
 };
 
 // flag indicating parameter change

@@ -15,9 +15,8 @@ Scene::Scene()
 //-----------------------------------------------------------------------------
 // window to chose scene
 //-----------------------------------------------------------------------------
-string Scene::askNameScene(int direction)
+string Scene::askNameScene(FileDirection direction)
 {
-
     // choise file name and test extension
     QString captionPath = qApp->translate("Frontieres","Frontieres : name of the scene");
     QString filterExtensionScene = "*" + g_extensionScene;
@@ -25,7 +24,7 @@ string Scene::askNameScene(int direction)
     if (g_audioPath == g_audioPathDefault)
         pathScene = QStandardPaths::displayName(QStandardPaths::HomeLocation).toUtf8().constData();
     string nameSceneFile = "";
-    if (direction == SAVE){
+    if (direction == FileDirection::Save) {
         nameSceneFile = QFileDialog::getSaveFileName(nullptr, captionPath, pathScene, filterExtensionScene ).toUtf8().constData();
         if (nameSceneFile.length() != 0) {
             if (nameSceneFile.substr(nameSceneFile.size()-4, nameSceneFile.size()) != g_extensionScene.toUtf8().constData())

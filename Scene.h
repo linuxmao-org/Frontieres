@@ -32,7 +32,7 @@ public:
 
     // window to choose a scene file
 
-    string askNameScene(int direction);
+    string askNameScene(FileDirection direction);
 };
 
 #endif // SCENE_H

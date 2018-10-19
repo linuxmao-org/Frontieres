@@ -856,7 +856,7 @@ int main(int argc, char **argv)
     string audioPathUser = "";
     string nameSceneFile = "";
     if (replyLoadScene == QMessageBox::Yes){
-        nameSceneFile = sceneCurrent.askNameScene(LOAD);
+        nameSceneFile = sceneCurrent.askNameScene(FileDirection::Load);
         if (nameSceneFile.length() != 0) {
             QFile sceneFile (QString::fromStdString(nameSceneFile));
             sceneFile.open(QIODevice::ReadOnly | QIODevice::Text);
