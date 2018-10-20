@@ -43,6 +43,7 @@ SOURCES += \
   sources/MyRtAudio.cpp \
   sources/interface/MyGLApplication.cpp \
   sources/interface/MyGLWindow.cpp \
+  sources/interface/StartDialog.cpp \
   sources/dsp/Window.cpp \
   sources/model/AudioFileSet.cpp \
   sources/model/GrainVoice.cpp \
@@ -64,6 +65,7 @@ HEADERS += \
   sources/MyRtAudio.h \
   sources/interface/MyGLApplication.h \
   sources/interface/MyGLWindow.h \
+  sources/interface/StartDialog.h \
   sources/dsp/Window.h \
   sources/model/AudioFileSet.h \
   sources/model/GrainCluster.h \
@@ -80,4 +82,5 @@ HEADERS += \
   libraries/ring_buffer.tcc \
 
 FORMS += \
-  sources/interface/MyGLWindow.ui
+  sources/interface/MyGLWindow.ui \
+  sources/interface/StartDialog.ui

@@ -79,6 +79,7 @@
 // Qt application
 #include "interface/MyGLApplication.h"
 #include "interface/MyGLWindow.h"
+#include "interface/StartDialog.h"
 #include <QtFont3D.h>
 #include <QApplication>
 #include <QJsonDocument>
@@ -815,22 +816,28 @@ int main(int argc, char **argv)
 
     double fps = 50;
     app.startIdleCallback(fps);
-    // work path or scene file
-    int replyLoadScene = 0;
-    replyLoadScene = QMessageBox::question(nullptr,
-                                  qApp->translate("message asking to load a scene or not","Frontieres"),
-                                  qApp->translate("message asking to load a scene or not",
-                                                  "Welcome ! Do you want to load a recorded scene ?"),
-                                  QMessageBox::Yes | QMessageBox::No);
+
+    StartDialog startDlg;
+    startDlg.exec();
+
+    //
     std::string audioPathUser;
     std::string nameSceneFile;
-    if (replyLoadScene == QMessageBox::Yes) {
+    int startChoice = startDlg.choiceResult();
+
+    switch (startChoice) {
+    default:
+        break;
+
+    case StartDialog::Choice_NewScene:
+        break;
+
+    case StartDialog::Choice_LoadScene: {
         nameSceneFile = scene->askNameScene(FileDirection::Load);
         QFile sceneFile(QString::fromStdString(nameSceneFile));
         QJsonParseError jsonParseError;
         QJsonDocument doc;
         if (sceneFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            // TODO structurer ce format de fichier
             doc = QJsonDocument::fromJson(sceneFile.readAll(), &jsonParseError);
         }
         if (jsonParseError.error == QJsonParseError::NoError) {
@@ -840,7 +847,11 @@ int main(int argc, char **argv)
             audioPathUser = docRoot["audio-path"].toString().toStdString();
             cout << "audio path user : " << audioPathUser << endl;
         }
+        break;
     }
+
+    }
+
     if (audioPathUser.empty() || !QDir(QString::fromStdString(audioPathUser)).exists()) {
         QString captionPath = qApp->translate("window to choose working directory",
                                               "Frontieres : select sample's directory");
@@ -862,23 +873,28 @@ int main(int argc, char **argv)
     cout << "Audio path of user: " << audioPathUser << "\n";
     cout << "Audio path of system: " << g_audioPathDefault << "\n";
     cout << "Audio path used: " << g_audioPath << "\n";
+
     // load sounds
     AudioFileSet newFileMgr;
-
     if (newFileMgr.loadFileSet(g_audioPath) == 1) {
         goto cleanup;
     }
-
     mySounds = newFileMgr.getFileVector();
     cout << _S("", "Sounds loaded successfully...") << endl;
 
-    if (replyLoadScene == QMessageBox::Yes && !nameSceneFile.empty()) { // load scene
+    switch (startChoice) {
+    default:
+        break;
+
+    case StartDialog::Choice_NewScene:
+        scene->addSampleSet(mySounds->data(), mySounds->size());
+        break;
+
+    case StartDialog::Choice_LoadScene:
         cout << "Loading scene " << nameSceneFile << endl;
         QFile sceneFile(QString::fromStdString(nameSceneFile));
         scene->load(sceneFile);
-    }
-    else {
-        scene->addSampleSet(mySounds->data(), mySounds->size());
+        break;
     }
 
     // start audio stream

@@ -14,11 +14,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
 
+# set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address")
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
+
 add_executable(Frontieres WIN32
   sources/Frontieres.cpp
   sources/MyRtAudio.cpp
   sources/interface/MyGLApplication.cpp
   sources/interface/MyGLWindow.cpp
+  sources/interface/StartDialog.cpp
   sources/dsp/Window.cpp
   sources/model/AudioFileSet.cpp
   sources/model/GrainVoice.cpp
@@ -65,7 +69,8 @@ find_package(Qt5Widgets CONFIG REQUIRED)
 find_package(Qt5OpenGL CONFIG REQUIRED)
 
 qt5_wrap_ui(Frontieres_UI_SOURCES
-  sources/interface/MyGLWindow.ui)
+  sources/interface/MyGLWindow.ui
+  sources/interface/StartDialog.ui)
 target_sources(Frontieres PRIVATE ${Frontieres_UI_SOURCES})
 target_link_libraries(Frontieres PRIVATE Qt5::Widgets Qt5::OpenGL)
 
