@@ -33,6 +33,7 @@ public:
     MyGLWindow();
     ~MyGLWindow();
     void initialize();
+    void setMenuBarVisible(bool visible);
     MyGLScreen *screen() const;
 
 private:
