@@ -855,10 +855,9 @@ int main(int argc, char **argv)
     if (audioPathUser.empty() || !QDir(QString::fromStdString(audioPathUser)).exists()) {
         QString captionPath = qApp->translate("window to choose working directory",
                                               "Frontieres : select sample's directory");
-        string separateurPath = "/";
         QString homeUser = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
         audioPathUser = QFileDialog::getExistingDirectory(nullptr, captionPath, QString::fromStdString(g_audioPathDefault),
-                                                          QFileDialog::DontResolveSymlinks).toUtf8().constData() + separateurPath;
+                                                          QFileDialog::DontResolveSymlinks).toUtf8().constData();
     }
     cout << "path selected : " << audioPathUser << endl;
     bool audioPathUserEmpty = true;
