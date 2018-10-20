@@ -61,6 +61,11 @@ void MyGLWindow::initialize()
     screen->setFormat(format);
 }
 
+void MyGLWindow::setMenuBarVisible(bool visible)
+{
+    P->ui.menubar->setVisible(visible);
+}
+
 MyGLScreen *MyGLWindow::screen() const
 {
     return P->ui.screen;
@@ -510,8 +515,10 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
         break;
 
     case Qt::Key_O: {
-        QWidget *win = window();
-        win->setWindowState(win->windowState() ^ Qt::WindowFullScreen);
+        MyGLWindow *win = static_cast<MyGLWindow *>(window());
+        Qt::WindowStates state = win->windowState() ^ Qt::WindowFullScreen;
+        win->setWindowState(state);
+        win->setMenuBarVisible(!(state & Qt::WindowFullScreen));
         break;
     }
 
