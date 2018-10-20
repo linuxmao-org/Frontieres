@@ -228,6 +228,7 @@ bool Scene::save(QFile &sceneFile)
     m_selectedSound = -1;
     m_selectionIndex = 0;
     m_selectionIndices.clear();
+    m_audioPath = g_audioPath;
 
     QJsonObject docRoot;
 
