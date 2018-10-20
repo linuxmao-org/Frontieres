@@ -23,15 +23,27 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-#include "Frontieres.h"
+#include "theglobals.h"
 #include <string>
+#include <vector>
+#include <memory>
+#include <mutex>
+struct SceneSound;
+struct SceneCloud;
+struct AudioFile;
+struct SoundRect;
+struct GrainCluster;
+struct GrainClusterVis;
 class QFile;
+
+typedef std::vector<std::unique_ptr<SceneSound>> VecSceneSound;
+typedef std::vector<std::unique_ptr<SceneCloud>> VecSceneCloud;
 
 class Scene
 {
 public:
     // destructor
-    virtual ~Scene();
+    ~Scene();
 
     // constructor
     Scene();
@@ -41,6 +53,44 @@ public:
 
     bool load(QFile &sceneFile);
     bool save(QFile &sceneFile);
+    void addSampleSet(AudioFile *samples[], unsigned count);
+    void addNewCloud(int numVoices);
+
+    SceneSound *selectedSound();
+    SceneCloud *selectedCloud();
+
+    // handle deselections
+    void deselect(int shapeType);
+
+    // data contents
+    std::string m_audioPath;
+    VecSceneSound m_sounds;
+    VecSceneSound m_soundsNotFound;
+    VecSceneCloud m_clouds;
+
+    // selection helper vars
+    int m_selectedCloud = -1;
+    int m_selectedSound = -1;
+    int m_selectionIndex = 0;
+    std::vector<int> m_selectionIndices;
+
+    // mutex
+    std::mutex m_mutex;
+};
+
+struct SceneSound {
+    std::string name;
+    AudioFile *sample = nullptr;
+    std::unique_ptr<SoundRect> view;
+
+    ~SceneSound();
+};
+
+struct SceneCloud {
+    std::unique_ptr<GrainCluster> cloud;
+    std::unique_ptr<GrainClusterVis> view;
+
+    ~SceneCloud();
 };
 
 #endif // SCENE_H

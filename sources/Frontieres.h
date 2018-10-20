@@ -28,9 +28,7 @@
 #include <QDialog>
 #include <QFileDialog>
 #include <QMessageBox>
-class SoundRect;
-class GrainCluster;
-class GrainClusterVis;
+class Scene;
 struct AudioFile;
 class QtFont3D;
 
@@ -73,23 +71,11 @@ extern std::string g_audioPathDefault;
 
 // audio files
 extern std::vector<AudioFile *> *mySounds;
-// audio file visualization objects
-extern std::vector<SoundRect *> soundViews;
-// grain cloud audio objects
-extern std::vector<GrainCluster *> grainCloud;
-// grain cloud visualization objects
-extern std::vector<GrainClusterVis *> grainCloudVis;
-// cloud counter
-extern unsigned int numClouds;
-
-// not used yet - for multiple selection
-extern std::vector<int> selectionIndices;
+// current scene
+extern Scene *currentScene;
 
 // selection helper vars
-extern int selectedCloud;
-extern int selectedRect;
 extern bool menuFlag;
-extern int selectionIndex;
 
 // cloud parameter changing
 enum {
@@ -107,12 +93,6 @@ enum {
     P_LFO_AMT,
     SPATIALIZE,
     VOLUME
-};
-
-// scenes files read/write direction
-enum class FileDirection {
-    Load,
-    Save
 };
 
 // flag indicating parameter change
@@ -137,11 +117,7 @@ enum {
       //  j'ai mis un facteur qui donne à peu près comme le logiciel original.
 };
 
-// scenes
-extern const char *g_extensionScene;
-
 void updateMouseCoords(int x, int y);
-void deselect(int mode);
 
 void printUsage();
 void printParam();

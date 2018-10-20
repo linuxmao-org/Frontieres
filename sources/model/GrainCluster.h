@@ -30,16 +30,19 @@
 #ifndef GRAIN_CLUSTER_H
 #define GRAIN_CLUSTER_H
 
+#include <Stk.h>
 #include <map>
 #include <vector>
+#include <memory>
 #include <iostream>
 #include <string>
-#include <mutex>
 #include <cstdlib>
 #include <time.h>
 #include <ctime>
-#include <Stk.h>
-#include "GrainVoice.h"
+class GrainVoice;
+struct SceneSound;
+
+typedef std::vector<std::unique_ptr<SceneSound>> VecSceneSound;
 
 // direction modes
 enum { FORWARD, BACKWARD, RANDOM_DIR };
@@ -70,7 +73,7 @@ public:
     virtual ~GrainCluster();
 
     // constructor
-    GrainCluster(vector<AudioFile *> *soundSet, float theNumVoices);
+    GrainCluster(VecSceneSound *soundSet, float theNumVoices);
 
     // compute next buffer of audio (accumulate from grains)
     void nextBuffer(double *accumBuff, unsigned int numFrames);
@@ -159,10 +162,6 @@ private:
     int stereoSide;
     int side;
 
-
-    // thread safety
-    std::mutex myLock;
-
     // registered visualization
     GrainClusterVis *myVis;
 
@@ -185,7 +184,7 @@ private:
     int myDirMode, windowType;
 
     // audio files
-    vector<AudioFile *> *theSounds;
+    VecSceneSound *theSounds;
 };
 
 #endif

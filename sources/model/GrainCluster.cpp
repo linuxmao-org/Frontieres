@@ -26,7 +26,8 @@
 //  Created by Christopher Carlson on 11/23/11.
 //
 
-#include "GrainCluster.h"
+#include "model/GrainCluster.h"
+#include "model/GrainVoice.h"
 #include "visual/GrainClusterVis.h"
 #include "dsp/Window.h"
 #include "utility/GTime.h"
@@ -41,15 +42,13 @@ GrainCluster::~GrainCluster()
         delete myGrains[i];
     }
 
-    if (myVis)
-        delete myVis;
     if (channelMults)
         delete[] channelMults;
 }
 
 
 // Constructor
-GrainCluster::GrainCluster(vector<AudioFile *> *soundSet, float theNumVoices)
+GrainCluster::GrainCluster(VecSceneSound *soundSet, float theNumVoices)
 {
     // cluster id
     myId = ++clusterId;
@@ -401,7 +400,6 @@ void GrainCluster::nextBuffer(double *accumBuff, unsigned int numFrames)
     }
 
     if (removeFlag == true) {
-        std::lock_guard<std::mutex> lock(myLock);
         if (myGrains.size() > 1) {
             if (nextGrain >= myGrains.size() - 1) {
                 nextGrain = 0;

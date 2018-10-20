@@ -107,14 +107,8 @@ string paramString = "";
 unsigned int g_buffSize = 1024;
 // audio files
 vector<AudioFile *> *mySounds = NULL;
-// audio file visualization objects
-vector<SoundRect *> soundViews;
-// grain cloud audio objects
-vector<GrainCluster *> grainCloud;
-// grain cloud visualization objects
-vector<GrainClusterVis *> grainCloudVis;
-// cloud counter
-unsigned int numClouds = 0;
+// current scene
+Scene *currentScene = nullptr;
 
 // sample rate - Hz
 unsigned int samp_rate = 0;
@@ -138,14 +132,8 @@ bool resizeDir = false;  // for rects
 int rb_anchor_x = -1;
 int rb_anchor_y = -1;
 
-// not used yet - for multiple selection
-vector<int> selectionIndices;
-
 // selection helper vars
-int selectedCloud = -1;
-int selectedRect = -1;
 bool menuFlag = true;
-int selectionIndex = 0;
 
 // flag indicating parameter change
 bool paramChanged = false;
@@ -162,9 +150,6 @@ long lastDragY = veryHighNumber;
 
 // text renderer
 QtFont3D *text_renderer = NULL;
-
-// scenes
-const char *g_extensionScene = ".scn";
 
 //--------------------------------------------------------------------------------
 // FUNCTION PROTOTYPES
@@ -235,8 +220,13 @@ int audioCallback(void *outputBuffer, void *inputBuffer, unsigned int numFrames,
 
     memset(out, 0, sizeof(SAMPLE) * numFrames * MY_CHANNELS);
     if (menuFlag == false) {
-        for (int i = 0; i < grainCloud.size(); i++) {
-            grainCloud[i]->nextBuffer(out, numFrames);
+        Scene *scene = ::currentScene;
+        std::unique_lock<std::mutex> lock(scene->m_mutex, std::try_to_lock);
+        if (lock.owns_lock()) {
+            for (int i = 0, n = scene->m_clouds.size(); i < n; i++) {
+                GrainCluster &theCloud = *scene->m_clouds[i]->cloud;
+                theCloud.nextBuffer(out, numFrames);
+            }
         }
     }
     GTime::instance().sec += numFrames * samp_time_sec;
@@ -416,15 +406,19 @@ void printUsage()
 
 void printParam()
 {
+    Scene *scene = ::currentScene;
+    SceneCloud *selectedCloud = scene->selectedCloud();
+
     // get screen width and height
     MyGLScreen *screen = theApplication->GLwindow()->screen();
     int screenHeight = screen->height();
 
-    if ((numClouds > 0) && (selectedCloud >= 0)) {
-        GrainClusterVis *theCloudVis = grainCloudVis[selectedCloud];
-        GrainCluster *theCloud = grainCloud[selectedCloud];
-        float cloudX = theCloudVis->getX();
-        float cloudY = theCloudVis->getY();
+    if (selectedCloud) {
+        GrainClusterVis &theCloudVis = *selectedCloud->view;
+        GrainCluster &theCloud = *selectedCloud->cloud;
+
+        // float cloudX = theCloudVis.getX();
+        // float cloudY = theCloudVis.getY();
         string myValue;
         ostringstream sinput;
         ostringstream sinput2;
@@ -434,7 +428,7 @@ void printParam()
         switch (currentParam) {
         case NUMGRAINS:
             myValue = _S("", "Voices: ");
-            sinput << theCloud->getNumVoices();
+            sinput << theCloud.getNumVoices();
             myValue = myValue + sinput.str();
             draw_string((GLfloat)mouseX, (GLfloat)(screenHeight - mouseY), 0.0,
                         myValue.c_str(), 100.0f);
@@ -442,7 +436,7 @@ void printParam()
         case DURATION:
             myValue = _S("", "Duration: ");
             if (paramString == "") {
-                sinput << theCloud->getDurationMs();
+                sinput << theCloud.getDurationMs();
                 myValue = myValue + sinput.str() + " ms";
             }
             else {
@@ -453,7 +447,7 @@ void printParam()
             //            myValue = "Duration (ms): " + theCloud->getDurationMs();
             break;
         case WINDOW:
-            switch (theCloud->getWindowType()) {
+            switch (theCloud.getWindowType()) {
             case HANNING:
                 myValue = _S("", "Window: HANNING");
                 break;
@@ -482,30 +476,30 @@ void printParam()
             break;
         case MOTIONX:
             myValue = _S("", "X: ");
-            sinput << theCloudVis->getXRandExtent();
+            sinput << theCloudVis.getXRandExtent();
             myValue = myValue + sinput.str();
             draw_string((GLfloat)mouseX, (GLfloat)(screenHeight - mouseY), 0.0,
                         myValue.c_str(), 100.0f);
             break;
         case MOTIONY:
             myValue = _S("", "Y: ");
-            sinput << theCloudVis->getYRandExtent();
+            sinput << theCloudVis.getYRandExtent();
             myValue = myValue + sinput.str();
             draw_string((GLfloat)mouseX, (GLfloat)(screenHeight - mouseY), 0.0,
                         myValue.c_str(), 100.0f);
             break;
         case MOTIONXY:
             myValue = _S("", "X,Y: ");
-            sinput << theCloudVis->getXRandExtent();
+            sinput << theCloudVis.getXRandExtent();
             myValue = myValue + sinput.str() + ", ";
-            sinput2 << theCloudVis->getYRandExtent();
+            sinput2 << theCloudVis.getYRandExtent();
             myValue = myValue + sinput2.str();
             draw_string((GLfloat)mouseX, (GLfloat)(screenHeight - mouseY), 0.0,
                         myValue.c_str(), 100.0f);
             break;
 
         case DIRECTION:
-            switch (theCloud->getDirection()) {
+            switch (theCloud.getDirection()) {
             case FORWARD:
                 myValue = _S("", "Direction: FORWARD");
                 break;
@@ -524,7 +518,7 @@ void printParam()
             break;
 
         case SPATIALIZE:
-            switch (theCloud->getSpatialMode()) {
+            switch (theCloud.getSpatialMode()) {
             case UNITY:
                 myValue = _S("", "Spatial Mode: UNITY");
                 break;
@@ -544,7 +538,7 @@ void printParam()
         case VOLUME:
             myValue = _S("", "Volume (dB): ");
             if (paramString == "") {
-                sinput << theCloud->getVolumeDb();
+                sinput << theCloud.getVolumeDb();
                 myValue = myValue + sinput.str();
             }
             else {
@@ -556,7 +550,7 @@ void printParam()
         case OVERLAP:
             myValue = _S("", "Overlap: ");
             if (paramString == "") {
-                sinput << theCloud->getOverlap();
+                sinput << theCloud.getOverlap();
                 myValue = myValue + sinput.str();
             }
             else {
@@ -569,7 +563,7 @@ void printParam()
         case PITCH:
             myValue = _S("", "Pitch: ");
             if (paramString == "") {
-                sinput << theCloud->getPitch();
+                sinput << theCloud.getPitch();
                 myValue = myValue + sinput.str();
             }
             else {
@@ -583,7 +577,7 @@ void printParam()
         case P_LFO_FREQ:
             myValue = _S("", "Pitch LFO Freq: ");
             if (paramString == "") {
-                sinput << theCloud->getPitchLFOFreq();
+                sinput << theCloud.getPitchLFOFreq();
                 myValue = myValue + sinput.str();
             }
             else {
@@ -596,7 +590,7 @@ void printParam()
         case P_LFO_AMT:
             myValue = _S("", "Pitch LFO Amount: ");
             if (paramString == "") {
-                sinput << theCloud->getPitchLFOAmount();
+                sinput << theCloud.getPitchLFOAmount();
                 myValue = myValue + sinput.str();
             }
             else {
@@ -631,33 +625,6 @@ void updateMouseCoords(int x, int y)
 
 
 //-----------------------------------------------------------------------------
-// Handle mouse clicks, etc.
-//-----------------------------------------------------------------------------
-
-
-// handle deselections
-void deselect(int shapeType)
-{
-    switch (shapeType) {
-    case CLOUD:
-        if (selectedCloud >= 0) {
-            grainCloudVis[selectedCloud]->setSelectState(false);
-            // reset selected cloud
-            selectedCloud = -1;
-            // cout << "deselecting cloud" <<endl;
-        }
-
-    case RECT:
-        if (selectedRect >= 0) {
-            // cout << "deselecting rect" << endl;
-            soundViews[selectedRect]->setSelectState(false);
-            selectedRect = -1;
-        }
-    }
-}
-
-
-//-----------------------------------------------------------------------------
 // Handle mouse movement during button press (drag)
 //-----------------------------------------------------------------------------
 
@@ -668,8 +635,12 @@ void mouseDrag(int x, int y)
     int xDiff = 0;
     int yDiff = 0;
 
-    if (selectedCloud >= 0) {
-        grainCloudVis[selectedCloud]->updateCloudPosition(mouseX, mouseY);
+    Scene *scene = ::currentScene;
+    SceneSound *selectedSound = scene->selectedSound();
+    SceneCloud *selectedCloud = scene->selectedCloud();
+
+    if (selectedCloud) {
+        selectedCloud->view->updateCloudPosition(mouseX, mouseY);
     }
     else {
 
@@ -677,8 +648,8 @@ void mouseDrag(int x, int y)
         case MOVE:
             if ((lastDragX != veryHighNumber) && (lastDragY != veryHighNumber)) {
 
-                if (selectedRect >= 0) {  // movement case
-                    soundViews[selectedRect]->move(mouseX - lastDragX, mouseY - lastDragY);
+                if (selectedSound) {  // movement case
+                    selectedSound->view->move(mouseX - lastDragX, mouseY - lastDragY);
                 }
             }
             lastDragX = mouseX;
@@ -690,12 +661,12 @@ void mouseDrag(int x, int y)
                 // cout << "drag ok" << endl;
                 // for width height - use screen coords
 
-                if (selectedRect >= 0) {
+                if (selectedSound) {
                     xDiff = x - lastDragX;
                     yDiff = y - lastDragY;
                     // get width and height
-                    float newWidth = soundViews[selectedRect]->getWidth();
-                    float newHeight = soundViews[selectedRect]->getHeight();
+                    float newWidth = selectedSound->view->getWidth();
+                    float newHeight = selectedSound->view->getHeight();
 
                     int thresh = 0;
                     // check motion mag
@@ -719,7 +690,7 @@ void mouseDrag(int x, int y)
                     }
 
                     // update width and height
-                    soundViews[selectedRect]->setWidthHeight(newWidth, newHeight);
+                    selectedSound->view->setWidthHeight(newWidth, newHeight);
                 }
             }
             lastDragX = x;
@@ -740,17 +711,19 @@ void mousePassiveMotion(int x, int y)
 {
     updateMouseCoords(x, y);
 
+    Scene *scene = ::currentScene;
+    SceneCloud *selectedCloud = scene->selectedCloud();
 
-    if (selectedCloud >= 0) {
+    if (selectedCloud) {
         switch (currentParam) {
         case MOTIONX:
-            grainCloudVis[selectedCloud]->setXRandExtent(mouseX);
+            selectedCloud->view->setXRandExtent(mouseX);
             break;
         case MOTIONY:
-            grainCloudVis[selectedCloud]->setYRandExtent(mouseY);
+            selectedCloud->view->setYRandExtent(mouseY);
             break;
         case MOTIONXY:
-            grainCloudVis[selectedCloud]->setRandExtent(mouseX, mouseY);
+            selectedCloud->view->setRandExtent(mouseX, mouseY);
             break;
         default:
             break;
@@ -759,7 +732,7 @@ void mousePassiveMotion(int x, int y)
     //            case NUMGRAINS:
     //                break;
     //            case DURATION:
-    //                grainCloud->at(selectedCloud)->setDurationMs((mouseY/screenHeight)*4000.0f);
+    //                gv.setDurationMs((mouseY/screenHeight)*4000.0f);
     //
     //            default:
     //                break;
@@ -837,8 +810,8 @@ int main(int argc, char **argv)
     GLwindow->initialize();
     GLwindow->show();
 
-    MyGLScreen *screen = GLwindow->screen();
-    Scene &scene = screen->currentScene();
+    Scene *scene = new Scene;
+    ::currentScene = scene;
 
     double fps = 50;
     app.startIdleCallback(fps);
@@ -852,7 +825,7 @@ int main(int argc, char **argv)
     std::string audioPathUser;
     std::string nameSceneFile;
     if (replyLoadScene == QMessageBox::Yes) {
-        nameSceneFile = scene.askNameScene(FileDirection::Load);
+        nameSceneFile = scene->askNameScene(FileDirection::Load);
         QFile sceneFile(QString::fromStdString(nameSceneFile));
         QJsonParseError jsonParseError;
         QJsonDocument doc;
@@ -899,22 +872,18 @@ int main(int argc, char **argv)
     mySounds = newFileMgr.getFileVector();
     cout << _S("", "Sounds loaded successfully...") << endl;
 
-
-    // create visual representation of sounds
-    for (int i = 0; i < mySounds->size(); i++) {
-        soundViews.push_back(new SoundRect());
-        soundViews[i]->associateSound(mySounds->at(i)->wave, mySounds->at(i)->frames,
-                                      mySounds->at(i)->channels);
+    if (replyLoadScene == QMessageBox::Yes && !nameSceneFile.empty()) { // load scene
+        cout << "Loading scene " << nameSceneFile << endl;
+        QFile sceneFile(QString::fromStdString(nameSceneFile));
+        scene->load(sceneFile);
+    }
+    else {
+        scene->addSampleSet(mySounds->data(), mySounds->size());
     }
 
     // start audio stream
     theAudio->startStream();
 
-    if (replyLoadScene == QMessageBox::Yes && !nameSceneFile.empty()) { // load scene
-        cout << "Loading scene " << nameSceneFile << endl;
-        QFile sceneFile(QString::fromStdString(nameSceneFile));
-        scene.load(sceneFile);
-    }
     // let Qt handle the current thread from here
     exitCode = app.exec();
 

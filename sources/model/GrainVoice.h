@@ -31,6 +31,7 @@
 #define GRAINVOICE_H
 
 #include <vector>
+#include <memory>
 #include <math.h>
 #include <time.h>
 #include <ctime>
@@ -48,6 +49,9 @@
 class AudioFile;
 class GrainVoice;
 class GrainVis;
+class SceneSound;
+
+typedef std::vector<std::unique_ptr<SceneSound>> VecSceneSound;
 
 
 // AUDIO CLASS
@@ -58,7 +62,7 @@ public:
     virtual ~GrainVoice();
 
     // constructor
-    GrainVoice(vector<AudioFile *> *soundSet, float durationMs, float thePitch);
+    GrainVoice(VecSceneSound *soundSet, float durationMs, float thePitch);
 
     // dump samples into next buffer
     void nextBuffer(double *accumBuff, unsigned int numFrames,
@@ -100,14 +104,11 @@ protected:
 
 private:
     // pointer to all audio file buffers
-    vector<AudioFile *> *theSounds;
+    VecSceneSound *theSounds;
     // status
     bool playingState;
     // param update required flag
     bool newParam;
-
-    // numsounds
-    unsigned int numSounds;
 
     // grain parameters
     float duration, queuedDuration;

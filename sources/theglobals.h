@@ -77,5 +77,13 @@ static const double globalAtten = 0.5;
 //    float y;
 //};
 
+// scenes files read/write direction
+enum class FileDirection {
+    Load,
+    Save
+};
+
+// scenes
+static const char *g_extensionScene = ".scn";
 
 #endif

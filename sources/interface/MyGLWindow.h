@@ -27,7 +27,6 @@
 #include <memory>
 
 class MyGLScreen;
-class Scene;
 
 class MyGLWindow : public QMainWindow {
 public:
@@ -46,8 +45,6 @@ class MyGLScreen : public QOpenGLWidget {
 public:
     MyGLScreen(QWidget *parent = nullptr);
     ~MyGLScreen();
-
-    Scene &currentScene();
 
 protected:
     void initializeGL() override;

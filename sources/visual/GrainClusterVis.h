@@ -40,9 +40,12 @@
 #endif
 
 #include <vector>
+#include <memory>
 #include <iostream>
-class SoundRect;
+class SceneSound;
 class GrainVis;
+
+typedef std::vector<std::unique_ptr<SceneSound>> VecSceneSound;
 
 // VISUALIZATION/CONTROLLER
 class GrainClusterVis {
@@ -51,7 +54,7 @@ public:
     ~GrainClusterVis();
 
     // constructor (takes center position (x,y), number of voices, sound rectangles)
-    GrainClusterVis(float x, float y, unsigned int numVoices, std::vector<SoundRect *> *rects);
+    GrainClusterVis(float x, float y, unsigned int numVoices, VecSceneSound *rects);
 
     // render
     void draw();
@@ -107,7 +110,7 @@ private:
     // grain voice visualizations
     std::vector<GrainVis *> myGrainsV;
     // registered sound rectangles
-    std::vector<SoundRect *> *theLandscape;
+    VecSceneSound *theLandscape;
 };
 
 #endif

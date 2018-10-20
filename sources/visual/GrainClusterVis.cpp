@@ -27,9 +27,10 @@
 //  Created by Christopher Carlson on 11/15/11.
 //
 
-#include "GrainClusterVis.h"
-#include "GrainVis.h"
-#include "SoundRect.h"
+#include "visual/GrainClusterVis.h"
+#include "visual/GrainVis.h"
+#include "visual/SoundRect.h"
+#include "model/Scene.h"
 #include "utility/GTime.h"
 
 // TODO avoid this
@@ -57,7 +58,7 @@ GrainClusterVis::~GrainClusterVis()
 }
 
 GrainClusterVis::GrainClusterVis(float x, float y, unsigned int numVoices,
-                                 std::vector<SoundRect *> *rects)
+                                 VecSceneSound *rects)
 {
     // get screen width and height
     MyGLScreen *screen = theApplication->GLwindow()->screen();
@@ -187,8 +188,9 @@ void GrainClusterVis::getTriggerPos(unsigned int idx, double *playPos,
         // updateGrainPosition(idx,gcX + randf()*50.0 + randf()*(-50.0),gcY + randf()*50.0 + randf()*(-50.0));
         updateGrainPosition(idx, gcX + (randf() * xRandExtent - randf() * xRandExtent),
                             gcY + (randf() * yRandExtent - randf() * yRandExtent));
-        for (int i = 0; i < theLandscape->size(); i++) {
-            theRect = theLandscape->at(i);
+        VecSceneSound &landscape = *theLandscape;
+        for (int i = 0, n = landscape.size(); i < n; i++) {
+            theRect = landscape[i]->view.get();
             bool tempTrig = false;
             tempTrig = theRect->getNormedPosition(playPos, playVol, theGrain->getX(),
                                                   theGrain->getY(), i);

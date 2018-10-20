@@ -29,6 +29,7 @@
 
 #include "model/GrainVoice.h"
 #include "model/AudioFileSet.h"
+#include "model/Scene.h"
 #include "dsp/Window.h"
 #include "theglobals.h"
 
@@ -41,18 +42,11 @@ extern unsigned int samp_rate;
 //-----------------------------------------------------------------------------
 GrainVoice::~GrainVoice()
 {
-
-    if (theSounds != NULL)
-        delete theSounds;
-
     if (playPositions != NULL)
         delete[] playPositions;
 
     if (playVols != NULL)
         delete[] playVols;
-
-    if (window != NULL)
-        delete[] window;
 
     if (chanMults)
         delete[] chanMults;
@@ -66,7 +60,7 @@ GrainVoice::~GrainVoice()
 // Constructor
 //-----------------------------------------------------------------------------
 
-GrainVoice::GrainVoice(vector<AudioFile *> *soundSet, float durationMs, float thePitch)
+GrainVoice::GrainVoice(VecSceneSound *soundSet, float durationMs, float thePitch)
 {
 
 
@@ -74,7 +68,7 @@ GrainVoice::GrainVoice(vector<AudioFile *> *soundSet, float durationMs, float th
     theSounds = soundSet;
 
     // get number of loaded sounds
-    numSounds = (unsigned int)soundSet->size();
+    unsigned numSounds = (unsigned)soundSet->size();
 
     // set play positions to -1 for all
     // note - will have to handle files being added at runtime later if it becomes a feature
@@ -168,11 +162,12 @@ bool GrainVoice::playMe(double *startPositions, double *startVols)
 
         activeSounds.clear();
 
-        for (int i = 0; i < numSounds; i++) {
+        VecSceneSound &sounds = *theSounds;
+        for (int i = 0, n = sounds.size(); i < n; i++) {
             if (startPositions[i] != -1) {
                 activeSounds.push_back(i);
                 playPositions[i] =
-                    floor(startPositions[i] * (theSounds->at(i)->frames - 1));
+                    floor(startPositions[i] * (sounds[i]->sample->frames - 1));
                 playVols[i] = startVols[i];
             }
         }
@@ -341,6 +336,7 @@ void GrainVoice::nextBuffer(double *accumBuff, unsigned int numFrames,
     // only go through this ordeal if grain is active
     if (playingState == true) {
         // initialize local vars
+        VecSceneSound &sounds = *theSounds;
 
         // linear interp coeff
         double nu = 0.0;
@@ -410,11 +406,11 @@ void GrainVoice::nextBuffer(double *accumBuff, unsigned int numFrames,
 
                 // if sound is in play,sample it
                 if (pos > 0) {
-
                     // sound vars
-                    wave = theSounds->at(nextSound)->wave;
-                    channels = theSounds->at(nextSound)->channels;
-                    frames = theSounds->at(nextSound)->frames;
+                    AudioFile *af = sounds[nextSound]->sample;
+                    wave = af->wave;
+                    channels = af->channels;
+                    frames = af->frames;
 
                     // get info for interpolation based on frame location
                     flooredIdx = floor(pos);

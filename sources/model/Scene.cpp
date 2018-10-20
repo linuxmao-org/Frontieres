@@ -21,6 +21,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "Scene.h"
+#include "Frontieres.h"
 #include "GrainCluster.h"
 #include "GrainVoice.h"
 #include "AudioFileSet.h"
@@ -30,6 +31,8 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QFileDialog>
+#include <QFile>
 #include <QDebug>
 
 // TODO arrange this later
@@ -50,7 +53,7 @@ Scene::Scene()
 //-----------------------------------------------------------------------------
 // window to chose scene
 //-----------------------------------------------------------------------------
-string Scene::askNameScene(FileDirection direction)
+std::string Scene::askNameScene(FileDirection direction)
 {
     // choise file name and test extension
     QString caption = _Q("","Frontieres : name of the scene");
@@ -95,42 +98,63 @@ bool Scene::load(QFile &sceneFile)
 
     QJsonObject docRoot = doc.object();
 
-    QString lineScene = docRoot["audio-path"].toString(); // path
-    cout << "scene path : " << lineScene.toStdString() << "\n";
-    for (const QJsonValue &jsonElement : docRoot["sounds"].toArray()) { // samples
-        QJsonObject objSound = jsonElement.toObject();
-        int nSample = -1;
-        lineScene = objSound["name"].toString(); // sample
-        cout << lineScene.toStdString();
-        for (int j = 0; j < mySounds->size(); ++j) {
-            if (mySounds->at(j)->name.c_str() == lineScene) { // sample matching
-                nSample = j;
-                j = mySounds->size();
-            }
-        }
+    m_audioPath = docRoot["audio-path"].toString().toStdString(); // path
+    cout << "scene path : " << m_audioPath << "\n";
 
-        if (nSample != -1) {
-            SoundRect *sv = soundViews[nSample];
-            if ((bool)objSound["orientation"].toInt() != sv->getOrientation())
-                sv->toggleOrientation();
-            double heightSample = objSound["height"].toDouble();
-            double widthSample = objSound["width"].toDouble();
-            double xSample = objSound["x"].toDouble();
-            double ySample = objSound["y"].toDouble();
-            sv->setWidthHeight(widthSample, heightSample);
-            sv->setXY(xSample, ySample);
-            cout << ", heigth : " << heightSample
-                 << ", width : " << widthSample
-                 << ", x : " << xSample
-                 << ", y : " << ySample << "\n";
+    QJsonArray docSounds = docRoot["sounds"].toArray();
+    m_sounds.clear();
+    m_sounds.reserve(docSounds.size());
+    m_soundsNotFound.clear();
+    m_soundsNotFound.reserve(docSounds.size());
+    for (const QJsonValue &jsonElement : docSounds) { // samples
+        QJsonObject objSound = jsonElement.toObject();
+        SceneSound *sound = new SceneSound;
+        m_sounds.emplace_back(sound);
+
+        std::string name = objSound["name"].toString().toStdString(); // sample
+        cout << name << "\n";
+
+        AudioFile *af = nullptr;
+        for (int j = 0, n = mySounds->size(); !af && j < n; ++j) {
+            AudioFile *cur = (*mySounds)[j];
+            if (name == cur->name) // sample matching
+                af = cur;
         }
-        else
+        sound->sample = af;
+
+        SoundRect *sv = new SoundRect();
+        sound->view.reset(sv);
+        if ((bool)objSound["orientation"].toInt() != sv->getOrientation())
+            sv->toggleOrientation();
+        double heightSample = objSound["height"].toDouble();
+        double widthSample = objSound["width"].toDouble();
+        double xSample = objSound["x"].toDouble();
+        double ySample = objSound["y"].toDouble();
+        sv->setWidthHeight(widthSample, heightSample);
+        sv->setXY(xSample, ySample);
+        cout << ", heigth : " << heightSample
+             << ", width : " << widthSample
+             << ", x : " << xSample
+             << ", y : " << ySample << "\n";
+
+        if (af) {
+            sv->associateSound(af->wave, af->frames, af->channels);
+        }
+        else {
             cout << " not found" << "\n";
+            m_soundsNotFound.push_back(std::move(m_sounds.back()));
+            m_sounds.pop_back();
+        }
     }
 
-    int cloudCurrent = 0;
-    for (const QJsonValue &jsonElement : docRoot["clouds"].toArray()) { // samples
+    QJsonArray docGrains = docRoot["clouds"].toArray();
+    m_clouds.clear();
+    m_clouds.reserve(docGrains.size());
+    for (const QJsonValue &jsonElement : docGrains) { // samples
         QJsonObject objGrain = jsonElement.toObject();
+        SceneCloud *cloud = new SceneCloud;
+        m_clouds.emplace_back(cloud);
+
         double cloudDuration = objGrain["duration"].toDouble();
         double cloudOverlap = objGrain["overlap"].toDouble();
         double cloudPitch = objGrain["pitch"].toDouble();
@@ -147,7 +171,7 @@ bool Scene::load(QFile &sceneFile)
         double cloudY = objGrain["y"].toDouble();
         double cloudXRandExtent = objGrain["x-rand-extent"].toDouble();
         double cloudYRandExtent = objGrain["y-rand-extent"].toDouble();
-        cout << "cloud " << (cloudCurrent + 1) << " :" << "\n";
+        cout << "cloud " << m_clouds.size() << " :" << "\n";
         cout << "duration = " << cloudDuration << "\n";
         cout << "overlap = " << cloudOverlap << "\n";
         cout << "pitch = " << cloudPitch << "\n";
@@ -165,11 +189,11 @@ bool Scene::load(QFile &sceneFile)
         cout << "X extent = " << cloudXRandExtent << "\n";
         cout << "Y extent = " << cloudYRandExtent << "\n";
         // create audio
-        GrainCluster *gc = new GrainCluster(mySounds, cloudNumVoices);
-        grainCloud.push_back(gc);
+        GrainCluster *gc = new GrainCluster(&m_sounds, cloudNumVoices);
+        cloud->cloud.reset(gc);
         // create visualization
-        GrainClusterVis *gv = new GrainClusterVis(cloudX, cloudY, cloudNumVoices, &soundViews);
-        grainCloudVis.push_back(gv);
+        GrainClusterVis *gv = new GrainClusterVis(cloudX, cloudY, cloudNumVoices, &m_sounds);
+        cloud->view.reset(gv);
         // register visualization with audio
         gv->setSelectState(true);
         gc->registerVis(gv);
@@ -187,8 +211,6 @@ bool Scene::load(QFile &sceneFile)
         gv->setFixedXRandExtent(cloudXRandExtent);
         gv->setFixedYRandExtent(cloudYRandExtent);
         gv->setSelectState(false);
-
-        ++cloudCurrent;
     }
 
     return true;
@@ -202,28 +224,41 @@ bool Scene::save(QFile &sceneFile)
     if (!sceneFile.open(QIODevice::WriteOnly | QIODevice::Text))
         return false;
 
+    m_selectedCloud = -1;
+    m_selectedSound = -1;
+    m_selectionIndex = 0;
+    m_selectionIndices.clear();
+
     QJsonObject docRoot;
 
     // audio path
     cout << "record scene " << sceneFile.fileName().toStdString() << "\n";
-    cout << "audio path : " << g_audioPath << "\n";
-    docRoot["audio-path"] = QString::fromStdString(g_audioPath);
+    cout << "audio path : " << m_audioPath << "\n";
+    docRoot["audio-path"] = QString::fromStdString(m_audioPath);
+
+    // collect a list of sounds (both found and not found)
+    std::vector<SceneSound *> allSounds;
+    allSounds.reserve(m_sounds.size() + m_soundsNotFound.size());
+    for (const auto &sound : m_sounds)
+        allSounds.push_back(sound.get());
+    for (const auto &sound : m_soundsNotFound)
+        allSounds.push_back(sound.get());
 
     // samples
     QJsonArray docSounds;
-    cout << mySounds->size() << "samples : " << "\n";
-    for (int i = 0; i < mySounds->size(); ++i) {
-        AudioFile *af = mySounds->at(i);
-        SoundRect *sv = soundViews.at(i);
+    cout << allSounds.size() << "samples : " << "\n";
+    for (int i = 0, n = allSounds.size(); i < n; ++i) {
+        SceneSound *sound = allSounds[i];
+        SoundRect *sv = sound->view.get();
 
         std::ostream &out = std::cout;
-        out << "Audio file " << i << ":";
-        af->describe(out);
-        out << "Sound rect " << i << ":";
+        out << "Audio file " << i << ":\n";
+        out << "- name : " << sound->name << "\n";
+        out << "Sound rect " << i << ":\n";
         sv->describe(out);
 
         QJsonObject objSound;
-        objSound["name"] = QString::fromStdString(af->name);
+        objSound["name"] = QString::fromStdString(sound->name);
         objSound["orientation"] = QString::number(sv->getOrientation());
         objSound["height"] = sv->getHeight();
         objSound["width"] = sv->getWidth();
@@ -234,10 +269,10 @@ bool Scene::save(QFile &sceneFile)
 
     // grainclouds
     QJsonArray docGrains;
-    cout << grainCloud.size() << " clouds : " << "\n";
-    for (int i = 0; i < grainCloud.size(); i++) {
-        GrainCluster *gc = grainCloud.at(i);
-        GrainClusterVis *gv = grainCloudVis.at(i);
+    for (int i = 0, n = m_clouds.size(); i < n; i++) {
+        SceneCloud *cloud = m_clouds[i].get();
+        GrainCluster *gc = cloud->cloud.get();
+        GrainClusterVis *gv = cloud->view.get();
 
         std::ostream &out = std::cout;
         out << "Grain Cluster " << i << ":";
@@ -275,4 +310,79 @@ bool Scene::save(QFile &sceneFile)
         return false;
 
     return true;
+}
+
+void Scene::addSampleSet(AudioFile *samples[], unsigned count)
+{
+    for (unsigned i = 0; i < count; ++i) {
+        SceneSound *sound = new SceneSound;
+        m_sounds.emplace_back(sound);
+
+        AudioFile *af = samples[i];
+        sound->name = af->name;
+        sound->sample = af;
+        SoundRect *sv = new SoundRect;
+        sound->view.reset(sv);
+        sv->associateSound(af->wave, af->frames, af->channels);
+    }
+}
+
+void Scene::addNewCloud(int numVoices)
+{
+    // create audio
+    SceneCloud *cloud = new SceneCloud;
+    m_clouds.emplace_back(cloud);
+    cloud->cloud.reset(new GrainCluster(&m_sounds, numVoices));
+    // create visualization
+    cloud->view.reset(new GrainClusterVis(mouseX, mouseY, numVoices, &m_sounds));
+    // select new cloud
+    cloud->view->setSelectState(true);
+    // register visualization with audio
+    cloud->cloud->registerVis(cloud->view.get());
+}
+
+SceneSound *Scene::selectedSound()
+{
+    if ((unsigned)m_selectedSound >= m_sounds.size())
+        return nullptr;
+    return m_sounds[(unsigned)m_selectedSound].get();
+}
+
+SceneCloud *Scene::selectedCloud()
+{
+    if ((unsigned)m_selectedCloud >= m_clouds.size())
+        return nullptr;
+    return m_clouds[(unsigned)m_selectedCloud].get();
+}
+
+// handle deselections
+void Scene::deselect(int shapeType)
+{
+    switch (shapeType) {
+    case CLOUD:
+        if (SceneCloud *cloud = selectedCloud()) {
+            cloud->view->setSelectState(false);
+            // reset selected cloud
+            m_selectedCloud = -1;
+            // cout << "deselecting cloud" <<endl;
+        }
+        break;
+    case RECT:
+        if (SceneSound *sound = selectedSound()) {
+            // cout << "deselecting rect" << endl;
+            sound->view->setSelectState(false);
+            m_selectedSound = -1;
+        }
+        break;
+    }
+}
+
+// destructor
+SceneSound::~SceneSound()
+{
+}
+
+// destructor
+SceneCloud::~SceneCloud()
+{
 }
