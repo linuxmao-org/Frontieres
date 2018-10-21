@@ -825,6 +825,11 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
                 scene->m_clouds.erase(scene->m_clouds.begin() + scene->m_selectedCloud);
                 scene->m_selectedCloud = -1;
             }
+            else if (selectedSound) {
+                // std::lock_guard<std::mutex> lock(::currentSceneMutex);
+                // scene->removeSoundAt(scene->m_selectedSound);
+                // scene->m_selectedSound = -1;
+            }
         }
         else {
             if (paramString.size() > 0)

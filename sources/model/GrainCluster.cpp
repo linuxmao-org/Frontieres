@@ -349,6 +349,13 @@ unsigned int GrainCluster::getNumVoices()
     return myGrains.size();
 }
 
+// update after a change of sound set
+void GrainCluster::updateSoundSet()
+{
+    for (GrainVoice *grain : myGrains)
+        grain->updateSoundSet();
+}
+
 // print information
 void GrainCluster::describe(std::ostream &out)
 {

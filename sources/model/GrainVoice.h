@@ -97,6 +97,8 @@ public:
     // change window type
     void setWindow(unsigned int windowType);
 
+    // update after a change of sound set
+    void updateSoundSet();
 
 protected:
     // makes temp  params permanent
@@ -141,8 +143,8 @@ private:
 
     // array of position values (in frames, not samples)
     //-1 means not in current soundfile
-    double *playPositions;
-    double *playVols;
+    std::unique_ptr<double[]> playPositions;
+    std::unique_ptr<double[]> playVols;
 };
 
 #endif

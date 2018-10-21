@@ -435,9 +435,35 @@ bool Scene::loadSampleSet(bool interactive)
         }
     }
 
+    for (unsigned i = 0, n = m_clouds.size(); i < n; ++i)
+        m_clouds[i]->cloud->updateSoundSet();
+
     // update the audio path, adding user's candidates which worked
     m_audioPaths = audioPaths;
 
+    return true;
+}
+
+AudioFile *Scene::loadNewSample(const std::string &path)
+{
+    AudioFile *af = m_audioFiles->loadFile(path);
+    if (!af) {
+        // cannot load
+        return nullptr;
+    }
+
+    for (unsigned i = 0, n = m_clouds.size(); i < n; ++i)
+        m_clouds[i]->cloud->updateSoundSet();
+
+    return af;
+}
+
+bool Scene::removeSoundAt(unsigned index)
+{
+    if (index >= m_sounds.size())
+        return false;
+
+    m_sounds.erase(m_sounds.begin() + index);
     return true;
 }
 

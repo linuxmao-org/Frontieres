@@ -132,13 +132,16 @@ void MyGLApplication::addSound()
     std::unique_lock<std::mutex> lock(::currentSceneMutex);
     Scene *scene = ::currentScene;
 
-    AudioFile *af = scene->m_audioFiles->loadFile(qSoundFile.toStdString());
+    AudioFile *af = scene->loadNewSample(qSoundFile.toStdString());
     if (!af) {
         // cannot load
         return;
     }
 
+    // add into the scene
     scene->addSoundRect(af);
+
+    // add the file's location into search paths, if not already
     scene->addAudioPath(qSoundDir.path().toStdString());
 }
 

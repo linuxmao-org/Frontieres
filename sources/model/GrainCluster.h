@@ -136,6 +136,9 @@ public:
     // return number of voices
     unsigned int getNumVoices();
 
+    // update after a change of sound set
+    void updateSoundSet();
+
     // print information
     void describe(std::ostream &out);
 

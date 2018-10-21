@@ -57,6 +57,8 @@ public:
     bool save(QFile &sceneFile);
 
     bool loadSampleSet(bool interactive);
+    AudioFile *loadNewSample(const std::string &path);
+    bool removeSoundAt(unsigned index);
     void addAudioPath(const std::string &path);
 
     void addSoundRect(AudioFile *sample);

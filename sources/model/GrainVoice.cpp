@@ -42,12 +42,6 @@ extern unsigned int samp_rate;
 //-----------------------------------------------------------------------------
 GrainVoice::~GrainVoice()
 {
-    if (playPositions != NULL)
-        delete[] playPositions;
-
-    if (playVols != NULL)
-        delete[] playVols;
-
     if (chanMults)
         delete[] chanMults;
 
@@ -67,23 +61,8 @@ GrainVoice::GrainVoice(VecSceneSound *soundSet, float durationMs, float thePitch
     // store pointer to external vector of sound files
     theSounds = soundSet;
 
-    // get number of loaded sounds
-    unsigned numSounds = (unsigned)soundSet->size();
-
-    // set play positions to -1 for all
-    // note - will have to handle files being added at runtime later if it becomes a feature
-    if (numSounds > 0) {
-        playPositions = new double[numSounds];
-        playVols = new double[numSounds];
-        // initialize - (-1 signifies that sound should not be played)
-        for (int i = 0; i < soundSet->size(); i++) {
-            playPositions[i] = -1.0;
-            playVols[i] = 0.0;
-        }
-    }
-    else {
-        playPositions = NULL;
-    }
+    // initialize with the current sound set
+    updateSoundSet();
 
     // playing status init
     playingState = false;
@@ -306,6 +285,24 @@ void GrainVoice::setWindow(unsigned int theType)
     queuedWindowType = theType;
     if (queuedWindowType != windowType)
         newParam = true;
+}
+
+//-----------------------------------------------------------------------------
+// Update after a change of sound set
+//-----------------------------------------------------------------------------
+void GrainVoice::updateSoundSet()
+{
+    // get number of loaded sounds
+    unsigned numSounds = (unsigned)theSounds->size();
+
+    // set play positions to -1 for all
+    playPositions.reset(new double[numSounds]);
+    playVols.reset(new double[numSounds]);
+    // initialize - (-1 signifies that sound should not be played)
+    for (int i = 0; i < numSounds; i++) {
+        playPositions[i] = -1.0;
+        playVols[i] = 0.0;
+    }
 }
 
 
