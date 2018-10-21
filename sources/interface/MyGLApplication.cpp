@@ -124,11 +124,8 @@ void MyGLApplication::addSound()
     QStringList qSoundFiles = QFileDialog::getOpenFileNames(
         nullptr, _Q("", "Load sound"),
         QString(), _Q("", "Sound files (*.*)"));
-
-    if (qSoundFiles.isEmpty())
-        return;
-    QString qSoundFile = "";
-    for (int i =0;i<qSoundFiles.count();i++) {
+    QString qSoundFile;
+    for (int i = 0 ; i < qSoundFiles.count() ; i++) {
         qSoundFile = (qSoundFiles.at(i));
         QDir qSoundDir = QFileInfo(qSoundFile).dir();
 
