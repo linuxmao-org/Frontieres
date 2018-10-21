@@ -30,6 +30,9 @@ public:
     MyGLWindow *GLwindow();
     void startIdleCallback(double fps);
 
+    bool loadSceneFile();
+    bool saveSceneFile();
+
 private:
     struct Impl;
     std::unique_ptr<Impl> P;

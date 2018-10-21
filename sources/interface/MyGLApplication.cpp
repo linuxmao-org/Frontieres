@@ -21,6 +21,8 @@
 
 #include "MyGLApplication.h"
 #include "MyGLWindow.h"
+#include "Frontieres.h"
+#include "model/Scene.h"
 #include <QTranslator>
 #include <QLibraryInfo>
 #include <QTimer>
@@ -79,6 +81,40 @@ void MyGLApplication::startIdleCallback(double fps)
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, [this]{ P->onIdle(); });
     timer->start(1e3 / fps);
+}
+
+bool MyGLApplication::loadSceneFile()
+{
+    std::string nameSceneFile = Scene::askNameScene(FileDirection::Load);
+    if (nameSceneFile.empty())
+        return false;
+
+    // load the scene and its sounds
+    Scene *scene = new Scene;
+    QFile sceneFile(QString::fromStdString(nameSceneFile));
+    if (!scene->load(sceneFile) || !scene->loadSampleSet(true)) {
+        delete scene;
+        return false;
+    }
+
+    // swap with the current, acquiring mutex for very short time
+    std::unique_lock<std::mutex> lock(::currentSceneMutex);
+    std::swap(::currentScene, scene);
+    lock.unlock();
+
+    // delete the previous scene
+    delete scene;
+    return true;
+}
+
+bool MyGLApplication::saveSceneFile()
+{
+    std::string nameSceneFile = Scene::askNameScene(FileDirection::Save);
+    if (nameSceneFile.empty())
+        return false;
+
+    QFile sceneFile(QString::fromStdString(nameSceneFile));
+    return ::currentScene->save(sceneFile);
 }
 
 void MyGLApplication::Impl::onIdle()

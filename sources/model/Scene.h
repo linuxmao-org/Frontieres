@@ -27,7 +27,6 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include <mutex>
 struct SceneSound;
 struct SceneCloud;
 struct AudioFile;
@@ -81,9 +80,6 @@ public:
     int m_selectedSound = -1;
     int m_selectionIndex = 0;
     std::vector<int> m_selectionIndices;
-
-    // mutex
-    std::mutex m_mutex;
 };
 
 struct SceneSound {

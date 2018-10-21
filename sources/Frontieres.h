@@ -24,6 +24,7 @@
 
 #include <string>
 #include <vector>
+#include <mutex>
 #include <QApplication>
 #include <QDialog>
 #include <QFileDialog>
@@ -71,6 +72,8 @@ extern std::string g_audioPathSystem;
 
 // current scene
 extern Scene *currentScene;
+// current scene mutex
+extern std::mutex currentSceneMutex;
 
 // selection helper vars
 extern bool menuFlag;

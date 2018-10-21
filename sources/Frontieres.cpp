@@ -108,6 +108,8 @@ string paramString = "";
 unsigned int g_buffSize = 1024;
 // current scene
 Scene *currentScene = nullptr;
+// current scene mutex
+std::mutex currentSceneMutex;
 
 // sample rate - Hz
 unsigned int samp_rate = 0;
@@ -219,9 +221,9 @@ int audioCallback(void *outputBuffer, void *inputBuffer, unsigned int numFrames,
 
     memset(out, 0, sizeof(SAMPLE) * numFrames * MY_CHANNELS);
     if (menuFlag == false) {
-        Scene *scene = ::currentScene;
-        std::unique_lock<std::mutex> lock(scene->m_mutex, std::try_to_lock);
+        std::unique_lock<std::mutex> lock(::currentSceneMutex, std::try_to_lock);
         if (lock.owns_lock()) {
+            Scene *scene = ::currentScene;
             for (int i = 0, n = scene->m_clouds.size(); i < n; i++) {
                 GrainCluster &theCloud = *scene->m_clouds[i]->cloud;
                 theCloud.nextBuffer(out, numFrames);

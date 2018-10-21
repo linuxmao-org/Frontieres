@@ -20,6 +20,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "interface/MyGLWindow.h"
+#include "interface/MyGLApplication.h"
 #include "ui_MyGLWindow.h"
 #include "model/GrainCluster.h"
 #include "model/Scene.h"
@@ -53,6 +54,10 @@ void MyGLWindow::initialize()
 
     connect(P->ui.action_Quit, &QAction::triggered,
             qApp, &QApplication::quit);
+    connect(P->ui.action_Load, &QAction::triggered,
+            this, []() { theApplication->loadSceneFile(); });
+    connect(P->ui.action_Save, &QAction::triggered,
+            this, []() { theApplication->saveSceneFile(); });
 
     // initial window settings
     QSurfaceFormat format = QSurfaceFormat::defaultFormat();
@@ -658,7 +663,7 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
     case Qt::Key_G: {
         paramString = "";
         scene->deselect(RECT);
-        std::lock_guard<std::mutex> lock(scene->m_mutex);
+        std::lock_guard<std::mutex> lock(::currentSceneMutex);
         if (modkey == Qt::ShiftModifier) {
             if (!scene->m_clouds.empty()) {
                 scene->m_clouds.pop_back();
@@ -814,7 +819,7 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Delete:  // delete selected
         if (paramString == "") {
             if (selectedCloud) {
-                std::lock_guard<std::mutex> lock(scene->m_mutex);
+                std::lock_guard<std::mutex> lock(::currentSceneMutex);
                 scene->m_clouds.erase(scene->m_clouds.begin() + scene->m_selectedCloud);
                 scene->m_selectedCloud = -1;
             }
@@ -854,11 +859,7 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
         break;
     case Qt::Key_M: {
         // record scene
-        string nameSceneFile = scene->askNameScene(FileDirection::Save);
-        if (!nameSceneFile.empty()) {
-            QFile sceneFile(QString::fromStdString(nameSceneFile));
-            scene->save(sceneFile);
-        }
+        theApplication->saveSceneFile();
         break;
     }
 
