@@ -82,7 +82,7 @@
   </action>
   <action name="action_Add_sound">
    <property name="text">
-    <string>&amp;Add sound...</string>
+    <string>&amp;Add sounds...</string>
    </property>
   </action>
  </widget>
