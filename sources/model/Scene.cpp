@@ -267,7 +267,7 @@ bool Scene::save(QFile &sceneFile)
 
         QJsonObject objSound;
         objSound["name"] = QString::fromStdString(sound->name);
-        objSound["orientation"] = QString::number(sv->getOrientation());
+        objSound["orientation"] = (int)sv->getOrientation();
         objSound["height"] = sv->getHeight();
         objSound["width"] = sv->getWidth();
         objSound["x"] = sv->getX();
