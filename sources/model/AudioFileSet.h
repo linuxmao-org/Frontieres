@@ -91,6 +91,9 @@ public:
     // load a single file in the collection, or return if the same name already exists
     AudioFile *loadFile(const std::string &path);
 
+    // remove a single sample from the set
+    void removeSample(AudioFile *sample);
+
     // return the audio vector- note, the intension is for the files to be
     // read only.  if write access is needed in the future - thread safety will
     // need to be considered

@@ -303,21 +303,9 @@ void GrainVoice::updateSoundSet()
         playPositions[i] = -1.0;
         playVols[i] = 0.0;
     }
-}
 
-
-// update after a removed sound
-void GrainVoice::updateSoundRemoved(unsigned removedIndex)
-{
-    // recalculate the indices to match
-    unsigned newCount = 0;
-    for (unsigned count = 0, total = activeSounds.size(); count < total; ++count) {
-        unsigned otherIndex = activeSounds[count];
-        if (otherIndex != removedIndex)
-            activeSounds[newCount++] = (otherIndex < removedIndex) ?
-                otherIndex : (otherIndex - 1);
-    }
-    activeSounds.resize(newCount);
+    activeSounds.clear();
+    activeSounds.reserve(numSounds);
 }
 
 

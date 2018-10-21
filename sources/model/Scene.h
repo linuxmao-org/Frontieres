@@ -59,6 +59,7 @@ public:
     bool loadSampleSet(bool interactive);
     AudioFile *loadNewSample(const std::string &path);
     bool removeSoundAt(unsigned index);
+    void removeSampleIfNotUsed(AudioFile *sample);
     void addAudioPath(const std::string &path);
 
     void addSoundRect(AudioFile *sample);

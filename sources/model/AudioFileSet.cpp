@@ -222,6 +222,21 @@ AudioFile *AudioFileSet::loadFile(const std::string &path)
     return audioFile;
 }
 
+void AudioFileSet::removeSample(AudioFile *sample)
+{
+    unsigned index = 0;
+    unsigned count = fileSet.size();
+
+    while (index < count && fileSet[index] != sample)
+        ++index;
+
+    if (index == count)
+        return;  // not found
+
+    fileSet.erase(fileSet.begin() + index);
+    delete sample;
+}
+
 void AudioFile::resampleTo(unsigned int newRate)
 {
     unsigned channels = this->channels;

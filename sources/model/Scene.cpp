@@ -435,8 +435,10 @@ bool Scene::loadSampleSet(bool interactive)
         }
     }
 
-    for (unsigned i = 0, n = m_clouds.size(); i < n; ++i)
-        m_clouds[i]->cloud->updateSoundSet();
+    for (unsigned i = 0, n = m_clouds.size(); i < n; ++i) {
+        GrainCluster &gc = *m_clouds[i]->cloud;
+        gc.updateSoundSet();
+    }
 
     // update the audio path, adding user's candidates which worked
     m_audioPaths = audioPaths;
@@ -451,10 +453,6 @@ AudioFile *Scene::loadNewSample(const std::string &path)
         // cannot load
         return nullptr;
     }
-
-    for (unsigned i = 0, n = m_clouds.size(); i < n; ++i)
-        m_clouds[i]->cloud->updateSoundSet();
-
     return af;
 }
 
@@ -463,14 +461,30 @@ bool Scene::removeSoundAt(unsigned index)
     if (index >= m_sounds.size())
         return false;
 
+    AudioFile *af = m_sounds[index]->sample;
     m_sounds.erase(m_sounds.begin() + index);
 
     for (unsigned i = 0, n = m_clouds.size(); i < n; ++i) {
         GrainCluster &gc = *m_clouds[i]->cloud;
-        gc.updateSoundRemoved(index);
+        gc.updateSoundSet();
     }
 
+    removeSampleIfNotUsed(af);
     return true;
+}
+
+void Scene::removeSampleIfNotUsed(AudioFile *sample)
+{
+    bool used = false;
+    for (unsigned i = 0, n = m_sounds.size(); !used && i < n; ++i)
+        used = m_sounds[i]->sample == sample;
+    if (!used) {
+        std::cout << "Sample is not used, delete\n";
+        m_audioFiles->removeSample(sample);
+    }
+    else {
+        std::cout << "Sample is used, keep\n";
+    }
 }
 
 void Scene::addAudioPath(const std::string &path)
@@ -494,9 +508,15 @@ void Scene::addSoundRect(AudioFile *sample)
     m_sounds.emplace_back(sound);
     sound->name = sample->name;
     sound->sample = sample;
+
     SoundRect *sv = new SoundRect;
     sound->view.reset(sv);
     sv->associateSound(sample->wave, sample->frames, sample->channels);
+
+    for (unsigned i = 0, n = m_clouds.size(); i < n; ++i) {
+        GrainCluster &gc = *m_clouds[i]->cloud;
+        gc.updateSoundSet();
+    }
 }
 
 void Scene::addNewCloud(int numVoices)

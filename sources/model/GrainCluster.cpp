@@ -356,13 +356,6 @@ void GrainCluster::updateSoundSet()
         grain->updateSoundSet();
 }
 
-// update after a removed sound
-void GrainCluster::updateSoundRemoved(unsigned index)
-{
-    for (GrainVoice *grain : myGrains)
-        grain->updateSoundRemoved(index);
-}
-
 // print information
 void GrainCluster::describe(std::ostream &out)
 {
