@@ -121,28 +121,29 @@ bool MyGLApplication::saveSceneFile()
 
 void MyGLApplication::addSound()
 {
-    QString qSoundFile = QFileDialog::getOpenFileName(
+    QStringList qSoundFiles = QFileDialog::getOpenFileNames(
         nullptr, _Q("", "Load sound"),
         QString(), _Q("", "Sound files (*.*)"));
 
-    if (qSoundFile.isEmpty())
+    if (qSoundFiles.isEmpty())
         return;
-    QDir qSoundDir = QFileInfo(qSoundFile).dir();
+    QString qSoundFile = "";
+    for (int i =0;i<qSoundFiles.count();i++) {
+        qSoundFile = (qSoundFiles.at(i));
+        QDir qSoundDir = QFileInfo(qSoundFile).dir();
 
-    std::unique_lock<std::mutex> lock(::currentSceneMutex);
-    Scene *scene = ::currentScene;
+        std::unique_lock<std::mutex> lock(::currentSceneMutex);
+        Scene *scene = ::currentScene;
 
-    AudioFile *af = scene->loadNewSample(qSoundFile.toStdString());
-    if (!af) {
-        // cannot load
-        return;
+        AudioFile *af = scene->loadNewSample(qSoundFile.toStdString());
+        if (af) {
+            // add into the scene
+            scene->addSoundRect(af);
+
+            // add the file's location into search paths, if not already
+            scene->addAudioPath(qSoundDir.path().toStdString());
+        }
     }
-
-    // add into the scene
-    scene->addSoundRect(af);
-
-    // add the file's location into search paths, if not already
-    scene->addAudioPath(qSoundDir.path().toStdString());
 }
 
 void MyGLApplication::Impl::onIdle()
