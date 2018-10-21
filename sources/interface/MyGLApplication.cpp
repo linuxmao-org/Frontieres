@@ -22,7 +22,9 @@
 #include "MyGLApplication.h"
 #include "MyGLWindow.h"
 #include "Frontieres.h"
+#include "I18n.h"
 #include "model/Scene.h"
+#include "model/AudioFileSet.h"
 #include <QTranslator>
 #include <QLibraryInfo>
 #include <QTimer>
@@ -115,6 +117,29 @@ bool MyGLApplication::saveSceneFile()
 
     QFile sceneFile(QString::fromStdString(nameSceneFile));
     return ::currentScene->save(sceneFile);
+}
+
+void MyGLApplication::addSound()
+{
+    QString qSoundFile = QFileDialog::getOpenFileName(
+        nullptr, _Q("", "Load sound"),
+        QString(), _Q("", "Sound files (*.*)"));
+
+    if (qSoundFile.isEmpty())
+        return;
+    QDir qSoundDir = QFileInfo(qSoundFile).dir();
+
+    std::unique_lock<std::mutex> lock(::currentSceneMutex);
+    Scene *scene = ::currentScene;
+
+    AudioFile *af = scene->m_audioFiles->loadFile(qSoundFile.toStdString());
+    if (!af) {
+        // cannot load
+        return;
+    }
+
+    scene->addSoundRect(af);
+    scene->addAudioPath(qSoundDir.path().toStdString());
 }
 
 void MyGLApplication::Impl::onIdle()

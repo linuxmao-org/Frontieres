@@ -58,6 +58,8 @@ void MyGLWindow::initialize()
             this, []() { theApplication->loadSceneFile(); });
     connect(P->ui.action_Save, &QAction::triggered,
             this, []() { theApplication->saveSceneFile(); });
+    connect(P->ui.action_Add_sound, &QAction::triggered,
+            this, []() { theApplication->addSound(); });
 
     // initial window settings
     QSurfaceFormat format = QSurfaceFormat::defaultFormat();

@@ -50,11 +50,18 @@
     <addaction name="separator"/>
     <addaction name="action_Quit"/>
    </widget>
+   <widget class="QMenu" name="menu_Edit">
+    <property name="title">
+     <string>&amp;Edit</string>
+    </property>
+    <addaction name="action_Add_sound"/>
+   </widget>
    <addaction name="menu_File"/>
+   <addaction name="menu_Edit"/>
   </widget>
   <action name="action_Load">
    <property name="text">
-    <string>&amp;Load</string>
+    <string>&amp;Load...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -62,7 +69,7 @@
   </action>
   <action name="action_Save">
    <property name="text">
-    <string>&amp;Save</string>
+    <string>&amp;Save...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
@@ -71,6 +78,11 @@
   <action name="action_Quit">
    <property name="text">
     <string>&amp;Quit</string>
+   </property>
+  </action>
+  <action name="action_Add_sound">
+   <property name="text">
+    <string>&amp;Add sound...</string>
    </property>
   </action>
  </widget>

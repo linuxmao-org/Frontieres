@@ -57,6 +57,7 @@ public:
     bool save(QFile &sceneFile);
 
     bool loadSampleSet(bool interactive);
+    void addAudioPath(const std::string &path);
 
     void addSoundRect(AudioFile *sample);
     void addNewCloud(int numVoices);

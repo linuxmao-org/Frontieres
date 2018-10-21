@@ -441,6 +441,21 @@ bool Scene::loadSampleSet(bool interactive)
     return true;
 }
 
+void Scene::addAudioPath(const std::string &path)
+{
+    QDir dir(QString::fromStdString(path));
+    dir.makeAbsolute();
+
+    for (const std::string &otherPath : m_audioPaths) {
+        // check if already present
+        if (dir == QDir(QString::fromStdString(otherPath)))
+            return;
+    }
+
+    m_audioPaths.push_back(path);
+    return;
+}
+
 void Scene::addSoundRect(AudioFile *sample)
 {
     SceneSound *sound = new SceneSound;

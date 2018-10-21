@@ -32,6 +32,7 @@ public:
 
     bool loadSceneFile();
     bool saveSceneFile();
+    void addSound();
 
 private:
     struct Impl;
