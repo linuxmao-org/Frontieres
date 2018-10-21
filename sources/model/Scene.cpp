@@ -48,6 +48,7 @@ Scene::~Scene()
 // Constructor
 //-----------------------------------------------------------------------------
 Scene::Scene()
+    : m_audioFiles(new AudioFileSet)
 {
 }
 //-----------------------------------------------------------------------------
@@ -56,19 +57,17 @@ Scene::Scene()
 std::string Scene::askNameScene(FileDirection direction)
 {
     // choise file name and test extension
-    QString caption = _Q("","Frontieres : name of the scene");
     QString filterExtensionScene = _Q("", "Scene files (*%1)").arg(g_extensionScene);
-    QString pathScene = QString::fromStdString(g_audioPath);
+    QString pathScene = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
 
-    if (g_audioPath == g_audioPathDefault)
-        pathScene = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-
-    QFileDialog dlg(nullptr, caption, pathScene, filterExtensionScene);
+    QFileDialog dlg(nullptr, QString(), pathScene, filterExtensionScene);
     dlg.setDefaultSuffix(g_extensionScene);
     if (direction == FileDirection::Save) {
+        dlg.setWindowTitle(_Q("", "Save scene"));
         dlg.setAcceptMode(QFileDialog::AcceptSave);
     }
     else {
+        dlg.setWindowTitle(_Q("", "Load scene"));
         dlg.setAcceptMode(QFileDialog::AcceptOpen);
         dlg.setFileMode(QFileDialog::ExistingFile);
     }
@@ -83,10 +82,22 @@ std::string Scene::askNameScene(FileDirection direction)
     return selection.front().toStdString();
 }
 
+void Scene::clear()
+{
+    m_audioPaths.clear();
+    m_sounds.clear();
+    m_clouds.clear();
+    m_audioFiles.reset(new AudioFileSet);
+    m_selectedCloud = -1;
+    m_selectedSound = -1;
+    m_selectionIndex = 0;
+    m_selectionIndices.clear();
+}
+
 bool Scene::load(QFile &sceneFile)
 {
-    // TODO structurer ce format de fichier
-    // TODO ne pas charger la scène en global
+    QString sceneFileName = sceneFile.fileName();
+    QDir sceneFileDir = QFileInfo(sceneFileName).dir();
 
     if (!sceneFile.open(QIODevice::ReadOnly | QIODevice::Text))
         return false;
@@ -98,29 +109,36 @@ bool Scene::load(QFile &sceneFile)
 
     QJsonObject docRoot = doc.object();
 
-    m_audioPath = docRoot["audio-path"].toString().toStdString(); // path
-    cout << "scene path : " << m_audioPath << "\n";
+    QJsonValue valAudioPath = docRoot["audio-path"];
+
+    // path
+    m_audioPaths.clear();
+    if (valAudioPath.isArray()) {
+        for (QJsonValue v : valAudioPath.toArray())
+            m_audioPaths.push_back(v.toString().toStdString());
+    }
+    else if (valAudioPath.isString()) {
+        m_audioPaths.push_back(valAudioPath.toString().toStdString());
+    }
+    for (std::string &path : m_audioPaths) {
+        // transform paths relative to the scene file
+        QString qpath = QString::fromStdString(path);
+        if (QDir::isRelativePath(qpath))
+            path = sceneFileDir.filePath(qpath).toStdString();
+        cout << "scene path : " << path << "\n";
+    }
 
     QJsonArray docSounds = docRoot["sounds"].toArray();
     m_sounds.clear();
     m_sounds.reserve(docSounds.size());
-    m_soundsNotFound.clear();
-    m_soundsNotFound.reserve(docSounds.size());
     for (const QJsonValue &jsonElement : docSounds) { // samples
         QJsonObject objSound = jsonElement.toObject();
         SceneSound *sound = new SceneSound;
         m_sounds.emplace_back(sound);
 
         std::string name = objSound["name"].toString().toStdString(); // sample
+        sound->name = name;
         cout << name << "\n";
-
-        AudioFile *af = nullptr;
-        for (int j = 0, n = mySounds->size(); !af && j < n; ++j) {
-            AudioFile *cur = (*mySounds)[j];
-            if (name == cur->name) // sample matching
-                af = cur;
-        }
-        sound->sample = af;
 
         SoundRect *sv = new SoundRect();
         sound->view.reset(sv);
@@ -136,15 +154,6 @@ bool Scene::load(QFile &sceneFile)
              << ", width : " << widthSample
              << ", x : " << xSample
              << ", y : " << ySample << "\n";
-
-        if (af) {
-            sv->associateSound(af->wave, af->frames, af->channels);
-        }
-        else {
-            cout << " not found" << "\n";
-            m_soundsNotFound.push_back(std::move(m_sounds.back()));
-            m_sounds.pop_back();
-        }
     }
 
     QJsonArray docGrains = docRoot["clouds"].toArray();
@@ -218,8 +227,8 @@ bool Scene::load(QFile &sceneFile)
 
 bool Scene::save(QFile &sceneFile)
 {
-    // TODO structurer ce format de fichier
-    // TODO ne pas sauvegarder la scène globale
+    QString sceneFileName = sceneFile.fileName();
+    QDir sceneFileDir = QFileInfo(sceneFileName).dir();
 
     if (!sceneFile.open(QIODevice::WriteOnly | QIODevice::Text))
         return false;
@@ -228,28 +237,26 @@ bool Scene::save(QFile &sceneFile)
     m_selectedSound = -1;
     m_selectionIndex = 0;
     m_selectionIndices.clear();
-    m_audioPath = g_audioPath;
 
     QJsonObject docRoot;
 
     // audio path
     cout << "record scene " << sceneFile.fileName().toStdString() << "\n";
-    cout << "audio path : " << m_audioPath << "\n";
-    docRoot["audio-path"] = QString::fromStdString(m_audioPath);
 
-    // collect a list of sounds (both found and not found)
-    std::vector<SceneSound *> allSounds;
-    allSounds.reserve(m_sounds.size() + m_soundsNotFound.size());
-    for (const auto &sound : m_sounds)
-        allSounds.push_back(sound.get());
-    for (const auto &sound : m_soundsNotFound)
-        allSounds.push_back(sound.get());
+    QJsonArray docPaths;
+    for (const std::string &path : m_audioPaths) {
+        QString qpath = QString::fromStdString(path);
+        // save the paths under scene directory as relative
+        QString relative = sceneFileDir.relativeFilePath(qpath);
+        docPaths.append(relative.startsWith("../") ? qpath : relative);
+    }
+    docRoot["audio-path"] = docPaths;
 
     // samples
     QJsonArray docSounds;
-    cout << allSounds.size() << "samples : " << "\n";
-    for (int i = 0, n = allSounds.size(); i < n; ++i) {
-        SceneSound *sound = allSounds[i];
+    cout << m_sounds.size() << "samples : " << "\n";
+    for (int i = 0, n = m_sounds.size(); i < n; ++i) {
+        SceneSound *sound = m_sounds[i].get();
         SoundRect *sv = sound->view.get();
 
         std::ostream &out = std::cout;
@@ -313,19 +320,136 @@ bool Scene::save(QFile &sceneFile)
     return true;
 }
 
-void Scene::addSampleSet(AudioFile *samples[], unsigned count)
+bool Scene::loadSampleSet(bool interactive)
 {
-    for (unsigned i = 0; i < count; ++i) {
-        SceneSound *sound = new SceneSound;
-        m_sounds.emplace_back(sound);
+    // a new sound collection
+    std::unique_ptr<AudioFileSet> audioFiles(new AudioFileSet);
+    // total count of sounds needed
+    unsigned numSounds = m_sounds.size();
+    // count of sounds left to load
+    unsigned numSoundsLeft = numSounds;
+    // list of sounds associated with scene
+    std::vector<AudioFile *> soundFileAssoc(numSounds);
 
-        AudioFile *af = samples[i];
-        sound->name = af->name;
-        sound->sample = af;
-        SoundRect *sv = new SoundRect;
-        sound->view.reset(sv);
-        sv->associateSound(af->wave, af->frames, af->channels);
+    // the scene's current audio paths
+    std::vector<std::string> audioPaths = m_audioPaths;
+    // a list of additional candidate paths, added interactively by user
+    std::vector<std::string> candidateAudioPaths;
+    // a temporary list of search paths to try in order
+    std::vector<const std::string *> effectiveAudioPaths;
+
+    while (numSoundsLeft > 0) {
+        // attempt to load many missing sounds as possible
+        for (size_t i = 0; i < numSounds; ++i) {
+            if (soundFileAssoc[i])
+                continue;  // already loaded
+
+            // construct the current search path
+            effectiveAudioPaths.clear();
+            for (const std::string &path : candidateAudioPaths) {
+                // has to be the candidates at the front (logic follows below)
+                effectiveAudioPaths.push_back(&path);
+            }
+            for (const std::string &path : audioPaths)
+                effectiveAudioPaths.push_back(&path);
+            effectiveAudioPaths.push_back(&g_audioPathUser);
+            effectiveAudioPaths.push_back(&g_audioPathSystem);
+
+            // locate this file and load
+            AudioFile *af = nullptr;
+            QString qname = QString::fromStdString(m_sounds[i]->name);
+            for (unsigned i = 0, n = effectiveAudioPaths.size(); !af && i < n; ++i) {
+                QDir dir(QString::fromStdString(*effectiveAudioPaths[i]));
+                QString curpath = dir.filePath(qname);
+                af = audioFiles->loadFile(curpath.toStdString());
+
+                // successful load from a candidate path?
+                if (af && i < candidateAudioPaths.size()) {
+                    // move the candidate path into the recognized audio path (front)
+                    audioPaths.insert(audioPaths.begin(), *effectiveAudioPaths[i]);
+                    candidateAudioPaths.erase(candidateAudioPaths.begin() + i);
+                }
+            }
+
+            if (af) {
+                soundFileAssoc[i] = af;
+                --numSoundsLeft;
+            }
+        }
+
+        if (numSoundsLeft > 0) {  // failure to load some sounds
+            if (!interactive)
+                return false;
+
+            // ask the user to fix
+            unsigned indexMissing = 0;
+            while (soundFileAssoc[indexMissing]) ++indexMissing;
+
+            QString qnameMissing = QString::fromStdString(m_sounds[indexMissing]->name);
+
+            QMessageBox mbox(
+                QMessageBox::Warning, _Q("", "Load sounds"),
+                _Q("", "Could not find the sound file \"%1\".").arg(qnameMissing));
+
+            mbox.addButton(_Q("", "Add a different sound directory"), QMessageBox::AcceptRole);
+            mbox.addButton(_Q("", "Discard missing sounds"), QMessageBox::DestructiveRole);
+            mbox.addButton(QMessageBox::Cancel);
+            mbox.exec();
+
+            QAbstractButton *clicked = mbox.clickedButton();
+            QMessageBox::ButtonRole role = clicked ? mbox.buttonRole(clicked) : QMessageBox::RejectRole;
+
+            if (role == QMessageBox::DestructiveRole) {
+                // ignore missing sounds and proceed
+                break;
+            }
+            else if (role == QMessageBox::AcceptRole) {
+                // ask for a directory to add to search paths
+                QString candidateDir = QFileDialog::getExistingDirectory(
+                    nullptr, _Q("", "Add sound directory"),
+                    QString(), QFileDialog::ShowDirsOnly);
+                // add into candidates
+                if (!candidateDir.isEmpty())
+                    candidateAudioPaths.insert(candidateAudioPaths.begin(), candidateDir.toStdString());
+            }
+            else {
+                // cancel
+                return false;
+            }
+        }
     }
+
+    // load all sounds into model
+    m_audioFiles = std::move(audioFiles);
+    for (unsigned i = 0, j = 0, n = soundFileAssoc.size(); i < n; ++i) {
+        AudioFile *assoc = soundFileAssoc[i];
+        if (!assoc) {
+            // could not load sound for element? remove
+            m_sounds.erase(m_sounds.begin() + j);
+        }
+        else {
+            // associate sound with its element
+            SceneSound &sceneSound = *m_sounds[j++];
+            sceneSound.sample = assoc;
+            sceneSound.view->associateSound(assoc->wave, assoc->frames, assoc->channels);
+        }
+    }
+
+    // update the audio path, adding user's candidates which worked
+    m_audioPaths = audioPaths;
+
+    return true;
+}
+
+void Scene::addSoundRect(AudioFile *sample)
+{
+    SceneSound *sound = new SceneSound;
+    m_sounds.emplace_back(sound);
+    sound->name = sample->name;
+    sound->sample = sample;
+    SoundRect *sv = new SoundRect;
+    sound->view.reset(sv);
+    sv->associateSound(sample->wave, sample->frames, sample->channels);
 }
 
 void Scene::addNewCloud(int numVoices)

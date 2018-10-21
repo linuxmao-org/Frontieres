@@ -100,14 +100,12 @@ RtMidiIn *theMidiIn = NULL;
 // buffer of midi input messages
 Ring_Buffer *theMidiInBuffer = NULL;
 // library path
-string g_audioPath = "./loops/";
-string g_audioPathDefault = DATA_ROOT_DIR "/Frontieres/loops/";
+string g_audioPathUser;
+string g_audioPathSystem;
 // parameter string
 string paramString = "";
 // desired audio buffer size
 unsigned int g_buffSize = 1024;
-// audio files
-vector<AudioFile *> *mySounds = NULL;
 // current scene
 Scene *currentScene = nullptr;
 
@@ -800,10 +798,38 @@ int main(int argc, char **argv)
         exit(1);
     }
 
-    //-------------Graphics Initialization--------//
+    //-------------App Initialization--------//
 
     // init Qt application
     MyGLApplication app(argc, argv);
+    app.setApplicationName("Frontieres");
+    app.setApplicationDisplayName(u8"Frontières");
+
+    //-------------Paths Initialization--------//
+#if defined(Q_OS_WIN)
+    // subdirectory of program path
+    const QDir programDir = QFileInfo(QCoreApplication::applicationFilePath()).dir();
+    g_audioPathSystem = programDir.filePath("loops").toStdString();
+#elif defined(Q_OS_MAC)
+    // folder of bundle resources
+    const QDir programDir = QFileInfo(QCoreApplication::applicationFilePath()).dir();
+    g_audioPathSystem = programDir.filePath("../Resources/loops").toStdString();
+#else
+    // in the share directory of the root prefix
+    g_audioPathSystem = DATA_ROOT_DIR "/Frontieres/loops";
+#endif
+
+    // user path in system-dependent place
+    g_audioPathUser = (QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) +
+        "/loops").toStdString();
+
+    cout << "Audio path of user: " << g_audioPathUser << "\n";
+    cout << "Audio path of system: " << g_audioPathSystem << "\n";
+
+    // create the user directory
+    QDir(QString::fromStdString(g_audioPathUser)).mkpath(".");
+
+    //-------------Graphics Initialization--------//
 
     // initialize graphics
     MyGLWindow *GLwindow = app.GLwindow();
@@ -811,8 +837,6 @@ int main(int argc, char **argv)
     GLwindow->initialize();
     GLwindow->show();
 
-    Scene *scene = new Scene;
-    ::currentScene = scene;
 
     double fps = 50;
     app.startIdleCallback(fps);
@@ -821,80 +845,40 @@ int main(int argc, char **argv)
     startDlg.exec();
 
     //
-    std::string audioPathUser;
-    std::string nameSceneFile;
     int startChoice = startDlg.choiceResult();
 
+    Scene *scene = new Scene;
+
     switch (startChoice) {
     default:
         break;
 
-    case StartDialog::Choice_NewScene:
+    case StartDialog::Choice_NewScene: {
+        std::vector<AudioFile *> loaded;
+
+        // attempt to load from user, then system if empty
+        scene->m_audioFiles->loadFileSet(g_audioPathUser, &loaded);
+        if (loaded.empty())
+            scene->m_audioFiles->loadFileSet(g_audioPathSystem, &loaded);
+
+        // add them into the scene
+        for (AudioFile *af : loaded)
+            scene->addSoundRect(af);
+
         break;
+    }
 
     case StartDialog::Choice_LoadScene: {
-        nameSceneFile = scene->askNameScene(FileDirection::Load);
+        std::string nameSceneFile = scene->askNameScene(FileDirection::Load);
         QFile sceneFile(QString::fromStdString(nameSceneFile));
-        QJsonParseError jsonParseError;
-        QJsonDocument doc;
-        if (sceneFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            doc = QJsonDocument::fromJson(sceneFile.readAll(), &jsonParseError);
-        }
-        if (jsonParseError.error == QJsonParseError::NoError) {
-            // TODO ne pas charger les fichiers de cette manière.. se débrouiller autrement
-            // audio path
-            QJsonObject docRoot = doc.object();
-            audioPathUser = docRoot["audio-path"].toString().toStdString();
-            cout << "audio path user : " << audioPathUser << endl;
-        }
+        if (!scene->load(sceneFile) || !scene->loadSampleSet(true))
+            scene->clear();
         break;
     }
 
     }
 
-    if (audioPathUser.empty() || !QDir(QString::fromStdString(audioPathUser)).exists()) {
-        QString captionPath = qApp->translate("window to choose working directory",
-                                              "Frontieres : select sample's directory");
-        QString homeUser = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
-        audioPathUser = QFileDialog::getExistingDirectory(nullptr, captionPath, QString::fromStdString(g_audioPathDefault),
-                                                          QFileDialog::DontResolveSymlinks).toUtf8().constData();
-    }
-    cout << "path selected : " << audioPathUser << endl;
-    bool audioPathUserEmpty = true;
-    if (DIR *rep = opendir(audioPathUser.c_str())) {
-        struct dirent *ent;
-        while (audioPathUserEmpty && (ent = readdir(rep)))
-            audioPathUserEmpty = !strcmp(ent->d_name, ".") || !strcmp(ent->d_name, "..");
-        closedir(rep);
-    }
-    g_audioPath = audioPathUserEmpty ? g_audioPathDefault : audioPathUser;
-
-    cout << "Audio path of user: " << audioPathUser << "\n";
-    cout << "Audio path of system: " << g_audioPathDefault << "\n";
-    cout << "Audio path used: " << g_audioPath << "\n";
-
-    // load sounds
-    AudioFileSet newFileMgr;
-    if (newFileMgr.loadFileSet(g_audioPath) == 1) {
-        goto cleanup;
-    }
-    mySounds = newFileMgr.getFileVector();
-    cout << _S("", "Sounds loaded successfully...") << endl;
-
-    switch (startChoice) {
-    default:
-        break;
-
-    case StartDialog::Choice_NewScene:
-        scene->addSampleSet(mySounds->data(), mySounds->size());
-        break;
-
-    case StartDialog::Choice_LoadScene:
-        cout << "Loading scene " << nameSceneFile << endl;
-        QFile sceneFile(QString::fromStdString(nameSceneFile));
-        scene->load(sceneFile);
-        break;
-    }
+    ::currentScene = scene;
 
     // start audio stream
     theAudio->startStream();
@@ -904,7 +888,6 @@ int main(int argc, char **argv)
 
 
     // cleanup routine
-cleanup:
     cleaningFunction();
 
     // done

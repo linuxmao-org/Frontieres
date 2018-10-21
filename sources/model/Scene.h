@@ -34,6 +34,7 @@ struct AudioFile;
 struct SoundRect;
 struct GrainCluster;
 struct GrainClusterVis;
+class AudioFileSet;
 class QFile;
 
 typedef std::vector<std::unique_ptr<SceneSound>> VecSceneSound;
@@ -51,9 +52,14 @@ public:
     // window to choose a scene file
     static std::string askNameScene(FileDirection direction);
 
+    void clear();
+
     bool load(QFile &sceneFile);
     bool save(QFile &sceneFile);
-    void addSampleSet(AudioFile *samples[], unsigned count);
+
+    bool loadSampleSet(bool interactive);
+
+    void addSoundRect(AudioFile *sample);
     void addNewCloud(int numVoices);
 
     SceneSound *selectedSound();
@@ -63,10 +69,12 @@ public:
     void deselect(int shapeType);
 
     // data contents
-    std::string m_audioPath;
+    std::vector<std::string> m_audioPaths;
     VecSceneSound m_sounds;
-    VecSceneSound m_soundsNotFound;
     VecSceneCloud m_clouds;
+
+    // sounds
+    std::unique_ptr<AudioFileSet> m_audioFiles;
 
     // selection helper vars
     int m_selectedCloud = -1;

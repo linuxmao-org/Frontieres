@@ -86,7 +86,10 @@ public:
     AudioFileSet();
 
     // read in all audio files contained in
-    int loadFileSet(string path);
+    int loadFileSet(const std::string &path, std::vector<AudioFile *> *loaded = nullptr);
+
+    // load a single file in the collection, or return if the same name already exists
+    AudioFile *loadFile(const std::string &path);
 
     // return the audio vector- note, the intension is for the files to be
     // read only.  if write access is needed in the future - thread safety will

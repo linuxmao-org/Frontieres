@@ -66,11 +66,9 @@ extern int dragMode;
 extern bool resizeDir;  // for rects
 
 // library path
-extern std::string g_audioPath;
-extern std::string g_audioPathDefault;
+extern std::string g_audioPathUser;
+extern std::string g_audioPathSystem;
 
-// audio files
-extern std::vector<AudioFile *> *mySounds;
 // current scene
 extern Scene *currentScene;
 

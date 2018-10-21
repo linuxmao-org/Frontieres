@@ -28,6 +28,7 @@
 //
 
 #include "AudioFileSet.h"
+#include <QFileInfo>
 #include <stdexcept>
 #include <soxr.h>
 #include <math.h>
@@ -64,7 +65,7 @@ vector<AudioFile *> *AudioFileSet::getFileVector()
 //  Search path and load all audio files into memory.  Convert to mono (L)
 //  if needed.
 //---------------------------------------------------------------------------
-int AudioFileSet::loadFileSet(string localPath)
+int AudioFileSet::loadFileSet(const std::string &localPath, std::vector<AudioFile *> *loaded)
 {
     // read through loop directory and attempt to load audio files into buffers
 
@@ -88,108 +89,22 @@ int AudioFileSet::loadFileSet(string localPath)
             string theFileName = ent->d_name;
 
             // skip cd, top directory, other files
-            if ((theFileName == ".") || (theFileName == "..") ||
-                (theFileName == ".DS_Store") || (theFileName == ".svn")) {
+            if (!theFileName.empty() && theFileName.front() == '.')
                 continue;
-            }
-
 
             // construct path
             string myPath = localPath + '/' + theFileName;
 
-
-            // temp struct that will hold the details of the file being read (sample rate, num channels. etc.)
-            SF_INFO sfinfo;
-
-            // a pointer to the audio file to read
-            SNDFILE *infile;
-
-
-            // open the file for reading and get the header info
-            if (!(infile = sf_open(myPath.c_str(), SFM_READ, &sfinfo))) {
-                printf("Not able to open input file %s.\n", theFileName.c_str());
-                // Print the error message from libsndfile.
-                puts(sf_strerror(NULL));
-                // skip to next
+            // load it
+            AudioFile *af = loadFile(myPath.c_str());
+            if (!af)
                 continue;
-            }
 
-            // show the current file path (comment this eventually)
-            printf("Loading '%s'... \n", theFileName.c_str());
-
-            // explore the file's info
-            cout << "  Channels: " << sfinfo.channels << endl;
-            cout << "  Frames: " << sfinfo.frames << endl;
-            cout << "  Sample Rate: " << sfinfo.samplerate << endl;
-            cout << "  Format: " << sfinfo.format << endl;
-
-            // warn about sampling rate incompatibility
-            if (sfinfo.samplerate != ::samp_rate) {
-                printf("'%s' is sampled at a different rate from the current "
-                       "sample rate of %i\n",
-                       theFileName.c_str(), ::samp_rate);
-            }
-
-            // MONO CONVERSION SET ASIDE FOR NOW...  number of channels for each file is dealt with
-            // by external audio processing algorithms
-            // notify user of mono conversion
-            //            if (sfinfo.channels > 1){
-            //  printf("\nWARNING: '%s' will be converted to mono using left channel \n\n",theFileName.c_str());
-            //            }
-
-            // read the contents of the file in chunks of 512 samples
-            const int buffSize = 512;
-
-            // we will convert the file to mono - left channel, but store the stereo frames temporarily
-            double stereoBuff[buffSize];
-
-            // length of mono buffer
-            //            unsigned int monoLength = sfinfo.frames/sfinfo.channels;
-
-
-            // allocate memory for the new waveform (new audio file entry in the fileSet)
-            // length corresponds to the number of frames * number of channels (1 frame contains L, R pair or chans 1,2,3...)
-            unsigned long fullSize = sfinfo.frames * sfinfo.channels;
-
-            AudioFile *audioFile = new AudioFile(theFileName, myPath, sfinfo.channels,
-                                                 sfinfo.frames, sfinfo.samplerate,
-                                                 new double[fullSize]);
-            fileSet.push_back(audioFile);
-
-
-            // accumulate the samples
-            unsigned long counter = 0;
-            bool empty = false;
-            do {
-                // read the samples as doubles
-                sf_count_t count = sf_read_double(infile, &stereoBuff[0], buffSize);
-                // break if we reached the end of the file
-                // print the sample values to screen
-                for (int i = 0; i < buffSize; i++) {
-                    if (counter < fullSize) {
-                        // if ((i % sfinfo.channels) == 0){
-                        audioFile->wave[counter] = stereoBuff[i] * globalAtten;
-                        counter++;
-                    }
-                }
-                if (count == 0) {
-                    empty = true;
-                    continue;
-                }
-
-            } while (!empty);
-
-            if (sfinfo.samplerate != ::samp_rate) {
-                printf("Resample to %i\n", ::samp_rate);
-                audioFile->resampleTo(::samp_rate);
-            }
-
-            cout << counter << endl;
             // increment the file counter
             fileCounter++;
 
-            // don't forget to close the file
-            sf_close(infile);
+            if (loaded)
+                loaded->push_back(af);
         }
 
         // close the directory that we've been navigating
@@ -202,6 +117,109 @@ int AudioFileSet::loadFileSet(string localPath)
     }
 
     return 0;
+}
+
+AudioFile *AudioFileSet::loadFile(const std::string &path)
+{
+    // temp struct that will hold the details of the file being read (sample rate, num channels. etc.)
+    SF_INFO sfinfo;
+
+    // a pointer to the audio file to read
+    SNDFILE *infile;
+
+    // isolate the file name part
+    std::string theFileName = QFileInfo(QString::fromStdString(path)).fileName().toStdString();
+
+    // check if exists, if so return it
+    for (AudioFile *existing : fileSet) {
+        if (existing->name == theFileName)
+            return existing;
+    }
+
+    // open the file for reading and get the header info
+    if (!(infile = sf_open(path.c_str(), SFM_READ, &sfinfo))) {
+        printf("Not able to open input file %s.\n", theFileName.c_str());
+        // Print the error message from libsndfile.
+        puts(sf_strerror(NULL));
+        // skip to next
+        return nullptr;
+    }
+
+    // show the current file path (comment this eventually)
+    printf("Loading '%s'... \n", theFileName.c_str());
+
+    // explore the file's info
+    cout << "  Channels: " << sfinfo.channels << endl;
+    cout << "  Frames: " << sfinfo.frames << endl;
+    cout << "  Sample Rate: " << sfinfo.samplerate << endl;
+    cout << "  Format: " << sfinfo.format << endl;
+
+    // warn about sampling rate incompatibility
+    if (sfinfo.samplerate != ::samp_rate) {
+        printf("'%s' is sampled at a different rate from the current "
+               "sample rate of %i\n",
+               theFileName.c_str(), ::samp_rate);
+    }
+
+    // MONO CONVERSION SET ASIDE FOR NOW...  number of channels for each file is dealt with
+    // by external audio processing algorithms
+    // notify user of mono conversion
+    //            if (sfinfo.channels > 1){
+    //  printf("\nWARNING: '%s' will be converted to mono using left channel \n\n",theFileName.c_str());
+    //            }
+
+    // read the contents of the file in chunks of 512 samples
+    const int buffSize = 512;
+
+    // we will convert the file to mono - left channel, but store the stereo frames temporarily
+    double stereoBuff[buffSize];
+
+    // length of mono buffer
+    //            unsigned int monoLength = sfinfo.frames/sfinfo.channels;
+
+
+    // allocate memory for the new waveform (new audio file entry in the fileSet)
+    // length corresponds to the number of frames * number of channels (1 frame contains L, R pair or chans 1,2,3...)
+    unsigned long fullSize = sfinfo.frames * sfinfo.channels;
+
+    AudioFile *audioFile = new AudioFile(theFileName, path, sfinfo.channels,
+                                         sfinfo.frames, sfinfo.samplerate,
+                                         new double[fullSize]());
+    fileSet.push_back(audioFile);
+
+
+    // accumulate the samples
+    unsigned long counter = 0;
+    bool empty = false;
+    do {
+        // read the samples as doubles
+        sf_count_t count = sf_read_double(infile, &stereoBuff[0], buffSize);
+        // break if we reached the end of the file
+        // print the sample values to screen
+        for (int i = 0; i < buffSize; i++) {
+            if (counter < fullSize) {
+                // if ((i % sfinfo.channels) == 0){
+                audioFile->wave[counter] = stereoBuff[i] * globalAtten;
+                counter++;
+            }
+        }
+        if (count == 0) {
+            empty = true;
+            continue;
+        }
+    } while (!empty);
+
+    if (sfinfo.samplerate != ::samp_rate) {
+        printf("Resample to %i\n", ::samp_rate);
+        audioFile->resampleTo(::samp_rate);
+    }
+
+    cout << counter << endl;
+
+    // don't forget to close the file
+    sf_close(infile);
+
+    return audioFile;
 }
 
 void AudioFile::resampleTo(unsigned int newRate)
@@ -238,4 +256,5 @@ void AudioFile::resampleTo(unsigned int newRate)
 void AudioFile::describe(std::ostream &out)
 {
     out << "- name : " << this->name << "\n";
+    out << "- path : " << this->path << "\n";
 }
