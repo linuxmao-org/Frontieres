@@ -100,6 +100,9 @@ public:
     // update after a change of sound set
     void updateSoundSet();
 
+    // update after a removed sound
+    void updateSoundRemoved(unsigned index);
+
 protected:
     // makes temp  params permanent
     void updateParams();

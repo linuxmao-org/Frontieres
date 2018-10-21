@@ -306,6 +306,21 @@ void GrainVoice::updateSoundSet()
 }
 
 
+// update after a removed sound
+void GrainVoice::updateSoundRemoved(unsigned removedIndex)
+{
+    // recalculate the indices to match
+    unsigned newCount = 0;
+    for (unsigned count = 0, total = activeSounds.size(); count < total; ++count) {
+        unsigned otherIndex = activeSounds[count];
+        if (otherIndex != removedIndex)
+            activeSounds[newCount++] = (otherIndex < removedIndex) ?
+                otherIndex : (otherIndex - 1);
+    }
+    activeSounds.resize(newCount);
+}
+
+
 //-----------------------------------------------------------------------------
 // Set direction (effective on next trigger)
 //-----------------------------------------------------------------------------

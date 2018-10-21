@@ -464,6 +464,12 @@ bool Scene::removeSoundAt(unsigned index)
         return false;
 
     m_sounds.erase(m_sounds.begin() + index);
+
+    for (unsigned i = 0, n = m_clouds.size(); i < n; ++i) {
+        GrainCluster &gc = *m_clouds[i]->cloud;
+        gc.updateSoundRemoved(index);
+    }
+
     return true;
 }
 

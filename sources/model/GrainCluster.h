@@ -139,6 +139,9 @@ public:
     // update after a change of sound set
     void updateSoundSet();
 
+    // update after a removed sound
+    void updateSoundRemoved(unsigned index);
+
     // print information
     void describe(std::ostream &out);
 
