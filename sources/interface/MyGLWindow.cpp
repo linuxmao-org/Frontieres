@@ -869,7 +869,18 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
         theApplication->saveSceneFile();
         break;
     }
-
+    case Qt::Key_N: {
+        // see name of cloud or sample
+        if (selectedSound) {
+            currentParam = NAME;
+        }
+        else {
+            paramString = "";
+            if (currentParam != NUM)
+                currentParam = NUM;
+        }
+        break;
+    }
     default:
         break;
     }
