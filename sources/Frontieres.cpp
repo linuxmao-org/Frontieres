@@ -624,7 +624,7 @@ void printParam()
         switch (currentParam) {
         case NAME:
             myValue = _S("", "Sample: ");
-        // TODO    sinput << theSoundRect.getName();
+        sinput << theSoundRect.getName();
             myValue = myValue + sinput.str();
             draw_string((GLfloat)mouseX, (GLfloat)(screenHeight - mouseY), 0.0,
                         myValue.c_str(), 100.0f);

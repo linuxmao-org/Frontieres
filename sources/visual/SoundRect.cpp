@@ -332,12 +332,13 @@ void SoundRect::setUps()
 //    lastY = (float)y;
 //}
 
-void SoundRect::associateSound(double *theBuff, unsigned long buffFrames, unsigned int buffChans)
+void SoundRect::associateSound(double *theBuff, unsigned long buffFrames, unsigned int buffChans, string name)
 {
 
     myBuff = theBuff;
     myBuffFrames = buffFrames;
     myBuffChans = buffChans;
+    rName = name;
     //    if (orientation == true)
     //        setWidthHeight((float)buffFrames/20000.f,rHeight);
     //    else
@@ -558,8 +559,10 @@ bool SoundRect::getNormedPosition(double *positionsX, double *positionsY,
 
 
 // set name
-void SoundRect::setName(char *name)
+void SoundRect::setName(string name)
 {
+    rName = name;
+    return;
 }
 
 // print information
@@ -570,4 +573,9 @@ void SoundRect::describe(std::ostream &out)
     out << "- width : " << getWidth() << "\n";
     out << "- X : " << getX() << "\n";
     out << "- Y : " << getY() << "\n";
+}
+
+string SoundRect::getName()
+{
+    return rName;
 }
