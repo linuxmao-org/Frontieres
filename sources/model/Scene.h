@@ -50,11 +50,13 @@ public:
 
     // window to choose a scene file
     static std::string askNameScene(FileDirection direction);
-
+    static std::string askNameCloud(FileDirection direction);
     void clear();
 
     bool load(QFile &sceneFile);
+    bool loadCloudDefault(QFile &cloudFile);
     bool save(QFile &sceneFile);
+    bool saveCloud(QFile &cloudFile, int numCloud);
 
     bool loadSampleSet(bool interactive);
     AudioFile *loadNewSample(const std::string &path);
@@ -64,6 +66,10 @@ public:
 
     void addSoundRect(AudioFile *sample);
     void addNewCloud(int numVoices);
+
+    // init default cloud params
+    void initDefaultCloudParams();
+
 
     SceneSound *selectedSound();
     SceneCloud *selectedCloud();

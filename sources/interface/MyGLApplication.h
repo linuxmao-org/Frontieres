@@ -32,6 +32,8 @@ public:
 
     bool loadSceneFile();
     bool saveSceneFile();
+    bool saveCloudFile(int numCloud);
+    bool loadCloudDefaultFile();
     void addSound();
 
 private:

@@ -57,7 +57,8 @@ GrainCluster::GrainCluster(VecSceneSound *soundSet, float theNumVoices)
     awaitingPlay = false;
 
     // number of voices
-    numVoices = theNumVoices;
+    //numVoices = theNumVoices;
+    numVoices = g_defaultCloudParams.numVoices;
     // initialize random number generator (for random motion)
     srand(time(NULL));
 
@@ -75,18 +76,22 @@ GrainCluster::GrainCluster(VecSceneSound *soundSet, float theNumVoices)
     local_time = 0;
 
     // default duration (ms)
-    duration = 500.0;
+    //duration = 500.0;
+    duration = g_defaultCloudParams.duration;
 
     // default pitch
-    pitch = 1.0f;
+    //pitch = 1.0f;
+    pitch = g_defaultCloudParams.pitch;
 
     // default window type
-    windowType = HANNING;
+    //windowType = HANNING;
+    windowType = g_defaultCloudParams.windowType;
 
     // initialize pitch LFO
-    pitchLFOFreq = 0.01f;
-    pitchLFOAmount = 0.0f;
-
+    //pitchLFOFreq = 0.01f;
+    pitchLFOFreq = g_defaultCloudParams.pitchLFOFreq;
+    //pitchLFOAmount = 0.0f;
+    pitchLFOAmount = g_defaultCloudParams.pitchLFOAmount;
     // initialize channel multiplier array
     channelMults = new double[MY_CHANNELS];
     for (int i = 0; i < MY_CHANNELS; i++) {
@@ -98,10 +103,12 @@ GrainCluster::GrainCluster(VecSceneSound *soundSet, float theNumVoices)
     side = 1;
 
 
-    spatialMode = UNITY;
-    channelLocation = -1;
-
-    myDirMode = RANDOM_DIR;
+    //spatialMode = UNITY;
+    spatialMode = g_defaultCloudParams.spatialMode;
+    //channelLocation = -1;
+    channelLocation = g_defaultCloudParams.chanelLocation;
+    //myDirMode = RANDOM_DIR;
+    myDirMode = g_defaultCloudParams.dirMode;
 
     // populate grain cloud
     for (int i = 0; i < numVoices; i++) {
@@ -109,10 +116,12 @@ GrainCluster::GrainCluster(VecSceneSound *soundSet, float theNumVoices)
     }
 
     // set volume of cloud to unity
-    setVolumeDb(0.0);
+    //setVolumeDb(0.0);
+    setVolumeDb(g_defaultCloudParams.volumeDB);
 
     // set overlap (default to full overlap)
-    setOverlap(1.0f);
+    //setOverlap(1.0f);
+    setOverlap(g_defaultCloudParams.overlap);
 
     //    //direction
     //    setDirection(RANDOM_DIR);
@@ -126,10 +135,9 @@ GrainCluster::GrainCluster(VecSceneSound *soundSet, float theNumVoices)
     }
 
     // state - (user can remove cloud from "play" for editing)
-    isActive = true;
+    //isActive = true;
+    isActive = g_defaultCloudParams.activateState;
 }
-
-
 // register controller for communication with view
 void GrainCluster::registerVis(GrainClusterVis *vis)
 {

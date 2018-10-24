@@ -27,6 +27,7 @@
 #include "AudioFileSet.h"
 #include "I18n.h"
 #include "visual/SoundRect.h"
+#include "dsp/Window.h"
 #include <QStandardPaths>
 #include <QJsonDocument>
 #include <QJsonObject>
@@ -50,6 +51,7 @@ Scene::~Scene()
 Scene::Scene()
     : m_audioFiles(new AudioFileSet)
 {
+    initDefaultCloudParams();
 }
 //-----------------------------------------------------------------------------
 // window to chose scene
@@ -81,7 +83,6 @@ std::string Scene::askNameScene(FileDirection direction)
 
     return selection.front().toStdString();
 }
-
 void Scene::clear()
 {
     m_audioPaths.clear();
@@ -92,6 +93,37 @@ void Scene::clear()
     m_selectedSound = -1;
     m_selectionIndex = 0;
     m_selectionIndices.clear();
+}
+//-----------------------------------------------------------------------------
+// window to chose cloud
+//-----------------------------------------------------------------------------
+std::string Scene::askNameCloud(FileDirection direction)
+{
+    // choise file name and test extension
+    QString g_extensionCloud = "cld";
+    QString filterExtensionCloud = _Q("", "Cloud files (*%1)").arg(g_extensionCloud);
+    QString pathScene = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+
+    QFileDialog dlg(nullptr, QString(), pathScene, filterExtensionCloud);
+    dlg.setDefaultSuffix(g_extensionCloud);
+    if (direction == FileDirection::Save) {
+        dlg.setWindowTitle(_Q("", "Save cloud"));
+        dlg.setAcceptMode(QFileDialog::AcceptSave);
+    }
+    else {
+        dlg.setWindowTitle(_Q("", "Load cloud"));
+        dlg.setAcceptMode(QFileDialog::AcceptOpen);
+        dlg.setFileMode(QFileDialog::ExistingFile);
+    }
+
+    if (dlg.exec() != QDialog::Accepted)
+        return std::string();
+
+    QStringList selection = dlg.selectedFiles();
+    if (selection.size() != 1)
+        return std::string();
+
+    return selection.front().toStdString();
 }
 
 bool Scene::load(QFile &sceneFile)
@@ -320,6 +352,115 @@ bool Scene::save(QFile &sceneFile)
     return true;
 }
 
+bool Scene::loadCloudDefault(QFile &cloudFile)
+{
+    QString cloudFileName = cloudFile.fileName();
+    QDir cloudFileDir = QFileInfo(cloudFileName).dir();
+
+    if (!cloudFile.open(QIODevice::ReadOnly | QIODevice::Text))
+        return false;
+
+    QJsonParseError jsonParseError;
+    QJsonDocument doc = QJsonDocument::fromJson(cloudFile.readAll(), &jsonParseError);
+    if (jsonParseError.error != QJsonParseError::NoError)
+        return false;
+
+    QJsonObject docRoot = doc.object();
+
+    QJsonArray docGrains = docRoot["cloud"].toArray();
+    for (const QJsonValue &jsonElement : docGrains) {
+        QJsonObject objGrain = jsonElement.toObject();
+
+        g_defaultCloudParams.duration = objGrain["duration"].toDouble();
+        g_defaultCloudParams.overlap = objGrain["overlap"].toDouble();
+        g_defaultCloudParams.pitch = objGrain["pitch"].toDouble();
+        g_defaultCloudParams.pitchLFOFreq = objGrain["pitch-lfo-freq"].toDouble();
+        g_defaultCloudParams.pitchLFOAmount = objGrain["pitch-lfo-amount"].toDouble();
+        g_defaultCloudParams.dirMode = objGrain["direction"].toInt();
+        g_defaultCloudParams.windowType = objGrain["window-type"].toInt();
+        g_defaultCloudParams.spatialMode = objGrain["spatial-mode"].toInt();
+        g_defaultCloudParams.chanelLocation = objGrain["spatial-channel"].toInt();
+        g_defaultCloudParams.volumeDB = objGrain["volume"].toDouble();
+        g_defaultCloudParams.numVoices = objGrain["num-voices"].toInt();
+        g_defaultCloudParams.activateState = objGrain["active-state"].toBool();
+        g_defaultCloudParams.xRandExtent = objGrain["x-rand-extent"].toDouble();
+        g_defaultCloudParams.yRandExtent = objGrain["y-rand-extent"].toDouble();
+
+        cout << "duration = " << g_defaultCloudParams.duration << "\n";
+        cout << "overlap = " << g_defaultCloudParams.overlap << "\n";
+        cout << "pitch = " << g_defaultCloudParams.pitch << "\n";
+        cout << "pitchLFOFreq = " << g_defaultCloudParams.pitchLFOFreq << "\n";
+        cout << "pitchLFOAmount = " << g_defaultCloudParams.pitchLFOAmount << "\n";
+        cout << "direction = " << g_defaultCloudParams.dirMode << "\n";
+        cout << "window type = " << g_defaultCloudParams.windowType << "\n";
+        cout << "spatial mode = " << g_defaultCloudParams.spatialMode << "\n";
+        cout << "spatial channel = " << g_defaultCloudParams.chanelLocation << "\n";
+        cout << "volume = " << g_defaultCloudParams.volumeDB << "\n";
+        cout << "voices = " << g_defaultCloudParams.numVoices << "\n";
+        cout << "active = " << g_defaultCloudParams.activateState << "\n";
+        cout << "xRandExtent = " << g_defaultCloudParams.xRandExtent << "\n";
+        cout << "yRandExtent = " << g_defaultCloudParams.yRandExtent << "\n";
+    }
+
+    return true;
+
+}
+
+bool Scene::saveCloud(QFile &cloudFile, int numCloud)
+{
+    QString cloudFileName = cloudFile.fileName();
+    QDir cloudFileDir = QFileInfo(cloudFileName).dir();
+
+    if (!cloudFile.open(QIODevice::WriteOnly | QIODevice::Text))
+            return false;
+
+        QJsonObject docRoot;
+
+        // audio path
+        cout << "record cloud " << cloudFile.fileName().toStdString() << "\n";
+
+        QJsonArray docPaths;
+
+        // graincloud
+
+        QJsonArray docGrains;
+        SceneCloud *cloud = m_clouds[numCloud].get();
+        GrainCluster *gc = cloud->cloud.get();
+        GrainClusterVis *gv = cloud->view.get();
+
+        std::ostream &out = std::cout;
+        out << "Grain Cloud " << numCloud << ":";
+        gc->describe(out);
+
+        QJsonObject objGrain;
+        objGrain["duration"] = gc->getDurationMs();
+        objGrain["overlap"] = gc->getOverlap();
+        objGrain["pitch"] = gc->getPitch();
+        objGrain["pitch-lfo-freq"] = gc->getPitchLFOFreq();
+        objGrain["pitch-lfo-amount"] = gc->getPitchLFOAmount();
+        objGrain["direction"] = gc->getDirection();
+        objGrain["window-type"] = gc->getWindowType();
+        objGrain["spatial-mode"] = gc->getSpatialMode();
+        objGrain["spatial-channel"] = gc->getSpatialChannel();
+        objGrain["volume"] = gc->getVolumeDb();
+        objGrain["num-voices"] = (int)gc->getNumVoices();
+        objGrain["active-state"] = gc->getActiveState();
+        objGrain["x-rand-extent"] = gv->getXRandExtent();
+        objGrain["y-rand-extent"] = gv->getYRandExtent();
+
+        docGrains.append(objGrain);
+
+        docRoot["cloud"] = docGrains;
+
+        QJsonDocument document;
+        document.setObject(docRoot);
+        cloudFile.write(document.toJson());
+        if (!cloudFile.flush())
+            return false;
+
+        return true;
+    }
+
 bool Scene::loadSampleSet(bool interactive)
 {
     // a new sound collection
@@ -442,8 +583,24 @@ bool Scene::loadSampleSet(bool interactive)
 
     // update the audio path, adding user's candidates which worked
     m_audioPaths = audioPaths;
-
     return true;
+}
+// init default cloud params
+void Scene::initDefaultCloudParams()
+{
+    cout << "entree init default" << endl;
+g_defaultCloudParams.duration = 500.0;
+g_defaultCloudParams.overlap = 1.0f;
+g_defaultCloudParams.pitch = 1.0f;
+g_defaultCloudParams.pitchLFOFreq = 0.01f;
+g_defaultCloudParams.pitchLFOAmount = 0.00f;
+g_defaultCloudParams.windowType = HANNING;
+g_defaultCloudParams.spatialMode= UNITY;
+g_defaultCloudParams.chanelLocation = -1;
+g_defaultCloudParams.numVoices = 8;
+g_defaultCloudParams.activateState = true;
+g_defaultCloudParams.xRandExtent = 3.0f;
+g_defaultCloudParams.yRandExtent = 3.0f;
 }
 
 AudioFile *Scene::loadNewSample(const std::string &path)

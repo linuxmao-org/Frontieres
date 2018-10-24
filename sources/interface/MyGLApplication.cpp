@@ -109,6 +109,17 @@ bool MyGLApplication::loadSceneFile()
     return true;
 }
 
+bool MyGLApplication::loadCloudDefaultFile()
+{
+    std::string nameCloudFile = Scene::askNameCloud(FileDirection::Load);
+    if (nameCloudFile.empty())
+        return false;
+    // load the clouds default params file
+
+    QFile cloudFile(QString::fromStdString(nameCloudFile));
+    return currentScene->loadCloudDefault(cloudFile);
+}
+
 bool MyGLApplication::saveSceneFile()
 {
     std::string nameSceneFile = Scene::askNameScene(FileDirection::Save);
@@ -117,6 +128,16 @@ bool MyGLApplication::saveSceneFile()
 
     QFile sceneFile(QString::fromStdString(nameSceneFile));
     return ::currentScene->save(sceneFile);
+}
+
+bool MyGLApplication::saveCloudFile(int numCloud)
+{
+    std::string nameCloudFile = Scene::askNameCloud(FileDirection::Save);
+    if (nameCloudFile.empty())
+        return false;
+
+    QFile cloudFile(QString::fromStdString(nameCloudFile));
+    return ::currentScene->saveCloud(cloudFile, numCloud);
 }
 
 void MyGLApplication::addSound()

@@ -151,7 +151,7 @@ long lastDragY = veryHighNumber;
 
 // text renderer
 QtFont3D *text_renderer = NULL;
-
+CloudParams g_defaultCloudParams;
 //--------------------------------------------------------------------------------
 // FUNCTION PROTOTYPES
 //--------------------------------------------------------------------------------

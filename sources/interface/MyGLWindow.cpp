@@ -54,12 +54,15 @@ void MyGLWindow::initialize()
 
     connect(P->ui.action_Quit, &QAction::triggered,
             qApp, &QApplication::quit);
-    connect(P->ui.action_Load, &QAction::triggered,
+    connect(P->ui.action_Load_scene, &QAction::triggered,
             this, []() { theApplication->loadSceneFile(); });
-    connect(P->ui.action_Save, &QAction::triggered,
+    connect(P->ui.action_Save_scene, &QAction::triggered,
             this, []() { theApplication->saveSceneFile(); });
     connect(P->ui.action_Add_sound, &QAction::triggered,
             this, []() { theApplication->addSound(); });
+    connect(P->ui.action_Load_clouds_defaults, &QAction::triggered,
+            this, []() { theApplication->loadCloudDefaultFile(); });
+
 
     // initial window settings
     QSurfaceFormat format = QSurfaceFormat::defaultFormat();
@@ -878,6 +881,13 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
             paramString = "";
             if (currentParam != NUM)
                 currentParam = NUM;
+        }
+        break;
+    }
+    case Qt::Key_C: {
+        // record cloud parameters
+        if (selectedCloud) {
+            theApplication->saveCloudFile(selectedCloud->cloud->getId()-1);
         }
         break;
     }
