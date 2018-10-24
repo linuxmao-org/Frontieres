@@ -27,7 +27,6 @@
 //  Created by Christopher Carlson on 11/30/11.
 //
 
-
 #ifndef SOUNDRECT_H
 #define SOUNDRECT_H
 
@@ -84,7 +83,7 @@ public:
     bool select(float x, float y);
 
     void toggleWaveDisplay();
-    void associateSound(double *theBuff, unsigned long buffFrames, unsigned int buffChans);
+    void associateSound(double *theBuff, unsigned long buffFrames, unsigned int buffChans, const string &name);
     // return id
     // unsigned int getId();
 
@@ -95,7 +94,9 @@ public:
     // change from vertical to horizontal
     void toggleOrientation();
     // set name
-    void setName(char *name);
+    void setName(const string &name);
+    // get name
+    const string &getName() const;
 
     // print information
     void describe(std::ostream &out);
@@ -116,6 +117,7 @@ private:
     float rWidth, rHeight;
     float rtop, rbot, rleft, rright;
     float rX, rY, rZ;
+    std::string rName;
     bool isSelected;
     float colR, colG, colB, colA;
     float minDim;

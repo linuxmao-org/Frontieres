@@ -93,7 +93,9 @@ enum {
     P_LFO_FREQ,
     P_LFO_AMT,
     SPATIALIZE,
-    VOLUME
+    VOLUME,
+    NUM,
+    NAME
 };
 
 // flag indicating parameter change

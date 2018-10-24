@@ -431,7 +431,7 @@ bool Scene::loadSampleSet(bool interactive)
             // associate sound with its element
             SceneSound &sceneSound = *m_sounds[j++];
             sceneSound.sample = assoc;
-            sceneSound.view->associateSound(assoc->wave, assoc->frames, assoc->channels);
+            sceneSound.view->associateSound(assoc->wave, assoc->frames, assoc->channels, assoc->name);
         }
     }
 
@@ -511,7 +511,7 @@ void Scene::addSoundRect(AudioFile *sample)
 
     SoundRect *sv = new SoundRect;
     sound->view.reset(sv);
-    sv->associateSound(sample->wave, sample->frames, sample->channels);
+    sv->associateSound(sample->wave, sample->frames, sample->channels, sample->name);
 
     for (unsigned i = 0, n = m_clouds.size(); i < n; ++i) {
         GrainCluster &gc = *m_clouds[i]->cloud;
