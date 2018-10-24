@@ -603,9 +603,7 @@ void printParam()
             //            myValue = "Duration (ms): " + theCloud->getDurationMs();
             break;
         case NUM:
-            myValue = _S("", "Cloud Num: ");
-            sinput << theCloud.getId();
-            myValue = myValue + sinput.str();
+            myValue = _S("", "Cloud Num: ") + std::to_string(theCloud.getId());
             draw_string((GLfloat)mouseX, (GLfloat)(screenHeight - mouseY), 0.0,
                         myValue.c_str(), 100.0f);
             break;
@@ -616,16 +614,12 @@ void printParam()
     if (selectedSound) {
         SoundRect &theSoundRect = *selectedSound->view;
         string myValue;
-        ostringstream sinput;
-        ostringstream sinput2;
         float theA = 0.7f + 0.3 * sin(1.6 * PI * GTime::instance().sec);
         glColor4f(1.0f, 1.0f, 1.0f, theA);
 
         switch (currentParam) {
         case NAME:
-            myValue = _S("", "Sample: ");
-        sinput << theSoundRect.getName();
-            myValue = myValue + sinput.str();
+            myValue = _S("", "Sample: ") + theSoundRect.getName();
             draw_string((GLfloat)mouseX, (GLfloat)(screenHeight - mouseY), 0.0,
                         myValue.c_str(), 100.0f);
             break;

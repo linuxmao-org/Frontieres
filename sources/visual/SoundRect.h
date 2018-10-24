@@ -83,7 +83,7 @@ public:
     bool select(float x, float y);
 
     void toggleWaveDisplay();
-    void associateSound(double *theBuff, unsigned long buffFrames, unsigned int buffChans, string name);
+    void associateSound(double *theBuff, unsigned long buffFrames, unsigned int buffChans, const string &name);
     // return id
     // unsigned int getId();
 
@@ -94,9 +94,9 @@ public:
     // change from vertical to horizontal
     void toggleOrientation();
     // set name
-    void setName(string name);
+    void setName(const string &name);
     // get name
-    std::string getName();
+    const string &getName() const;
 
     // print information
     void describe(std::ostream &out);

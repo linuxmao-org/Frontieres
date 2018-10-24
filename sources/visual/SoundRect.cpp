@@ -332,7 +332,7 @@ void SoundRect::setUps()
 //    lastY = (float)y;
 //}
 
-void SoundRect::associateSound(double *theBuff, unsigned long buffFrames, unsigned int buffChans, string name)
+void SoundRect::associateSound(double *theBuff, unsigned long buffFrames, unsigned int buffChans, const string &name)
 {
 
     myBuff = theBuff;
@@ -559,7 +559,7 @@ bool SoundRect::getNormedPosition(double *positionsX, double *positionsY,
 
 
 // set name
-void SoundRect::setName(string name)
+void SoundRect::setName(const string &name)
 {
     rName = name;
     return;
@@ -575,7 +575,7 @@ void SoundRect::describe(std::ostream &out)
     out << "- Y : " << getY() << "\n";
 }
 
-string SoundRect::getName()
+const string &SoundRect::getName() const
 {
     return rName;
 }
