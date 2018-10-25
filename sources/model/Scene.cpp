@@ -367,40 +367,36 @@ bool Scene::loadCloudDefault(QFile &cloudFile)
 
     QJsonObject docRoot = doc.object();
 
-    QJsonArray docGrains = docRoot["cloud"].toArray();
-    for (const QJsonValue &jsonElement : docGrains) {
-        QJsonObject objGrain = jsonElement.toObject();
+    QJsonObject objGrain = docRoot["cloud"].toObject();
+    g_defaultCloudParams.duration = objGrain["duration"].toDouble();
+    g_defaultCloudParams.overlap = objGrain["overlap"].toDouble();
+    g_defaultCloudParams.pitch = objGrain["pitch"].toDouble();
+    g_defaultCloudParams.pitchLFOFreq = objGrain["pitch-lfo-freq"].toDouble();
+    g_defaultCloudParams.pitchLFOAmount = objGrain["pitch-lfo-amount"].toDouble();
+    g_defaultCloudParams.dirMode = objGrain["direction"].toInt();
+    g_defaultCloudParams.windowType = objGrain["window-type"].toInt();
+    g_defaultCloudParams.spatialMode = objGrain["spatial-mode"].toInt();
+    g_defaultCloudParams.chanelLocation = objGrain["spatial-channel"].toInt();
+    g_defaultCloudParams.volumeDB = objGrain["volume"].toDouble();
+    g_defaultCloudParams.numVoices = objGrain["num-voices"].toInt();
+    g_defaultCloudParams.activateState = objGrain["active-state"].toBool();
+    g_defaultCloudParams.xRandExtent = objGrain["x-rand-extent"].toDouble();
+    g_defaultCloudParams.yRandExtent = objGrain["y-rand-extent"].toDouble();
 
-        g_defaultCloudParams.duration = objGrain["duration"].toDouble();
-        g_defaultCloudParams.overlap = objGrain["overlap"].toDouble();
-        g_defaultCloudParams.pitch = objGrain["pitch"].toDouble();
-        g_defaultCloudParams.pitchLFOFreq = objGrain["pitch-lfo-freq"].toDouble();
-        g_defaultCloudParams.pitchLFOAmount = objGrain["pitch-lfo-amount"].toDouble();
-        g_defaultCloudParams.dirMode = objGrain["direction"].toInt();
-        g_defaultCloudParams.windowType = objGrain["window-type"].toInt();
-        g_defaultCloudParams.spatialMode = objGrain["spatial-mode"].toInt();
-        g_defaultCloudParams.chanelLocation = objGrain["spatial-channel"].toInt();
-        g_defaultCloudParams.volumeDB = objGrain["volume"].toDouble();
-        g_defaultCloudParams.numVoices = objGrain["num-voices"].toInt();
-        g_defaultCloudParams.activateState = objGrain["active-state"].toBool();
-        g_defaultCloudParams.xRandExtent = objGrain["x-rand-extent"].toDouble();
-        g_defaultCloudParams.yRandExtent = objGrain["y-rand-extent"].toDouble();
-
-        cout << "duration = " << g_defaultCloudParams.duration << "\n";
-        cout << "overlap = " << g_defaultCloudParams.overlap << "\n";
-        cout << "pitch = " << g_defaultCloudParams.pitch << "\n";
-        cout << "pitchLFOFreq = " << g_defaultCloudParams.pitchLFOFreq << "\n";
-        cout << "pitchLFOAmount = " << g_defaultCloudParams.pitchLFOAmount << "\n";
-        cout << "direction = " << g_defaultCloudParams.dirMode << "\n";
-        cout << "window type = " << g_defaultCloudParams.windowType << "\n";
-        cout << "spatial mode = " << g_defaultCloudParams.spatialMode << "\n";
-        cout << "spatial channel = " << g_defaultCloudParams.chanelLocation << "\n";
-        cout << "volume = " << g_defaultCloudParams.volumeDB << "\n";
-        cout << "voices = " << g_defaultCloudParams.numVoices << "\n";
-        cout << "active = " << g_defaultCloudParams.activateState << "\n";
-        cout << "xRandExtent = " << g_defaultCloudParams.xRandExtent << "\n";
-        cout << "yRandExtent = " << g_defaultCloudParams.yRandExtent << "\n";
-    }
+    cout << "duration = " << g_defaultCloudParams.duration << "\n";
+    cout << "overlap = " << g_defaultCloudParams.overlap << "\n";
+    cout << "pitch = " << g_defaultCloudParams.pitch << "\n";
+    cout << "pitchLFOFreq = " << g_defaultCloudParams.pitchLFOFreq << "\n";
+    cout << "pitchLFOAmount = " << g_defaultCloudParams.pitchLFOAmount << "\n";
+    cout << "direction = " << g_defaultCloudParams.dirMode << "\n";
+    cout << "window type = " << g_defaultCloudParams.windowType << "\n";
+    cout << "spatial mode = " << g_defaultCloudParams.spatialMode << "\n";
+    cout << "spatial channel = " << g_defaultCloudParams.chanelLocation << "\n";
+    cout << "volume = " << g_defaultCloudParams.volumeDB << "\n";
+    cout << "voices = " << g_defaultCloudParams.numVoices << "\n";
+    cout << "active = " << g_defaultCloudParams.activateState << "\n";
+    cout << "xRandExtent = " << g_defaultCloudParams.xRandExtent << "\n";
+    cout << "yRandExtent = " << g_defaultCloudParams.yRandExtent << "\n";
 
     return true;
 
@@ -412,54 +408,51 @@ bool Scene::saveCloud(QFile &cloudFile, int numCloud)
     QDir cloudFileDir = QFileInfo(cloudFileName).dir();
 
     if (!cloudFile.open(QIODevice::WriteOnly | QIODevice::Text))
-            return false;
+        return false;
 
-        QJsonObject docRoot;
+    QJsonObject docRoot;
 
-        // audio path
-        cout << "record cloud " << cloudFile.fileName().toStdString() << "\n";
+    // audio path
+    cout << "record cloud " << cloudFile.fileName().toStdString() << "\n";
 
-        QJsonArray docPaths;
+    QJsonArray docPaths;
 
-        // graincloud
+    // graincloud
 
-        QJsonArray docGrains;
-        SceneCloud *cloud = m_clouds[numCloud].get();
-        GrainCluster *gc = cloud->cloud.get();
-        GrainClusterVis *gv = cloud->view.get();
+    SceneCloud *cloud = m_clouds[numCloud].get();
+    GrainCluster *gc = cloud->cloud.get();
+    GrainClusterVis *gv = cloud->view.get();
 
-        std::ostream &out = std::cout;
-        out << "Grain Cloud " << numCloud << ":";
-        gc->describe(out);
+    std::ostream &out = std::cout;
+    out << "Grain Cloud " << numCloud << ":";
+    gc->describe(out);
 
-        QJsonObject objGrain;
-        objGrain["duration"] = gc->getDurationMs();
-        objGrain["overlap"] = gc->getOverlap();
-        objGrain["pitch"] = gc->getPitch();
-        objGrain["pitch-lfo-freq"] = gc->getPitchLFOFreq();
-        objGrain["pitch-lfo-amount"] = gc->getPitchLFOAmount();
-        objGrain["direction"] = gc->getDirection();
-        objGrain["window-type"] = gc->getWindowType();
-        objGrain["spatial-mode"] = gc->getSpatialMode();
-        objGrain["spatial-channel"] = gc->getSpatialChannel();
-        objGrain["volume"] = gc->getVolumeDb();
-        objGrain["num-voices"] = (int)gc->getNumVoices();
-        objGrain["active-state"] = gc->getActiveState();
-        objGrain["x-rand-extent"] = gv->getXRandExtent();
-        objGrain["y-rand-extent"] = gv->getYRandExtent();
+    QJsonObject objGrain;
+    objGrain["duration"] = gc->getDurationMs();
+    objGrain["overlap"] = gc->getOverlap();
+    objGrain["pitch"] = gc->getPitch();
+    objGrain["pitch-lfo-freq"] = gc->getPitchLFOFreq();
+    objGrain["pitch-lfo-amount"] = gc->getPitchLFOAmount();
+    objGrain["direction"] = gc->getDirection();
+    objGrain["window-type"] = gc->getWindowType();
+    objGrain["spatial-mode"] = gc->getSpatialMode();
+    objGrain["spatial-channel"] = gc->getSpatialChannel();
+    objGrain["volume"] = gc->getVolumeDb();
+    objGrain["num-voices"] = (int)gc->getNumVoices();
+    objGrain["active-state"] = gc->getActiveState();
+    objGrain["x-rand-extent"] = gv->getXRandExtent();
+    objGrain["y-rand-extent"] = gv->getYRandExtent();
 
-        docGrains.append(objGrain);
+    docRoot["cloud"] = objGrain;
 
-        docRoot["cloud"] = docGrains;
+    QJsonDocument document;
+    document.setObject(docRoot);
+    cloudFile.write(document.toJson());
+    if (!cloudFile.flush())
+        return false;
 
-        QJsonDocument document;
-        document.setObject(docRoot);
-        cloudFile.write(document.toJson());
-        if (!cloudFile.flush())
-            return false;
-
-        return true;
-    }
+    return true;
+}
 
 bool Scene::loadSampleSet(bool interactive)
 {
