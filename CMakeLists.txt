@@ -25,11 +25,11 @@ add_executable(Frontieres WIN32
   sources/interface/StartDialog.cpp
   sources/dsp/Window.cpp
   sources/model/AudioFileSet.cpp
-  sources/model/GrainVoice.cpp
-  sources/model/GrainCluster.cpp
+  sources/model/Grain.cpp
+  sources/model/Cloud.cpp
   sources/model/Scene.cpp
   sources/visual/GrainVis.cpp
-  sources/visual/GrainClusterVis.cpp
+  sources/visual/CloudVis.cpp
   sources/visual/SoundRect.cpp
   sources/utility/GTime.cpp
   libraries/QtFont3D/QtFont3D.cpp
