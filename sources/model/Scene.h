@@ -56,7 +56,7 @@ public:
     bool load(QFile &sceneFile);
     bool loadCloudDefault(QFile &cloudFile);
     bool save(QFile &sceneFile);
-    bool saveCloud(QFile &cloudFile, int numCloud);
+    bool saveCloud(QFile &cloudFile, SceneCloud *selectedCloudSave);
 
     bool loadSampleSet(bool interactive);
     AudioFile *loadNewSample(const std::string &path);

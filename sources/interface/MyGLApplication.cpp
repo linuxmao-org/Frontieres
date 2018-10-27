@@ -23,7 +23,6 @@
 #include "MyGLWindow.h"
 #include "Frontieres.h"
 #include "I18n.h"
-#include "model/Scene.h"
 #include "model/AudioFileSet.h"
 #include <QTranslator>
 #include <QLibraryInfo>
@@ -130,14 +129,14 @@ bool MyGLApplication::saveSceneFile()
     return ::currentScene->save(sceneFile);
 }
 
-bool MyGLApplication::saveCloudFile(int numCloud)
+bool MyGLApplication::saveCloudFile(SceneCloud *selectedCloudSave)
 {
     std::string nameCloudFile = Scene::askNameCloud(FileDirection::Save);
     if (nameCloudFile.empty())
         return false;
 
     QFile cloudFile(QString::fromStdString(nameCloudFile));
-    return ::currentScene->saveCloud(cloudFile, numCloud);
+    return ::currentScene->saveCloud(cloudFile, selectedCloudSave);
 }
 
 void MyGLApplication::addSound()

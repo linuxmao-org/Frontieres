@@ -402,7 +402,7 @@ bool Scene::loadCloudDefault(QFile &cloudFile)
 
 }
 
-bool Scene::saveCloud(QFile &cloudFile, int numCloud)
+bool Scene::saveCloud(QFile &cloudFile, SceneCloud *selectedCloudSave)
 {
     QString cloudFileName = cloudFile.fileName();
     QDir cloudFileDir = QFileInfo(cloudFileName).dir();
@@ -419,12 +419,11 @@ bool Scene::saveCloud(QFile &cloudFile, int numCloud)
 
     // graincloud
 
-    SceneCloud *cloud = m_clouds[numCloud].get();
-    GrainCluster *gc = cloud->cloud.get();
-    GrainClusterVis *gv = cloud->view.get();
+    GrainCluster *gc = selectedCloudSave->cloud.get();
+    GrainClusterVis *gv = selectedCloudSave->view.get();
 
     std::ostream &out = std::cout;
-    out << "Grain Cloud " << numCloud << ":";
+    out << "Grain Cloud " << gc->getId() << "\n";
     gc->describe(out);
 
     QJsonObject objGrain;

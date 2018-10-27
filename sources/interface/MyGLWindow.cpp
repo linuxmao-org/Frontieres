@@ -887,7 +887,7 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
     case Qt::Key_C: {
         // record cloud parameters
         if (selectedCloud) {
-            theApplication->saveCloudFile(selectedCloud->cloud->getId()-1);
+            theApplication->saveCloudFile(selectedCloud);
         }
         break;
     }
