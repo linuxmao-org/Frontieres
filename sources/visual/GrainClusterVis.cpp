@@ -75,8 +75,10 @@ GrainClusterVis::GrainClusterVis(float x, float y, unsigned int numVoices,
 
 
     // randomness params
-    xRandExtent = 3.0;
-    yRandExtent = 3.0;
+    //xRandExtent = 3.0;
+    //yRandExtent = 3.0;
+    xRandExtent = g_defaultCloudParams.xRandExtent;
+    yRandExtent = g_defaultCloudParams.yRandExtent;
 
     // init add and remove flags to false
     addFlag = false;

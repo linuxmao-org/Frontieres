@@ -151,7 +151,7 @@ long lastDragY = veryHighNumber;
 
 // text renderer
 QtFont3D *text_renderer = NULL;
-
+CloudParams g_defaultCloudParams;
 //--------------------------------------------------------------------------------
 // FUNCTION PROTOTYPES
 //--------------------------------------------------------------------------------
@@ -603,7 +603,7 @@ void printParam()
             //            myValue = "Duration (ms): " + theCloud->getDurationMs();
             break;
         case NUM:
-            myValue = _S("", "Cloud Num: ") + std::to_string(theCloud.getId());
+            myValue = _S("", "Cloud Num: ") + std::to_string(currentScene->getNumCloud(selectedCloud)+1);
             draw_string((GLfloat)mouseX, (GLfloat)(screenHeight - mouseY), 0.0,
                         myValue.c_str(), 100.0f);
             break;

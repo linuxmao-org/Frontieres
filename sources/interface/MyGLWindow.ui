@@ -45,8 +45,10 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
-    <addaction name="action_Load"/>
-    <addaction name="action_Save"/>
+    <addaction name="action_Load_scene"/>
+    <addaction name="action_Save_scene"/>
+    <addaction name="separator"/>
+    <addaction name="action_Load_clouds_defaults"/>
     <addaction name="separator"/>
     <addaction name="action_Quit"/>
    </widget>
@@ -59,17 +61,17 @@
    <addaction name="menu_File"/>
    <addaction name="menu_Edit"/>
   </widget>
-  <action name="action_Load">
+  <action name="action_Load_scene">
    <property name="text">
-    <string>&amp;Load...</string>
+    <string>&amp;Load scene</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
    </property>
   </action>
-  <action name="action_Save">
+  <action name="action_Save_scene">
    <property name="text">
-    <string>&amp;Save...</string>
+    <string>&amp;Save scene</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
@@ -83,6 +85,11 @@
   <action name="action_Add_sound">
    <property name="text">
     <string>&amp;Add sounds...</string>
+   </property>
+  </action>
+  <action name="action_Load_clouds_defaults">
+   <property name="text">
+    <string>Load &amp;clouds defaults</string>
    </property>
   </action>
  </widget>

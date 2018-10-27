@@ -85,5 +85,26 @@ enum class FileDirection {
 
 // scenes
 static const char *g_extensionScene = ".scn";
+static const char *g_extensionCloud = ".cld";
+// clouds
+//typedef struct CloudParams CloudParams;
+struct CloudParams
+{
+    // cluster params
+    float duration;
+    float overlap;
+    float pitch;
+    float pitchLFOFreq;
+    float pitchLFOAmount;
+    int dirMode;
+    int windowType;
+    int spatialMode;
+    int chanelLocation;
+    float volumeDB;
+    int numVoices;
+    bool activateState;
+    float xRandExtent;
+    float yRandExtent;
+};
 
 #endif

@@ -21,6 +21,8 @@
 
 #include <QApplication>
 #include <memory>
+#include "model/Scene.h"
+
 class MyGLWindow;
 
 class MyGLApplication : public QApplication {
@@ -32,6 +34,8 @@ public:
 
     bool loadSceneFile();
     bool saveSceneFile();
+    bool saveCloudFile(SceneCloud *selectedCloudSave);
+    bool loadCloudDefaultFile();
     void addSound();
 
 private:

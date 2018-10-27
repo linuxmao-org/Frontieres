@@ -23,7 +23,6 @@
 #include "MyGLWindow.h"
 #include "Frontieres.h"
 #include "I18n.h"
-#include "model/Scene.h"
 #include "model/AudioFileSet.h"
 #include <QTranslator>
 #include <QLibraryInfo>
@@ -109,6 +108,17 @@ bool MyGLApplication::loadSceneFile()
     return true;
 }
 
+bool MyGLApplication::loadCloudDefaultFile()
+{
+    std::string nameCloudFile = Scene::askNameCloud(FileDirection::Load);
+    if (nameCloudFile.empty())
+        return false;
+    // load the clouds default params file
+
+    QFile cloudFile(QString::fromStdString(nameCloudFile));
+    return currentScene->loadCloudDefault(cloudFile);
+}
+
 bool MyGLApplication::saveSceneFile()
 {
     std::string nameSceneFile = Scene::askNameScene(FileDirection::Save);
@@ -117,6 +127,16 @@ bool MyGLApplication::saveSceneFile()
 
     QFile sceneFile(QString::fromStdString(nameSceneFile));
     return ::currentScene->save(sceneFile);
+}
+
+bool MyGLApplication::saveCloudFile(SceneCloud *selectedCloudSave)
+{
+    std::string nameCloudFile = Scene::askNameCloud(FileDirection::Save);
+    if (nameCloudFile.empty())
+        return false;
+
+    QFile cloudFile(QString::fromStdString(nameCloudFile));
+    return ::currentScene->saveCloud(cloudFile, selectedCloudSave);
 }
 
 void MyGLApplication::addSound()

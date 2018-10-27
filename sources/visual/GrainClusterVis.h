@@ -38,14 +38,15 @@
 #include <GL/gl.h>
 #include <GL/glu.h>
 #endif
-
 #include <vector>
 #include <memory>
 #include <iostream>
+#include "theglobals.h"
 class SceneSound;
 class GrainVis;
 
 typedef std::vector<std::unique_ptr<SceneSound>> VecSceneSound;
+extern CloudParams g_defaultCloudParams;
 
 // VISUALIZATION/CONTROLLER
 class GrainClusterVis {

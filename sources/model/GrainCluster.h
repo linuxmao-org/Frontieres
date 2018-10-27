@@ -30,6 +30,7 @@
 #ifndef GRAIN_CLUSTER_H
 #define GRAIN_CLUSTER_H
 
+#include "theglobals.h"
 #include <Stk.h>
 #include <map>
 #include <vector>
@@ -39,6 +40,10 @@
 #include <cstdlib>
 #include <time.h>
 #include <ctime>
+#include <QFile>
+#include <QDir>
+#include <QJsonObject>
+#include <QJsonArray>
 class GrainVoice;
 struct SceneSound;
 
@@ -63,8 +68,7 @@ class GrainClusterVis;
 
 // ids
 static unsigned int clusterId = 0;
-
-
+extern CloudParams g_defaultCloudParams;
 // class interface
 class GrainCluster {
 
