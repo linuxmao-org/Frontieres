@@ -581,18 +581,18 @@ bool Scene::loadSampleSet(bool interactive)
 void Scene::initDefaultCloudParams()
 {
     cout << "entree init default" << endl;
-g_defaultCloudParams.duration = 500.0;
-g_defaultCloudParams.overlap = 1.0f;
-g_defaultCloudParams.pitch = 1.0f;
-g_defaultCloudParams.pitchLFOFreq = 0.01f;
-g_defaultCloudParams.pitchLFOAmount = 0.00f;
-g_defaultCloudParams.windowType = HANNING;
-g_defaultCloudParams.spatialMode= UNITY;
-g_defaultCloudParams.chanelLocation = -1;
-g_defaultCloudParams.numVoices = 8;
-g_defaultCloudParams.activateState = true;
-g_defaultCloudParams.xRandExtent = 3.0f;
-g_defaultCloudParams.yRandExtent = 3.0f;
+    g_defaultCloudParams.duration = 500.0;
+    g_defaultCloudParams.overlap = 1.0f;
+    g_defaultCloudParams.pitch = 1.0f;
+    g_defaultCloudParams.pitchLFOFreq = 0.01f;
+    g_defaultCloudParams.pitchLFOAmount = 0.00f;
+    g_defaultCloudParams.windowType = HANNING;
+    g_defaultCloudParams.spatialMode= UNITY;
+    g_defaultCloudParams.chanelLocation = -1;
+    g_defaultCloudParams.numVoices = 8;
+    g_defaultCloudParams.activateState = true;
+    g_defaultCloudParams.xRandExtent = 3.0f;
+    g_defaultCloudParams.yRandExtent = 3.0f;
 }
 
 AudioFile *Scene::loadNewSample(const std::string &path)
