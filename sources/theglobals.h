@@ -90,7 +90,7 @@ static const char *g_extensionCloud = ".cld";
 //typedef struct CloudParams CloudParams;
 struct CloudParams
 {
-    // cluster params
+    // cloud params
     float duration;
     float overlap;
     float pitch;
@@ -101,7 +101,7 @@ struct CloudParams
     int spatialMode;
     int chanelLocation;
     float volumeDB;
-    int numVoices;
+    int numGrains;
     bool activateState;
     float xRandExtent;
     float yRandExtent;

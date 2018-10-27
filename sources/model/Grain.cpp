@@ -21,13 +21,13 @@
 
 
 //
-//  GrainVoice.cpp
+//  Grain.cpp
 //  Frontières
 //
 //  Created by Christopher Carlson on 11/20/11.
 //
 
-#include "model/GrainVoice.h"
+#include "model/Grain.h"
 #include "model/AudioFileSet.h"
 #include "model/Scene.h"
 #include "dsp/Window.h"
@@ -40,7 +40,7 @@ extern unsigned int samp_rate;
 //-----------------------------------------------------------------------------
 // Destructor
 //-----------------------------------------------------------------------------
-GrainVoice::~GrainVoice()
+Grain::~Grain()
 {
     if (chanMults)
         delete[] chanMults;
@@ -54,7 +54,7 @@ GrainVoice::~GrainVoice()
 // Constructor
 //-----------------------------------------------------------------------------
 
-GrainVoice::GrainVoice(VecSceneSound *soundSet, float durationMs, float thePitch)
+Grain::Grain(VecSceneSound *soundSet, float durationMs, float thePitch)
 {
 
 
@@ -123,10 +123,10 @@ GrainVoice::GrainVoice(VecSceneSound *soundSet, float durationMs, float thePitch
 // Turn on grain.
 // input args = position and volume vectors in sound rect space
 // returns whether or not grain is awaiting play.
-// parent cloud will wait to play this voice if the voice is still
+// parent cloud will wait to play this grain if the grain is still
 // this should not be an issue unless the overlap value is erroneous
 //-----------------------------------------------------------------------------
-bool GrainVoice::playMe(double *startPositions, double *startVols)
+bool Grain::playMe(double *startPositions, double *startVols)
 {
 
     if (playingState == false) {
@@ -166,7 +166,7 @@ bool GrainVoice::playMe(double *startPositions, double *startVols)
 //-----------------------------------------------------------------------------
 // Find out if grain is currently on
 //-----------------------------------------------------------------------------
-bool GrainVoice::isPlaying()
+bool Grain::isPlaying()
 {
     return playingState;
 }
@@ -175,7 +175,7 @@ bool GrainVoice::isPlaying()
 //-----------------------------------------------------------------------------
 // Set channel multipliers
 //-----------------------------------------------------------------------------
-void GrainVoice::setChannelMultipliers(double *multipliers)
+void Grain::setChannelMultipliers(double *multipliers)
 {
     for (int i = 0; i < MY_CHANNELS; i++) {
         queuedChanMults[i] = multipliers[i];
@@ -187,7 +187,7 @@ void GrainVoice::setChannelMultipliers(double *multipliers)
 //-----------------------------------------------------------------------------
 // Set channel multipliers
 //-----------------------------------------------------------------------------
-void GrainVoice::setVolume(float theVolNormed)
+void Grain::setVolume(float theVolNormed)
 {
     float pVol = fabs(theVolNormed);
     queuedLocalAtten = pVol;
@@ -196,7 +196,7 @@ void GrainVoice::setVolume(float theVolNormed)
 //-----------------------------------------------------------------------------
 // Get channel multipliers
 //-----------------------------------------------------------------------------
-float GrainVoice::getVolume()
+float Grain::getVolume()
 {
     return localAtten;
 }
@@ -204,7 +204,7 @@ float GrainVoice::getVolume()
 //-----------------------------------------------------------------------------
 // Set duration (effective on next trigger)
 //-----------------------------------------------------------------------------
-void GrainVoice::setDurationMs(float dur)
+void Grain::setDurationMs(float dur)
 {
     // get absolute value
     queuedDuration = fabs(dur);
@@ -216,7 +216,7 @@ void GrainVoice::setDurationMs(float dur)
 //-----------------------------------------------------------------------------
 // Set pitch (effective on next trigger)
 //-----------------------------------------------------------------------------
-void GrainVoice::setPitch(float newPitch)
+void Grain::setPitch(float newPitch)
 {
     // get absolute value
     queuedPitch = newPitch;
@@ -224,7 +224,7 @@ void GrainVoice::setPitch(float newPitch)
         newParam = true;
 }
 
-float GrainVoice::getPitch()
+float Grain::getPitch()
 {
     if (queuedPitch != pitch)
         return queuedPitch;
@@ -236,7 +236,7 @@ float GrainVoice::getPitch()
 //-----------------------------------------------------------------------------
 // Update params
 //-----------------------------------------------------------------------------
-void GrainVoice::updateParams()
+void Grain::updateParams()
 {
     // update parameter set
 
@@ -280,7 +280,7 @@ void GrainVoice::updateParams()
 // Set window type (effective on next trigger)
 //-----------------------------------------------------------------------------
 
-void GrainVoice::setWindow(unsigned int theType)
+void Grain::setWindow(unsigned int theType)
 {
     queuedWindowType = theType;
     if (queuedWindowType != windowType)
@@ -290,7 +290,7 @@ void GrainVoice::setWindow(unsigned int theType)
 //-----------------------------------------------------------------------------
 // Update after a change of sound set
 //-----------------------------------------------------------------------------
-void GrainVoice::updateSoundSet()
+void Grain::updateSoundSet()
 {
     // get number of loaded sounds
     unsigned numSounds = (unsigned)theSounds->size();
@@ -313,7 +313,7 @@ void GrainVoice::updateSoundSet()
 // Set direction (effective on next trigger)
 //-----------------------------------------------------------------------------
 
-void GrainVoice::setDirection(float thedir)
+void Grain::setDirection(float thedir)
 {
     queuedDirection = thedir;
     if (queuedDirection != direction)
@@ -326,7 +326,7 @@ void GrainVoice::setDirection(float thedir)
 //-----------------------------------------------------------------------------
 
 
-void GrainVoice::nextBuffer(double *accumBuff, unsigned int numFrames,
+void Grain::nextBuffer(double *accumBuff, unsigned int numFrames,
                             unsigned int bufferOffset, int name)
 {
 
@@ -491,7 +491,7 @@ void GrainVoice::nextBuffer(double *accumBuff, unsigned int numFrames,
 
             // spatialize output
             for (int k = 0; k < MY_CHANNELS; k++) {
-                // preserve stereo waveform L/R for now and just sample alternate channels in "AROUND" case (see GrainCluster.cpp updateSpatialization routine)
+                // preserve stereo waveform L/R for now and just sample alternate channels in "AROUND" case (see Cloud.cpp updateSpatialization routine)
                 if ((k % 2) == 0) {
                     accumBuff[(bufferOffset + i) * MY_CHANNELS + k] +=
                         (stereoLeftVal + monoWaveVal) * chanMults[k] * localAtten;
