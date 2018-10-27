@@ -22,9 +22,9 @@
 #include "interface/MyGLWindow.h"
 #include "interface/MyGLApplication.h"
 #include "ui_MyGLWindow.h"
-#include "model/GrainCluster.h"
+#include "model/Cloud.h"
 #include "model/Scene.h"
-#include "visual/GrainClusterVis.h"
+#include "visual/CloudVis.h"
 #include "visual/SoundRect.h"
 #include "Frontieres.h"
 #include <QtFont3D.h>
@@ -152,9 +152,9 @@ void MyGLScreen::paintGL()
             sv.draw();
         }
 
-        // render grain clouds if they exist
+        // render clouds if they exist
         for (int i = 0, n = scene->m_clouds.size(); i < n; i++) {
-            GrainClusterVis &gv = *scene->m_clouds[i]->view;
+            CloudVis &gv = *scene->m_clouds[i]->view;
             gv.draw();
         }
 
@@ -165,9 +165,6 @@ void MyGLScreen::paintGL()
     else {
         printUsage();
     }
-
-
-    // printUsage();
 
     // POP ---//restore state
     glPopMatrix();
@@ -211,9 +208,9 @@ void MyGLScreen::mousePressEvent(QMouseEvent *event)
 
         lastDragX = veryHighNumber;
         lastDragY = veryHighNumber;
-        // first check grain clouds to see if we have selection
+        // first check clouds to see if we have selection
         for (int i = 0, n = scene->m_clouds.size(); i < n; i++) {
-            GrainClusterVis &gv = *scene->m_clouds[i]->view;
+            CloudVis &gv = *scene->m_clouds[i]->view;
             if (gv.select(mouseX, mouseY)) {
                 gv.setSelectState(true);
                 scene->m_selectedCloud = i;
@@ -225,7 +222,7 @@ void MyGLScreen::mousePressEvent(QMouseEvent *event)
         // clear selection buffer
         scene->m_selectionIndices.clear();
         scene->m_selectionIndex = 0;
-        // if grain cloud is not selected - search for rectangle selection
+        // if cloud is not selected - search for rectangle selection
         if (!scene->selectedCloud()) {
             // search for selections
             resizeDir = false;  // set resize direction to horizontal
@@ -360,25 +357,10 @@ void MyGLScreen::mousePassiveMoveEvent(QMouseEvent *event)
             break;
         }
     }
-    //            case NUMGRAINS:
-    //                break;
-    //            case DURATION:
-    //                grainCloud->at(selectedCloud)->setDurationMs((mouseY/screenHeight)*4000.0f);
-    //
-    //            default:
-    //                break;
-    //        }
-    //    }
-    // process rectangles
-    //    for (int i = 0; i < soundViews.size(); i++)
-    //        soundViews[i]->procMovement(x, y);
-    //
 }
 
 void MyGLScreen::keyPressEvent(QKeyEvent *event)
 {
-    //qDebug() << event;
-
     static const float sidewaysMoveSpeed = 10.0f;
     static const float upDownMoveSpeed = 10.0f;
 
@@ -512,7 +494,6 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
             }
             paramString = "";
         }
-        // cout << "enter key caught" << endl;
         break;
 
 
@@ -606,13 +587,8 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
         if (selectedSound) {
             selectedSound->view->toggleOrientation();
         }
-        // cerr << "Looking from the front" << endl;
         break;
     case Qt::Key_P:  // waveform display on/off
-
-        //            for (int i = 0; i < soundViews.size();i++){
-        //                soundViews[i]->toggleWaveDisplay();
-        //            }
         break;
     case Qt::Key_W:  // window editing for grain
         paramString = "";
@@ -685,21 +661,18 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
             break;
         }
         else {
-            int numVoices = 8;  // initial number of voices
+            int numGrains = 8;  // initial number of grains
             if (selectedCloud) {
                 if (!scene->m_clouds.empty()) {
                     selectedCloud->view->setSelectState(false);
                 }
             }
-            scene->addNewCloud(numVoices);
+            scene->addNewCloud(numGrains);
             scene->m_selectedCloud = scene->m_clouds.size() - 1;
         }
-        //                        cout << "cloud added" << endl;
-        // grainControl->newCluster(mouseX,mouseY,1);
-
         break;
     }
-    case Qt::Key_V:  // grain voices (add, delete)
+    case Qt::Key_V:  // grains (add, delete)
         paramString = "";
         if (currentParam != NUMGRAINS) {
             currentParam = NUMGRAINS;
@@ -708,7 +681,6 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
             if (modkey == Qt::ShiftModifier) {
                 if (selectedCloud) {
                     selectedCloud->cloud->removeGrain();
-                    // cout << "grain removed" << endl;
                 }
             }
             else {

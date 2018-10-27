@@ -21,14 +21,14 @@
 
 
 //
-//  GrainCluster.h
+//  Cloud.h
 //  Frontières
 //
 //  Created by Christopher Carlson on 11/15/11.
 //
 
-#ifndef GRAIN_CLUSTER_H
-#define GRAIN_CLUSTER_H
+#ifndef CLOUD_H
+#define CLOUD_H
 
 #include "theglobals.h"
 #include <Stk.h>
@@ -44,7 +44,7 @@
 #include <QDir>
 #include <QJsonObject>
 #include <QJsonArray>
-class GrainVoice;
+class Grain;
 struct SceneSound;
 
 typedef std::vector<std::unique_ptr<SceneSound>> VecSceneSound;
@@ -63,26 +63,26 @@ using namespace std;
 
 
 // forward declarations
-class GrainCluster;
-class GrainClusterVis;
+class Cloud;
+class CloudVis;
 
 // ids
-static unsigned int clusterId = 0;
+static unsigned int cloudId = 0;
 extern CloudParams g_defaultCloudParams;
 // class interface
-class GrainCluster {
+class Cloud {
 
 public:
     // destructor
-    virtual ~GrainCluster();
+    virtual ~Cloud();
 
     // constructor
-    GrainCluster(VecSceneSound *soundSet, float theNumVoices);
+    Cloud(VecSceneSound *soundSet, float theNumGrains);
 
     // compute next buffer of audio (accumulate from grains)
     void nextBuffer(double *accumBuff, unsigned int numFrames);
 
-    // CLUSTER PARAMETER accessors/mutators
+    // CLOUD PARAMETER accessors/mutators
     // set duration for all grains
     void setDurationMs(float theDur);
     float getDurationMs();
@@ -106,7 +106,7 @@ public:
     void setDirection(int dirMode);
     int getDirection();
 
-    // add/remove grain voice
+    // add/remove grain
     void addGrain();
     void removeGrain();
 
@@ -125,11 +125,12 @@ public:
     float getVolumeDb();
 
 
-    // get unique id of grain cluster
+    // get unique id of cloud
     unsigned int getId();
+    void setId(int cloudId);
 
     // register visualization
-    void registerVis(GrainClusterVis *myVis);
+    void registerVis(CloudVis *myVis);
 
     // turn on/off
     void toggleActive();
@@ -137,8 +138,8 @@ public:
     bool getActiveState();
 
 
-    // return number of voices
-    unsigned int getNumVoices();
+    // return number of Grains
+    unsigned int getNumGrains();
 
     // update after a change of sound set
     void updateSoundSet();
@@ -150,7 +151,7 @@ protected:
     // update internal trigger point
     void updateBangTime();
 
-    // spatialization - get new channel multiplier buffer to pass to grain voice instance
+    // spatialization - get new channel multiplier buffer to pass to grain instance
     void updateSpatialization();
 
 private:
@@ -162,7 +163,7 @@ private:
     unsigned long local_time;  // internal clock
     double startTime;  // instantiation time
     double bang_time;  // trigger time for next grain
-    unsigned int nextGrain;  // grain voice index
+    unsigned int nextGrain;  // grain index
 
     // spatialization vars
     int currentAroundChan;
@@ -170,7 +171,7 @@ private:
     int side;
 
     // registered visualization
-    GrainClusterVis *myVis;
+    CloudVis *myVis;
 
     // spatialization
     double *channelMults;
@@ -181,12 +182,12 @@ private:
     float volumeDb, normedVol;
 
     // vector of grains
-    vector<GrainVoice *> myGrains;
+    vector<Grain *> myGrains;
 
-    // number of grains in this cluster
-    unsigned int numVoices;
+    // number of grains in this cloud
+    unsigned int numGrains;
 
-    // cluster params
+    // cloud params
     float overlap, overlapNorm, pitch, duration, pitchLFOFreq, pitchLFOAmount;
     int myDirMode, windowType;
 

@@ -21,14 +21,14 @@
 
 
 //
-//  GrainClusterVis.h
+//  CloudVis.h
 //  Frontières
 //
 //  Created by Christopher Carlson on 11/15/11.
 //
 
-#ifndef GRAIN_CLUSTER_VIS_H
-#define GRAIN_CLUSTER_VIS_H
+#ifndef CLOUD_VIS_H
+#define CLOUD_VIS_H
 
 
 // graphics includes
@@ -49,13 +49,13 @@ typedef std::vector<std::unique_ptr<SceneSound>> VecSceneSound;
 extern CloudParams g_defaultCloudParams;
 
 // VISUALIZATION/CONTROLLER
-class GrainClusterVis {
+class CloudVis {
 public:
     // destructor
-    ~GrainClusterVis();
+    ~CloudVis();
 
-    // constructor (takes center position (x,y), number of voices, sound rectangles)
-    GrainClusterVis(float x, float y, unsigned int numVoices, VecSceneSound *rects);
+    // constructor (takes center position (x,y), number of grains, sound rectangles)
+    CloudVis(float x, float y, unsigned int numGrainsVis, VecSceneSound *rects);
 
     // render
     void draw();
@@ -108,7 +108,7 @@ private:
     float selRad, lambda, maxSelRad, minSelRad, targetRad;
     unsigned int numGrains;
 
-    // grain voice visualizations
+    // grain visualizations
     std::vector<GrainVis *> myGrainsV;
     // registered sound rectangles
     VecSceneSound *theLandscape;

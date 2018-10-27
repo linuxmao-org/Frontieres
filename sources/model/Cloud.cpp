@@ -20,15 +20,15 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 //
-//  GrainCluster.cpp
+//  Cloud.cpp
 //  Frontières
 //
 //  Created by Christopher Carlson on 11/23/11.
 //
 
-#include "model/GrainCluster.h"
-#include "model/GrainVoice.h"
-#include "visual/GrainClusterVis.h"
+#include "model/Cloud.h"
+#include "model/Grain.h"
+#include "visual/CloudVis.h"
 #include "dsp/Window.h"
 #include "utility/GTime.h"
 
@@ -36,7 +36,7 @@ extern unsigned int samp_rate;
 
 
 // Destructor
-GrainCluster::~GrainCluster()
+Cloud::~Cloud()
 {
     for (int i = 0; i < myGrains.size(); i++) {
         delete myGrains[i];
@@ -48,17 +48,16 @@ GrainCluster::~GrainCluster()
 
 
 // Constructor
-GrainCluster::GrainCluster(VecSceneSound *soundSet, float theNumVoices)
+Cloud::Cloud(VecSceneSound *soundSet, float theNumGrains)
 {
-    // cluster id
-    myId = ++clusterId;
+    // cloud id
+    myId = ++cloudId;
 
     // playback bool to make sure we precisely time grain triggers
     awaitingPlay = false;
 
-    // number of voices
-    //numVoices = theNumVoices;
-    numVoices = g_defaultCloudParams.numVoices;
+    // number of grains
+    numGrains = g_defaultCloudParams.numGrains;
     // initialize random number generator (for random motion)
     srand(time(NULL));
 
@@ -111,8 +110,8 @@ GrainCluster::GrainCluster(VecSceneSound *soundSet, float theNumVoices)
     myDirMode = g_defaultCloudParams.dirMode;
 
     // populate grain cloud
-    for (int i = 0; i < numVoices; i++) {
-        myGrains.push_back(new GrainVoice(theSounds, duration, pitch));
+    for (int i = 0; i < numGrains; i++) {
+        myGrains.push_back(new Grain(theSounds, duration, pitch));
     }
 
     // set volume of cloud to unity
@@ -139,31 +138,31 @@ GrainCluster::GrainCluster(VecSceneSound *soundSet, float theNumVoices)
     isActive = g_defaultCloudParams.activateState;
 }
 // register controller for communication with view
-void GrainCluster::registerVis(GrainClusterVis *vis)
+void Cloud::registerVis(CloudVis *vis)
 {
     myVis = vis;
     myVis->setDuration(duration);
 }
 
 // turn on/off
-void GrainCluster::toggleActive()
+void Cloud::toggleActive()
 {
     isActive = !isActive;
 }
 
-void GrainCluster::setActiveState(bool activateState)
+void Cloud::setActiveState(bool activateState)
 {
     isActive = activateState;
 }
 
-bool GrainCluster::getActiveState()
+bool Cloud::getActiveState()
 {
     return isActive;
 }
 
 
 // set window type
-void GrainCluster::setWindowType(int winType)
+void Cloud::setWindowType(int winType)
 {
     int numWins = Window::Instance().numWindows();
     windowType = winType % numWins;
@@ -186,34 +185,37 @@ void GrainCluster::setWindowType(int winType)
     }
 }
 
-int GrainCluster::getWindowType()
+int Cloud::getWindowType()
 {
     return windowType;
 }
 
 
-void GrainCluster::addGrain()
+void Cloud::addGrain()
 {
     addFlag = true;
     myVis->addGrain();
 }
 
-void GrainCluster::removeGrain()
+void Cloud::removeGrain()
 {
     removeFlag = true;
     myVis->removeGrain();
 }
 
-
-// return id for grain cluster
-unsigned int GrainCluster::getId()
+// return id for grain
+unsigned int Cloud::getId()
 {
     return myId;
 }
 
+void Cloud::setId(int cloudId)
+{
+    myId = cloudId;
+}
 
 // overlap (input on 0 to 1 scale)
-void GrainCluster::setOverlap(float target)
+void Cloud::setOverlap(float target)
 {
     if (target > 1.0f)
         target = 1.0f;
@@ -230,13 +232,13 @@ void GrainCluster::setOverlap(float target)
     updateBangTime();
 }
 
-float GrainCluster::getOverlap()
+float Cloud::getOverlap()
 {
     return overlapNorm;
 }
 
 // duration
-void GrainCluster::setDurationMs(float theDur)
+void Cloud::setDurationMs(float theDur)
 {
     if (theDur >= 1.0f) {
         duration = theDur;
@@ -252,7 +254,7 @@ void GrainCluster::setDurationMs(float theDur)
 }
 
 // update internal grain trigger time
-void GrainCluster::updateBangTime()
+void Cloud::updateBangTime()
 {
     bang_time = duration * ::samp_rate * (double)0.001 / overlap;
     // cout << "duration: " << duration << ", new bang time " << bang_time << endl;
@@ -260,7 +262,7 @@ void GrainCluster::updateBangTime()
 
 
 // pitch
-void GrainCluster::setPitch(float targetPitch)
+void Cloud::setPitch(float targetPitch)
 {
     if (targetPitch < 0.0001) {
         targetPitch = 0.0001;
@@ -270,16 +272,16 @@ void GrainCluster::setPitch(float targetPitch)
         myGrains[i]->setPitch(targetPitch);
 }
 
-float GrainCluster::getPitch()
+float Cloud::getPitch()
 {
     return pitch;
 }
 
 
 //-----------------------------------------------------------------
-// Cluster volume
+// Cloud volume
 //-----------------------------------------------------------------
-void GrainCluster::setVolumeDb(float volDb)
+void Cloud::setVolumeDb(float volDb)
 {
     // max = 6 db, min = -60 db
     if (volDb > 6.0) {
@@ -299,14 +301,14 @@ void GrainCluster::setVolumeDb(float volDb)
         myGrains[i]->setVolume(normedVol);
 }
 
-float GrainCluster::getVolumeDb()
+float Cloud::getVolumeDb()
 {
     return volumeDb;
 }
 
 
 // direction mode
-void GrainCluster::setDirection(int dirMode)
+void Cloud::setDirection(int dirMode)
 {
     myDirMode = dirMode % 3;
     if (myDirMode < 0) {
@@ -339,33 +341,33 @@ void GrainCluster::setDirection(int dirMode)
 
 
 // return grain direction int (see enum.  currently, 0 = forward, 1 = back, 2 = random)
-int GrainCluster::getDirection()
+int Cloud::getDirection()
 {
     return myDirMode;
 }
 
 // return duration in ms
-float GrainCluster::getDurationMs()
+float Cloud::getDurationMs()
 {
     return duration;
 }
 
 
-// return number of voices in this cloud
-unsigned int GrainCluster::getNumVoices()
+// return number of grains in this cloud
+unsigned int Cloud::getNumGrains()
 {
     return myGrains.size();
 }
 
 // update after a change of sound set
-void GrainCluster::updateSoundSet()
+void Cloud::updateSoundSet()
 {
-    for (GrainVoice *grain : myGrains)
+    for (Grain *grain : myGrains)
         grain->updateSoundSet();
 }
 
 // print information
-void GrainCluster::describe(std::ostream &out)
+void Cloud::describe(std::ostream &out)
 {
     out << "- duration : " << getDurationMs() << "\n";
     out << "- overlap : " << getOverlap() << "\n";
@@ -377,18 +379,18 @@ void GrainCluster::describe(std::ostream &out)
     out << "- spatial mode : " << getSpatialMode() << "\n";
     out << "- spatial chanel : " << getSpatialChannel() << "\n";
     out << "- volume DB : " << getVolumeDb() << "\n";
-    out << "- number of voices : " << getNumVoices() << "\n";
+    out << "- number of grains : " << getNumGrains() << "\n";
     out << "- active : " << getActiveState() << "\n";
 }
 
 
 // compute audio
-void GrainCluster::nextBuffer(double *accumBuff, unsigned int numFrames)
+void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
 {
 
     if (addFlag == true) {
         addFlag = false;
-        myGrains.push_back(new GrainVoice(theSounds, duration, pitch));
+        myGrains.push_back(new Grain(theSounds, duration, pitch));
         size_t idx = myGrains.size() - 1;
         myGrains[idx]->setWindow(windowType);
         switch (myDirMode) {
@@ -410,7 +412,7 @@ void GrainCluster::nextBuffer(double *accumBuff, unsigned int numFrames)
         }
 
         myGrains[idx]->setVolume(normedVol);
-        numVoices += 1;
+        numGrains += 1;
         setOverlap(overlapNorm);
     }
 
@@ -506,12 +508,12 @@ void GrainCluster::nextBuffer(double *accumBuff, unsigned int numFrames)
 
 
 // pitch lfo methods
-void GrainCluster::setPitchLFOFreq(float pfreq)
+void Cloud::setPitchLFOFreq(float pfreq)
 {
     pitchLFOFreq = fabs(pfreq);
 }
 
-void GrainCluster::setPitchLFOAmount(float lfoamt)
+void Cloud::setPitchLFOAmount(float lfoamt)
 {
     if (lfoamt < 0.0) {
         lfoamt = 0.0f;
@@ -519,19 +521,19 @@ void GrainCluster::setPitchLFOAmount(float lfoamt)
     pitchLFOAmount = lfoamt;
 }
 
-float GrainCluster::getPitchLFOFreq()
+float Cloud::getPitchLFOFreq()
 {
     return pitchLFOFreq;
 }
 
-float GrainCluster::getPitchLFOAmount()
+float Cloud::getPitchLFOAmount()
 {
     return pitchLFOAmount;
 }
 
 
 // spatialization methods
-void GrainCluster::setSpatialMode(int theMode, int channelNumber = -1)
+void Cloud::setSpatialMode(int theMode, int channelNumber = -1)
 {
     spatialMode = theMode % 3;
     if (spatialMode < 0) {
@@ -543,17 +545,17 @@ void GrainCluster::setSpatialMode(int theMode, int channelNumber = -1)
         channelLocation = channelNumber;
 }
 
-int GrainCluster::getSpatialMode()
+int Cloud::getSpatialMode()
 {
     return spatialMode;
 }
-int GrainCluster::getSpatialChannel()
+int Cloud::getSpatialChannel()
 {
     return channelLocation;
 }
 
 // spatialization logic
-void GrainCluster::updateSpatialization()
+void Cloud::updateSpatialization()
 {
 
     // currently assumes orientation L: 0,2,4,...  R: 1,3,5, etc (interleaved)

@@ -21,14 +21,14 @@
 
 
 //
-//  GrainVoice.h
+//  Grain.h
 //  Frontières
 //
 //  Created by Christopher Carlson on 11/13/11.
 //
 
-#ifndef GRAINVOICE_H
-#define GRAINVOICE_H
+#ifndef GRAIN_H
+#define GRAIN_H
 
 #include <vector>
 #include <memory>
@@ -47,7 +47,7 @@
 
 // forward declarations
 class AudioFile;
-class GrainVoice;
+class Grain;
 class GrainVis;
 class SceneSound;
 
@@ -55,14 +55,14 @@ typedef std::vector<std::unique_ptr<SceneSound>> VecSceneSound;
 
 
 // AUDIO CLASS
-class GrainVoice {
+class Grain {
 
 public:
     // destructor
-    virtual ~GrainVoice();
+    virtual ~Grain();
 
     // constructor
-    GrainVoice(VecSceneSound *soundSet, float durationMs, float thePitch);
+    Grain(VecSceneSound *soundSet, float durationMs, float thePitch);
 
     // dump samples into next buffer
     void nextBuffer(double *accumBuff, unsigned int numFrames,

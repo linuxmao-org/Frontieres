@@ -46,11 +46,11 @@ SOURCES += \
   sources/interface/StartDialog.cpp \
   sources/dsp/Window.cpp \
   sources/model/AudioFileSet.cpp \
-  sources/model/GrainVoice.cpp \
-  sources/model/GrainCluster.cpp \
+  sources/model/Grain.cpp \
+  sources/model/Cloud.cpp \
   sources/model/Scene.cpp \
   sources/visual/GrainVis.cpp \
-  sources/visual/GrainClusterVis.cpp \
+  sources/visual/CloudVis.cpp \
   sources/visual/SoundRect.cpp \
   sources/utility/GTime.cpp \
   libraries/Stk.cpp \
@@ -68,11 +68,11 @@ HEADERS += \
   sources/interface/StartDialog.h \
   sources/dsp/Window.h \
   sources/model/AudioFileSet.h \
-  sources/model/GrainCluster.h \
-  sources/model/GrainVoice.h \
+  sources/model/Cloud.h \
+  sources/model/Grain.h \
   sources/model/Scene.h \
   sources/visual/GrainVis.h \
-  sources/visual/GrainClusterVis.h \
+  sources/visual/CloudVis.h \
   sources/visual/SoundRect.h \
   sources/utility/GTime.h \
   libraries/RtMidi.h \

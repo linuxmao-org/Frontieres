@@ -21,13 +21,13 @@
 
 
 //
-//  GrainClusterVis.cpp
+//  CloudVis.cpp
 //  Frontières
 //
 //  Created by Christopher Carlson on 11/15/11.
 //
 
-#include "visual/GrainClusterVis.h"
+#include "visual/CloudVis.h"
 #include "visual/GrainVis.h"
 #include "visual/SoundRect.h"
 #include "model/Scene.h"
@@ -51,13 +51,13 @@
 // GRAPHICS
 //-----------------------------------------------------------------------------------------------
 
-GrainClusterVis::~GrainClusterVis()
+CloudVis::~CloudVis()
 {
     for (GrainVis *vis : myGrainsV)
         delete vis;
 }
 
-GrainClusterVis::GrainClusterVis(float x, float y, unsigned int numVoices,
+CloudVis::CloudVis(float x, float y, unsigned int numGrainsVis,
                                  VecSceneSound *rects)
 {
     // get screen width and height
@@ -66,17 +66,10 @@ GrainClusterVis::GrainClusterVis(float x, float y, unsigned int numVoices,
     screenHeight = screen->height();
 
     startTime = GTime::instance().sec;
-    // cout << "cluster started at : " << startTime << " sec " << endl;
+
     gcX = x;
     gcY = y;
 
-    //    cout << "cluster x" << gcX << endl;
-    //    cout << "cluster y" << gcY  << endl;
-
-
-    // randomness params
-    //xRandExtent = 3.0;
-    //yRandExtent = 3.0;
     xRandExtent = g_defaultCloudParams.xRandExtent;
     yRandExtent = g_defaultCloudParams.yRandExtent;
 
@@ -93,11 +86,11 @@ GrainClusterVis::GrainClusterVis(float x, float y, unsigned int numVoices,
     // pointer to landscape visualization objects
     theLandscape = rects;
 
-    for (int i = 0; i < numVoices; i++) {
+    for (int i = 0; i < numGrainsVis; i++) {
         myGrainsV.push_back(new GrainVis(gcX, gcY));
     }
 
-    numGrains = numVoices;
+    numGrains = numGrainsVis;
 
 
     // visualization stuff
@@ -108,13 +101,13 @@ GrainClusterVis::GrainClusterVis(float x, float y, unsigned int numVoices,
     targetRad = maxSelRad;
 }
 
-void GrainClusterVis::setDuration(float dur)
+void CloudVis::setDuration(float dur)
 {
     freq = 1000.0 / dur;
 }
 
 // print information
-void GrainClusterVis::describe(std::ostream &out)
+void CloudVis::describe(std::ostream &out)
 {
     out << "- X : " << getX() << "\n";
     out << "- Y : " << getY() << "\n";
@@ -122,18 +115,18 @@ void GrainClusterVis::describe(std::ostream &out)
     out << "- Y extent : " << getYRandExtent() << "\n";
 }
 
-// return cluster x
-float GrainClusterVis::getX()
+// return cloud x
+float CloudVis::getX()
 {
     return gcX;
 }
-// return cluster y
-float GrainClusterVis::getY()
+// return cloud y
+float CloudVis::getY()
 {
     return gcY;
 }
 
-void GrainClusterVis::draw()
+void CloudVis::draw()
 {
     double t_sec = GTime::instance().sec - startTime;
     // cout << t_sec << endl;
@@ -141,7 +134,7 @@ void GrainClusterVis::draw()
     // if ((g_time -last_gtime) > 50){
     glPushMatrix();
     glTranslatef((GLfloat)gcX, (GLfloat)gcY, 0.0);
-    // Grain cluster representation
+    // Cloud representation
     if (isSelected)
         glColor4f(0.1, 0.7, 0.6, 0.35);
     else
@@ -151,24 +144,9 @@ void GrainClusterVis::draw()
                              sin(2 * PI * (freq * t_sec + 0.125));
     gluDisk(gluNewQuadric(), selRad, selRad + 5.0, 128, 2);
     glPopMatrix();
-
-    // update grain motion;
-    // Individual voices
-
-    // disc version (lower quality, but works on graphics cards that don't support GL_POINT_SMOOTH)
-    //
-    //    for (int i = 0; i < numGrains; i++){
-    //        glPushMatrix();
-    //        myGrainsV[i]->draw(mode);
-    //        glPopMatrix();
-    //    }
-
-    // end disc version
-
-    // point version (preferred)
     glPushMatrix();
     // update grain motion;
-    // Individual voices
+    // Individual grains
     for (int i = 0; i < numGrains; i++) {
         myGrainsV[i]->draw();
     }
@@ -179,7 +157,7 @@ void GrainClusterVis::draw()
 
 
 // get trigger position/volume relative to sound rects for single grain voice
-void GrainClusterVis::getTriggerPos(unsigned int idx, double *playPos,
+void CloudVis::getTriggerPos(unsigned int idx, double *playPos,
                                     double *playVol, float theDur)
 {
     bool trigger = false;
@@ -207,49 +185,49 @@ void GrainClusterVis::getTriggerPos(unsigned int idx, double *playPos,
 }
 
 
-// rand cluster size
-void GrainClusterVis::setFixedXRandExtent(float X)
+// rand cloud size
+void CloudVis::setFixedXRandExtent(float X)
 {
     xRandExtent = X;
 }
 
-void GrainClusterVis::setFixedYRandExtent(float Y)
+void CloudVis::setFixedYRandExtent(float Y)
 {
     yRandExtent = Y;
 }
-void GrainClusterVis::setFixedRandExtent(float X, float Y)
+void CloudVis::setFixedRandExtent(float X, float Y)
 {
     setFixedXRandExtent(X);
     setFixedYRandExtent(Y);
 }
-void GrainClusterVis::setXRandExtent(float mouseX)
+void CloudVis::setXRandExtent(float mouseX)
 {
     xRandExtent = fabs(mouseX - gcX);
     if (xRandExtent < 2.0f)
         xRandExtent = 0.0f;
 }
-void GrainClusterVis::setYRandExtent(float mouseY)
+void CloudVis::setYRandExtent(float mouseY)
 {
     yRandExtent = fabs(mouseY - gcY);
     if (yRandExtent < 2.0f)
         yRandExtent = 0.0f;
 }
-void GrainClusterVis::setRandExtent(float mouseX, float mouseY)
+void CloudVis::setRandExtent(float mouseX, float mouseY)
 {
     setXRandExtent(mouseX);
     setYRandExtent(mouseY);
 }
-float GrainClusterVis::getXRandExtent()
+float CloudVis::getXRandExtent()
 {
     return xRandExtent;
 }
-float GrainClusterVis::getYRandExtent()
+float CloudVis::getYRandExtent()
 {
     return yRandExtent;
 }
 
 //
-void GrainClusterVis::updateCloudPosition(float x, float y)
+void CloudVis::updateCloudPosition(float x, float y)
 {
     float xDiff = x - gcX;
     float yDiff = y - gcY;
@@ -262,7 +240,7 @@ void GrainClusterVis::updateCloudPosition(float x, float y)
     }
 }
 
-void GrainClusterVis::updateGrainPosition(int idx, float x, float y)
+void CloudVis::updateGrainPosition(int idx, float x, float y)
 {
     if (idx < numGrains)
         myGrainsV[idx]->moveTo(x, y);
@@ -270,7 +248,7 @@ void GrainClusterVis::updateGrainPosition(int idx, float x, float y)
 
 
 // check mouse selection
-bool GrainClusterVis::select(float x, float y)
+bool CloudVis::select(float x, float y)
 {
     float xdiff = x - gcX;
     float ydiff = y - gcY;
@@ -281,12 +259,12 @@ bool GrainClusterVis::select(float x, float y)
         return false;
 }
 
-void GrainClusterVis::setSelectState(bool selectState)
+void CloudVis::setSelectState(bool selectState)
 {
     isSelected = selectState;
 }
 
-void GrainClusterVis::addGrain()
+void CloudVis::addGrain()
 {
     //    addFlag = true;
     myGrainsV.push_back(new GrainVis(gcX, gcY));
@@ -294,7 +272,7 @@ void GrainClusterVis::addGrain()
 }
 
 // remove a grain from the cloud (visualization only)
-void GrainClusterVis::removeGrain()
+void CloudVis::removeGrain()
 {
     //    removeFlag = true;
     if (numGrains > 1) {

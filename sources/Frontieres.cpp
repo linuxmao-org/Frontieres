@@ -64,10 +64,10 @@
 
 // graphics related
 #include "visual/SoundRect.h"
-#include "visual/GrainClusterVis.h"
+#include "visual/CloudVis.h"
 
 // audio related
-#include "model/GrainCluster.h"
+#include "model/Cloud.h"
 #include "model/Scene.h"
 
 // time
@@ -225,7 +225,7 @@ int audioCallback(void *outputBuffer, void *inputBuffer, unsigned int numFrames,
         if (lock.owns_lock()) {
             Scene *scene = ::currentScene;
             for (int i = 0, n = scene->m_clouds.size(); i < n; i++) {
-                GrainCluster &theCloud = *scene->m_clouds[i]->cloud;
+                Cloud &theCloud = *scene->m_clouds[i]->cloud;
                 theCloud.nextBuffer(out, numFrames);
             }
         }
@@ -416,8 +416,8 @@ void printParam()
     int screenHeight = screen->height();
 
     if (selectedCloud) {
-        GrainClusterVis &theCloudVis = *selectedCloud->view;
-        GrainCluster &theCloud = *selectedCloud->cloud;
+        CloudVis &theCloudVis = *selectedCloud->view;
+        Cloud &theCloud = *selectedCloud->cloud;
 
         // float cloudX = theCloudVis.getX();
         // float cloudY = theCloudVis.getY();
@@ -429,8 +429,8 @@ void printParam()
 
         switch (currentParam) {
         case NUMGRAINS:
-            myValue = _S("", "Voices: ");
-            sinput << theCloud.getNumVoices();
+            myValue = _S("", "Grains: ");
+            sinput << theCloud.getNumGrains();
             myValue = myValue + sinput.str();
             draw_string((GLfloat)mouseX, (GLfloat)(screenHeight - mouseY), 0.0,
                         myValue.c_str(), 100.0f);
@@ -603,7 +603,9 @@ void printParam()
             //            myValue = "Duration (ms): " + theCloud->getDurationMs();
             break;
         case NUM:
-            myValue = _S("", "Cloud Num: ") + std::to_string(currentScene->getNumCloud(selectedCloud)+1);
+            myValue = _S("", "Cloud ID/Num: ")
+                    + std::to_string(theCloud.getId())
+                    + "/" + std::to_string(currentScene->getNumCloud(selectedCloud)+1);
             draw_string((GLfloat)mouseX, (GLfloat)(screenHeight - mouseY), 0.0,
                         myValue.c_str(), 100.0f);
             break;

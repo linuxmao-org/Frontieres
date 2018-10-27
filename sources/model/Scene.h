@@ -31,8 +31,8 @@ struct SceneSound;
 struct SceneCloud;
 struct AudioFile;
 struct SoundRect;
-struct GrainCluster;
-struct GrainClusterVis;
+struct Cloud;
+struct CloudVis;
 class AudioFileSet;
 class QFile;
 
@@ -65,12 +65,12 @@ public:
     void addAudioPath(const std::string &path);
 
     void addSoundRect(AudioFile *sample);
-    void addNewCloud(int numVoices);
+    void addNewCloud(int numGrains);
 
     // init default cloud params
     void initDefaultCloudParams();
 
-    int getNumCloud(SceneCloud *cloudForNum);
+    int getNumCloud(SceneCloud *cloudCurrent);
 
 
     SceneSound *selectedSound();
@@ -103,8 +103,8 @@ struct SceneSound {
 };
 
 struct SceneCloud {
-    std::unique_ptr<GrainCluster> cloud;
-    std::unique_ptr<GrainClusterVis> view;
+    std::unique_ptr<Cloud> cloud;
+    std::unique_ptr<CloudVis> view;
 
     ~SceneCloud();
 };
