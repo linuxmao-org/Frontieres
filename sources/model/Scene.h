@@ -70,6 +70,8 @@ public:
     // init default cloud params
     void initDefaultCloudParams();
 
+    int getNumCloud(SceneCloud *cloudForNum);
+
 
     SceneSound *selectedSound();
     SceneCloud *selectedCloud();

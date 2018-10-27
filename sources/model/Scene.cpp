@@ -717,6 +717,18 @@ void Scene::deselect(int shapeType)
         break;
     }
 }
+// get num of a cloud in current scene
+int Scene::getNumCloud(SceneCloud *cloudForNum)
+{
+    for (int i = 0, n = m_clouds.size(); i < n; i++) {
+        GrainCluster *gcForNum = cloudForNum->cloud.get();
+        GrainCluster *gc = m_clouds[i]->cloud.get();
+        if (gcForNum->getId() == gc->getId())
+            return i;
+    }
+    return -1;
+}
+
 
 // destructor
 SceneSound::~SceneSound()
