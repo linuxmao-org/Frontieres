@@ -21,15 +21,15 @@
 
 
 //
-//  AudioFileSet.h
+//  Sample.h
 //  Frontières
 //
 //  Created by Christopher Carlson on 11/21/11.
 //
 
 
-#ifndef AUDIOFILESET_H
-#define AUDIOFILESET_H
+#ifndef SAMPLE_H
+#define SAMPLE_H
 
 #include <vector>
 #include <string>
@@ -41,10 +41,10 @@ using namespace std;
 
 
 // basic encapsulation of an audio file
-struct AudioFile {
+struct Sample {
 
     // constructor
-    AudioFile(string myName, string thePath, unsigned int numChan,
+    Sample(string myName, string thePath, unsigned int numChan,
               unsigned long numFrames, unsigned int srate, BUFFERPREC *theWave)
     {
         cout << numFrames << endl;
@@ -56,7 +56,7 @@ struct AudioFile {
         this->wave = theWave;
     }
     // destructor
-    ~AudioFile()
+    ~Sample()
     {
         if (wave != NULL) {
             delete[] wave;
@@ -77,31 +77,31 @@ struct AudioFile {
 };
 
 
-class AudioFileSet {
+class SampleSet {
 
 public:
-    virtual ~AudioFileSet();
+    virtual ~SampleSet();
 
     // constructor
-    AudioFileSet();
+    SampleSet();
 
     // read in all audio files contained in
-    int loadFileSet(const std::string &path, std::vector<AudioFile *> *loaded = nullptr);
+    int loadFileSet(const std::string &path, std::vector<Sample *> *loaded = nullptr);
 
     // load a single file in the collection, or return if the same name already exists
-    AudioFile *loadFile(const std::string &path);
+    Sample *loadFile(const std::string &path);
 
     // remove a single sample from the set
-    void removeSample(AudioFile *sampleToRemove);
+    void removeSample(Sample *sampleToRemove);
 
     // return the audio vector- note, the intension is for the files to be
     // read only.  if write access is needed in the future - thread safety will
     // need to be considered
-    vector<AudioFile *> *getFileVector();
+    vector<Sample *> *getFileVector();
 
 
 private:
-    vector<AudioFile *> fileSet;
+    vector<Sample *> fileSet;
 };
 
 

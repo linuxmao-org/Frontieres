@@ -29,7 +29,7 @@
 
 #include "visual/CloudVis.h"
 #include "visual/GrainVis.h"
-#include "visual/SoundRect.h"
+#include "visual/SampleVis.h"
 #include "model/Scene.h"
 #include "utility/GTime.h"
 
@@ -161,7 +161,7 @@ void CloudVis::getTriggerPos(unsigned int idx, double *playPos,
                                     double *playVol, float theDur)
 {
     bool trigger = false;
-    SoundRect *theRect = NULL;
+    SampleVis *theRect = NULL;
     if (idx < myGrainsV.size()) {
         GrainVis *theGrain = myGrainsV[idx];
         // TODO: motion models

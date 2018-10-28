@@ -30,7 +30,7 @@
 
 // TODO:  set and show name implementation
 
-#include "SoundRect.h"
+#include "SampleVis.h"
 #include "utility/GTime.h"
 
 // TODO avoid this
@@ -38,14 +38,14 @@
 #include "interface/MyGLWindow.h"
 
 // destructor
-SoundRect::~SoundRect()
+SampleVis::~SampleVis()
 {
     myBuff = NULL;
 }
 
 
 // constructor
-SoundRect::SoundRect()
+SampleVis::SampleVis()
 {
     // get screen width and height
     MyGLScreen *screen = theApplication->GLwindow()->screen();
@@ -87,7 +87,7 @@ SoundRect::SoundRect()
 
 
 // other intialization code
-void SoundRect::init()
+void SampleVis::init()
 {
 
     // selection state
@@ -126,12 +126,12 @@ void SoundRect::init()
 
 
 // set selection (highlight)
-void SoundRect::setSelectState(bool state)
+void SampleVis::setSelectState(bool state)
 {
     isSelected = state;
 }
 // determine if mouse click is in selection range
-bool SoundRect::select(float x, float y)
+bool SampleVis::select(float x, float y)
 {
 
     // check selection
@@ -146,26 +146,26 @@ bool SoundRect::select(float x, float y)
 }
 
 // process mouse motion during selection
-void SoundRect::move(float xDiff, float yDiff)
+void SampleVis::move(float xDiff, float yDiff)
 {
     rX = rX + xDiff;
     rY = rY + yDiff;
     updateCorners(rWidth, rHeight);
 }
 
-void SoundRect::setXY(float x, float y)
+void SampleVis::setXY(float x, float y)
 {
     rX = x;
     rY = y;
     updateCorners(rWidth, rHeight);
 }
 
-bool SoundRect::getOrientation()
+bool SampleVis::getOrientation()
 {
     return orientation;
 }
 
-void SoundRect::toggleOrientation()
+void SampleVis::toggleOrientation()
 {
     orientation = !orientation;
     setWidthHeight(rHeight, rWidth);
@@ -173,7 +173,7 @@ void SoundRect::toggleOrientation()
 
 
 // color randomizer + alpha (roughly green/blue in color)
-void SoundRect::randColor()
+void SampleVis::randColor()
 {
     // color
     colR = 0.4 + ((float)rand() / RAND_MAX) * 0.3;
@@ -186,7 +186,7 @@ void SoundRect::randColor()
 }
 
 // set width and height
-void SoundRect::setWidthHeight(float width, float height)
+void SampleVis::setWidthHeight(float width, float height)
 {
 
 
@@ -231,29 +231,29 @@ void SoundRect::setWidthHeight(float width, float height)
 }
 
 // getters for width and height
-float SoundRect::getWidth()
+float SampleVis::getWidth()
 {
     return rWidth;
 }
 
-float SoundRect::getHeight()
+float SampleVis::getHeight()
 {
     return rHeight;
 }
 
 // getters for X and Y
-float SoundRect::getX()
+float SampleVis::getX()
 {
     return rX;
 }
 
-float SoundRect::getY()
+float SampleVis::getY()
 {
     return rY;
 }
 
 // update box corners with new width values
-void SoundRect::updateCorners(float width, float height)
+void SampleVis::updateCorners(float width, float height)
 {
     rtop = rY + height * 0.5f;
     rbot = rY - height * 0.5f;
@@ -266,7 +266,7 @@ void SoundRect::updateCorners(float width, float height)
 
 
 // set upsampling for waveform display
-void SoundRect::setUps()
+void SampleVis::setUps()
 {
     float sizeFactor = 10.0f;
     if (orientation == true)
@@ -280,7 +280,7 @@ void SoundRect::setUps()
 
 
 ////process mouse movement/selection
-// void SoundRect::procMovement(int x, int y)
+// void SampleVis::procMovement(int x, int y)
 //{
 //    for (int i = 0; i<5; i++){
 //        if (pickedArray[i] == 1){
@@ -332,7 +332,7 @@ void SoundRect::setUps()
 //    lastY = (float)y;
 //}
 
-void SoundRect::associateSound(double *theBuff, unsigned long buffFrames, unsigned int buffChans, const string &name)
+void SampleVis::associateSound(double *theBuff, unsigned long buffFrames, unsigned int buffChans, const string &name)
 {
 
     myBuff = theBuff;
@@ -347,7 +347,7 @@ void SoundRect::associateSound(double *theBuff, unsigned long buffFrames, unsign
     setWaveDisplayParams();
 }
 
-void SoundRect::setWaveDisplayParams()
+void SampleVis::setWaveDisplayParams()
 {
     if (orientation == true) {
         myBuffInc = myBuffFrames / (ups * rWidth);
@@ -358,7 +358,7 @@ void SoundRect::setWaveDisplayParams()
 }
 
 // draw function
-void SoundRect::draw()
+void SampleVis::draw()
 {
     glPushMatrix();
     // rect properties
@@ -507,7 +507,7 @@ void SoundRect::draw()
 }
 
 
-void SoundRect::toggleWaveDisplay()
+void SampleVis::toggleWaveDisplay()
 {
     pendingBuffState = !pendingBuffState;
     if (pendingBuffState == true)
@@ -515,14 +515,14 @@ void SoundRect::toggleWaveDisplay()
 }
 
 // return id
-// unsigned int SoundRect::getId()
+// unsigned int SampleVis::getId()
 //{
 //    return myId;
 //}
 
 
 // check to see if a coordinate is inside this rectangle
-bool SoundRect::insideMe(float x, float y)
+bool SampleVis::insideMe(float x, float y)
 {
     if ((x > rleft) && (x < rright)) {
         if ((y > rbot) && (y < rtop)) {
@@ -533,7 +533,7 @@ bool SoundRect::insideMe(float x, float y)
 }
 
 // return normalized position values in x and y
-bool SoundRect::getNormedPosition(double *positionsX, double *positionsY,
+bool SampleVis::getNormedPosition(double *positionsX, double *positionsY,
                                   float x, float y, unsigned int idx)
 {
     bool trigger = false;
@@ -550,23 +550,23 @@ bool SoundRect::getNormedPosition(double *positionsX, double *positionsY,
         }
         // cout << positionsX[idx] << ", " << positionsY[idx]<<endl;
         if ((positionsY[idx] < 0.0) || (positionsY[idx] > 1.0))
-            cout << "problem with x trigger pos - see soundrect get normed pos" << endl;
+            cout << "problem with x trigger pos - see sampleVis get normed pos" << endl;
         if ((positionsY[idx] < 0.0) || (positionsY[idx] > 1.0))
-            cout << "problem with x trigger pos - see soundrect get normed pos" << endl;
+            cout << "problem with x trigger pos - see sampleVis get normed pos" << endl;
     }
     return trigger;
 }
 
 
 // set name
-void SoundRect::setName(const string &name)
+void SampleVis::setName(const string &name)
 {
     rName = name;
     return;
 }
 
 // print information
-void SoundRect::describe(std::ostream &out)
+void SampleVis::describe(std::ostream &out)
 {
     out << "- orientation : " << getOrientation() << "\n";
     out << "- height : " << getHeight() << "\n";
@@ -575,7 +575,7 @@ void SoundRect::describe(std::ostream &out)
     out << "- Y : " << getY() << "\n";
 }
 
-const string &SoundRect::getName() const
+const string &SampleVis::getName() const
 {
     return rName;
 }
