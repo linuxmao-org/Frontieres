@@ -45,9 +45,9 @@
 #include <QJsonObject>
 #include <QJsonArray>
 class Grain;
-struct SceneSound;
+struct SceneSample;
 
-typedef std::vector<std::unique_ptr<SceneSound>> VecSceneSound;
+typedef std::vector<std::unique_ptr<SceneSample>> VecSceneSample;
 
 // direction modes
 enum { FORWARD, BACKWARD, RANDOM_DIR };
@@ -77,7 +77,7 @@ public:
     virtual ~Cloud();
 
     // constructor
-    Cloud(VecSceneSound *soundSet, float theNumGrains);
+    Cloud(VecSceneSample *sampleSet, float theNumGrains);
 
     // compute next buffer of audio (accumulate from grains)
     void nextBuffer(double *accumBuff, unsigned int numFrames);
@@ -141,8 +141,8 @@ public:
     // return number of Grains
     unsigned int getNumGrains();
 
-    // update after a change of sound set
-    void updateSoundSet();
+    // update after a change of sample set
+    void updateSampleSet();
 
     // print information
     void describe(std::ostream &out);
@@ -192,7 +192,7 @@ private:
     int myDirMode, windowType;
 
     // audio files
-    VecSceneSound *theSounds;
+    VecSceneSample *theSamples;
 };
 
 #endif

@@ -54,15 +54,15 @@ Grain::~Grain()
 // Constructor
 //-----------------------------------------------------------------------------
 
-Grain::Grain(VecSceneSound *soundSet, float durationMs, float thePitch)
+Grain::Grain(VecSceneSample *sampleSet, float durationMs, float thePitch)
 {
 
 
-    // store pointer to external vector of sound files
-    theSounds = soundSet;
+    // store pointer to external vector of sample files
+    theSamples = sampleSet;
 
-    // initialize with the current sound set
-    updateSoundSet();
+    // initialize with the current sample set
+    updateSampleSet();
 
     // playing status init
     playingState = false;
@@ -121,7 +121,7 @@ Grain::Grain(VecSceneSound *soundSet, float durationMs, float thePitch)
 
 //-----------------------------------------------------------------------------
 // Turn on grain.
-// input args = position and volume vectors in sound rect space
+// input args = position and volume vectors in sample viual space
 // returns whether or not grain is awaiting play.
 // parent cloud will wait to play this grain if the grain is still
 // this should not be an issue unless the overlap value is erroneous
@@ -139,14 +139,14 @@ bool Grain::playMe(double *startPositions, double *startVols)
 
         // convert relative start positions to sample locations
 
-        activeSounds.clear();
+        activeSamples.clear();
 
-        VecSceneSound &sounds = *theSounds;
-        for (int i = 0, n = sounds.size(); i < n; i++) {
+        VecSceneSample &sceneSamples = *theSamples;
+        for (int i = 0, n = sceneSamples.size(); i < n; i++) {
             if (startPositions[i] != -1) {
-                activeSounds.push_back(i);
+                activeSamples.push_back(i);
                 playPositions[i] =
-                    floor(startPositions[i] * (sounds[i]->sample->frames - 1));
+                    floor(startPositions[i] * (sceneSamples[i]->sample->frames - 1));
                 playVols[i] = startVols[i];
             }
         }
@@ -288,24 +288,24 @@ void Grain::setWindow(unsigned int theType)
 }
 
 //-----------------------------------------------------------------------------
-// Update after a change of sound set
+// Update after a change of sample set
 //-----------------------------------------------------------------------------
-void Grain::updateSoundSet()
+void Grain::updateSampleSet()
 {
-    // get number of loaded sounds
-    unsigned numSounds = (unsigned)theSounds->size();
+    // get number of loaded samples
+    unsigned numSamples = (unsigned)theSamples->size();
 
     // set play positions to -1 for all
-    playPositions.reset(new double[numSounds]);
-    playVols.reset(new double[numSounds]);
-    // initialize - (-1 signifies that sound should not be played)
-    for (int i = 0; i < numSounds; i++) {
+    playPositions.reset(new double[numSamples]);
+    playVols.reset(new double[numSamples]);
+    // initialize - (-1 signifies that sample should not be played)
+    for (int i = 0; i < numSamples; i++) {
         playPositions[i] = -1.0;
         playVols[i] = 0.0;
     }
 
-    activeSounds.clear();
-    activeSounds.reserve(numSounds);
+    activeSamples.clear();
+    activeSamples.reserve(numSamples);
 }
 
 
@@ -336,7 +336,7 @@ void Grain::nextBuffer(double *accumBuff, unsigned int numFrames,
     // only go through this ordeal if grain is active
     if (playingState == true) {
         // initialize local vars
-        VecSceneSound &sounds = *theSounds;
+        VecSceneSample &sceneSamples = *theSamples;
 
         // linear interp coeff
         double nu = 0.0;
@@ -348,7 +348,7 @@ void Grain::nextBuffer(double *accumBuff, unsigned int numFrames,
         double flooredIdx = 0;
 
         // next file index
-        int nextSound = -1;
+        int nextSample = -1;
 
         // waveform params
         double *wave = NULL;
@@ -390,24 +390,24 @@ void Grain::nextBuffer(double *accumBuff, unsigned int numFrames,
             }
 
 
-            // reinit sound accumulators for mono and stereo files to prepare for this frame
+            // reinit sample accumulators for mono and stereo files to prepare for this frame
             monoWaveVal = 0.0;
             stereoLeftVal = 0.0;
             stereoRightVal = 0.0;
 
-            // Get next audio frame data (accumulate from each sound under grain)
+            // Get next audio frame data (accumulate from each sample under grain)
             //-- REMEMBER - playPositions are in frames, not samples
-            for (int j = 0; j < activeSounds.size(); j++) {
+            for (int j = 0; j < activeSamples.size(); j++) {
 
-                nextSound = activeSounds[j];
-                pos = playPositions[nextSound];  // get start position
-                atten = playVols[nextSound];  // get volume relative to rect
+                nextSample = activeSamples[j];
+                pos = playPositions[nextSample];  // get start position
+                atten = playVols[nextSample];  // get volume relative to rect
 
 
-                // if sound is in play,sample it
+                // if sample is in play,sample it
                 if (pos > 0) {
-                    // sound vars
-                    Sample *af = sounds[nextSound]->sample;
+                    // Sample vars
+                    Sample *af = sceneSamples[nextSample]->sample;
                     wave = af->wave;
                     channels = af->channels;
                     frames = af->frames;
@@ -438,16 +438,16 @@ void Grain::nextBuffer(double *accumBuff, unsigned int numFrames,
                              */
 
                             // advance after each stereo frame (do calc twice for mono)
-                            playPositions[nextSound] += playInc;
+                            playPositions[nextSample] += playInc;
                         }
                         else {
                             // not playing anymore
-                            playPositions[nextSound] = -1.0;
+                            playPositions[nextSample] = -1.0;
                         }
                         break;
                     case 2:  // stereo
 
-                        // make sure we are still in sound
+                        // make sure we are still in sample
                         if ((flooredIdx >= 0) && ((flooredIdx + 1) < (frames - 1))) {
 
 
@@ -473,11 +473,11 @@ void Grain::nextBuffer(double *accumBuff, unsigned int numFrames,
                              */
 
                             // advance after each stereo frame (do calc twice for mono)
-                            playPositions[nextSound] += playInc;
+                            playPositions[nextSample] += playInc;
                         }
                         else {
                             // not playing anymore
-                            playPositions[nextSound] = -1.0;
+                            playPositions[nextSample] = -1.0;
                         }
                         break;
                         // don't handle numbers of channels > 2

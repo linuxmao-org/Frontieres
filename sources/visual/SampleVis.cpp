@@ -21,7 +21,7 @@
 
 
 //
-//  SoundRect.cpp
+//  SampleVis.cpp
 //  Frontières
 //
 //  Created by Christopher Carlson on 11/30/11.
@@ -259,9 +259,6 @@ void SampleVis::updateCorners(float width, float height)
     rbot = rY - height * 0.5f;
     rright = rX + width * 0.5f;
     rleft = rX - width * 0.5f;
-    //    cout << "Sound Rect " << myId << ": "
-    //    << rtop << ", " << rright << ", " <<
-    //    rbot << ", " << rleft << endl;
 }
 
 
@@ -332,7 +329,7 @@ void SampleVis::setUps()
 //    lastY = (float)y;
 //}
 
-void SampleVis::associateSound(double *theBuff, unsigned long buffFrames, unsigned int buffChans, const string &name)
+void SampleVis::associateSample(double *theBuff, unsigned long buffFrames, unsigned int buffChans, const string &name)
 {
 
     myBuff = theBuff;

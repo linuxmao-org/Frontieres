@@ -48,7 +48,7 @@ Cloud::~Cloud()
 
 
 // Constructor
-Cloud::Cloud(VecSceneSound *soundSet, float theNumGrains)
+Cloud::Cloud(VecSceneSample *sampleSet, float theNumGrains)
 {
     // cloud id
     myId = ++cloudId;
@@ -65,8 +65,8 @@ Cloud::Cloud(VecSceneSound *soundSet, float theNumGrains)
     addFlag = false;
     removeFlag = false;
 
-    // keep pointer to the sound set
-    theSounds = soundSet;
+    // keep pointer to the sample set
+    theSamples = sampleSet;
 
     // trigger idx
     nextGrain = 0;
@@ -111,7 +111,7 @@ Cloud::Cloud(VecSceneSound *soundSet, float theNumGrains)
 
     // populate grain cloud
     for (int i = 0; i < numGrains; i++) {
-        myGrains.push_back(new Grain(theSounds, duration, pitch));
+        myGrains.push_back(new Grain(theSamples, duration, pitch));
     }
 
     // set volume of cloud to unity
@@ -359,11 +359,11 @@ unsigned int Cloud::getNumGrains()
     return myGrains.size();
 }
 
-// update after a change of sound set
-void Cloud::updateSoundSet()
+// update after a change of sample set
+void Cloud::updateSampleSet()
 {
     for (Grain *grain : myGrains)
-        grain->updateSoundSet();
+        grain->updateSampleSet();
 }
 
 // print information
@@ -390,7 +390,7 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
 
     if (addFlag == true) {
         addFlag = false;
-        myGrains.push_back(new Grain(theSounds, duration, pitch));
+        myGrains.push_back(new Grain(theSamples, duration, pitch));
         size_t idx = myGrains.size() - 1;
         myGrains[idx]->setWindow(windowType);
         switch (myDirMode) {
@@ -431,8 +431,8 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
 
 
         // initialize play positions array
-        double playPositions[theSounds->size()];
-        double playVols[theSounds->size()];
+        double playPositions[theSamples->size()];
+        double playVols[theSamples->size()];
 
         // buffer variables
         unsigned int nextFrame = 0;
@@ -453,7 +453,7 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
                 if (!awaitingPlay) {
                     local_time = 0;
                     // clear play and volume buffs
-                    for (int i = 0; i < theSounds->size(); i++) {
+                    for (int i = 0; i < theSamples->size(); i++) {
                         playPositions[i] = (double)(-1.0);
                         playVols[i] = (double)0.0;
                     }

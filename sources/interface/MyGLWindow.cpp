@@ -58,8 +58,8 @@ void MyGLWindow::initialize()
             this, []() { theApplication->loadSceneFile(); });
     connect(P->ui.action_Save_scene, &QAction::triggered,
             this, []() { theApplication->saveSceneFile(); });
-    connect(P->ui.action_Add_sound, &QAction::triggered,
-            this, []() { theApplication->addSound(); });
+    connect(P->ui.action_Add_sample, &QAction::triggered,
+            this, []() { theApplication->addSample(); });
     connect(P->ui.action_Load_clouds_defaults, &QAction::triggered,
             this, []() { theApplication->loadCloudDefaultFile(); });
 
@@ -143,12 +143,12 @@ void MyGLScreen::paintGL()
     glTranslatef(-position.x, -position.y, -position.z);  // translate the screen to the position of our camera
     if (menuFlag == false) {
         Scene *scene = ::currentScene;
-        SceneSound *selectedSound = scene->selectedSound();
+        SceneSample *selectedSample = scene->selectedSample();
         SceneCloud *selectedCloud = scene->selectedCloud();
 
         // render rectangles
-        for (int i = 0, n = scene->m_sounds.size(); i < n; i++) {
-            SampleVis &sv = *scene->m_sounds[i]->view;
+        for (int i = 0, n = scene->m_samples.size(); i < n; i++) {
+            SampleVis &sv = *scene->m_samples[i]->view;
             sv.draw();
         }
 
@@ -159,7 +159,7 @@ void MyGLScreen::paintGL()
         }
 
         // print current param if editing
-        if (selectedSound || selectedCloud)
+        if (selectedSample || selectedCloud)
             printParam();
     }
     else {
@@ -226,8 +226,8 @@ void MyGLScreen::mousePressEvent(QMouseEvent *event)
         if (!scene->selectedCloud()) {
             // search for selections
             resizeDir = false;  // set resize direction to horizontal
-            for (int i = 0, n = scene->m_sounds.size(); i < n; i++) {
-                SampleVis &sv = *scene->m_sounds[i]->view;
+            for (int i = 0, n = scene->m_samples.size(); i < n; i++) {
+                SampleVis &sv = *scene->m_samples[i]->view;
                 if (sv.select(mouseX, mouseY) == true) {
                     scene->m_selectionIndices.push_back(i);
                     // sv.setSelectState(true);
@@ -237,8 +237,8 @@ void MyGLScreen::mousePressEvent(QMouseEvent *event)
             }
 
             if (!scene->m_selectionIndices.empty()) {
-                scene->m_selectedSound = scene->m_selectionIndices[0];
-                scene->selectedSound()->view->setSelectState(true);
+                scene->m_selectedSample = scene->m_selectionIndices[0];
+                scene->selectedSample()->view->setSelectState(true);
             }
         }
     }
@@ -267,7 +267,7 @@ void MyGLScreen::mouseMoveEvent(QMouseEvent *event)
     int yDiff = 0;
 
     Scene *scene = ::currentScene;
-    SceneSound *selectedSound = scene->selectedSound();
+    SceneSample *selectedSample = scene->selectedSample();
     SceneCloud *selectedCloud = scene->selectedCloud();
 
     if (selectedCloud) {
@@ -279,8 +279,8 @@ void MyGLScreen::mouseMoveEvent(QMouseEvent *event)
         case MOVE:
             if ((lastDragX != veryHighNumber) && (lastDragY != veryHighNumber)) {
 
-                if (selectedSound) {  // movement case
-                    selectedSound->view->move(mouseX - lastDragX, mouseY - lastDragY);
+                if (selectedSample) {  // movement case
+                    selectedSample->view->move(mouseX - lastDragX, mouseY - lastDragY);
                 }
             }
             lastDragX = mouseX;
@@ -292,12 +292,12 @@ void MyGLScreen::mouseMoveEvent(QMouseEvent *event)
                 // cout << "drag ok" << endl;
                 // for width height - use screen coords
 
-                if (selectedSound) {
+                if (selectedSample) {
                     xDiff = x - lastDragX;
                     yDiff = y - lastDragY;
                     // get width and height
-                    float newWidth = selectedSound->view->getWidth();
-                    float newHeight = selectedSound->view->getHeight();
+                    float newWidth = selectedSample->view->getWidth();
+                    float newHeight = selectedSample->view->getHeight();
 
                     int thresh = 0;
                     // check motion mag
@@ -321,7 +321,7 @@ void MyGLScreen::mouseMoveEvent(QMouseEvent *event)
                     }
 
                     // update width and height
-                    selectedSound->view->setWidthHeight(newWidth, newHeight);
+                    selectedSample->view->setWidthHeight(newWidth, newHeight);
                 }
             }
             lastDragX = x;
@@ -368,21 +368,21 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
     int modkey = event->modifiers();
 
     Scene *scene = ::currentScene;
-    SceneSound *selectedSound = scene->selectedSound();
+    SceneSample *selectedSample = scene->selectedSample();
     SceneCloud *selectedCloud = scene->selectedCloud();
 
     switch (event->key()) {
 
     case Qt::Key_Tab:  // tab key
         if (scene->m_selectionIndices.size() > 1) {
-            selectedSound->view->setSelectState(false);
+            selectedSample->view->setSelectState(false);
             scene->m_selectionIndex++;
             if (scene->m_selectionIndex >= scene->m_selectionIndices.size()) {
                 scene->m_selectionIndex = 0;
             }
-            scene->m_selectedSound = scene->m_selectionIndices[scene->m_selectionIndex];
-            selectedSound = scene->selectedSound();
-            selectedSound->view->setSelectState(true);
+            scene->m_selectedSample = scene->m_selectionIndices[scene->m_selectionIndex];
+            selectedSample = scene->selectedSample();
+            selectedSample->view->setSelectState(true);
         }
         break;
     case Qt::Key_1:
@@ -584,8 +584,8 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
                 }
             }
         }
-        if (selectedSound) {
-            selectedSound->view->toggleOrientation();
+        if (selectedSample) {
+            selectedSample->view->toggleOrientation();
         }
         break;
     case Qt::Key_P:  // waveform display on/off
@@ -800,10 +800,10 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
                 scene->m_clouds.erase(scene->m_clouds.begin() + scene->m_selectedCloud);
                 scene->m_selectedCloud = -1;
             }
-            else if (selectedSound) {
+            else if (selectedSample) {
                 std::lock_guard<std::mutex> lock(::currentSceneMutex);
-                scene->removeSoundAt(scene->m_selectedSound);
-                scene->m_selectedSound = -1;
+                scene->removeSampleAt(scene->m_selectedSample);
+                scene->m_selectedSample = -1;
             }
         }
         else {
@@ -846,7 +846,7 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
     }
     case Qt::Key_N: {
         // see name of cloud or sample
-        if (selectedSound) {
+        if (selectedSample) {
             currentParam = NAME;
         }
         else {

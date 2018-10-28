@@ -36,7 +36,7 @@ public:
     bool saveSceneFile();
     bool saveCloudFile(SceneCloud *selectedCloudSave);
     bool loadCloudDefaultFile();
-    void addSound();
+    void addSample();
 
 private:
     struct Impl;

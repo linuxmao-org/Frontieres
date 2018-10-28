@@ -83,7 +83,7 @@ public:
     bool select(float x, float y);
 
     void toggleWaveDisplay();
-    void associateSound(double *theBuff, unsigned long buffFrames, unsigned int buffChans, const string &name);
+    void associateSample(double *theBuff, unsigned long buffFrames, unsigned int buffChans, const string &name);
     // return id
     // unsigned int getId();
 

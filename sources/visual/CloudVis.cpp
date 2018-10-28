@@ -58,7 +58,7 @@ CloudVis::~CloudVis()
 }
 
 CloudVis::CloudVis(float x, float y, unsigned int numGrainsVis,
-                                 VecSceneSound *rects)
+                                 VecSceneSample *rects)
 {
     // get screen width and height
     MyGLScreen *screen = theApplication->GLwindow()->screen();
@@ -156,7 +156,7 @@ void CloudVis::draw()
 }
 
 
-// get trigger position/volume relative to sound rects for single grain voice
+// get trigger position/volume relative to sample visuals for single grain voice
 void CloudVis::getTriggerPos(unsigned int idx, double *playPos,
                                     double *playVol, float theDur)
 {
@@ -168,7 +168,7 @@ void CloudVis::getTriggerPos(unsigned int idx, double *playPos,
         // updateGrainPosition(idx,gcX + randf()*50.0 + randf()*(-50.0),gcY + randf()*50.0 + randf()*(-50.0));
         updateGrainPosition(idx, gcX + (randf() * xRandExtent - randf() * xRandExtent),
                             gcY + (randf() * yRandExtent - randf() * yRandExtent));
-        VecSceneSound &landscape = *theLandscape;
+        VecSceneSample &landscape = *theLandscape;
         for (int i = 0, n = landscape.size(); i < n; i++) {
             theRect = landscape[i]->view.get();
             bool tempTrig = false;
