@@ -21,14 +21,14 @@
 
 
 //
-//  SoundRect.h
+//  SampleVis.h
 //  Frontières
 //
 //  Created by Christopher Carlson on 11/30/11.
 //
 
-#ifndef SOUNDRECT_H
-#define SOUNDRECT_H
+#ifndef SAMPLEVIS_H
+#define SAMPLEVIS_H
 
 #include "theglobals.h"
 //#include "pt2d.h"
@@ -50,14 +50,14 @@
 // id for this class, which is incremented for each instance
 // static unsigned int boxId = 0;
 
-class SoundRect {
+class SampleVis {
 
 public:
     // destructor
-    virtual ~SoundRect();
+    virtual ~SampleVis();
 
     // constructor (default)
-    SoundRect();
+    SampleVis();
 
     // other object initialization code
     void init();

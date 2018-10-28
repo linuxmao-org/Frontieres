@@ -23,7 +23,7 @@
 #include "MyGLWindow.h"
 #include "Frontieres.h"
 #include "I18n.h"
-#include "model/AudioFileSet.h"
+#include "model/Sample.h"
 #include <QTranslator>
 #include <QLibraryInfo>
 #include <QTimer>
@@ -152,10 +152,10 @@ void MyGLApplication::addSound()
         std::unique_lock<std::mutex> lock(::currentSceneMutex);
         Scene *scene = ::currentScene;
 
-        AudioFile *af = scene->loadNewSample(qSoundFile.toStdString());
+        Sample *af = scene->loadNewSample(qSoundFile.toStdString());
         if (af) {
             // add into the scene
-            scene->addSoundRect(af);
+            scene->addSampleVis(af);
 
             // add the file's location into search paths, if not already
             scene->addAudioPath(qSoundDir.path().toStdString());

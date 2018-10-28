@@ -25,7 +25,7 @@
 #include "model/Cloud.h"
 #include "model/Scene.h"
 #include "visual/CloudVis.h"
-#include "visual/SoundRect.h"
+#include "visual/SampleVis.h"
 #include "Frontieres.h"
 #include <QtFont3D.h>
 #include <QMouseEvent>
@@ -148,7 +148,7 @@ void MyGLScreen::paintGL()
 
         // render rectangles
         for (int i = 0, n = scene->m_sounds.size(); i < n; i++) {
-            SoundRect &sv = *scene->m_sounds[i]->view;
+            SampleVis &sv = *scene->m_sounds[i]->view;
             sv.draw();
         }
 
@@ -227,7 +227,7 @@ void MyGLScreen::mousePressEvent(QMouseEvent *event)
             // search for selections
             resizeDir = false;  // set resize direction to horizontal
             for (int i = 0, n = scene->m_sounds.size(); i < n; i++) {
-                SoundRect &sv = *scene->m_sounds[i]->view;
+                SampleVis &sv = *scene->m_sounds[i]->view;
                 if (sv.select(mouseX, mouseY) == true) {
                     scene->m_selectionIndices.push_back(i);
                     // sv.setSelectState(true);

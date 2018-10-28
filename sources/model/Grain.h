@@ -46,7 +46,7 @@
 
 
 // forward declarations
-class AudioFile;
+class Sample;
 class Grain;
 class GrainVis;
 class SceneSound;
