@@ -216,10 +216,10 @@ int audioCallback(void *outputBuffer, void *inputBuffer, unsigned int numFrames,
     }
 
     // cast audio buffers
-    SAMPLE *out = (SAMPLE *)outputBuffer;
-    SAMPLE *in = (SAMPLE *)inputBuffer;
+    BUFFERPREC *out = (BUFFERPREC *)outputBuffer;
+    BUFFERPREC *in = (BUFFERPREC *)inputBuffer;
 
-    memset(out, 0, sizeof(SAMPLE) * numFrames * MY_CHANNELS);
+    memset(out, 0, sizeof(BUFFERPREC) * numFrames * MY_CHANNELS);
     if (menuFlag == false) {
         std::unique_lock<std::mutex> lock(::currentSceneMutex, std::try_to_lock);
         if (lock.owns_lock()) {

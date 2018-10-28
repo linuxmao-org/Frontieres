@@ -222,19 +222,19 @@ AudioFile *AudioFileSet::loadFile(const std::string &path)
     return audioFile;
 }
 
-void AudioFileSet::removeSample(AudioFile *sample)
+void AudioFileSet::removeSample(AudioFile *sampleToRemove)
 {
     unsigned index = 0;
     unsigned count = fileSet.size();
 
-    while (index < count && fileSet[index] != sample)
+    while (index < count && fileSet[index] != sampleToRemove)
         ++index;
 
     if (index == count)
         return;  // not found
 
     fileSet.erase(fileSet.begin() + index);
-    delete sample;
+    delete sampleToRemove;
 }
 
 void AudioFile::resampleTo(unsigned int newRate)
@@ -243,10 +243,10 @@ void AudioFile::resampleTo(unsigned int newRate)
 
     unsigned oldFrames = frames;
     unsigned oldRate = sampleRate;
-    SAMPLE *oldWave = wave;
+    BUFFERPREC *oldWave = wave;
 
     unsigned newFrames = ceil((double)oldRate * newRate / oldRate);
-    SAMPLE *newWave = new SAMPLE[channels * newFrames];
+    BUFFERPREC *newWave = new BUFFERPREC[channels * newFrames];
 
     soxr_io_spec_t io_spec = soxr_io_spec(MY_RESAMPLER_FORMAT_I, MY_RESAMPLER_FORMAT_I);
     soxr_quality_spec_t quality_spec = soxr_quality_spec(SOXR_VHQ, 0);

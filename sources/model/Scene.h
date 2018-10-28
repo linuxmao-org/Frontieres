@@ -61,10 +61,10 @@ public:
     bool loadSampleSet(bool interactive);
     AudioFile *loadNewSample(const std::string &path);
     bool removeSoundAt(unsigned index);
-    void removeSampleIfNotUsed(AudioFile *sample);
+    void removeSampleIfNotUsed(AudioFile *audioFileToRemove);
     void addAudioPath(const std::string &path);
 
-    void addSoundRect(AudioFile *sample);
+    void addSoundRect(AudioFile *audioFileToAdd);
     void addNewCloud(int numGrains);
 
     // init default cloud params

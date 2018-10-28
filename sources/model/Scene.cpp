@@ -584,7 +584,6 @@ bool Scene::loadSampleSet(bool interactive)
 // init default cloud params
 void Scene::initDefaultCloudParams()
 {
-    cout << "entree init default" << endl;
     g_defaultCloudParams.duration = 500.0;
     g_defaultCloudParams.overlap = 1.0f;
     g_defaultCloudParams.pitch = 1.0f;
@@ -626,14 +625,14 @@ bool Scene::removeSoundAt(unsigned index)
     return true;
 }
 
-void Scene::removeSampleIfNotUsed(AudioFile *sample)
+void Scene::removeSampleIfNotUsed(AudioFile *audioFileToRemove)
 {
     bool used = false;
     for (unsigned i = 0, n = m_sounds.size(); !used && i < n; ++i)
-        used = m_sounds[i]->sample == sample;
+        used = m_sounds[i]->sample == audioFileToRemove;
     if (!used) {
         std::cout << "Sample is not used, delete\n";
-        m_audioFiles->removeSample(sample);
+        m_audioFiles->removeSample(audioFileToRemove);
     }
     else {
         std::cout << "Sample is used, keep\n";
@@ -655,16 +654,16 @@ void Scene::addAudioPath(const std::string &path)
     return;
 }
 
-void Scene::addSoundRect(AudioFile *sample)
+void Scene::addSoundRect(AudioFile *audioFileToAdd)
 {
     SceneSound *sound = new SceneSound;
     m_sounds.emplace_back(sound);
-    sound->name = sample->name;
-    sound->sample = sample;
+    sound->name = audioFileToAdd->name;
+    sound->sample = audioFileToAdd;
 
     SoundRect *sv = new SoundRect;
     sound->view.reset(sv);
-    sv->associateSound(sample->wave, sample->frames, sample->channels, sample->name);
+    sv->associateSound(audioFileToAdd->wave, audioFileToAdd->frames, audioFileToAdd->channels, audioFileToAdd->name);
 
     for (unsigned i = 0, n = m_clouds.size(); i < n; ++i) {
         Cloud &cloudToUpdate = *m_clouds[i]->cloud;

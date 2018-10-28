@@ -45,7 +45,7 @@ struct AudioFile {
 
     // constructor
     AudioFile(string myName, string thePath, unsigned int numChan,
-              unsigned long numFrames, unsigned int srate, SAMPLE *theWave)
+              unsigned long numFrames, unsigned int srate, BUFFERPREC *theWave)
     {
         cout << numFrames << endl;
         this->name = myName;
@@ -70,7 +70,7 @@ struct AudioFile {
 
     string name;
     string path;
-    SAMPLE *wave;
+    BUFFERPREC *wave;
     unsigned long frames;
     unsigned int channels;
     unsigned int sampleRate;
@@ -92,7 +92,7 @@ public:
     AudioFile *loadFile(const std::string &path);
 
     // remove a single sample from the set
-    void removeSample(AudioFile *sample);
+    void removeSample(AudioFile *sampleToRemove);
 
     // return the audio vector- note, the intension is for the files to be
     // read only.  if write access is needed in the future - thread safety will
