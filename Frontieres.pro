@@ -45,13 +45,13 @@ SOURCES += \
   sources/interface/MyGLWindow.cpp \
   sources/interface/StartDialog.cpp \
   sources/dsp/Window.cpp \
-  sources/model/AudioFileSet.cpp \
+  sources/model/Sample.cpp \
   sources/model/Grain.cpp \
   sources/model/Cloud.cpp \
   sources/model/Scene.cpp \
+  sources/visual/SampleVis.cpp \
   sources/visual/GrainVis.cpp \
   sources/visual/CloudVis.cpp \
-  sources/visual/SoundRect.cpp \
   sources/utility/GTime.cpp \
   libraries/Stk.cpp \
   libraries/RtAudio.cpp \
@@ -67,13 +67,13 @@ HEADERS += \
   sources/interface/MyGLWindow.h \
   sources/interface/StartDialog.h \
   sources/dsp/Window.h \
-  sources/model/AudioFileSet.h \
+  sources/model/Sample.h \
   sources/model/Cloud.h \
   sources/model/Grain.h \
   sources/model/Scene.h \
+  sources/visual/SampleVis.h \
   sources/visual/GrainVis.h \
   sources/visual/CloudVis.h \
-  sources/visual/SoundRect.h \
   sources/utility/GTime.h \
   libraries/RtMidi.h \
   libraries/RtAudio.h \

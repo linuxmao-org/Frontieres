@@ -28,7 +28,7 @@
 //
 
 #include "model/Grain.h"
-#include "model/AudioFileSet.h"
+#include "model/Sample.h"
 #include "model/Scene.h"
 #include "dsp/Window.h"
 #include "theglobals.h"
@@ -407,7 +407,7 @@ void Grain::nextBuffer(double *accumBuff, unsigned int numFrames,
                 // if sound is in play,sample it
                 if (pos > 0) {
                     // sound vars
-                    AudioFile *af = sounds[nextSound]->sample;
+                    Sample *af = sounds[nextSound]->sample;
                     wave = af->wave;
                     channels = af->channels;
                     frames = af->frames;

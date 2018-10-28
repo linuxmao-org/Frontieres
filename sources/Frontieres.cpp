@@ -55,7 +55,7 @@
 
 // audio related
 #include "MyRtAudio.h"
-#include "model/AudioFileSet.h"
+#include "model/Sample.h"
 #include "dsp/Window.h"
 
 // midi related
@@ -63,7 +63,7 @@
 #include <ring_buffer.h>
 
 // graphics related
-#include "visual/SoundRect.h"
+#include "visual/SampleVis.h"
 #include "visual/CloudVis.h"
 
 // audio related
@@ -216,10 +216,10 @@ int audioCallback(void *outputBuffer, void *inputBuffer, unsigned int numFrames,
     }
 
     // cast audio buffers
-    SAMPLE *out = (SAMPLE *)outputBuffer;
-    SAMPLE *in = (SAMPLE *)inputBuffer;
+    BUFFERPREC *out = (BUFFERPREC *)outputBuffer;
+    BUFFERPREC *in = (BUFFERPREC *)inputBuffer;
 
-    memset(out, 0, sizeof(SAMPLE) * numFrames * MY_CHANNELS);
+    memset(out, 0, sizeof(BUFFERPREC) * numFrames * MY_CHANNELS);
     if (menuFlag == false) {
         std::unique_lock<std::mutex> lock(::currentSceneMutex, std::try_to_lock);
         if (lock.owns_lock()) {
@@ -614,14 +614,14 @@ void printParam()
         }
     }
     if (selectedSound) {
-        SoundRect &theSoundRect = *selectedSound->view;
+        SampleVis &theSampleVis = *selectedSound->view;
         string myValue;
         float theA = 0.7f + 0.3 * sin(1.6 * PI * GTime::instance().sec);
         glColor4f(1.0f, 1.0f, 1.0f, theA);
 
         switch (currentParam) {
         case NAME:
-            myValue = _S("", "Sample: ") + theSoundRect.getName();
+            myValue = _S("", "Sample: ") + theSampleVis.getName();
             draw_string((GLfloat)mouseX, (GLfloat)(screenHeight - mouseY), 0.0,
                         myValue.c_str(), 100.0f);
             break;
@@ -880,16 +880,16 @@ int main(int argc, char **argv)
         break;
 
     case StartDialog::Choice_NewScene: {
-        std::vector<AudioFile *> loaded;
+        std::vector<Sample *> loaded;
 
         // attempt to load from user, then system if empty
-        scene->m_audioFiles->loadFileSet(g_audioPathUser, &loaded);
+        scene->m_samples->loadFileSet(g_audioPathUser, &loaded);
         if (loaded.empty())
-            scene->m_audioFiles->loadFileSet(g_audioPathSystem, &loaded);
+            scene->m_samples->loadFileSet(g_audioPathSystem, &loaded);
 
         // add them into the scene
-        for (AudioFile *af : loaded)
-            scene->addSoundRect(af);
+        for (Sample *af : loaded)
+            scene->addSampleVis(af);
 
         break;
     }

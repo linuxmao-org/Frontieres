@@ -21,13 +21,13 @@
 
 
 //
-//  AudioFileSet.cpp
+//  Sample.cpp
 //  Frontières
 //
 //  Created by Christopher Carlson on 11/21/11.
 //
 
-#include "AudioFileSet.h"
+#include "Sample.h"
 #include <QFileInfo>
 #include <stdexcept>
 #include <soxr.h>
@@ -38,24 +38,24 @@ extern unsigned int samp_rate;
 //---------------------------------------------------------------------------
 // Destructor
 //---------------------------------------------------------------------------
-AudioFileSet::~AudioFileSet()
+SampleSet::~SampleSet()
 {
     // delete each audio file object (and corresponding buffer, etc.)
-    for (AudioFile * audioFile : fileSet)
-        delete audioFile;
+    for (Sample * sample : fileSet)
+        delete sample;
 }
 
 //---------------------------------------------------------------------------
 // constructor
 //---------------------------------------------------------------------------
-AudioFileSet::AudioFileSet()
+SampleSet::SampleSet()
 {
 }
 
 //---------------------------------------------------------------------------
 // Access file set externally (note this is not thread safe)
 //---------------------------------------------------------------------------
-vector<AudioFile *> *AudioFileSet::getFileVector()
+vector<Sample *> *SampleSet::getFileVector()
 {
     return &this->fileSet;
 }
@@ -65,7 +65,7 @@ vector<AudioFile *> *AudioFileSet::getFileVector()
 //  Search path and load all audio files into memory.  Convert to mono (L)
 //  if needed.
 //---------------------------------------------------------------------------
-int AudioFileSet::loadFileSet(const std::string &localPath, std::vector<AudioFile *> *loaded)
+int SampleSet::loadFileSet(const std::string &localPath, std::vector<Sample *> *loaded)
 {
     // read through loop directory and attempt to load audio files into buffers
 
@@ -96,7 +96,7 @@ int AudioFileSet::loadFileSet(const std::string &localPath, std::vector<AudioFil
             string myPath = localPath + '/' + theFileName;
 
             // load it
-            AudioFile *af = loadFile(myPath.c_str());
+            Sample *af = loadFile(myPath.c_str());
             if (!af)
                 continue;
 
@@ -119,7 +119,7 @@ int AudioFileSet::loadFileSet(const std::string &localPath, std::vector<AudioFil
     return 0;
 }
 
-AudioFile *AudioFileSet::loadFile(const std::string &path)
+Sample *SampleSet::loadFile(const std::string &path)
 {
     // temp struct that will hold the details of the file being read (sample rate, num channels. etc.)
     SF_INFO sfinfo;
@@ -131,7 +131,7 @@ AudioFile *AudioFileSet::loadFile(const std::string &path)
     std::string theFileName = QFileInfo(QString::fromStdString(path)).fileName().toStdString();
 
     // check if exists, if so return it
-    for (AudioFile *existing : fileSet) {
+    for (Sample *existing : fileSet) {
         if (existing->name == theFileName)
             return existing;
     }
@@ -182,10 +182,10 @@ AudioFile *AudioFileSet::loadFile(const std::string &path)
     // length corresponds to the number of frames * number of channels (1 frame contains L, R pair or chans 1,2,3...)
     unsigned long fullSize = sfinfo.frames * sfinfo.channels;
 
-    AudioFile *audioFile = new AudioFile(theFileName, path, sfinfo.channels,
+    Sample *sample = new Sample(theFileName, path, sfinfo.channels,
                                          sfinfo.frames, sfinfo.samplerate,
                                          new double[fullSize]());
-    fileSet.push_back(audioFile);
+    fileSet.push_back(sample);
 
 
     // accumulate the samples
@@ -199,7 +199,7 @@ AudioFile *AudioFileSet::loadFile(const std::string &path)
         for (int i = 0; i < buffSize; i++) {
             if (counter < fullSize) {
                 // if ((i % sfinfo.channels) == 0){
-                audioFile->wave[counter] = stereoBuff[i] * globalAtten;
+                sample->wave[counter] = stereoBuff[i] * globalAtten;
                 counter++;
             }
         }
@@ -211,7 +211,7 @@ AudioFile *AudioFileSet::loadFile(const std::string &path)
 
     if (sfinfo.samplerate != ::samp_rate) {
         printf("Resample to %i\n", ::samp_rate);
-        audioFile->resampleTo(::samp_rate);
+        sample->resampleTo(::samp_rate);
     }
 
     cout << counter << endl;
@@ -219,34 +219,34 @@ AudioFile *AudioFileSet::loadFile(const std::string &path)
     // don't forget to close the file
     sf_close(infile);
 
-    return audioFile;
+    return sample;
 }
 
-void AudioFileSet::removeSample(AudioFile *sample)
+void SampleSet::removeSample(Sample *sampleToRemove)
 {
     unsigned index = 0;
     unsigned count = fileSet.size();
 
-    while (index < count && fileSet[index] != sample)
+    while (index < count && fileSet[index] != sampleToRemove)
         ++index;
 
     if (index == count)
         return;  // not found
 
     fileSet.erase(fileSet.begin() + index);
-    delete sample;
+    delete sampleToRemove;
 }
 
-void AudioFile::resampleTo(unsigned int newRate)
+void Sample::resampleTo(unsigned int newRate)
 {
     unsigned channels = this->channels;
 
     unsigned oldFrames = frames;
     unsigned oldRate = sampleRate;
-    SAMPLE *oldWave = wave;
+    BUFFERPREC *oldWave = wave;
 
     unsigned newFrames = ceil((double)oldRate * newRate / oldRate);
-    SAMPLE *newWave = new SAMPLE[channels * newFrames];
+    BUFFERPREC *newWave = new BUFFERPREC[channels * newFrames];
 
     soxr_io_spec_t io_spec = soxr_io_spec(MY_RESAMPLER_FORMAT_I, MY_RESAMPLER_FORMAT_I);
     soxr_quality_spec_t quality_spec = soxr_quality_spec(SOXR_VHQ, 0);
@@ -268,7 +268,7 @@ void AudioFile::resampleTo(unsigned int newRate)
 }
 
 // print information
-void AudioFile::describe(std::ostream &out)
+void Sample::describe(std::ostream &out)
 {
     out << "- name : " << this->name << "\n";
     out << "- path : " << this->path << "\n";

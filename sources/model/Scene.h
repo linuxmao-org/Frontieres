@@ -29,11 +29,11 @@
 #include <memory>
 struct SceneSound;
 struct SceneCloud;
-struct AudioFile;
-struct SoundRect;
+struct Sample;
+struct SampleVis;
 struct Cloud;
 struct CloudVis;
-class AudioFileSet;
+class SampleSet;
 class QFile;
 
 typedef std::vector<std::unique_ptr<SceneSound>> VecSceneSound;
@@ -59,12 +59,12 @@ public:
     bool saveCloud(QFile &cloudFile, SceneCloud *selectedCloudSave);
 
     bool loadSampleSet(bool interactive);
-    AudioFile *loadNewSample(const std::string &path);
+    Sample *loadNewSample(const std::string &path);
     bool removeSoundAt(unsigned index);
-    void removeSampleIfNotUsed(AudioFile *sample);
+    void removeSampleIfNotUsed(Sample *sampleToRemove);
     void addAudioPath(const std::string &path);
 
-    void addSoundRect(AudioFile *sample);
+    void addSampleVis(Sample *sampleToAdd);
     void addNewCloud(int numGrains);
 
     // init default cloud params
@@ -85,7 +85,7 @@ public:
     VecSceneCloud m_clouds;
 
     // sounds
-    std::unique_ptr<AudioFileSet> m_audioFiles;
+    std::unique_ptr<SampleSet> m_samples;
 
     // selection helper vars
     int m_selectedCloud = -1;
@@ -96,8 +96,8 @@ public:
 
 struct SceneSound {
     std::string name;
-    AudioFile *sample = nullptr;
-    std::unique_ptr<SoundRect> view;
+    Sample *sample = nullptr;
+    std::unique_ptr<SampleVis> view;
 
     ~SceneSound();
 };
