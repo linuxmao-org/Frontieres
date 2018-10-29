@@ -49,7 +49,7 @@ Scene::~Scene()
 // Constructor
 //-----------------------------------------------------------------------------
 Scene::Scene()
-    : m_samples(new SampleSet)
+    : m_sampleSet(new SampleSet)
 {
     initDefaultCloudParams();
 }
@@ -86,11 +86,11 @@ std::string Scene::askNameScene(FileDirection direction)
 void Scene::clear()
 {
     m_audioPaths.clear();
-    m_sounds.clear();
+    m_samples.clear();
     m_clouds.clear();
-    m_samples.reset(new SampleSet);
+    m_sampleSet.reset(new SampleSet);
     m_selectedCloud = -1;
-    m_selectedSound = -1;
+    m_selectedSample = -1;
     m_selectionIndex = 0;
     m_selectionIndices.clear();
 }
@@ -160,26 +160,26 @@ bool Scene::load(QFile &sceneFile)
         cout << "scene path : " << path << "\n";
     }
 
-    QJsonArray docSounds = docRoot["sounds"].toArray();
-    m_sounds.clear();
-    m_sounds.reserve(docSounds.size());
-    for (const QJsonValue &jsonElement : docSounds) { // samples
-        QJsonObject objSound = jsonElement.toObject();
-        SceneSound *sound = new SceneSound;
-        m_sounds.emplace_back(sound);
+    QJsonArray docSamples = docRoot["samples"].toArray();
+    m_samples.clear();
+    m_samples.reserve(docSamples.size());
+    for (const QJsonValue &jsonElement : docSamples) { // samples
+        QJsonObject objSample = jsonElement.toObject();
+        SceneSample *sceneSample = new SceneSample;
+        m_samples.emplace_back(sceneSample);
 
-        std::string name = objSound["name"].toString().toStdString(); // sample
-        sound->name = name;
+        std::string name = objSample["name"].toString().toStdString(); // sample
+        sceneSample->name = name;
         cout << name << "\n";
 
         SampleVis *sv = new SampleVis();
-        sound->view.reset(sv);
-        if ((bool)objSound["orientation"].toInt() != sv->getOrientation())
+        sceneSample->view.reset(sv);
+        if ((bool)objSample["orientation"].toInt() != sv->getOrientation())
             sv->toggleOrientation();
-        double heightSample = objSound["height"].toDouble();
-        double widthSample = objSound["width"].toDouble();
-        double xSample = objSound["x"].toDouble();
-        double ySample = objSound["y"].toDouble();
+        double heightSample = objSample["height"].toDouble();
+        double widthSample = objSample["width"].toDouble();
+        double xSample = objSample["x"].toDouble();
+        double ySample = objSample["y"].toDouble();
         sv->setWidthHeight(widthSample, heightSample);
         sv->setXY(xSample, ySample);
         cout << ", heigth : " << heightSample
@@ -232,10 +232,10 @@ bool Scene::load(QFile &sceneFile)
         cout << "X extent = " << cloudXRandExtent << "\n";
         cout << "Y extent = " << cloudYRandExtent << "\n";
         // create audio
-        Cloud *cloudToLoad = new Cloud(&m_sounds, cloudNumGrains);
+        Cloud *cloudToLoad = new Cloud(&m_samples, cloudNumGrains);
         cloud->cloud.reset(cloudToLoad);
         // create visualization
-        CloudVis *cloudVisToLoad = new CloudVis(cloudX, cloudY, cloudNumGrains, &m_sounds);
+        CloudVis *cloudVisToLoad = new CloudVis(cloudX, cloudY, cloudNumGrains, &m_samples);
         cloud->view.reset(cloudVisToLoad);
         // register visualization with audio
         cloudVisToLoad->setSelectState(true);
@@ -269,7 +269,7 @@ bool Scene::save(QFile &sceneFile)
         return false;
 
     m_selectedCloud = -1;
-    m_selectedSound = -1;
+    m_selectedSample = -1;
     m_selectionIndex = 0;
     m_selectionIndices.clear();
 
@@ -288,26 +288,26 @@ bool Scene::save(QFile &sceneFile)
     docRoot["audio-path"] = docPaths;
 
     // samples
-    QJsonArray docSounds;
-    cout << m_sounds.size() << "samples : " << "\n";
-    for (int i = 0, n = m_sounds.size(); i < n; ++i) {
-        SceneSound *sound = m_sounds[i].get();
-        SampleVis *sv = sound->view.get();
+    QJsonArray docSamples;
+    cout << m_samples.size() << "samples : " << "\n";
+    for (int i = 0, n = m_samples.size(); i < n; ++i) {
+        SceneSample *sceneSample = m_samples[i].get();
+        SampleVis *sv = sceneSample->view.get();
 
         std::ostream &out = std::cout;
         out << "Audio file " << i << ":\n";
-        out << "- name : " << sound->name << "\n";
-        out << "Sound rect " << i << ":\n";
+        out << "- name : " << sceneSample->name << "\n";
+        out << "Sample visual " << i << ":\n";
         sv->describe(out);
 
-        QJsonObject objSound;
-        objSound["name"] = QString::fromStdString(sound->name);
-        objSound["orientation"] = (int)sv->getOrientation();
-        objSound["height"] = sv->getHeight();
-        objSound["width"] = sv->getWidth();
-        objSound["x"] = sv->getX();
-        objSound["y"] = sv->getY();
-        docSounds.append(objSound);
+        QJsonObject objSample;
+        objSample["name"] = QString::fromStdString(sceneSample->name);
+        objSample["orientation"] = (int)sv->getOrientation();
+        objSample["height"] = sv->getHeight();
+        objSample["width"] = sv->getWidth();
+        objSample["x"] = sv->getX();
+        objSample["y"] = sv->getY();
+        docSamples.append(objSample);
     }
 
     // grainclouds
@@ -344,7 +344,7 @@ bool Scene::save(QFile &sceneFile)
         docGrains.append(objGrain);
     }
 
-    docRoot["sounds"] = docSounds;
+    docRoot["samples"] = docSamples;
     docRoot["clouds"] = docGrains;
 
     QJsonDocument document;
@@ -459,14 +459,14 @@ bool Scene::saveCloud(QFile &cloudFile, SceneCloud *selectedCloudSave)
 
 bool Scene::loadSampleSet(bool interactive)
 {
-    // a new sound collection
+    // a new sample collection
     std::unique_ptr<SampleSet> samples(new SampleSet);
-    // total count of sounds needed
-    unsigned numSounds = m_sounds.size();
-    // count of sounds left to load
-    unsigned numSoundsLeft = numSounds;
-    // list of sounds associated with scene
-    std::vector<Sample *> soundFileAssoc(numSounds);
+    // total count of samples needed
+    unsigned numSamples = m_samples.size();
+    // count of samples left to load
+    unsigned numSamplesLeft = numSamples;
+    // list of samples associated with scene
+    std::vector<Sample *> sampleFileAssoc(numSamples);
 
     // the scene's current audio paths
     std::vector<std::string> audioPaths = m_audioPaths;
@@ -475,10 +475,10 @@ bool Scene::loadSampleSet(bool interactive)
     // a temporary list of search paths to try in order
     std::vector<const std::string *> effectiveAudioPaths;
 
-    while (numSoundsLeft > 0) {
-        // attempt to load many missing sounds as possible
-        for (size_t i = 0; i < numSounds; ++i) {
-            if (soundFileAssoc[i])
+    while (numSamplesLeft > 0) {
+        // attempt to load many missing samples as possible
+        for (size_t i = 0; i < numSamples; ++i) {
+            if (sampleFileAssoc[i])
                 continue;  // already loaded
 
             // construct the current search path
@@ -494,7 +494,7 @@ bool Scene::loadSampleSet(bool interactive)
 
             // locate this file and load
             Sample *af = nullptr;
-            QString qname = QString::fromStdString(m_sounds[i]->name);
+            QString qname = QString::fromStdString(m_samples[i]->name);
             for (unsigned i = 0, n = effectiveAudioPaths.size(); !af && i < n; ++i) {
                 QDir dir(QString::fromStdString(*effectiveAudioPaths[i]));
                 QString curpath = dir.filePath(qname);
@@ -509,27 +509,27 @@ bool Scene::loadSampleSet(bool interactive)
             }
 
             if (af) {
-                soundFileAssoc[i] = af;
-                --numSoundsLeft;
+                sampleFileAssoc[i] = af;
+                --numSamplesLeft;
             }
         }
 
-        if (numSoundsLeft > 0) {  // failure to load some sounds
+        if (numSamplesLeft > 0) {  // failure to load some samples
             if (!interactive)
                 return false;
 
             // ask the user to fix
             unsigned indexMissing = 0;
-            while (soundFileAssoc[indexMissing]) ++indexMissing;
+            while (sampleFileAssoc[indexMissing]) ++indexMissing;
 
-            QString qnameMissing = QString::fromStdString(m_sounds[indexMissing]->name);
+            QString qnameMissing = QString::fromStdString(m_samples[indexMissing]->name);
 
             QMessageBox mbox(
-                QMessageBox::Warning, _Q("", "Load sounds"),
-                _Q("", "Could not find the sound file \"%1\".").arg(qnameMissing));
+                QMessageBox::Warning, _Q("", "Load samples"),
+                _Q("", "Could not find the sample file \"%1\".").arg(qnameMissing));
 
-            mbox.addButton(_Q("", "Add a different sound directory"), QMessageBox::AcceptRole);
-            mbox.addButton(_Q("", "Discard missing sounds"), QMessageBox::DestructiveRole);
+            mbox.addButton(_Q("", "Add a different sample directory"), QMessageBox::AcceptRole);
+            mbox.addButton(_Q("", "Discard missing samples"), QMessageBox::DestructiveRole);
             mbox.addButton(QMessageBox::Cancel);
             mbox.exec();
 
@@ -537,13 +537,13 @@ bool Scene::loadSampleSet(bool interactive)
             QMessageBox::ButtonRole role = clicked ? mbox.buttonRole(clicked) : QMessageBox::RejectRole;
 
             if (role == QMessageBox::DestructiveRole) {
-                // ignore missing sounds and proceed
+                // ignore missing samples and proceed
                 break;
             }
             else if (role == QMessageBox::AcceptRole) {
                 // ask for a directory to add to search paths
                 QString candidateDir = QFileDialog::getExistingDirectory(
-                    nullptr, _Q("", "Add sound directory"),
+                    nullptr, _Q("", "Add sample directory"),
                     QString(), QFileDialog::ShowDirsOnly);
                 // add into candidates
                 if (!candidateDir.isEmpty())
@@ -556,25 +556,25 @@ bool Scene::loadSampleSet(bool interactive)
         }
     }
 
-    // load all sounds into model
-    m_samples = std::move(samples);
-    for (unsigned i = 0, j = 0, n = soundFileAssoc.size(); i < n; ++i) {
-        Sample *assoc = soundFileAssoc[i];
+    // load all samples into model
+    m_sampleSet = std::move(samples);
+    for (unsigned i = 0, j = 0, n = sampleFileAssoc.size(); i < n; ++i) {
+        Sample *assoc = sampleFileAssoc[i];
         if (!assoc) {
-            // could not load sound for element? remove
-            m_sounds.erase(m_sounds.begin() + j);
+            // could not load sample for element? remove
+            m_samples.erase(m_samples.begin() + j);
         }
         else {
-            // associate sound with its element
-            SceneSound &sceneSound = *m_sounds[j++];
-            sceneSound.sample = assoc;
-            sceneSound.view->associateSound(assoc->wave, assoc->frames, assoc->channels, assoc->name);
+            // associate sample with its element
+            SceneSample &sceneSample = *m_samples[j++];
+            sceneSample.sample = assoc;
+            sceneSample.view->associateSample(assoc->wave, assoc->frames, assoc->channels, assoc->name);
         }
     }
 
     for (unsigned i = 0, n = m_clouds.size(); i < n; ++i) {
         Cloud &cloudToUpdate = *m_clouds[i]->cloud;
-        cloudToUpdate.updateSoundSet();
+        cloudToUpdate.updateSampleSet();
     }
 
     // update the audio path, adding user's candidates which worked
@@ -600,7 +600,7 @@ void Scene::initDefaultCloudParams()
 
 Sample *Scene::loadNewSample(const std::string &path)
 {
-    Sample *af = m_samples->loadFile(path);
+    Sample *af = m_sampleSet->loadFile(path);
     if (!af) {
         // cannot load
         return nullptr;
@@ -608,17 +608,17 @@ Sample *Scene::loadNewSample(const std::string &path)
     return af;
 }
 
-bool Scene::removeSoundAt(unsigned index)
+bool Scene::removeSampleAt(unsigned index)
 {
-    if (index >= m_sounds.size())
+    if (index >= m_samples.size())
         return false;
 
-    Sample *af = m_sounds[index]->sample;
-    m_sounds.erase(m_sounds.begin() + index);
+    Sample *af = m_samples[index]->sample;
+    m_samples.erase(m_samples.begin() + index);
 
     for (unsigned i = 0, n = m_clouds.size(); i < n; ++i) {
         Cloud &cloudToUpdate = *m_clouds[i]->cloud;
-        cloudToUpdate.updateSoundSet();
+        cloudToUpdate.updateSampleSet();
     }
 
     removeSampleIfNotUsed(af);
@@ -628,11 +628,11 @@ bool Scene::removeSoundAt(unsigned index)
 void Scene::removeSampleIfNotUsed(Sample *sampleToRemove)
 {
     bool used = false;
-    for (unsigned i = 0, n = m_sounds.size(); !used && i < n; ++i)
-        used = m_sounds[i]->sample == sampleToRemove;
+    for (unsigned i = 0, n = m_samples.size(); !used && i < n; ++i)
+        used = m_samples[i]->sample == sampleToRemove;
     if (!used) {
         std::cout << "Sample is not used, delete\n";
-        m_samples->removeSample(sampleToRemove);
+        m_sampleSet->removeSample(sampleToRemove);
     }
     else {
         std::cout << "Sample is used, keep\n";
@@ -656,18 +656,18 @@ void Scene::addAudioPath(const std::string &path)
 
 void Scene::addSampleVis(Sample *sampleToAdd)
 {
-    SceneSound *sound = new SceneSound;
-    m_sounds.emplace_back(sound);
-    sound->name = sampleToAdd->name;
-    sound->sample = sampleToAdd;
+    SceneSample *sceneSample = new SceneSample;
+    m_samples.emplace_back(sceneSample);
+    sceneSample->name = sampleToAdd->name;
+    sceneSample->sample = sampleToAdd;
 
     SampleVis *sv = new SampleVis;
-    sound->view.reset(sv);
-    sv->associateSound(sampleToAdd->wave, sampleToAdd->frames, sampleToAdd->channels, sampleToAdd->name);
+    sceneSample->view.reset(sv);
+    sv->associateSample(sampleToAdd->wave, sampleToAdd->frames, sampleToAdd->channels, sampleToAdd->name);
 
     for (unsigned i = 0, n = m_clouds.size(); i < n; ++i) {
         Cloud &cloudToUpdate = *m_clouds[i]->cloud;
-        cloudToUpdate.updateSoundSet();
+        cloudToUpdate.updateSampleSet();
     }
 }
 
@@ -676,20 +676,20 @@ void Scene::addNewCloud(int numGrains)
     // create audio
     SceneCloud *cloud = new SceneCloud;
     m_clouds.emplace_back(cloud);
-    cloud->cloud.reset(new Cloud(&m_sounds, numGrains));
+    cloud->cloud.reset(new Cloud(&m_samples, numGrains));
     // create visualization
-    cloud->view.reset(new CloudVis(mouseX, mouseY, numGrains, &m_sounds));
+    cloud->view.reset(new CloudVis(mouseX, mouseY, numGrains, &m_samples));
     // select new cloud
     cloud->view->setSelectState(true);
     // register visualization with audio
     cloud->cloud->registerVis(cloud->view.get());
 }
 
-SceneSound *Scene::selectedSound()
+SceneSample *Scene::selectedSample()
 {
-    if ((unsigned)m_selectedSound >= m_sounds.size())
+    if ((unsigned)m_selectedSample >= m_samples.size())
         return nullptr;
-    return m_sounds[(unsigned)m_selectedSound].get();
+    return m_samples[(unsigned)m_selectedSample].get();
 }
 
 SceneCloud *Scene::selectedCloud()
@@ -712,10 +712,10 @@ void Scene::deselect(int shapeType)
         }
         break;
     case RECT:
-        if (SceneSound *sound = selectedSound()) {
+        if (SceneSample *sceneSample = selectedSample()) {
             // cout << "deselecting rect" << endl;
-            sound->view->setSelectState(false);
-            m_selectedSound = -1;
+            sceneSample->view->setSelectState(false);
+            m_selectedSample = -1;
         }
         break;
     }
@@ -734,7 +734,7 @@ int Scene::getNumCloud(SceneCloud *cloudCurrent)
 
 
 // destructor
-SceneSound::~SceneSound()
+SceneSample::~SceneSample()
 {
 }
 

@@ -27,7 +27,7 @@
 #include <string>
 #include <vector>
 #include <memory>
-struct SceneSound;
+struct SceneSample;
 struct SceneCloud;
 struct Sample;
 struct SampleVis;
@@ -36,7 +36,7 @@ struct CloudVis;
 class SampleSet;
 class QFile;
 
-typedef std::vector<std::unique_ptr<SceneSound>> VecSceneSound;
+typedef std::vector<std::unique_ptr<SceneSample>> VecSceneSample;
 typedef std::vector<std::unique_ptr<SceneCloud>> VecSceneCloud;
 
 class Scene
@@ -60,7 +60,7 @@ public:
 
     bool loadSampleSet(bool interactive);
     Sample *loadNewSample(const std::string &path);
-    bool removeSoundAt(unsigned index);
+    bool removeSampleAt(unsigned index);
     void removeSampleIfNotUsed(Sample *sampleToRemove);
     void addAudioPath(const std::string &path);
 
@@ -73,7 +73,7 @@ public:
     int getNumCloud(SceneCloud *cloudCurrent);
 
 
-    SceneSound *selectedSound();
+    SceneSample *selectedSample();
     SceneCloud *selectedCloud();
 
     // handle deselections
@@ -81,25 +81,25 @@ public:
 
     // data contents
     std::vector<std::string> m_audioPaths;
-    VecSceneSound m_sounds;
+    VecSceneSample m_samples;
     VecSceneCloud m_clouds;
 
-    // sounds
-    std::unique_ptr<SampleSet> m_samples;
+    // Samples
+    std::unique_ptr<SampleSet> m_sampleSet;
 
     // selection helper vars
     int m_selectedCloud = -1;
-    int m_selectedSound = -1;
+    int m_selectedSample = -1;
     int m_selectionIndex = 0;
     std::vector<int> m_selectionIndices;
 };
 
-struct SceneSound {
+struct SceneSample {
     std::string name;
     Sample *sample = nullptr;
     std::unique_ptr<SampleVis> view;
 
-    ~SceneSound();
+    ~SceneSample();
 };
 
 struct SceneCloud {

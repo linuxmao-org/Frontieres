@@ -42,10 +42,10 @@
 #include <memory>
 #include <iostream>
 #include "theglobals.h"
-class SceneSound;
+class SceneSample;
 class GrainVis;
 
-typedef std::vector<std::unique_ptr<SceneSound>> VecSceneSound;
+typedef std::vector<std::unique_ptr<SceneSample>> VecSceneSample;
 extern CloudParams g_defaultCloudParams;
 
 // VISUALIZATION/CONTROLLER
@@ -54,12 +54,12 @@ public:
     // destructor
     ~CloudVis();
 
-    // constructor (takes center position (x,y), number of grains, sound rectangles)
-    CloudVis(float x, float y, unsigned int numGrainsVis, VecSceneSound *rects);
+    // constructor (takes center position (x,y), number of grains, sample visuals)
+    CloudVis(float x, float y, unsigned int numGrainsVis, VecSceneSample *rects);
 
     // render
     void draw();
-    // get playback position in registered rectangles and return to grain cloud
+    // get playback position in registered sample visuals and return to grain cloud
     void getTriggerPos(unsigned int idx, double *playPos, double *playVols, float dur);
     // move grains
     void updateCloudPosition(float x, float y);
@@ -110,8 +110,8 @@ private:
 
     // grain visualizations
     std::vector<GrainVis *> myGrainsV;
-    // registered sound rectangles
-    VecSceneSound *theLandscape;
+    // registered sample visuals
+    VecSceneSample *theLandscape;
 };
 
 #endif

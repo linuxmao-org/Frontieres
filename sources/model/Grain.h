@@ -49,9 +49,9 @@
 class Sample;
 class Grain;
 class GrainVis;
-class SceneSound;
+class SceneSample;
 
-typedef std::vector<std::unique_ptr<SceneSound>> VecSceneSound;
+typedef std::vector<std::unique_ptr<SceneSample>> VecSceneSample;
 
 
 // AUDIO CLASS
@@ -62,7 +62,7 @@ public:
     virtual ~Grain();
 
     // constructor
-    Grain(VecSceneSound *soundSet, float durationMs, float thePitch);
+    Grain(VecSceneSample *sampleSet, float durationMs, float thePitch);
 
     // dump samples into next buffer
     void nextBuffer(double *accumBuff, unsigned int numFrames,
@@ -97,8 +97,8 @@ public:
     // change window type
     void setWindow(unsigned int windowType);
 
-    // update after a change of sound set
-    void updateSoundSet();
+    // update after a change of sample set
+    void updateSampleSet();
 
 protected:
     // makes temp  params permanent
@@ -106,7 +106,7 @@ protected:
 
 private:
     // pointer to all audio file buffers
-    VecSceneSound *theSounds;
+    VecSceneSample *theSamples;
     // status
     bool playingState;
     // param update required flag
@@ -128,7 +128,7 @@ private:
     double *queuedChanMults;
 
     // audio files being sampled
-    vector<int> activeSounds;
+    vector<int> activeSamples;
 
     // window type
     unsigned int windowType, queuedWindowType;
@@ -142,7 +142,7 @@ private:
 
 
     // array of position values (in frames, not samples)
-    //-1 means not in current soundfile
+    //-1 means not in current samplerfile
     std::unique_ptr<double[]> playPositions;
     std::unique_ptr<double[]> playVols;
 };

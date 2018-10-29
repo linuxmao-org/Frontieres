@@ -56,7 +56,7 @@
     <property name="title">
      <string>&amp;Edit</string>
     </property>
-    <addaction name="action_Add_sound"/>
+    <addaction name="action_Add_sample"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Edit"/>
@@ -82,9 +82,9 @@
     <string>&amp;Quit</string>
    </property>
   </action>
-  <action name="action_Add_sound">
+  <action name="action_Add_sample">
    <property name="text">
-    <string>&amp;Add sounds...</string>
+    <string>&amp;Add samples...</string>
    </property>
   </action>
   <action name="action_Load_clouds_defaults">

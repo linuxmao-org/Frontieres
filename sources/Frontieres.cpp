@@ -409,7 +409,7 @@ void printParam()
 {
     Scene *scene = ::currentScene;
     SceneCloud *selectedCloud = scene->selectedCloud();
-    SceneSound *selectedSound = scene->selectedSound();
+    SceneSample *selectedSample = scene->selectedSample();
 
     // get screen width and height
     MyGLScreen *screen = theApplication->GLwindow()->screen();
@@ -613,8 +613,8 @@ void printParam()
             break;
         }
     }
-    if (selectedSound) {
-        SampleVis &theSampleVis = *selectedSound->view;
+    if (selectedSample) {
+        SampleVis &theSampleVis = *selectedSample->view;
         string myValue;
         float theA = 0.7f + 0.3 * sin(1.6 * PI * GTime::instance().sec);
         glColor4f(1.0f, 1.0f, 1.0f, theA);
@@ -661,7 +661,7 @@ void mouseDrag(int x, int y)
     int yDiff = 0;
 
     Scene *scene = ::currentScene;
-    SceneSound *selectedSound = scene->selectedSound();
+    SceneSample *selectedSample = scene->selectedSample();
     SceneCloud *selectedCloud = scene->selectedCloud();
 
     if (selectedCloud) {
@@ -673,8 +673,8 @@ void mouseDrag(int x, int y)
         case MOVE:
             if ((lastDragX != veryHighNumber) && (lastDragY != veryHighNumber)) {
 
-                if (selectedSound) {  // movement case
-                    selectedSound->view->move(mouseX - lastDragX, mouseY - lastDragY);
+                if (selectedSample) {  // movement case
+                    selectedSample->view->move(mouseX - lastDragX, mouseY - lastDragY);
                 }
             }
             lastDragX = mouseX;
@@ -686,12 +686,12 @@ void mouseDrag(int x, int y)
                 // cout << "drag ok" << endl;
                 // for width height - use screen coords
 
-                if (selectedSound) {
+                if (selectedSample) {
                     xDiff = x - lastDragX;
                     yDiff = y - lastDragY;
                     // get width and height
-                    float newWidth = selectedSound->view->getWidth();
-                    float newHeight = selectedSound->view->getHeight();
+                    float newWidth = selectedSample->view->getWidth();
+                    float newHeight = selectedSample->view->getHeight();
 
                     int thresh = 0;
                     // check motion mag
@@ -715,7 +715,7 @@ void mouseDrag(int x, int y)
                     }
 
                     // update width and height
-                    selectedSound->view->setWidthHeight(newWidth, newHeight);
+                    selectedSample->view->setWidthHeight(newWidth, newHeight);
                 }
             }
             lastDragX = x;
@@ -883,9 +883,9 @@ int main(int argc, char **argv)
         std::vector<Sample *> loaded;
 
         // attempt to load from user, then system if empty
-        scene->m_samples->loadFileSet(g_audioPathUser, &loaded);
+        scene->m_sampleSet->loadFileSet(g_audioPathUser, &loaded);
         if (loaded.empty())
-            scene->m_samples->loadFileSet(g_audioPathSystem, &loaded);
+            scene->m_sampleSet->loadFileSet(g_audioPathSystem, &loaded);
 
         // add them into the scene
         for (Sample *af : loaded)

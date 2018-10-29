@@ -90,7 +90,7 @@ bool MyGLApplication::loadSceneFile()
     if (nameSceneFile.empty())
         return false;
 
-    // load the scene and its sounds
+    // load the scene and its samples
     Scene *scene = new Scene;
     QFile sceneFile(QString::fromStdString(nameSceneFile));
     if (!scene->load(sceneFile) || !scene->loadSampleSet(true)) {
@@ -139,26 +139,26 @@ bool MyGLApplication::saveCloudFile(SceneCloud *selectedCloudSave)
     return ::currentScene->saveCloud(cloudFile, selectedCloudSave);
 }
 
-void MyGLApplication::addSound()
+void MyGLApplication::addSample()
 {
-    QStringList qSoundFiles = QFileDialog::getOpenFileNames(
-        nullptr, _Q("", "Load sound"),
-        QString(), _Q("", "Sound files (*.*)"));
-    QString qSoundFile;
-    for (int i = 0 ; i < qSoundFiles.count() ; i++) {
-        qSoundFile = (qSoundFiles.at(i));
-        QDir qSoundDir = QFileInfo(qSoundFile).dir();
+    QStringList qSampleFiles = QFileDialog::getOpenFileNames(
+        nullptr, _Q("", "Load sample"),
+        QString(), _Q("", "Sample files (*.*)"));
+    QString qSampleFile;
+    for (int i = 0 ; i < qSampleFiles.count() ; i++) {
+        qSampleFile = (qSampleFiles.at(i));
+        QDir qSampleDir = QFileInfo(qSampleFile).dir();
 
         std::unique_lock<std::mutex> lock(::currentSceneMutex);
         Scene *scene = ::currentScene;
 
-        Sample *af = scene->loadNewSample(qSoundFile.toStdString());
+        Sample *af = scene->loadNewSample(qSampleFile.toStdString());
         if (af) {
             // add into the scene
             scene->addSampleVis(af);
 
             // add the file's location into search paths, if not already
-            scene->addAudioPath(qSoundDir.path().toStdString());
+            scene->addAudioPath(qSampleDir.path().toStdString());
         }
     }
 }
