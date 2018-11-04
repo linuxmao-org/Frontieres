@@ -121,7 +121,7 @@ Grain::Grain(VecSceneSample *sampleSet, float durationMs, float thePitch)
 
 //-----------------------------------------------------------------------------
 // Turn on grain.
-// input args = position and volume vectors in sample viual space
+// input args = position and volume vectors in sample visual space
 // returns whether or not grain is awaiting play.
 // parent cloud will wait to play this grain if the grain is still
 // this should not be an issue unless the overlap value is erroneous

@@ -142,7 +142,7 @@ private:
 
 
     // array of position values (in frames, not samples)
-    //-1 means not in current samplerfile
+    //-1 means not in current samplefile
     std::unique_ptr<double[]> playPositions;
     std::unique_ptr<double[]> playVols;
 };
