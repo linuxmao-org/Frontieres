@@ -44,6 +44,7 @@
 #include <QDir>
 #include <QJsonObject>
 #include <QJsonArray>
+#include "model/Adsr.h"
 class Grain;
 struct SceneSound;
 
@@ -145,7 +146,11 @@ public:
     void updateSoundSet();
 
     // print information
-    void describe(std::ostream &out);
+    void describe(ostream &out);
+
+    // envelope
+    void setEnvelopeVolume (ParamEnv envelopeVolumeToSet);
+    ParamEnv getEnvelopeVolume ();
 
 protected:
     // update internal trigger point
@@ -180,6 +185,8 @@ private:
 
     // volume
     float volumeDb, normedVol;
+    float *envelopeVolumeBuff;
+    double *intermediateBuff;
 
     // vector of grains
     vector<Grain *> myGrains;
@@ -193,6 +200,9 @@ private:
 
     // audio files
     VecSceneSound *theSounds;
+
+    // envelope
+    Env *envelopeVolume;
 };
 
 #endif

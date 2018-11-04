@@ -33,11 +33,12 @@
 #include "utility/GTime.h"
 
 extern unsigned int samp_rate;
-
+extern unsigned int g_buffSize;
 
 // Destructor
 Cloud::~Cloud()
 {
+    delete[] envelopeVolumeBuff;
     for (int i = 0; i < myGrains.size(); i++) {
         delete myGrains[i];
     }
@@ -117,6 +118,10 @@ Cloud::Cloud(VecSceneSound *soundSet, float theNumGrains)
     // set volume of cloud to unity
     //setVolumeDb(0.0);
     setVolumeDb(g_defaultCloudParams.volumeDB);
+    envelopeVolume = new Env;
+    envelopeVolume->setParam(g_defaultCloudParams.envelope);
+    envelopeVolumeBuff = new float[g_buffSize];
+    intermediateBuff = new double[g_buffSize * MY_CHANNELS];
 
     // set overlap (default to full overlap)
     //setOverlap(1.0f);
@@ -135,7 +140,7 @@ Cloud::Cloud(VecSceneSound *soundSet, float theNumGrains)
 
     // state - (user can remove cloud from "play" for editing)
     //isActive = true;
-    isActive = g_defaultCloudParams.activateState;
+    setActiveState(g_defaultCloudParams.activateState);
 }
 // register controller for communication with view
 void Cloud::registerVis(CloudVis *vis)
@@ -147,11 +152,15 @@ void Cloud::registerVis(CloudVis *vis)
 // turn on/off
 void Cloud::toggleActive()
 {
-    isActive = !isActive;
+    setActiveState(!isActive);
 }
 
 void Cloud::setActiveState(bool activateState)
 {
+    if (activateState)
+       envelopeVolume->trigger();
+    else
+       envelopeVolume->release();
     isActive = activateState;
 }
 
@@ -366,28 +375,50 @@ void Cloud::updateSoundSet()
         grain->updateSoundSet();
 }
 
+void Cloud::setEnvelopeVolume (ParamEnv envelopeVolumeToSet)
+{
+    envelopeVolume->setParam(envelopeVolumeToSet);
+}
+
+ParamEnv Cloud::getEnvelopeVolume ()
+{
+    return envelopeVolume->getParam();
+}
+
 // print information
+//void Cloud::describe(std::ostream &out)
 void Cloud::describe(std::ostream &out)
 {
-    out << "- duration : " << getDurationMs() << "\n";
-    out << "- overlap : " << getOverlap() << "\n";
-    out << "- pitch : " << getPitch() << "\n";
-    out << "- pitch LFO Freq : " << getPitchLFOFreq() << "\n";
-    out << "- pitch LFO Amount : " << getPitchLFOAmount() << "\n";
-    out << "- direction : " << getDirection() << "\n";
-    out << "- window type : " << getWindowType() << "\n";
-    out << "- spatial mode : " << getSpatialMode() << "\n";
-    out << "- spatial chanel : " << getSpatialChannel() << "\n";
-    out << "- volume DB : " << getVolumeDb() << "\n";
-    out << "- number of grains : " << getNumGrains() << "\n";
-    out << "- active : " << getActiveState() << "\n";
+    out << "- duration : " << getDurationMs() << endl;
+    out << "- overlap : " << getOverlap() << endl;
+    out << "- pitch : " << getPitch() << endl;
+    out << "- pitch LFO Freq : " << getPitchLFOFreq() << endl;
+    out << "- pitch LFO Amount : " << getPitchLFOAmount() << endl;
+    out << "- direction : " << getDirection() << endl;
+    out << "- window type : " << getWindowType() << endl;
+    out << "- spatial mode : " << getSpatialMode() << endl;
+    out << "- spatial chanel : " << getSpatialChannel() << endl;
+    out << "- volume DB : " << getVolumeDb() << endl;
+    out << "- volume envelope L1 : " << getEnvelopeVolume().l1 << endl;
+    out << "- volume envelope L2 : " << getEnvelopeVolume().l2 << endl;
+    out << "- volume envelope L3 : " << getEnvelopeVolume().l3 << endl;
+    out << "- volume envelope R1 : " << getEnvelopeVolume().r1 << endl;
+    out << "- volume envelope R2 : " << getEnvelopeVolume().r2 << endl;
+    out << "- volume envelope R3 : " << getEnvelopeVolume().r3 << endl;
+    out << "- volume envelope R4 : " << getEnvelopeVolume().r4 << endl;
+    out << "- volume envelope T1 : " << getEnvelopeVolume().t1 << endl;
+    out << "- volume envelope T2 : " << getEnvelopeVolume().t2 << endl;
+    out << "- volume envelope T3 : " << getEnvelopeVolume().t3 << endl;
+    out << "- volume envelope T4 : " << getEnvelopeVolume().t4 << endl;
+    out << "- number of grains : " << getNumGrains() << endl;
+    out << "- active : " << getActiveState() << endl;
 }
 
 
 // compute audio
 void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
 {
-
+    envelopeVolume->generate(envelopeVolumeBuff, numFrames);
     if (addFlag == true) {
         addFlag = false;
         myGrains.push_back(new Grain(theSounds, duration, pitch));
@@ -499,8 +530,18 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
             // sample offset (1 sample at a time for now)
             nextFrame = j * frameSkip;
             // iterate over all grains
+            //for (int k = 0; k < myGrains.size(); k++) {
+             //  myGrains[k]->nextBuffer(accumBuff, frameSkip, nextFrame, k);
+            //}
+            // iterate over all grains
+            memset(intermediateBuff, 0, numFrames * MY_CHANNELS * sizeof(intermediateBuff[0]));
             for (int k = 0; k < myGrains.size(); k++) {
-                myGrains[k]->nextBuffer(accumBuff, frameSkip, nextFrame, k);
+                myGrains[k]->nextBuffer(intermediateBuff, frameSkip, nextFrame, k);
+            }
+            for (int i = 0; i < numFrames; ++i) {
+                //cout << "debug, envelopeVolumeBuff["<<i<<"]="<<envelopeVolumeBuff[i]<<endl;
+                for (int j = 0; j < MY_CHANNELS; ++j)
+                    accumBuff[i * MY_CHANNELS + j] += intermediateBuff[i * MY_CHANNELS + j] * envelopeVolumeBuff[i];
             }
         }
     }

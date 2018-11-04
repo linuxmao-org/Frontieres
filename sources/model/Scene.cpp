@@ -207,6 +207,18 @@ bool Scene::load(QFile &sceneFile)
         int cloudSpatialMode = objGrain["spatial-mode"].toInt();
         int cloudSpatialChanel = objGrain["spatial-channel"].toInt();
         double cloudVolumeDb = objGrain["volume"].toDouble();
+        ParamEnv cloudEnvelopeVolume;
+        cloudEnvelopeVolume.l1 = objGrain["volume-envelope-L1"].toDouble();
+        cloudEnvelopeVolume.l2 = objGrain["volume-envelope-L2"].toDouble();
+        cloudEnvelopeVolume.l3 = objGrain["volume-envelope-L3"].toDouble();
+        cloudEnvelopeVolume.r1 = objGrain["volume-envelope-R1"].toDouble();
+        cloudEnvelopeVolume.r2 = objGrain["volume-envelope-R2"].toDouble();
+        cloudEnvelopeVolume.r3 = objGrain["volume-envelope-R3"].toDouble();
+        cloudEnvelopeVolume.r4 = objGrain["volume-envelope-R4"].toDouble();
+        cloudEnvelopeVolume.t1 = objGrain["volume-envelope-T1"].toInt();
+        cloudEnvelopeVolume.t2 = objGrain["volume-envelope-T2"].toInt();
+        cloudEnvelopeVolume.t3 = objGrain["volume-envelope-T3"].toInt();
+        cloudEnvelopeVolume.t4 = objGrain["volume-envelope-T4"].toInt();
         int cloudNumGrains = objGrain["num-grains"].toInt();
         int cloudActiveState = objGrain["active-state"].toBool();
         double cloudX = objGrain["x"].toDouble();
@@ -225,6 +237,17 @@ bool Scene::load(QFile &sceneFile)
         cout << "spatial mode = " << cloudSpatialMode << "\n";
         cout << "spatial channel = " << cloudSpatialChanel << "\n";
         cout << "volume = " << cloudVolumeDb << "\n";
+        cout << "volume envelope L1 = " << cloudEnvelopeVolume.l1 << "\n";
+        cout << "volume envelope L2 = " << cloudEnvelopeVolume.l2 << "\n";
+        cout << "volume envelope L3 = " << cloudEnvelopeVolume.l3 << "\n";
+        cout << "volume envelope R1 = " << cloudEnvelopeVolume.r1 << "\n";
+        cout << "volume envelope R2 = " << cloudEnvelopeVolume.r2 << "\n";
+        cout << "volume envelope R3 = " << cloudEnvelopeVolume.r3 << "\n";
+        cout << "volume envelope R4 = " << cloudEnvelopeVolume.t4 << "\n";
+        cout << "volume envelope T1 = " << cloudEnvelopeVolume.t1 << "\n";
+        cout << "volume envelope T2 = " << cloudEnvelopeVolume.t2 << "\n";
+        cout << "volume envelope T3 = " << cloudEnvelopeVolume.t3 << "\n";
+        cout << "volume envelope T4 = " << cloudEnvelopeVolume.t4 << "\n";
         cout << "grains = " << cloudNumGrains << "\n";
         cout << "active = " << cloudActiveState << "\n";
         cout << "X = " << cloudX << "\n";
@@ -255,6 +278,7 @@ bool Scene::load(QFile &sceneFile)
         cloudVisToLoad->setFixedXRandExtent(cloudXRandExtent);
         cloudVisToLoad->setFixedYRandExtent(cloudYRandExtent);
         cloudVisToLoad->setSelectState(false);
+        cloudToLoad->setEnvelopeVolume(cloudEnvelopeVolume);
     }
 
     return true;
@@ -335,12 +359,24 @@ bool Scene::save(QFile &sceneFile)
         objGrain["spatial-mode"] = cloudToSave->getSpatialMode();
         objGrain["spatial-channel"] = cloudToSave->getSpatialChannel();
         objGrain["volume"] = cloudToSave->getVolumeDb();
+        objGrain["volume-envelope-L1"] = cloudToSave->getEnvelopeVolume().l1;
+        objGrain["volume-envelope-L2"] = cloudToSave->getEnvelopeVolume().l2;
+        objGrain["volume-envelope-L3"] = cloudToSave->getEnvelopeVolume().l3;
+        objGrain["volume-envelope-R1"] = cloudToSave->getEnvelopeVolume().r1;
+        objGrain["volume-envelope-R2"] = cloudToSave->getEnvelopeVolume().r2;
+        objGrain["volume-envelope-R3"] = cloudToSave->getEnvelopeVolume().r3;
+        objGrain["volume-envelope-R4"] = cloudToSave->getEnvelopeVolume().r4;
+        objGrain["volume-envelope-T1"] = cloudToSave->getEnvelopeVolume().t1;
+        objGrain["volume-envelope-T2"] = cloudToSave->getEnvelopeVolume().t2;
+        objGrain["volume-envelope-T3"] = cloudToSave->getEnvelopeVolume().t3;
+        objGrain["volume-envelope-T4"] = cloudToSave->getEnvelopeVolume().t4;
         objGrain["num-grains"] = (int)cloudToSave->getNumGrains();
         objGrain["active-state"] = cloudToSave->getActiveState();
         objGrain["x"] = cloudVisToSave->getX();
         objGrain["y"] = cloudVisToSave->getY();
         objGrain["x-rand-extent"] = cloudVisToSave->getXRandExtent();
         objGrain["y-rand-extent"] = cloudVisToSave->getYRandExtent();
+
         docGrains.append(objGrain);
     }
 
@@ -382,6 +418,17 @@ bool Scene::loadCloudDefault(QFile &cloudFile)
     g_defaultCloudParams.spatialMode = objGrain["spatial-mode"].toInt();
     g_defaultCloudParams.chanelLocation = objGrain["spatial-channel"].toInt();
     g_defaultCloudParams.volumeDB = objGrain["volume"].toDouble();
+    g_defaultCloudParams.envelope.l1 = objGrain["volume-envelope-L1"].toDouble();
+    g_defaultCloudParams.envelope.l2 = objGrain["volume-envelope-L2"].toDouble();
+    g_defaultCloudParams.envelope.l3 = objGrain["volume-envelope-L3"].toDouble();
+    g_defaultCloudParams.envelope.r1 = objGrain["volume-envelope-R1"].toDouble();
+    g_defaultCloudParams.envelope.r2 = objGrain["volume-envelope-R2"].toDouble();
+    g_defaultCloudParams.envelope.r3 = objGrain["volume-envelope-R3"].toDouble();
+    g_defaultCloudParams.envelope.r4 = objGrain["volume-envelope-R4"].toDouble();
+    g_defaultCloudParams.envelope.t1 = objGrain["volume-envelope-T1"].toInt();
+    g_defaultCloudParams.envelope.t2 = objGrain["volume-envelope-T2"].toInt();
+    g_defaultCloudParams.envelope.t3 = objGrain["volume-envelope-T3"].toInt();
+    g_defaultCloudParams.envelope.t4 = objGrain["volume-envelope-T4"].toInt();
     g_defaultCloudParams.numGrains = objGrain["num-grains"].toInt();
     g_defaultCloudParams.activateState = objGrain["active-state"].toBool();
     g_defaultCloudParams.xRandExtent = objGrain["x-rand-extent"].toDouble();
@@ -401,7 +448,17 @@ bool Scene::loadCloudDefault(QFile &cloudFile)
     cout << "active = " << g_defaultCloudParams.activateState << "\n";
     cout << "xRandExtent = " << g_defaultCloudParams.xRandExtent << "\n";
     cout << "yRandExtent = " << g_defaultCloudParams.yRandExtent << "\n";
-
+    cout << "volume-envelope-L1 = " << g_defaultCloudParams.envelope.l1 << "\n";
+    cout << "volume-envelope-L2 = " << g_defaultCloudParams.envelope.l2 << "\n";
+    cout << "volume-envelope-L3 = " << g_defaultCloudParams.envelope.l3 << "\n";
+    cout << "volume-envelope-R1 = " << g_defaultCloudParams.envelope.r1 << "\n";
+    cout << "volume-envelope-R2 = " << g_defaultCloudParams.envelope.r2 << "\n";
+    cout << "volume-envelope-R3 = " << g_defaultCloudParams.envelope.r3 << "\n";
+    cout << "volume-envelope-R4 = " << g_defaultCloudParams.envelope.r4 << "\n";
+    cout << "volume-envelope-T1 = " << g_defaultCloudParams.envelope.t1 << "\n";
+    cout << "volume-envelope-T2 = " << g_defaultCloudParams.envelope.t2 << "\n";
+    cout << "volume-envelope-T3 = " << g_defaultCloudParams.envelope.t3 << "\n";
+    cout << "volume-envelope-T4 = " << g_defaultCloudParams.envelope.t4 << "\n";
     return true;
 
 }
@@ -440,6 +497,7 @@ bool Scene::saveCloud(QFile &cloudFile, SceneCloud *selectedCloudSave)
     objGrain["window-type"] = cloudToSave->getWindowType();
     objGrain["spatial-mode"] = cloudToSave->getSpatialMode();
     objGrain["spatial-channel"] = cloudToSave->getSpatialChannel();
+    objGrain["volume"] = cloudToSave->getVolumeDb();
     objGrain["volume"] = cloudToSave->getVolumeDb();
     objGrain["num-grains"] = (int)cloudToSave->getNumGrains();
     objGrain["active-state"] = cloudToSave->getActiveState();
@@ -596,6 +654,17 @@ void Scene::initDefaultCloudParams()
     g_defaultCloudParams.activateState = true;
     g_defaultCloudParams.xRandExtent = 3.0f;
     g_defaultCloudParams.yRandExtent = 3.0f;
+    g_defaultCloudParams.envelope.l1 = 1.0f;
+    g_defaultCloudParams.envelope.l2 = 0.9f;
+    g_defaultCloudParams.envelope.l3 = 0.8f;
+    g_defaultCloudParams.envelope.r1 = 0.2f;
+    g_defaultCloudParams.envelope.r2 = 0.2f;
+    g_defaultCloudParams.envelope.r3 = 0.2f;
+    g_defaultCloudParams.envelope.r4 = 0.2f;
+    g_defaultCloudParams.envelope.t1 = LINEAR;
+    g_defaultCloudParams.envelope.t2 = LINEAR;
+    g_defaultCloudParams.envelope.t3 = LINEAR;
+    g_defaultCloudParams.envelope.t4 = LINEAR;
 }
 
 Sample *Scene::loadNewSample(const std::string &path)
@@ -683,6 +752,8 @@ void Scene::addNewCloud(int numGrains)
     cloud->view->setSelectState(true);
     // register visualization with audio
     cloud->cloud->registerVis(cloud->view.get());
+    std::ostream &out = std::cout;
+    cloud->cloud->describe(out);
 }
 
 SceneSound *Scene::selectedSound()
