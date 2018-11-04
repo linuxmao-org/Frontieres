@@ -39,6 +39,8 @@ class QFile;
 typedef std::vector<std::unique_ptr<SceneSample>> VecSceneSample;
 typedef std::vector<std::unique_ptr<SceneCloud>> VecSceneCloud;
 
+extern unsigned int samp_rate;
+
 class Scene
 {
 public:

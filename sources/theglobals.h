@@ -86,6 +86,38 @@ enum class FileDirection {
 // scenes
 static const char *g_extensionScene = ".scn";
 static const char *g_extensionCloud = ".cld";
+
+// envelopes
+enum typeSlope {LINEAR, EXP, POWER};
+struct ParamEnv {
+
+    //** Levels **//
+
+    // attack target level [0:1]
+    float l1 = 0;
+    // decay target level [0:1]
+    float l2 = 0;
+    // 2nd attack target level [0:1]
+    float l3 = 0;
+
+    //** Slopes in unit/sample **//
+    // (multiply by sample rate to get unit/second)
+
+    // attack slope, positive
+    float r1 = 0;
+    // stage slope, positive or negative
+    float r2 = 0;
+    // decay, positive or negative
+    float r3 = 0;
+    // release slope, negative
+    float r4 = 0;
+    // types of slopes
+    int t1 = LINEAR;
+    int t2 = LINEAR;
+    int t3 = LINEAR;
+    int t4 = LINEAR;
+};
+
 // clouds
 //typedef struct CloudParams CloudParams;
 struct CloudParams
@@ -105,6 +137,7 @@ struct CloudParams
     bool activateState;
     float xRandExtent;
     float yRandExtent;
+    ParamEnv envelope;
 };
 
 #endif
