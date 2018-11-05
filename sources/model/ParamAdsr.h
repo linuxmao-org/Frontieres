@@ -46,6 +46,17 @@ struct ParamEnv {
     // release slope, negative
     float r4 = 0;
 
+    // set the levels Ln and rates Rn, based on time information in seconds
+    void setTimeBasedParameters(
+        float l1, float l2, float l3,
+        float tAtk, float tSta, float tDec, float tRel,
+        float sampleRate);
+
+    // get time information in seconds, matching current levels Ln and rates Rn
+    void getTimeBasedParameters(
+        float &tAtk, float &tSta, float &tDec, float &tRel,
+        float sampleRate) const;
+
     // types of slopes
     enum SlopeType { Linear, Exp, Power, };
     int t1 = Linear;

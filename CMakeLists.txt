@@ -29,6 +29,7 @@ add_executable(Frontieres WIN32
   sources/model/Grain.cpp
   sources/model/Cloud.cpp
   sources/model/Scene.cpp
+  sources/model/ParamAdsr.cpp
   sources/visual/GrainVis.cpp
   sources/visual/CloudVis.cpp
   sources/visual/SampleVis.cpp

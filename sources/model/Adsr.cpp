@@ -91,10 +91,12 @@ void Env::generate(float *outp, unsigned n)
     const float r2 = param.r2;
     const float r3 = param.r3;
     const float r4 = param.r4;
+#if 0  // TODO not used
     const int t1 = param.t1;
     const int t2 = param.t2;
     const int t3 = param.t3;
     const int t4 = param.t4;
+#endif
 
     auto enter = [&state](State newstate) {
 #ifdef debug

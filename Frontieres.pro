@@ -50,6 +50,7 @@ SOURCES += \
   sources/model/Grain.cpp \
   sources/model/Cloud.cpp \
   sources/model/Scene.cpp \
+  sources/model/ParamAdsr.cpp \
   sources/visual/SampleVis.cpp \
   sources/visual/GrainVis.cpp \
   sources/visual/CloudVis.cpp \
