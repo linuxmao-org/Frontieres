@@ -185,7 +185,7 @@ private:
     float *envelopeVolumeBuff;
     double *intermediateBuff;
 
-    enum EnvelopeAction { TriggerEnvelope, ReleaseEnvelope };
+    enum EnvelopeAction { TriggerEnvelope = 1, ReleaseEnvelope = 2 };
     std::atomic<int> envelopeAction;
 
     // vector of grains
