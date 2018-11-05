@@ -187,7 +187,9 @@ private:
     float volumeDb, normedVol;
     float *envelopeVolumeBuff;
     double *intermediateBuff;
-    int envelopeVolumeState = 0;
+
+    enum EnvelopeAction { TriggerEnvelope, ReleaseEnvelope };
+    std::atomic<int> envelopeAction;
 
     // vector of grains
     vector<Grain *> myGrains;

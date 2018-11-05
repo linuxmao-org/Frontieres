@@ -124,6 +124,9 @@ Cloud::Cloud(VecSceneSample *sampleSet, float theNumGrains)
     envelopeVolumeBuff = new float[g_buffSize];
     intermediateBuff = new double[g_buffSize * MY_CHANNELS];
 
+    // initialize the envelope trigger flag
+    envelopeAction.store(0);
+
     // set overlap (default to full overlap)
     //setOverlap(1.0f);
     setOverlap(g_defaultCloudParams.overlap);
@@ -159,9 +162,9 @@ void Cloud::toggleActive()
 void Cloud::setActiveState(bool activateState)
 {
     if (activateState)
-       envelopeVolumeState = 1;
+       envelopeAction.store(TriggerEnvelope);
     else
-       envelopeVolumeState = 2;
+       envelopeAction.store(ReleaseEnvelope);
     isActive = activateState;
 }
 
@@ -418,14 +421,14 @@ void Cloud::describe(std::ostream &out)
 // compute audio
 void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
 {
-    switch (envelopeVolumeState) {
-    case 1:
+    int envelopeAction = this->envelopeAction.exchange(0);
+
+    switch (envelopeAction) {
+    case TriggerEnvelope:
         envelopeVolume->trigger();
-        envelopeVolumeState = 0;
         break;
-    case 2:
+    case ReleaseEnvelope:
         envelopeVolume->release();
-        envelopeVolumeState = 0;
         break;
     default:
         break;
