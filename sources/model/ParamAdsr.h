@@ -21,32 +21,35 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include "ParamAdsr.h"
-#include <iostream>
 
-struct Env {
+// envelopes
+struct ParamEnv {
 
-    enum class State { Off, Atk, Sta, Dec, Sus, Rel };
+    //** Levels **//
 
-    Env();
-    void initialize();
-    void setParam(const ParamEnv &p);
-    ParamEnv getParam();
-    void reset();
-    void trigger();
-    void release();
-    State state() const;
-    bool running() const;
-    void generate(float *outp, unsigned n);
-    static const char *nameof(State s);
+    // attack target level [0:1]
+    float l1 = 0;
+    // decay target level [0:1]
+    float l2 = 0;
+    // 2nd attack target level [0:1]
+    float l3 = 0;
 
-private:
-    // parameters
-    ParamEnv param_;
-    // which state it's currently in
-    State state_ = State::Off;
-    // current level
-    float l_ = 0;
-    // whether key has been released yet
-    bool rel_ = false;
+    //** Slopes in unit/sample **//
+    // (multiply by sample rate to get unit/second)
+
+    // attack slope, positive
+    float r1 = 0;
+    // stage slope, positive or negative
+    float r2 = 0;
+    // decay, positive or negative
+    float r3 = 0;
+    // release slope, negative
+    float r4 = 0;
+
+    // types of slopes
+    enum SlopeType { Linear, Exp, Power, };
+    int t1 = Linear;
+    int t2 = Linear;
+    int t3 = Linear;
+    int t4 = Linear;
 };

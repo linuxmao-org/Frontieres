@@ -69,6 +69,7 @@
 // audio related
 #include "model/Cloud.h"
 #include "model/Scene.h"
+#include "model/ParamCloud.h"
 
 // time
 #include "utility/GTime.h"

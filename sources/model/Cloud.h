@@ -67,9 +67,6 @@ using namespace std;
 class Cloud;
 class CloudVis;
 
-// ids
-static unsigned int cloudId = 0;
-extern CloudParams g_defaultCloudParams;
 // class interface
 class Cloud {
 

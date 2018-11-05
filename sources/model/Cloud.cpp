@@ -28,12 +28,17 @@
 
 #include "model/Cloud.h"
 #include "model/Grain.h"
+#include "model/ParamCloud.h"
 #include "visual/CloudVis.h"
 #include "dsp/Window.h"
 #include "utility/GTime.h"
 
 extern unsigned int samp_rate;
 extern unsigned int g_buffSize;
+extern CloudParams g_defaultCloudParams;
+
+// ids
+static unsigned int cloudId = 0;
 
 // Destructor
 Cloud::~Cloud()

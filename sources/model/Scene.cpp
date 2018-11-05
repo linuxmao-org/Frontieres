@@ -25,6 +25,7 @@
 #include "Cloud.h"
 #include "Grain.h"
 #include "Sample.h"
+#include "ParamCloud.h"
 #include "I18n.h"
 #include "visual/SampleVis.h"
 #include "dsp/Window.h"
@@ -38,6 +39,8 @@
 
 // TODO arrange this later
 #include "visual/CloudVis.h"
+
+extern CloudParams g_defaultCloudParams;
 
 //-----------------------------------------------------------------------------
 // Destructor
@@ -660,10 +663,10 @@ void Scene::initDefaultCloudParams()
     g_defaultCloudParams.envelope.r2 = 0.2f;
     g_defaultCloudParams.envelope.r3 = 0.2f;
     g_defaultCloudParams.envelope.r4 = 0.02f;
-    g_defaultCloudParams.envelope.t1 = LINEAR;
-    g_defaultCloudParams.envelope.t2 = LINEAR;
-    g_defaultCloudParams.envelope.t3 = LINEAR;
-    g_defaultCloudParams.envelope.t4 = LINEAR;
+    g_defaultCloudParams.envelope.t1 = ParamEnv::Linear;
+    g_defaultCloudParams.envelope.t2 = ParamEnv::Linear;
+    g_defaultCloudParams.envelope.t3 = ParamEnv::Linear;
+    g_defaultCloudParams.envelope.t4 = ParamEnv::Linear;
 }
 
 Sample *Scene::loadNewSample(const std::string &path)

@@ -31,6 +31,7 @@
 #include "visual/GrainVis.h"
 #include "visual/SampleVis.h"
 #include "model/Scene.h"
+#include "model/ParamCloud.h"
 #include "utility/GTime.h"
 
 // TODO avoid this
@@ -46,6 +47,8 @@
 #endif
 
 #include <math.h>
+
+extern CloudParams g_defaultCloudParams;
 
 //-----------------------------------------------------------------------------------------------
 // GRAPHICS

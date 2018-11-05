@@ -73,6 +73,8 @@ HEADERS += \
   sources/model/Cloud.h \
   sources/model/Grain.h \
   sources/model/Scene.h \
+  sources/model/ParamAdsr.h \
+  sources/model/ParamCloud.h \
   sources/visual/SampleVis.h \
   sources/visual/GrainVis.h \
   sources/visual/CloudVis.h \
@@ -81,7 +83,7 @@ HEADERS += \
   libraries/RtAudio.h \
   libraries/Stk.h \
   libraries/ring_buffer.h \
-  libraries/ring_buffer.tcc \
+  libraries/ring_buffer.tcc
 
 FORMS += \
   sources/interface/MyGLWindow.ui \

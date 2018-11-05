@@ -6,7 +6,6 @@
 //
 //
 // Copyright (C) 2018  Olivier Flatres
-// Copyright (C) 2018  Jean Pierre Cimalando
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -22,31 +21,24 @@
 
 #pragma once
 #include "ParamAdsr.h"
-#include <iostream>
 
-struct Env {
-
-    enum class State { Off, Atk, Sta, Dec, Sus, Rel };
-
-    Env();
-    void initialize();
-    void setParam(const ParamEnv &p);
-    ParamEnv getParam();
-    void reset();
-    void trigger();
-    void release();
-    State state() const;
-    bool running() const;
-    void generate(float *outp, unsigned n);
-    static const char *nameof(State s);
-
-private:
-    // parameters
-    ParamEnv param_;
-    // which state it's currently in
-    State state_ = State::Off;
-    // current level
-    float l_ = 0;
-    // whether key has been released yet
-    bool rel_ = false;
+// clouds
+struct CloudParams
+{
+    // cloud params
+    float duration;
+    float overlap;
+    float pitch;
+    float pitchLFOFreq;
+    float pitchLFOAmount;
+    int dirMode;
+    int windowType;
+    int spatialMode;
+    int chanelLocation;
+    float volumeDB;
+    int numGrains;
+    bool activateState;
+    float xRandExtent;
+    float yRandExtent;
+    ParamEnv envelope;
 };

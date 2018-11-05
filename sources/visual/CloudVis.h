@@ -46,7 +46,6 @@ class SceneSample;
 class GrainVis;
 
 typedef std::vector<std::unique_ptr<SceneSample>> VecSceneSample;
-extern CloudParams g_defaultCloudParams;
 
 // VISUALIZATION/CONTROLLER
 class CloudVis {
