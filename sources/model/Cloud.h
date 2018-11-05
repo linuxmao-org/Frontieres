@@ -37,6 +37,7 @@
 #include <memory>
 #include <iostream>
 #include <string>
+#include <atomic>
 #include <cstdlib>
 #include <time.h>
 #include <ctime>
