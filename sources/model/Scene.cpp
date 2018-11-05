@@ -667,13 +667,12 @@ void Scene::initDefaultCloudParams()
     g_defaultCloudParams.activateState = true;
     g_defaultCloudParams.xRandExtent = 3.0f;
     g_defaultCloudParams.yRandExtent = 3.0f;
-    g_defaultCloudParams.envelope.l1 = 1.0f;
-    g_defaultCloudParams.envelope.l2 = 0.9f;
-    g_defaultCloudParams.envelope.l3 = 0.8f;
-    g_defaultCloudParams.envelope.r1 = 0.2f;
-    g_defaultCloudParams.envelope.r2 = 0.2f;
-    g_defaultCloudParams.envelope.r3 = 0.2f;
-    g_defaultCloudParams.envelope.r4 = 0.02f;
+    g_defaultCloudParams.envelope.setTimeBasedParameters(
+        // L1, L2, L3
+        1.0, 0.9, 0.8,
+        // TAtk, TSta, TDec, TRel
+        0.2, 0.2, 0.2, 0.02,
+        samp_rate);
     g_defaultCloudParams.envelope.t1 = ParamEnv::Linear;
     g_defaultCloudParams.envelope.t2 = ParamEnv::Linear;
     g_defaultCloudParams.envelope.t3 = ParamEnv::Linear;
