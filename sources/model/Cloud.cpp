@@ -43,6 +43,7 @@ static unsigned int cloudId = 0;
 // Destructor
 Cloud::~Cloud()
 {
+    delete envelopeVolume;
     delete[] envelopeVolumeBuff;
     delete[] intermediateBuff;
     for (int i = 0; i < myGrains.size(); i++) {
@@ -478,9 +479,7 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
         removeFlag = false;
     }
 
-    if (isActive == true) {
-
-
+    if (envelopeVolume->state() != Env::State::Off) {
         // initialize play positions array
         double playPositions[theSamples->size()];
         double playVols[theSamples->size()];

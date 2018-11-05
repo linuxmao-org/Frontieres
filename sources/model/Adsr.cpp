@@ -23,7 +23,7 @@
 #include "Adsr.h"
 #include <stdio.h>
 
-//#define debug(fmt, ...) do { fprintf(stderr, fmt "\n", ##__VA_ARGS__); } while (0)
+#define debug(fmt, ...) do { fprintf(stderr, fmt "\n", ##__VA_ARGS__); } while (0)
 #undef debug
 
 Env::Env()
@@ -106,7 +106,7 @@ void Env::generate(float *outp, unsigned n)
         state = newstate;
     };
 
-    if (rel_)
+    if (rel_ && state != State::Off)
         enter(State::Rel);
 
     for (unsigned i = 0; i < n; ++ i) {
