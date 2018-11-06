@@ -41,6 +41,7 @@ LIBS += -lsndfile -lsoxr
 SOURCES += \
   sources/Frontieres.cpp \
   sources/MyRtAudio.cpp \
+  sources/interface/AdsrDialog.cpp \
   sources/interface/MyGLApplication.cpp \
   sources/interface/MyGLWindow.cpp \
   sources/interface/StartDialog.cpp \
@@ -65,6 +66,7 @@ HEADERS += \
   sources/I18n.h \
   sources/Frontieres.h \
   sources/MyRtAudio.h \
+  sources/interface/AdsrDialog.h \
   sources/interface/MyGLApplication.h \
   sources/interface/MyGLWindow.h \
   sources/interface/StartDialog.h \
@@ -87,5 +89,6 @@ HEADERS += \
   libraries/ring_buffer.tcc
 
 FORMS += \
+  sources/interface/AdsrDialog.ui \
   sources/interface/MyGLWindow.ui \
   sources/interface/StartDialog.ui

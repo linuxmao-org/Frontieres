@@ -863,6 +863,12 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
         }
         break;
     }
+    case Qt::Key_E: {
+        // volume envelope
+        if (selectedCloud) {
+            theApplication->showDialogVolumeEnvelope(selectedCloud);
+        }
+    }
     default:
         break;
     }

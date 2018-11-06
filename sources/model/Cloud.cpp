@@ -40,6 +40,7 @@ extern CloudParams g_defaultCloudParams;
 // ids
 static unsigned int cloudId = 0;
 
+
 // Destructor
 Cloud::~Cloud()
 {
@@ -385,12 +386,12 @@ void Cloud::updateSampleSet()
         grain->updateSampleSet();
 }
 
-void Cloud::setEnvelopeVolume (ParamEnv envelopeVolumeToSet)
+void Cloud::setEnvelopeVolumeParam (ParamEnv envelopeVolumeParamToSet)
 {
-    envelopeVolume->setParam(envelopeVolumeToSet);
+    envelopeVolume->setParam(envelopeVolumeParamToSet);
 }
 
-ParamEnv Cloud::getEnvelopeVolume ()
+ParamEnv Cloud::getEnvelopeVolumeParam ()
 {
     return envelopeVolume->getParam();
 }
@@ -408,19 +409,29 @@ void Cloud::describe(std::ostream &out)
     out << "- spatial mode : " << getSpatialMode() << "\n";
     out << "- spatial chanel : " << getSpatialChannel() << "\n";
     out << "- volume DB : " << getVolumeDb() << "\n";
-    out << "- volume envelope L1 : " << getEnvelopeVolume().l1 << "\n";
-    out << "- volume envelope L2 : " << getEnvelopeVolume().l2 << "\n";
-    out << "- volume envelope L3 : " << getEnvelopeVolume().l3 << "\n";
-    out << "- volume envelope R1 : " << getEnvelopeVolume().r1 << "\n";
-    out << "- volume envelope R2 : " << getEnvelopeVolume().r2 << "\n";
-    out << "- volume envelope R3 : " << getEnvelopeVolume().r3 << "\n";
-    out << "- volume envelope R4 : " << getEnvelopeVolume().r4 << "\n";
-    out << "- volume envelope T1 : " << getEnvelopeVolume().t1 << "\n";
-    out << "- volume envelope T2 : " << getEnvelopeVolume().t2 << "\n";
-    out << "- volume envelope T3 : " << getEnvelopeVolume().t3 << "\n";
-    out << "- volume envelope T4 : " << getEnvelopeVolume().t4 << "\n";
+    out << "- volume envelope L1 : " << getEnvelopeVolumeParam().l1 << "\n";
+    out << "- volume envelope L2 : " << getEnvelopeVolumeParam().l2 << "\n";
+    out << "- volume envelope L3 : " << getEnvelopeVolumeParam().l3 << "\n";
+    out << "- volume envelope R1 : " << getEnvelopeVolumeParam().r1 << "\n";
+    out << "- volume envelope R2 : " << getEnvelopeVolumeParam().r2 << "\n";
+    out << "- volume envelope R3 : " << getEnvelopeVolumeParam().r3 << "\n";
+    out << "- volume envelope R4 : " << getEnvelopeVolumeParam().r4 << "\n";
+    out << "- volume envelope T1 : " << getEnvelopeVolumeParam().t1 << "\n";
+    out << "- volume envelope T2 : " << getEnvelopeVolumeParam().t2 << "\n";
+    out << "- volume envelope T3 : " << getEnvelopeVolumeParam().t3 << "\n";
+    out << "- volume envelope T4 : " << getEnvelopeVolumeParam().t4 << "\n";
     out << "- number of grains : " << getNumGrains() << "\n";
     out << "- active : " << getActiveState() << "\n";
+}
+
+void Cloud::setEnvelopeVolume(Env envelopeVolumeToSet)
+{
+    envelopeVolume = &envelopeVolumeToSet;
+}
+
+Env Cloud::getEnvelopeVolume()
+{
+    return *envelopeVolume;
 }
 
 

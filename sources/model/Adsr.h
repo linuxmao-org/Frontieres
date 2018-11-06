@@ -39,7 +39,7 @@ struct Env {
     bool running() const;
     void generate(float *outp, unsigned n);
     static const char *nameof(State s);
-
+    void envDialogShow (ParamEnv &paramEnvForDialog);
 private:
     // parameters
     ParamEnv param_;

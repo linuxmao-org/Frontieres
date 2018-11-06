@@ -287,7 +287,7 @@ bool Scene::load(QFile &sceneFile)
         cloudVisToLoad->setFixedXRandExtent(cloudXRandExtent);
         cloudVisToLoad->setFixedYRandExtent(cloudYRandExtent);
         cloudVisToLoad->setSelectState(false);
-        cloudToLoad->setEnvelopeVolume(cloudEnvelopeVolume);
+        cloudToLoad->setEnvelopeVolumeParam(cloudEnvelopeVolume);
     }
 
     return true;
@@ -368,7 +368,7 @@ bool Scene::save(QFile &sceneFile)
         objGrain["spatial-mode"] = cloudToSave->getSpatialMode();
         objGrain["spatial-channel"] = cloudToSave->getSpatialChannel();
         objGrain["volume"] = cloudToSave->getVolumeDb();
-        const ParamEnv &cloudEnvelopeVolume = cloudToSave->getEnvelopeVolume();
+        const ParamEnv &cloudEnvelopeVolume = cloudToSave->getEnvelopeVolumeParam();
         {
             float tAtk, tSta, tDec, tRel;
             cloudEnvelopeVolume.getTimeBasedParameters(tAtk, tSta, tDec, tRel, samp_rate);
@@ -813,6 +813,15 @@ int Scene::getNumCloud(SceneCloud *cloudCurrent)
             return i;
     }
     return -1;
+}
+
+void Scene::changeParamEnvelopeVolume(SceneCloud *selectedCloud)
+{
+        ParamEnv localParamEnv;
+        Cloud *cloudToChangePEV = selectedCloud->cloud.get();
+        localParamEnv = cloudToChangePEV->getEnvelopeVolumeParam();
+        cloudToChangePEV->getEnvelopeVolume().envDialogShow(localParamEnv);
+        cloudToChangePEV->setEnvelopeVolumeParam(localParamEnv);
 }
 
 
