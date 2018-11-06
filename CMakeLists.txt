@@ -72,6 +72,7 @@ find_package(Qt5Widgets CONFIG REQUIRED)
 find_package(Qt5OpenGL CONFIG REQUIRED)
 
 qt5_wrap_ui(Frontieres_UI_SOURCES
+  sources/interface/AdsrDialog.ui
   sources/interface/MyGLWindow.ui
   sources/interface/StartDialog.ui)
 target_sources(Frontieres PRIVATE ${Frontieres_UI_SOURCES})
