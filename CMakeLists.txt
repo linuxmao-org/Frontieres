@@ -17,6 +17,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address")
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
 
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_AUTOMOC ON)
+find_package(Qt5Widgets CONFIG REQUIRED)
+find_package(Qt5OpenGL CONFIG REQUIRED)
+
 add_executable(Frontieres WIN32
   sources/Frontieres.cpp
   sources/MyRtAudio.cpp
@@ -66,10 +71,6 @@ target_include_directories(Frontieres
   PRIVATE "${OPENGL_INCLUDE_DIR}" ${JACK_INCLUDE_DIRS} ${ALSA_INCLUDE_DIRS} ${SNDFILE_INCLUDE_DIRS} ${SOXR_INCLUDE_DIRS})
 
 # Qt
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(CMAKE_AUTOMOC ON)
-find_package(Qt5Widgets CONFIG REQUIRED)
-find_package(Qt5OpenGL CONFIG REQUIRED)
 
 qt5_wrap_ui(Frontieres_UI_SOURCES
   sources/interface/AdsrDialog.ui
