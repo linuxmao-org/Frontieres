@@ -19,54 +19,29 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef MYGLWINDOW_H
-#define MYGLWINDOW_H
-
-#include <QMainWindow>
-#include <QOpenGLWidget>
+#pragma once
 #include <memory>
 
-class MyGLScreen;
-
-class MyGLWindow : public QMainWindow {
-    Q_OBJECT
+class MyRtOsc
+{
+private:
+    MyRtOsc();
 
 public:
-    MyGLWindow();
-    ~MyGLWindow();
-    void initialize();
-    void setMenuBarVisible(bool visible);
-    void setupOscUrl(const QString &oscUrl);
-    MyGLScreen *screen() const;
+    ~MyRtOsc();
 
-public slots:
-    void on_action_Start_controller_triggered();
+    static MyRtOsc &instance();
+
+    bool open(const char *port = nullptr);
+    void close();
+
+    int getPort() const;
+    std::string getUrl() const;
+
+    bool start();
+    bool stop();
 
 private:
     struct Impl;
     std::unique_ptr<Impl> P;
 };
-
-// the openGL screen
-class MyGLScreen : public QOpenGLWidget {
-public:
-    MyGLScreen(QWidget *parent = nullptr);
-    ~MyGLScreen();
-
-protected:
-    void initializeGL() override;
-    void paintGL() override;
-    void resizeGL(int w, int h) override;
-    void mousePressEvent(QMouseEvent *event) override;
-    void mouseReleaseEvent(QMouseEvent *event) override;
-    void mouseMoveEvent(QMouseEvent *event) override;
-    void mousePassiveMoveEvent(QMouseEvent *event);
-    void keyPressEvent(QKeyEvent *event) override;
-    void keyReleaseEvent(QKeyEvent *event) override;
-
-private:
-    struct Impl;
-    std::unique_ptr<Impl> P;
-};
-
-#endif

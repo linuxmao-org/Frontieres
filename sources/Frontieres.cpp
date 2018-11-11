@@ -62,6 +62,9 @@
 #include <RtMidi.h>
 #include <ring_buffer.h>
 
+// OSC related
+#include "MyRtOsc.h"
+
 // graphics related
 #include "visual/SampleVis.h"
 #include "visual/CloudVis.h"
@@ -909,6 +912,17 @@ int main(int argc, char **argv)
 
     // start audio stream
     theAudio->startStream();
+
+    // start OSC
+    MyRtOsc &osc = MyRtOsc::instance();
+    if (!osc.open() || !osc.start()) {
+        std::cerr << "Error: failed to start OSC!\n";
+        return 1;
+    }
+
+    std::string oscUrl = osc.getUrl();
+    std::cout << "OSC address: " << oscUrl << "\n";
+    GLwindow->setupOscUrl(QString::fromStdString(oscUrl));
 
     // let Qt handle the current thread from here
     exitCode = app.exec();

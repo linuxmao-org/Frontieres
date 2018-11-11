@@ -36,11 +36,12 @@ linux: {
   LIBS += -ljack
 }
 
-LIBS += -lsndfile -lsoxr
+LIBS += -lsndfile -lsoxr -llo
 
 SOURCES += \
   sources/Frontieres.cpp \
   sources/MyRtAudio.cpp \
+  sources/MyRtOsc.cpp \
   sources/interface/MyGLApplication.cpp \
   sources/interface/MyGLWindow.cpp \
   sources/interface/StartDialog.cpp \
@@ -65,6 +66,7 @@ HEADERS += \
   sources/I18n.h \
   sources/Frontieres.h \
   sources/MyRtAudio.h \
+  sources/MyRtOsc.h \
   sources/interface/MyGLApplication.h \
   sources/interface/MyGLWindow.h \
   sources/interface/StartDialog.h \
