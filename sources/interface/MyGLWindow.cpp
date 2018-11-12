@@ -27,9 +27,11 @@
 #include "visual/CloudVis.h"
 #include "visual/SampleVis.h"
 #include "Frontieres.h"
+#include "MyRtOsc.h"
 #include <QtFont3D.h>
 #include <QMouseEvent>
 #include <QKeyEvent>
+#include <QProcess>
 #include <QDebug>
 
 extern string g_audioPath;
@@ -76,9 +78,34 @@ void MyGLWindow::setMenuBarVisible(bool visible)
     P->ui.menubar->setVisible(visible);
 }
 
+void MyGLWindow::setupOscUrl(const QString &oscUrl)
+{
+    QMenu *menu = P->ui.menu_OSC;
+    menu->insertSeparator(menu->actions().first());
+    QAction *head = new QAction(oscUrl, menu);
+    menu->insertAction(menu->actions().first(), head);
+    head->setEnabled(false);
+}
+
 MyGLScreen *MyGLWindow::screen() const
 {
     return P->ui.screen;
+}
+
+void MyGLWindow::on_action_Start_controller_triggered()
+{
+    MyRtOsc &osc = MyRtOsc::instance();
+
+    // TODO make a configuration for this command
+    QString program = "open-stage-control";
+    QStringList arguments;
+    arguments << "-s" << ("0.0.0.0:" + QString::number(osc.getPort()));
+
+    if (!QProcess::startDetached(program, arguments))
+        QMessageBox::warning(
+            this, tr("Error"),
+            tr("Cannot lanch the program: %1").arg(program) + "\n" +
+            tr("Please ensure the software is installed and the path is correct."));
 }
 
 // the openGL screen

@@ -58,8 +58,15 @@
     </property>
     <addaction name="action_Add_sample"/>
    </widget>
+   <widget class="QMenu" name="menu_OSC">
+    <property name="title">
+     <string>&amp;OSC</string>
+    </property>
+    <addaction name="action_Start_controller"/>
+   </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Edit"/>
+   <addaction name="menu_OSC"/>
   </widget>
   <action name="action_Load_scene">
    <property name="text">
@@ -90,6 +97,11 @@
   <action name="action_Load_clouds_defaults">
    <property name="text">
     <string>Load &amp;clouds defaults</string>
+   </property>
+  </action>
+  <action name="action_Start_controller">
+   <property name="text">
+    <string>&amp;Start controller</string>
    </property>
   </action>
  </widget>
