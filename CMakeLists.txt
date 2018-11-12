@@ -29,6 +29,7 @@ add_executable(Frontieres WIN32
   sources/interface/MyGLWindow.cpp
   sources/interface/StartDialog.cpp
   sources/interface/AdsrDialog.cpp
+  sources/interface/Node.cpp
   sources/dsp/Window.cpp
   sources/model/Adsr.cpp
   sources/model/Sample.cpp
