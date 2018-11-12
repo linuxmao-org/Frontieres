@@ -252,6 +252,8 @@ void AdsrDialog::on_doubleSpinBox_r_2_valueChanged(double arg1)
                      graphicNode_begin.y(),
                      graphicNode_l1.x(),
                      graphicNode_l1.y());
+    setLimits(graphicNode_begin, limits_begin, false, 0, true, graphicNode_l1.x() - 1, true, heightMaxAff / 2, true, heightMaxAff / 2);
+    setLimits(graphicNode_l1, limits_l1, false, 0, true, graphicNode_l2.x() - 1, true, - heightMaxAff / 2, true, heightMaxAff / 2);
 }
 
 void AdsrDialog::on_doubleSpinBox_l_3_valueChanged(double arg1)
