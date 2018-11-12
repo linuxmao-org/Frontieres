@@ -1,4 +1,5 @@
-//------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+
 // FRONTIÈRES:  An interactive granular sampler.
 //------------------------------------------------------------------------------
 // More information is available at
@@ -19,8 +20,8 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 #include "Adsr.h"
+#include "interface/AdsrDialog.h"
 #include <stdio.h>
 
 #define debug(fmt, ...) do { fprintf(stderr, fmt "\n", ##__VA_ARGS__); } while (0)
@@ -66,6 +67,7 @@ void Env::trigger()
 void Env::release()
 {
     rel_ = true;
+    std::cout << "entree release : " << param_.r3<<std::endl;
 }
 
 auto Env::state() const -> State
@@ -168,4 +170,12 @@ void Env::generate(float *outp, unsigned n)
 const char *Env::nameof(State s) {
     static const char *names[] = {"Off", "Atk", "Sta", "Dec", "Sus", "Rel"};
     return names[(unsigned)s];
+}
+
+void Env::envDialogShow(ParamEnv &paramEnvForDialog)
+{
+    AdsrDialog adsrDlg;
+    adsrDlg.show();
+    adsrDlg.modifEnvelope(paramEnvForDialog);
+    setParam(paramEnvForDialog);
 }

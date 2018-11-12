@@ -37,6 +37,7 @@ public:
     bool saveCloudFile(SceneCloud *selectedCloudSave);
     bool loadCloudDefaultFile();
     void addSample();
+    void showDialogVolumeEnvelope(SceneCloud *selectedCloudToVolumeEnvelope);
 
 private:
     struct Impl;

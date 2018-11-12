@@ -30,6 +30,8 @@ add_executable(Frontieres WIN32
   sources/interface/MyGLApplication.cpp
   sources/interface/MyGLWindow.cpp
   sources/interface/StartDialog.cpp
+  sources/interface/AdsrDialog.cpp
+  sources/interface/Node.cpp
   sources/dsp/Window.cpp
   sources/model/Adsr.cpp
   sources/model/Sample.cpp
@@ -73,6 +75,7 @@ target_include_directories(Frontieres
   PRIVATE "${OPENGL_INCLUDE_DIR}" ${JACK_INCLUDE_DIRS} ${ALSA_INCLUDE_DIRS} ${SNDFILE_INCLUDE_DIRS} ${SOXR_INCLUDE_DIRS} ${LIBLO_INCLUDE_DIRS})
 
 qt5_wrap_ui(Frontieres_UI_SOURCES
+  sources/interface/AdsrDialog.ui
   sources/interface/MyGLWindow.ui
   sources/interface/StartDialog.ui)
 target_sources(Frontieres PRIVATE ${Frontieres_UI_SOURCES})

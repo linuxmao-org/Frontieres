@@ -287,7 +287,7 @@ bool Scene::load(QFile &sceneFile)
         cloudVisToLoad->setFixedXRandExtent(cloudXRandExtent);
         cloudVisToLoad->setFixedYRandExtent(cloudYRandExtent);
         cloudVisToLoad->setSelectState(false);
-        cloudToLoad->setEnvelopeVolume(cloudEnvelopeVolume);
+        cloudToLoad->setEnvelopeVolumeParam(cloudEnvelopeVolume);
     }
 
     return true;
@@ -368,22 +368,22 @@ bool Scene::save(QFile &sceneFile)
         objGrain["spatial-mode"] = cloudToSave->getSpatialMode();
         objGrain["spatial-channel"] = cloudToSave->getSpatialChannel();
         objGrain["volume"] = cloudToSave->getVolumeDb();
-        const ParamEnv &cloudEnvelopeVolume = cloudToSave->getEnvelopeVolume();
+        const ParamEnv &cloudEnvelopeVolumeParam = cloudToSave->getEnvelopeVolumeParam();
         {
             float tAtk, tSta, tDec, tRel;
-            cloudEnvelopeVolume.getTimeBasedParameters(tAtk, tSta, tDec, tRel, samp_rate);
-            objGrain["volume-envelope-L1"] = cloudEnvelopeVolume.l1;
-            objGrain["volume-envelope-L2"] = cloudEnvelopeVolume.l2;
-            objGrain["volume-envelope-L3"] = cloudEnvelopeVolume.l3;
+            cloudEnvelopeVolumeParam.getTimeBasedParameters(tAtk, tSta, tDec, tRel, samp_rate);
+            objGrain["volume-envelope-L1"] = cloudEnvelopeVolumeParam.l1;
+            objGrain["volume-envelope-L2"] = cloudEnvelopeVolumeParam.l2;
+            objGrain["volume-envelope-L3"] = cloudEnvelopeVolumeParam.l3;
             objGrain["volume-envelope-TAtk"] = tAtk;
             objGrain["volume-envelope-TSta"] = tSta;
             objGrain["volume-envelope-TDec"] = tDec;
             objGrain["volume-envelope-TRel"] = tRel;
         }
-        objGrain["volume-envelope-T1"] = cloudEnvelopeVolume.t1;
-        objGrain["volume-envelope-T2"] = cloudEnvelopeVolume.t2;
-        objGrain["volume-envelope-T3"] = cloudEnvelopeVolume.t3;
-        objGrain["volume-envelope-T4"] = cloudEnvelopeVolume.t4;
+        objGrain["volume-envelope-T1"] = cloudEnvelopeVolumeParam.t1;
+        objGrain["volume-envelope-T2"] = cloudEnvelopeVolumeParam.t2;
+        objGrain["volume-envelope-T3"] = cloudEnvelopeVolumeParam.t3;
+        objGrain["volume-envelope-T4"] = cloudEnvelopeVolumeParam.t4;
         objGrain["num-grains"] = (int)cloudToSave->getNumGrains();
         objGrain["active-state"] = cloudToSave->getActiveState();
         objGrain["x"] = cloudVisToSave->getX();
@@ -813,6 +813,15 @@ int Scene::getNumCloud(SceneCloud *cloudCurrent)
             return i;
     }
     return -1;
+}
+
+void Scene::changeParamEnvelopeVolume(SceneCloud *selectedCloud)
+{
+        ParamEnv localParamEnv;
+        Cloud *cloudToChangePEV = selectedCloud->cloud.get();
+        localParamEnv = cloudToChangePEV->getEnvelopeVolumeParam();
+        cloudToChangePEV->getEnvelopeVolume().envDialogShow(localParamEnv);
+        cloudToChangePEV->setEnvelopeVolumeParam(localParamEnv);
 }
 
 

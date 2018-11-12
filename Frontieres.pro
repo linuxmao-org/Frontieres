@@ -45,6 +45,8 @@ SOURCES += \
   sources/interface/MyGLApplication.cpp \
   sources/interface/MyGLWindow.cpp \
   sources/interface/StartDialog.cpp \
+  sources/interface/AdsrDialog.cpp \
+  sources/interface/Node.cpp \
   sources/dsp/Window.cpp \
   sources/model/Adsr.cpp \
   sources/model/Sample.cpp \
@@ -70,6 +72,8 @@ HEADERS += \
   sources/interface/MyGLApplication.h \
   sources/interface/MyGLWindow.h \
   sources/interface/StartDialog.h \
+  sources/interface/AdsrDialog.h \
+  sources/interface/Node.h \
   sources/dsp/Window.h \
   sources/model/Adsr.h \
   sources/model/Sample.h \
@@ -90,4 +94,5 @@ HEADERS += \
 
 FORMS += \
   sources/interface/MyGLWindow.ui \
-  sources/interface/StartDialog.ui
+  sources/interface/StartDialog.ui \
+  sources/interface/AdsrDialog.ui

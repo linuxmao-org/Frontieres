@@ -147,8 +147,10 @@ public:
     void describe(std::ostream &out);
 
     // envelope
-    void setEnvelopeVolume (ParamEnv envelopeVolumeToSet);
-    ParamEnv getEnvelopeVolume ();
+    void setEnvelopeVolume (Env envelopeVolumeToSet);
+    Env getEnvelopeVolume ();
+    void setEnvelopeVolumeParam (ParamEnv envelopeVolumeParamToSet);
+    ParamEnv getEnvelopeVolumeParam ();
 
 protected:
     // update internal trigger point
@@ -185,9 +187,9 @@ private:
     float volumeDb, normedVol;
     float *envelopeVolumeBuff;
     double *intermediateBuff;
-
     enum EnvelopeAction { TriggerEnvelope = 1, ReleaseEnvelope = 2 };
     std::atomic<int> envelopeAction;
+
 
     // vector of grains
     vector<Grain *> myGrains;
