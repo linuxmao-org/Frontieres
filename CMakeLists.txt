@@ -17,6 +17,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address")
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address")
 
+# Qt
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 find_package(Qt5Widgets CONFIG REQUIRED)
@@ -25,6 +26,7 @@ find_package(Qt5OpenGL CONFIG REQUIRED)
 add_executable(Frontieres WIN32
   sources/Frontieres.cpp
   sources/MyRtAudio.cpp
+  sources/MyRtOsc.cpp
   sources/interface/MyGLApplication.cpp
   sources/interface/MyGLWindow.cpp
   sources/interface/StartDialog.cpp
@@ -65,13 +67,12 @@ find_package(Threads REQUIRED)
 include(FindPkgConfig)
 pkg_check_modules(SNDFILE sndfile REQUIRED)
 pkg_check_modules(SOXR soxr REQUIRED)
+pkg_check_modules(LIBLO liblo REQUIRED)
 
 target_link_libraries(Frontieres
-  PRIVATE ${OPENGL_LIBRARIES} ${JACK_LIBRARIES} ${ALSA_LIBRARIES} ${SNDFILE_LIBRARIES} ${SOXR_LIBRARIES} "${CMAKE_THREAD_LIBS_INIT}")
+  PRIVATE ${OPENGL_LIBRARIES} ${JACK_LIBRARIES} ${ALSA_LIBRARIES} ${SNDFILE_LIBRARIES} ${SOXR_LIBRARIES} ${LIBLO_LIBRARIES} "${CMAKE_THREAD_LIBS_INIT}")
 target_include_directories(Frontieres
-  PRIVATE "${OPENGL_INCLUDE_DIR}" ${JACK_INCLUDE_DIRS} ${ALSA_INCLUDE_DIRS} ${SNDFILE_INCLUDE_DIRS} ${SOXR_INCLUDE_DIRS})
-
-# Qt
+  PRIVATE "${OPENGL_INCLUDE_DIR}" ${JACK_INCLUDE_DIRS} ${ALSA_INCLUDE_DIRS} ${SNDFILE_INCLUDE_DIRS} ${SOXR_INCLUDE_DIRS} ${LIBLO_INCLUDE_DIRS})
 
 qt5_wrap_ui(Frontieres_UI_SOURCES
   sources/interface/AdsrDialog.ui

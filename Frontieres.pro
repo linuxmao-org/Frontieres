@@ -36,15 +36,16 @@ linux: {
   LIBS += -ljack
 }
 
-LIBS += -lsndfile -lsoxr
+LIBS += -lsndfile -lsoxr -llo
 
 SOURCES += \
   sources/Frontieres.cpp \
   sources/MyRtAudio.cpp \
-  sources/interface/AdsrDialog.cpp \
+  sources/MyRtOsc.cpp \
   sources/interface/MyGLApplication.cpp \
   sources/interface/MyGLWindow.cpp \
   sources/interface/StartDialog.cpp \
+  sources/interface/AdsrDialog.cpp \
   sources/interface/Node.cpp \
   sources/dsp/Window.cpp \
   sources/model/Adsr.cpp \
@@ -67,10 +68,11 @@ HEADERS += \
   sources/I18n.h \
   sources/Frontieres.h \
   sources/MyRtAudio.h \
-  sources/interface/AdsrDialog.h \
+  sources/MyRtOsc.h \
   sources/interface/MyGLApplication.h \
   sources/interface/MyGLWindow.h \
   sources/interface/StartDialog.h \
+  sources/interface/AdsrDialog.h \
   sources/interface/Node.h \
   sources/dsp/Window.h \
   sources/model/Adsr.h \
@@ -91,6 +93,6 @@ HEADERS += \
   libraries/ring_buffer.tcc
 
 FORMS += \
-  sources/interface/AdsrDialog.ui \
   sources/interface/MyGLWindow.ui \
-  sources/interface/StartDialog.ui
+  sources/interface/StartDialog.ui \
+  sources/interface/AdsrDialog.ui
