@@ -25,6 +25,7 @@ find_package(Qt5OpenGL CONFIG REQUIRED)
 
 add_executable(Frontieres WIN32
   sources/Frontieres.cpp
+  sources/Ports.cpp
   sources/MyRtAudio.cpp
   sources/MyRtOsc.cpp
   sources/interface/MyGLApplication.cpp

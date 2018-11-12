@@ -20,31 +20,14 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include <memory>
+#include <rtosc/ports.h>
 
-class MyRtOsc
-{
-private:
-    MyRtOsc();
+namespace Ports {
 
-public:
-    ~MyRtOsc();
+// the root of input OSC message dispatch
+extern rtosc::Ports root;
 
-    static MyRtOsc &instance();
+// the subpath /cloud
+extern rtosc::Ports cloud;
 
-    bool open(const char *port = nullptr);
-    void close();
-
-    int getPort() const;
-    std::string getUrl() const;
-
-    typedef void (MessageHandler)(const char *, size_t, void *);
-    void setMessageHandler(MessageHandler *handler, void *userdata);
-
-    bool start();
-    bool stop();
-
-private:
-    struct Impl;
-    std::unique_ptr<Impl> P;
-};
+}  // namespace Ports

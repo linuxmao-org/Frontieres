@@ -43,6 +43,8 @@
 // other libraries
 #include <iostream>
 #include <vector>
+#include <thread>
+#include <chrono>
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -64,6 +66,7 @@
 
 // OSC related
 #include "MyRtOsc.h"
+#include "Ports.h"
 
 // graphics related
 #include "visual/SampleVis.h"
@@ -103,6 +106,8 @@ MyRtAudio *theAudio = NULL;
 RtMidiIn *theMidiIn = NULL;
 // buffer of midi input messages
 Ring_Buffer *theMidiInBuffer = NULL;
+// buffer of OSC input messages
+Ring_Buffer *theOscInBuffer = NULL;
 // library path
 string g_audioPathUser;
 string g_audioPathSystem;
@@ -166,7 +171,9 @@ void drawAxis();
 int audioCallback(void *outputBuffer, void *inputBuffer, unsigned int numFrames,
                   double streamTime, RtAudioStreamStatus status, void *userData);
 void processMidiMessage(const unsigned char *message, unsigned length);
+void processOscMessage(const char *message, size_t length);
 void midiInCallback(double timeStamp, std::vector<unsigned char> *message, void *userData);
+void oscCallback(const char *msg, size_t length, void *);
 
 //--------------------------------------------------------------------------------
 // Cleanup code
@@ -217,6 +224,21 @@ int audioCallback(void *outputBuffer, void *inputBuffer, unsigned int numFrames,
         theMidiInBuffer->discard(1);  // the header that was peeked
         theMidiInBuffer->get(midiMessageBuffer, midiMessageSize);
         processMidiMessage(midiMessageBuffer, midiMessageSize);
+    }
+
+    // process the OSC messages
+    size_t oscMessageSize;
+    char oscMessageBuffer[1024];
+    while (theOscInBuffer->peek(oscMessageSize) &&
+           theOscInBuffer->size_used() >= sizeof(oscMessageSize) + oscMessageSize)  // must check the message is available in full
+    {
+        theOscInBuffer->discard(sizeof(oscMessageSize));  // the header that was peeked
+        if (oscMessageSize > sizeof(oscMessageBuffer))
+            theOscInBuffer->discard(oscMessageSize);
+        else {
+            theOscInBuffer->get(oscMessageBuffer, oscMessageSize);
+            processOscMessage(oscMessageBuffer, oscMessageSize);
+        }
     }
 
     // cast audio buffers
@@ -283,6 +305,18 @@ void processMidiMessage(const unsigned char *message, unsigned length)
     }
 }
 
+// OSC processing routing
+void processOscMessage(const char *message, size_t length)
+{
+    rtosc::RtData d;
+    d.obj = ::currentScene;
+
+    if (!d.obj)
+        return;
+
+    Ports::root.dispatch(message, d, true);
+}
+
 //================================================================================
 //   Midi Input Callback
 //================================================================================
@@ -302,6 +336,27 @@ void midiInCallback(double, std::vector<unsigned char> *message, void *)
     theMidiInBuffer->put((unsigned char)size);
     // write the message body
     theMidiInBuffer->put(message->data(), size);
+}
+
+//================================================================================
+//   OSC Input Callback
+//================================================================================
+void oscCallback(const char *msg, size_t length, void *)
+{
+    Ring_Buffer &buffer = *theOscInBuffer;
+    size_t need = sizeof(length) + length;
+
+    if (need > buffer.capacity())
+        return;  // message too large
+
+    // wait for free space if full buffer
+    while (buffer.size_free() < need)
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+
+    // write the message header, a size field
+    buffer.put(length);
+    // write the message body
+    buffer.put(msg, length);
 }
 
 //================================================================================
@@ -828,6 +883,9 @@ int main(int argc, char **argv)
         exit(1);
     }
 
+    //-------------OSC Configuration-----------//
+    theOscInBuffer = new Ring_Buffer(8192);
+
     //-------------App Initialization--------//
 
     // init Qt application
@@ -915,6 +973,7 @@ int main(int argc, char **argv)
 
     // start OSC
     MyRtOsc &osc = MyRtOsc::instance();
+    osc.setMessageHandler(&oscCallback, nullptr);
     if (!osc.open() || !osc.start()) {
         std::cerr << "Error: failed to start OSC!\n";
         return 1;

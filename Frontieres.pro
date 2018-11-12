@@ -40,6 +40,7 @@ LIBS += -lsndfile -lsoxr -llo
 
 SOURCES += \
   sources/Frontieres.cpp \
+  sources/Ports.cpp \
   sources/MyRtAudio.cpp \
   sources/MyRtOsc.cpp \
   sources/interface/MyGLApplication.cpp \
@@ -67,6 +68,7 @@ HEADERS += \
   sources/theglobals.h \
   sources/I18n.h \
   sources/Frontieres.h \
+  sources/Ports.h \
   sources/MyRtAudio.h \
   sources/MyRtOsc.h \
   sources/interface/MyGLApplication.h \
