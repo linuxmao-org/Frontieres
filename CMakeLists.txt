@@ -25,6 +25,7 @@ find_package(Qt5OpenGL CONFIG REQUIRED)
 
 add_executable(Frontieres WIN32
   sources/Frontieres.cpp
+  sources/Ports.cpp
   sources/MyRtAudio.cpp
   sources/MyRtOsc.cpp
   sources/interface/MyGLApplication.cpp
@@ -80,6 +81,30 @@ qt5_wrap_ui(Frontieres_UI_SOURCES
   sources/interface/StartDialog.ui)
 target_sources(Frontieres PRIVATE ${Frontieres_UI_SOURCES})
 target_link_libraries(Frontieres PRIVATE Qt5::Widgets Qt5::OpenGL)
+
+# RtOsc
+add_library(RtOsc STATIC
+  libraries/rtosc/src/dispatch.c
+  libraries/rtosc/src/util.c
+  libraries/rtosc/src/rtosc-time.c
+  libraries/rtosc/src/pretty-format.c
+  libraries/rtosc/src/rtosc.c
+  libraries/rtosc/src/arg-val-math.c
+  libraries/rtosc/src/arg-val-cmp.c
+  libraries/rtosc/src/version.c
+  libraries/rtosc/src/cpp/subtree-serialize.cpp
+  libraries/rtosc/src/cpp/default-value.cpp
+  libraries/rtosc/src/cpp/ports-runtime.cpp
+  libraries/rtosc/src/cpp/midimapper.cpp
+  libraries/rtosc/src/cpp/automations.cpp
+  libraries/rtosc/src/cpp/ports.cpp
+  libraries/rtosc/src/cpp/savefile.cpp
+  libraries/rtosc/src/cpp/undo-history.cpp
+  libraries/rtosc/src/cpp/miditable.cpp
+  libraries/rtosc/src/cpp/thread-link.cpp)
+target_include_directories(RtOsc PUBLIC
+  libraries/rtosc/include)
+target_link_libraries(Frontieres PRIVATE RtOsc)
 
 # I18n
 find_package(Qt5LinguistTools REQUIRED)

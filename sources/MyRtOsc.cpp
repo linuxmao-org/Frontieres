@@ -21,12 +21,22 @@
 
 #include "MyRtOsc.h"
 #include <lo/lo.h>
+#include <rtosc/ports.h>
+#include <string.h>
 
 struct MyRtOsc::Impl
 {
     static MyRtOsc theRtOsc;
 
     lo_server_thread server_ = nullptr;
+    std::unique_ptr<char[]> messagebuf_;
+    enum { messagebuf_size = 2048 };
+
+    MessageHandler *handler_ = nullptr;
+    void *handler_userdata_ = nullptr;
+
+    void handleIncomingMessage(const char *msg, size_t length);
+
     static void handleError(int num, const char *msg, const char *where);
     static int handleMethod(const char *path, const char *types,
                             lo_arg **argv, int argc, lo_message msg,
@@ -38,6 +48,7 @@ MyRtOsc MyRtOsc::Impl::theRtOsc;
 MyRtOsc::MyRtOsc()
     : P(new Impl)
 {
+    P->messagebuf_.reset(new char[Impl::messagebuf_size]);
 }
 
 MyRtOsc::~MyRtOsc()
@@ -96,6 +107,12 @@ std::string MyRtOsc::getUrl() const
     return str;
 }
 
+void MyRtOsc::setMessageHandler(MessageHandler *handler, void *userdata)
+{
+    P->handler_ = handler;
+    P->handler_userdata_ = userdata;
+}
+
 bool MyRtOsc::start()
 {
     lo_server_thread server = P->server_;
@@ -120,6 +137,12 @@ bool MyRtOsc::stop()
     return true;
 }
 
+void MyRtOsc::Impl::handleIncomingMessage(const char *msg, size_t length)
+{
+    if (handler_)
+        handler_(msg, length, handler_userdata_);
+}
+
 void MyRtOsc::Impl::handleError(int num, const char *msg, const char *where)
 {
     fprintf(stderr, "OSC error: %s\n", msg);
@@ -131,8 +154,17 @@ int MyRtOsc::Impl::handleMethod(const char *path, const char *types,
 {
     Impl *self = (Impl *)user_data;
 
-    // TODO
-    fprintf(stderr, "[OSC] %s %s\n", path, types);
+    char *buf = self->messagebuf_.get();
+    memset(buf, 0, messagebuf_size);
+
+    size_t size = messagebuf_size;
+    if (!lo_message_serialise(msg, path, buf, &size))
+        return 0;
+
+    if(buf[0]=='/' && strrchr(buf, '/')[1]) {  // same as ZynAddSubFx does
+        char *msg = rtosc::Ports::collapsePath(buf);
+        self->handleIncomingMessage(msg, rtosc_message_length(buf, messagebuf_size));
+    }
 
     return 0;
 }

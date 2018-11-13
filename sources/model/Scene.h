@@ -79,6 +79,8 @@ public:
     SceneSample *selectedSample();
     SceneCloud *selectedCloud();
 
+    SceneCloud *findCloudById(unsigned id);
+
     // handle deselections
     void deselect(int shapeType);
 

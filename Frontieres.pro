@@ -40,6 +40,7 @@ LIBS += -lsndfile -lsoxr -llo
 
 SOURCES += \
   sources/Frontieres.cpp \
+  sources/Ports.cpp \
   sources/MyRtAudio.cpp \
   sources/MyRtOsc.cpp \
   sources/interface/MyGLApplication.cpp \
@@ -67,6 +68,7 @@ HEADERS += \
   sources/theglobals.h \
   sources/I18n.h \
   sources/Frontieres.h \
+  sources/Ports.h \
   sources/MyRtAudio.h \
   sources/MyRtOsc.h \
   sources/interface/MyGLApplication.h \
@@ -96,3 +98,49 @@ FORMS += \
   sources/interface/MyGLWindow.ui \
   sources/interface/StartDialog.ui \
   sources/interface/AdsrDialog.ui
+
+# RtOsc
+INCLUDEPATH += $$PWD/libraries/rtosc/include
+
+SOURCES += \
+  libraries/rtosc/src/dispatch.c \
+  libraries/rtosc/src/util.c \
+  libraries/rtosc/src/rtosc-time.c \
+  libraries/rtosc/src/pretty-format.c \
+  libraries/rtosc/src/rtosc.c \
+  libraries/rtosc/src/arg-val-math.c \
+  libraries/rtosc/src/arg-val-cmp.c \
+  libraries/rtosc/src/version.c \
+  libraries/rtosc/src/cpp/subtree-serialize.cpp \
+  libraries/rtosc/src/cpp/default-value.cpp \
+  libraries/rtosc/src/cpp/ports-runtime.cpp \
+  libraries/rtosc/src/cpp/midimapper.cpp \
+  libraries/rtosc/src/cpp/automations.cpp \
+  libraries/rtosc/src/cpp/ports.cpp \
+  libraries/rtosc/src/cpp/savefile.cpp \
+  libraries/rtosc/src/cpp/undo-history.cpp \
+  libraries/rtosc/src/cpp/miditable.cpp \
+  libraries/rtosc/src/cpp/thread-link.cpp
+
+HEADERS += \
+  libraries/rtosc/include \
+  libraries/rtosc/include/rtosc \
+  libraries/rtosc/include/rtosc/rtosc-time.h \
+  libraries/rtosc/include/rtosc/typed-message.h \
+  libraries/rtosc/include/rtosc/ports.h \
+  libraries/rtosc/include/rtosc/subtree-serialize.h \
+  libraries/rtosc/include/rtosc/typestring.hh \
+  libraries/rtosc/include/rtosc/bundle-foreach.h \
+  libraries/rtosc/include/rtosc/default-value.h \
+  libraries/rtosc/include/rtosc/port-sugar.h \
+  libraries/rtosc/include/rtosc/miditable.h \
+  libraries/rtosc/include/rtosc/rtosc.h \
+  libraries/rtosc/include/rtosc/savefile.h \
+  libraries/rtosc/include/rtosc/automations.h \
+  libraries/rtosc/include/rtosc/arg-val-cmp.h \
+  libraries/rtosc/include/rtosc/ports-runtime.h \
+  libraries/rtosc/include/rtosc/rtosc-version.h \
+  libraries/rtosc/include/rtosc/undo-history.h \
+  libraries/rtosc/include/rtosc/thread-link.h \
+  libraries/rtosc/include/rtosc/arg-val-math.h \
+  libraries/rtosc/include/rtosc/pretty-format.h

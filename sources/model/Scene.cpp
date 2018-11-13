@@ -782,6 +782,16 @@ SceneCloud *Scene::selectedCloud()
     return m_clouds[(unsigned)m_selectedCloud].get();
 }
 
+SceneCloud *Scene::findCloudById(unsigned id)
+{
+    for (size_t i = 0, n = m_clouds.size(); i < n; i++) {
+        SceneCloud &cloud = *m_clouds[i];
+        if (cloud.cloud->getId() == id)
+            return &cloud;
+    }
+    return nullptr;
+}
+
 // handle deselections
 void Scene::deselect(int shapeType)
 {
