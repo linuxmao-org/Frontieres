@@ -34,7 +34,9 @@ struct CloudParams
     int dirMode;
     int windowType;
     int spatialMode;
-    int chanelLocation;
+    int channelLocation;
+    int midiChannel;
+    int midiNote;
     float volumeDB;
     int numGrains;
     bool activateState;

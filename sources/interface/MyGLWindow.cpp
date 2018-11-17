@@ -615,8 +615,8 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
             selectedSample->view->toggleOrientation();
         }
         break;
-    case Qt::Key_P:  // waveform display on/off
-        break;
+//    case Qt::Key_P:  // waveform display on/off
+//        break;
     case Qt::Key_W:  // window editing for grain
         paramString = "";
         if (currentParam != WINDOW) {
@@ -896,10 +896,15 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
             theApplication->showDialogVolumeEnvelope(selectedCloud);
         }
     }
+    case Qt::Key_P: {
+        // all parameters in a separate window
+        if (selectedCloud) {
+           theApplication->showCloudDialog(selectedCloud);
+        }
+    }
     default:
         break;
     }
-
     update();
 }
 

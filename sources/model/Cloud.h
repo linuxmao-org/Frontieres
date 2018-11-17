@@ -45,7 +45,10 @@
 #include <QDir>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QTranslator>
 #include "model/Adsr.h"
+#include "dsp/Window.h"
+
 class Grain;
 struct SceneSample;
 
@@ -67,6 +70,7 @@ using namespace std;
 // forward declarations
 class Cloud;
 class CloudVis;
+class CloudDialog;
 
 // class interface
 class Cloud {
@@ -129,7 +133,7 @@ public:
     void setId(int cloudId);
 
     // register visualization
-    void registerVis(CloudVis *myVis);
+    void registerCloudVis(CloudVis *cloudVisToRegister);
 
     // turn on/off
     void toggleActive();
@@ -137,8 +141,9 @@ public:
     bool getActiveState();
 
 
-    // return number of Grains
+    // number of Grains
     unsigned int getNumGrains();
+    void setNumGrains(unsigned int newNumGrains);
 
     // update after a change of sample set
     void updateSampleSet();
@@ -151,6 +156,18 @@ public:
     Env getEnvelopeVolume ();
     void setEnvelopeVolumeParam (ParamEnv envelopeVolumeParamToSet);
     ParamEnv getEnvelopeVolumeParam ();
+
+    // params dialog
+    void setDialogExist(bool exist);
+    bool getDialogExist();
+    void showDialog(CloudVis *selectedCloudVis);
+    void updateDialog();
+
+    // midi notes
+    void setMidiChannel(int newMidiChannel);
+    void setMidiNote(int newMidiNote);
+    int getMidiChannel();
+    int getMidiNote();
 
 protected:
     // update internal trigger point
@@ -176,7 +193,7 @@ private:
     int side;
 
     // registered visualization
-    CloudVis *myVis;
+    CloudVis *myCloudVis;
 
     // spatialization
     double *channelMults;
@@ -206,6 +223,14 @@ private:
 
     // envelope
     Env *envelopeVolume;
+
+    // params dialog
+    bool dialogExist = false;
+    CloudDialog *myCloudDialog;
+
+    // midi params
+    int midiChannel = 0;
+    int midiNote;
 };
 
 #endif

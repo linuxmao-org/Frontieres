@@ -168,6 +168,11 @@ void MyGLApplication::showDialogVolumeEnvelope(SceneCloud *selectedCloudToVolume
     currentScene->changeParamEnvelopeVolume(selectedCloudToVolumeEnvelope);
 }
 
+void MyGLApplication::showCloudDialog(SceneCloud *selectedCloud)
+{
+    currentScene->showSceneCloudDialog(selectedCloud);
+}
+
 void MyGLApplication::Impl::onIdle()
 {
     window->screen()->update();
