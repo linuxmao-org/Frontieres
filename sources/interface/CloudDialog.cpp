@@ -238,7 +238,7 @@ void CloudDialog::on_doubleSpinBox_Midi_Channel_valueChanged(double arg1)
 void CloudDialog::on_checkBox_Active_toggled(bool checked)
 {
     if (!linking)
-        cloudRef->toggleActive();
+        cloudRef->setActiveState(checked);
 }
 
 void CloudDialog::on_radioButton_Window_Hanning_toggled(bool checked)

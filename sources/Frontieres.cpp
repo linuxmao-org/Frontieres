@@ -279,12 +279,14 @@ void processMidiMessage(const unsigned char *message, unsigned length)
     //fprintf(stderr, "MIDI[%02u] %02X %02X %02X\n", channel + 1, status, data1, data2);
 
     switch (status) {
-    case 0x80:  // note on, 1=key number, 2=velocity
+    case 0x90:  // note on, 1=key number, 2=velocity
         /* do something */
+        theApplication->midiNoteOn(channel, data1, data2);
         break;
 
-    case 0x90:  // note off, 1=key number, 2=velocity
+    case 0x80:  // note off, 1=key number, 2=velocity
         /* do something */
+        theApplication->midiNoteOff(channel, data1);
         break;
     case 0xb0:  // control change, 1=control number, 2=value
         switch (data1) {

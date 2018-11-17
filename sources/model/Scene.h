@@ -98,6 +98,10 @@ public:
     int m_selectedSample = -1;
     int m_selectionIndex = 0;
     std::vector<int> m_selectionIndices;
+
+    // midi notes
+    void midiNoteOn (int midiChannelToPlay, int midiNoteToPlay, int midiVeloToPlay);
+    void midiNoteOff (int midiChannelToStop, int midiNoteToStop);
 };
 
 struct SceneSample {
