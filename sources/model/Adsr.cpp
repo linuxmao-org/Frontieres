@@ -67,7 +67,7 @@ void Env::trigger()
 void Env::release()
 {
     rel_ = true;
-    std::cout << "entree release : " << param_.r3<<std::endl;
+    //std::cout << "entree release : " << param_.r3<<std::endl;
 }
 
 auto Env::state() const -> State

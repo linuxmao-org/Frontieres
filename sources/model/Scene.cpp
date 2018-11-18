@@ -196,8 +196,8 @@ bool Scene::load(QFile &sceneFile)
     m_clouds.reserve(docGrains.size());
     for (const QJsonValue &jsonElement : docGrains) { // samples
         QJsonObject objGrain = jsonElement.toObject();
-        SceneCloud *cloud = new SceneCloud;
-        m_clouds.emplace_back(cloud);
+        SceneCloud *sceneCloud = new SceneCloud;
+        m_clouds.emplace_back(sceneCloud);
 
         int cloudId = objGrain["id"].toInt();
         double cloudDuration = objGrain["duration"].toDouble();
@@ -208,7 +208,9 @@ bool Scene::load(QFile &sceneFile)
         int cloudDirection = objGrain["direction"].toInt();
         int cloudWindowType = objGrain["window-type"].toInt();
         int cloudSpatialMode = objGrain["spatial-mode"].toInt();
-        int cloudSpatialChanel = objGrain["spatial-channel"].toInt();
+        int cloudSpatialChannel = objGrain["spatial-channel"].toInt();
+        int cloudMidiChannel = objGrain["midi-channel"].toInt();
+        int cloudMidiNote = objGrain["midi-note"].toInt();
         double cloudVolumeDb = objGrain["volume"].toDouble();
         ParamEnv cloudEnvelopeVolume;
         {
@@ -244,7 +246,9 @@ bool Scene::load(QFile &sceneFile)
         cout << "direction = " << cloudDirection << "\n";
         cout << "window type = " << cloudWindowType << "\n";
         cout << "spatial mode = " << cloudSpatialMode << "\n";
-        cout << "spatial channel = " << cloudSpatialChanel << "\n";
+        cout << "spatial channel = " << cloudSpatialChannel << "\n";
+        cout << "midi channel = " << cloudMidiChannel << "\n";
+        cout << "midi note = " << cloudMidiNote << "\n";
         cout << "volume = " << cloudVolumeDb << "\n";
         cout << "volume envelope L1 = " << cloudEnvelopeVolume.l1 << "\n";
         cout << "volume envelope L2 = " << cloudEnvelopeVolume.l2 << "\n";
@@ -265,14 +269,14 @@ bool Scene::load(QFile &sceneFile)
         cout << "Y extent = " << cloudYRandExtent << "\n";
         // create audio
         Cloud *cloudToLoad = new Cloud(&m_samples, cloudNumGrains);
-        cloud->cloud.reset(cloudToLoad);
+        sceneCloud->cloud.reset(cloudToLoad);
         // create visualization
         CloudVis *cloudVisToLoad = new CloudVis(cloudX, cloudY, cloudNumGrains, &m_samples);
-        cloud->view.reset(cloudVisToLoad);
+        sceneCloud->view.reset(cloudVisToLoad);
         // register visualization with audio
         cloudVisToLoad->setSelectState(true);
-        cloudToLoad->registerVis(cloudVisToLoad);
-
+        cloudToLoad->registerCloudVis(cloudVisToLoad);
+        cloudVisToLoad->registerCloud(cloudToLoad);
         cloudToLoad->setId(cloudId);
         cloudToLoad->setDurationMs(cloudDuration);
         cloudToLoad->setOverlap(cloudOverlap);
@@ -281,7 +285,9 @@ bool Scene::load(QFile &sceneFile)
         cloudToLoad->setPitchLFOAmount(cloudPitchLFOAmount);
         cloudToLoad->setDirection(cloudDirection);
         cloudToLoad->setWindowType(cloudWindowType);
-        cloudToLoad->setSpatialMode(cloudSpatialMode,cloudSpatialChanel);
+        cloudToLoad->setSpatialMode(cloudSpatialMode,cloudSpatialChannel);
+        cloudToLoad->setMidiChannel(cloudMidiChannel);
+        cloudToLoad->setMidiNote(cloudMidiNote);
         cloudToLoad->setVolumeDb(cloudVolumeDb);
         cloudToLoad->setActiveState(cloudActiveState);
         cloudVisToLoad->setFixedXRandExtent(cloudXRandExtent);
@@ -367,6 +373,8 @@ bool Scene::save(QFile &sceneFile)
         objGrain["window-type"] = cloudToSave->getWindowType();
         objGrain["spatial-mode"] = cloudToSave->getSpatialMode();
         objGrain["spatial-channel"] = cloudToSave->getSpatialChannel();
+        objGrain["midi-channel"] = cloudToSave->getMidiChannel();
+        objGrain["midi-note"] = cloudToSave->getMidiNote();
         objGrain["volume"] = cloudToSave->getVolumeDb();
         const ParamEnv &cloudEnvelopeVolumeParam = cloudToSave->getEnvelopeVolumeParam();
         {
@@ -430,7 +438,9 @@ bool Scene::loadCloudDefault(QFile &cloudFile)
     g_defaultCloudParams.dirMode = objGrain["direction"].toInt();
     g_defaultCloudParams.windowType = objGrain["window-type"].toInt();
     g_defaultCloudParams.spatialMode = objGrain["spatial-mode"].toInt();
-    g_defaultCloudParams.chanelLocation = objGrain["spatial-channel"].toInt();
+    g_defaultCloudParams.channelLocation = objGrain["spatial-channel"].toInt();
+    g_defaultCloudParams.midiChannel = objGrain["midi-channel"].toInt();
+    g_defaultCloudParams.midiNote = objGrain["midi-note"].toInt();
     g_defaultCloudParams.volumeDB = objGrain["volume"].toDouble();
     g_defaultCloudParams.envelope.l1 = objGrain["volume-envelope-L1"].toDouble();
     g_defaultCloudParams.envelope.l2 = objGrain["volume-envelope-L2"].toDouble();
@@ -456,7 +466,9 @@ bool Scene::loadCloudDefault(QFile &cloudFile)
     cout << "direction = " << g_defaultCloudParams.dirMode << "\n";
     cout << "window type = " << g_defaultCloudParams.windowType << "\n";
     cout << "spatial mode = " << g_defaultCloudParams.spatialMode << "\n";
-    cout << "spatial channel = " << g_defaultCloudParams.chanelLocation << "\n";
+    cout << "spatial channel = " << g_defaultCloudParams.channelLocation << "\n";
+    cout << "midi channel = " << g_defaultCloudParams.midiChannel << "\n";
+    cout << "midi note = " << g_defaultCloudParams.midiNote << "\n";
     cout << "volume = " << g_defaultCloudParams.volumeDB << "\n";
     cout << "grains = " << g_defaultCloudParams.numGrains << "\n";
     cout << "active = " << g_defaultCloudParams.activateState << "\n";
@@ -511,6 +523,8 @@ bool Scene::saveCloud(QFile &cloudFile, SceneCloud *selectedCloudSave)
     objGrain["window-type"] = cloudToSave->getWindowType();
     objGrain["spatial-mode"] = cloudToSave->getSpatialMode();
     objGrain["spatial-channel"] = cloudToSave->getSpatialChannel();
+    objGrain["midi-channel"] = cloudToSave->getMidiChannel();
+    objGrain["midi-note"] = cloudToSave->getMidiNote();
     objGrain["volume"] = cloudToSave->getVolumeDb();
     objGrain["num-grains"] = (int)cloudToSave->getNumGrains();
     objGrain["active-state"] = cloudToSave->getActiveState();
@@ -662,9 +676,11 @@ void Scene::initDefaultCloudParams()
     g_defaultCloudParams.pitchLFOAmount = 0.00f;
     g_defaultCloudParams.windowType = HANNING;
     g_defaultCloudParams.spatialMode= UNITY;
-    g_defaultCloudParams.chanelLocation = -1;
+    g_defaultCloudParams.channelLocation = -1;
     g_defaultCloudParams.numGrains = 8;
     g_defaultCloudParams.activateState = true;
+    g_defaultCloudParams.midiChannel = 0;
+    g_defaultCloudParams.midiNote = 69;
     g_defaultCloudParams.xRandExtent = 3.0f;
     g_defaultCloudParams.yRandExtent = 3.0f;
     g_defaultCloudParams.envelope.setTimeBasedParameters(
@@ -755,17 +771,18 @@ void Scene::addSampleVis(Sample *sampleToAdd)
 void Scene::addNewCloud(int numGrains)
 {
     // create audio
-    SceneCloud *cloud = new SceneCloud;
-    m_clouds.emplace_back(cloud);
-    cloud->cloud.reset(new Cloud(&m_samples, numGrains));
+    SceneCloud *sceneCloud = new SceneCloud;
+    m_clouds.emplace_back(sceneCloud);
+    sceneCloud->cloud.reset(new Cloud(&m_samples, numGrains));
     // create visualization
-    cloud->view.reset(new CloudVis(mouseX, mouseY, numGrains, &m_samples));
+    sceneCloud->view.reset(new CloudVis(mouseX, mouseY, numGrains, &m_samples));
     // select new cloud
-    cloud->view->setSelectState(true);
+    sceneCloud->view->setSelectState(true);
     // register visualization with audio
-    cloud->cloud->registerVis(cloud->view.get());
+    sceneCloud->cloud->registerCloudVis(sceneCloud->view.get());
+    sceneCloud->view->registerCloud(sceneCloud->cloud.get());
     std::ostream &out = std::cout;
-    cloud->cloud->describe(out);
+    sceneCloud->cloud->describe(out);
 }
 
 SceneSample *Scene::selectedSample()
@@ -813,6 +830,28 @@ void Scene::deselect(int shapeType)
         break;
     }
 }
+
+void Scene::midiNoteOn(int midiChannelToPlay, int midiNoteToPlay, int midiVeloToPlay)
+{
+    for (int i = 0, n = m_clouds.size(); i < n; i++) {
+        if ((m_clouds[i]->cloud->getMidiChannel() ==  midiChannelToPlay + 1) &
+                (m_clouds[i]->cloud.get()->getMidiNote() ==  midiNoteToPlay)) {
+            m_clouds[i]->cloud.get()->setActiveState(true);
+
+        }
+    }
+}
+
+void Scene::midiNoteOff(int midiChannelToStop, int midiNoteToStop)
+{
+    for (int i = 0, n = m_clouds.size(); i < n; i++) {
+        if ((m_clouds[i]->cloud.get()->getMidiChannel() ==  midiChannelToStop + 1) &
+                (m_clouds[i]->cloud.get()->getMidiNote() ==  midiNoteToStop)) {
+            m_clouds[i]->cloud.get()->setActiveState(false);
+        }
+    }
+}
+
 // get num of a cloud in current scene
 int Scene::getNumCloud(SceneCloud *cloudCurrent)
 {
@@ -827,11 +866,17 @@ int Scene::getNumCloud(SceneCloud *cloudCurrent)
 
 void Scene::changeParamEnvelopeVolume(SceneCloud *selectedCloud)
 {
-        ParamEnv localParamEnv;
-        Cloud *cloudToChangePEV = selectedCloud->cloud.get();
-        localParamEnv = cloudToChangePEV->getEnvelopeVolumeParam();
-        cloudToChangePEV->getEnvelopeVolume().envDialogShow(localParamEnv);
-        cloudToChangePEV->setEnvelopeVolumeParam(localParamEnv);
+    ParamEnv localParamEnv;
+    Cloud *cloudToChangePEV = selectedCloud->cloud.get();
+    localParamEnv = cloudToChangePEV->getEnvelopeVolumeParam();
+    cloudToChangePEV->getEnvelopeVolume().envDialogShow(localParamEnv);
+    cloudToChangePEV->setEnvelopeVolumeParam(localParamEnv);
+}
+
+void Scene::showSceneCloudDialog(SceneCloud *selectedCloud)
+{
+
+    selectedCloud->cloud.get()->showDialog(selectedCloud->view.get());
 }
 
 

@@ -168,6 +168,21 @@ void MyGLApplication::showDialogVolumeEnvelope(SceneCloud *selectedCloudToVolume
     currentScene->changeParamEnvelopeVolume(selectedCloudToVolumeEnvelope);
 }
 
+void MyGLApplication::showCloudDialog(SceneCloud *selectedCloud)
+{
+    currentScene->showSceneCloudDialog(selectedCloud);
+}
+
+void MyGLApplication::midiNoteOn(int midiChannelToPlay, int midiKeyToPlay, int midiVeloToPlay)
+{
+    currentScene->midiNoteOn(midiChannelToPlay, midiKeyToPlay, midiVeloToPlay);
+}
+
+void MyGLApplication::midiNoteOff(int midiChannelToStop, int midiKeyToStop)
+{
+    currentScene->midiNoteOff(midiChannelToStop, midiKeyToStop);
+}
+
 void MyGLApplication::Impl::onIdle()
 {
     window->screen()->update();

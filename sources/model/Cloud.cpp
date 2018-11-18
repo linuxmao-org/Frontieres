@@ -30,8 +30,8 @@
 #include "model/Grain.h"
 #include "model/ParamCloud.h"
 #include "visual/CloudVis.h"
-#include "dsp/Window.h"
 #include "utility/GTime.h"
+#include "interface/CloudDialog.h"
 
 extern unsigned int samp_rate;
 extern unsigned int g_buffSize;
@@ -39,8 +39,6 @@ extern CloudParams g_defaultCloudParams;
 
 // ids
 static unsigned int cloudId = 0;
-
-
 // Destructor
 Cloud::~Cloud()
 {
@@ -53,6 +51,8 @@ Cloud::~Cloud()
 
     if (channelMults)
         delete[] channelMults;
+    if (dialogExist)
+        delete myCloudDialog ;
 }
 
 
@@ -114,7 +114,7 @@ Cloud::Cloud(VecSceneSample *sampleSet, float theNumGrains)
     //spatialMode = UNITY;
     spatialMode = g_defaultCloudParams.spatialMode;
     //channelLocation = -1;
-    channelLocation = g_defaultCloudParams.chanelLocation;
+    channelLocation = g_defaultCloudParams.channelLocation;
     //myDirMode = RANDOM_DIR;
     myDirMode = g_defaultCloudParams.dirMode;
 
@@ -154,10 +154,10 @@ Cloud::Cloud(VecSceneSample *sampleSet, float theNumGrains)
     setActiveState(g_defaultCloudParams.activateState);
 }
 // register controller for communication with view
-void Cloud::registerVis(CloudVis *vis)
+void Cloud::registerCloudVis(CloudVis *cloudVisToRegister)
 {
-    myVis = vis;
-    myVis->setDuration(duration);
+    myCloudVis = cloudVisToRegister;
+    myCloudVis->setDuration(duration);
 }
 
 // turn on/off
@@ -173,6 +173,7 @@ void Cloud::setActiveState(bool activateState)
     else
        envelopeAction.store(ReleaseEnvelope);
     isActive = activateState;
+    updateDialog();
 }
 
 bool Cloud::getActiveState()
@@ -203,6 +204,7 @@ void Cloud::setWindowType(int winType)
             myGrains[i]->setWindow(windowType);
         }
     }
+    updateDialog();
 }
 
 int Cloud::getWindowType()
@@ -214,13 +216,13 @@ int Cloud::getWindowType()
 void Cloud::addGrain()
 {
     addFlag = true;
-    myVis->addGrain();
+    myCloudVis->addGrain();
 }
 
 void Cloud::removeGrain()
 {
     removeFlag = true;
-    myVis->removeGrain();
+    myCloudVis->removeGrain();
 }
 
 // return id for grain
@@ -232,6 +234,7 @@ unsigned int Cloud::getId()
 void Cloud::setId(int cloudId)
 {
     myId = cloudId;
+    updateDialog();
 }
 
 // overlap (input on 0 to 1 scale)
@@ -250,6 +253,7 @@ void Cloud::setOverlap(float target)
 
     //  cout<<"overlap set" << overlap << endl;
     updateBangTime();
+    updateDialog();
 }
 
 float Cloud::getOverlap()
@@ -268,9 +272,10 @@ void Cloud::setDurationMs(float theDur)
         updateBangTime();
 
         // notify visualization
-        if (myVis)
-            myVis->setDuration(duration);
+        if (myCloudVis)
+            myCloudVis->setDuration(duration);
     }
+    updateDialog();
 }
 
 // update internal grain trigger time
@@ -290,6 +295,7 @@ void Cloud::setPitch(float targetPitch)
     pitch = targetPitch;
     for (int i = 0; i < myGrains.size(); i++)
         myGrains[i]->setPitch(targetPitch);
+    updateDialog();
 }
 
 float Cloud::getPitch()
@@ -319,6 +325,7 @@ void Cloud::setVolumeDb(float volDb)
 
     for (int i = 0; i < myGrains.size(); i++)
         myGrains[i]->setVolume(normedVol);
+    updateDialog();
 }
 
 float Cloud::getVolumeDb()
@@ -357,6 +364,7 @@ void Cloud::setDirection(int dirMode)
     default:
         break;
     }
+    updateDialog();
 }
 
 
@@ -379,6 +387,12 @@ unsigned int Cloud::getNumGrains()
     return myGrains.size();
 }
 
+void Cloud::setNumGrains(unsigned int newNumGrains)
+{
+    numGrains = newNumGrains;
+    updateDialog();
+}
+
 // update after a change of sample set
 void Cloud::updateSampleSet()
 {
@@ -396,6 +410,77 @@ ParamEnv Cloud::getEnvelopeVolumeParam ()
     return envelopeVolume->getParam();
 }
 
+void Cloud::setDialogExist(bool exist)
+{
+    dialogExist = exist;
+}
+
+bool Cloud::getDialogExist()
+{
+    return dialogExist;
+}
+
+void Cloud::showDialog(CloudVis *selectedCloudVis)
+{
+    if (! dialogExist) {
+        myCloudDialog = new CloudDialog ();
+        myCloudDialog->setWindowTitle("Cloud parameters");
+        dialogExist = true;
+    }
+    myCloudDialog->show();
+    updateDialog();
+}
+
+void Cloud::updateDialog()
+{
+    if (dialogExist)
+        myCloudDialog->linkCloud(this, myCloudVis);
+}
+
+void Cloud::setMidiChannel(int newMidiChannel)
+{
+    midiChannel = newMidiChannel;
+}
+
+void Cloud::setMidiNote(int newMidiNote)
+{
+    midiNote = newMidiNote;
+}
+
+int Cloud::getMidiChannel()
+{
+    return midiChannel;
+}
+
+int Cloud::getMidiNote()
+{
+    return midiNote;
+}
+
+void Cloud::setLockedState(bool newLockedState)
+{
+    locked = newLockedState;
+}
+
+bool Cloud::getLockedState()
+{
+    return locked;
+}
+
+bool Cloud::dialogLocked()
+{
+    QMessageBox msgBox;
+    msgBox.setText("This cloud is locked, impossible to change parameters.");
+    msgBox.setInformativeText("Do you want to unlock the cloud ?");
+    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    msgBox.setDefaultButton(QMessageBox::No);
+    if (msgBox.exec() == QMessageBox::No)
+        locked = true;
+    else
+        locked = false;
+    return locked;
+}
+
 // print information
 void Cloud::describe(std::ostream &out)
 {
@@ -407,7 +492,9 @@ void Cloud::describe(std::ostream &out)
     out << "- direction : " << getDirection() << "\n";
     out << "- window type : " << getWindowType() << "\n";
     out << "- spatial mode : " << getSpatialMode() << "\n";
-    out << "- spatial chanel : " << getSpatialChannel() << "\n";
+    out << "- spatial channel : " << getSpatialChannel() << "\n";
+    out << "- midi channel : " << getMidiChannel() << "\n";
+    out << "- midi note : " << getMidiNote() << "\n";
     out << "- volume DB : " << getVolumeDb() << "\n";
     out << "- volume envelope L1 : " << getEnvelopeVolumeParam().l1 << "\n";
     out << "- volume envelope L2 : " << getEnvelopeVolumeParam().l2 << "\n";
@@ -520,8 +607,8 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
                     }
                     // TODO:  get position vector for grain with idx nextGrain from controller
                     // udate positions vector (currently randomized)q
-                    if (myVis)
-                        myVis->getTriggerPos(nextGrain, playPositions, playVols, duration);
+                    if (myCloudVis)
+                        myCloudVis->getTriggerPos(nextGrain, playPositions, playVols, duration);
                 }
 
                 // get next pitch (using LFO) -  eventually generalize to an applyLFOs method (if LFO control will be exerted over multiple params)
@@ -581,6 +668,7 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
 void Cloud::setPitchLFOFreq(float pfreq)
 {
     pitchLFOFreq = fabs(pfreq);
+    updateDialog();
 }
 
 void Cloud::setPitchLFOAmount(float lfoamt)
@@ -589,6 +677,7 @@ void Cloud::setPitchLFOAmount(float lfoamt)
         lfoamt = 0.0f;
     }
     pitchLFOAmount = lfoamt;
+    updateDialog();
 }
 
 float Cloud::getPitchLFOFreq()
@@ -613,6 +702,7 @@ void Cloud::setSpatialMode(int theMode, int channelNumber = -1)
     // eventually swap out for azimuth instead of single channel
     if (channelNumber >= 0)
         channelLocation = channelNumber;
+    updateDialog();
 }
 
 int Cloud::getSpatialMode()
