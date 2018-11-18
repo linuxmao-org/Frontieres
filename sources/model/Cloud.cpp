@@ -51,6 +51,8 @@ Cloud::~Cloud()
 
     if (channelMults)
         delete[] channelMults;
+    if (dialogExist)
+        delete myCloudDialog ;
 }
 
 
