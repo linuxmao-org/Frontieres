@@ -363,7 +363,7 @@ void CloudDialog::on_radioButton_Direction_Random_clicked(bool checked)
         cloudRef->setDirection(RANDOM_DIR);
 }
 
-void CloudDialog::on_pushButton_clicked()
+void CloudDialog::on_pushButton_Envelope_clicked()
 {
     ParamEnv localParamEnv;
     localParamEnv = cloudRef->getEnvelopeVolumeParam();
