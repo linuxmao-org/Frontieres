@@ -833,6 +833,7 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Delete:  // delete selected
         if (paramString == "") {
             if (selectedCloud) {
+                theApplication->destroyCloudDialog(selectedCloud->cloud->getId());
                 std::lock_guard<std::mutex> lock(::currentSceneMutex);
                 scene->m_clouds.erase(scene->m_clouds.begin() + scene->m_selectedCloud);
                 scene->m_selectedCloud = -1;

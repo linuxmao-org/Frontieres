@@ -31,7 +31,7 @@
 #include "model/ParamCloud.h"
 #include "visual/CloudVis.h"
 #include "utility/GTime.h"
-#include "interface/CloudDialog.h"
+#include <QMessageBox>
 
 extern unsigned int samp_rate;
 extern unsigned int g_buffSize;
@@ -51,8 +51,6 @@ Cloud::~Cloud()
 
     if (channelMults)
         delete[] channelMults;
-    if (dialogExist)
-        delete myCloudDialog ;
 }
 
 
@@ -173,7 +171,6 @@ void Cloud::setActiveState(bool activateState)
     else
        envelopeAction.store(ReleaseEnvelope);
     isActive = activateState;
-    updateDialog();
 }
 
 bool Cloud::getActiveState()
@@ -204,7 +201,6 @@ void Cloud::setWindowType(int winType)
             myGrains[i]->setWindow(windowType);
         }
     }
-    updateDialog();
 }
 
 int Cloud::getWindowType()
@@ -234,7 +230,6 @@ unsigned int Cloud::getId()
 void Cloud::setId(int cloudId)
 {
     myId = cloudId;
-    updateDialog();
 }
 
 // overlap (input on 0 to 1 scale)
@@ -253,7 +248,6 @@ void Cloud::setOverlap(float target)
 
     //  cout<<"overlap set" << overlap << endl;
     updateBangTime();
-    updateDialog();
 }
 
 float Cloud::getOverlap()
@@ -275,7 +269,6 @@ void Cloud::setDurationMs(float theDur)
         if (myCloudVis)
             myCloudVis->setDuration(duration);
     }
-    updateDialog();
 }
 
 // update internal grain trigger time
@@ -295,7 +288,6 @@ void Cloud::setPitch(float targetPitch)
     pitch = targetPitch;
     for (int i = 0; i < myGrains.size(); i++)
         myGrains[i]->setPitch(targetPitch);
-    updateDialog();
 }
 
 float Cloud::getPitch()
@@ -325,7 +317,6 @@ void Cloud::setVolumeDb(float volDb)
 
     for (int i = 0; i < myGrains.size(); i++)
         myGrains[i]->setVolume(normedVol);
-    updateDialog();
 }
 
 float Cloud::getVolumeDb()
@@ -364,7 +355,6 @@ void Cloud::setDirection(int dirMode)
     default:
         break;
     }
-    updateDialog();
 }
 
 
@@ -390,7 +380,6 @@ unsigned int Cloud::getNumGrains()
 void Cloud::setNumGrains(unsigned int newNumGrains)
 {
     numGrains = newNumGrains;
-    updateDialog();
 }
 
 // update after a change of sample set
@@ -408,33 +397,6 @@ void Cloud::setEnvelopeVolumeParam (ParamEnv envelopeVolumeParamToSet)
 ParamEnv Cloud::getEnvelopeVolumeParam ()
 {
     return envelopeVolume->getParam();
-}
-
-void Cloud::setDialogExist(bool exist)
-{
-    dialogExist = exist;
-}
-
-bool Cloud::getDialogExist()
-{
-    return dialogExist;
-}
-
-void Cloud::showDialog(CloudVis *selectedCloudVis)
-{
-    if (! dialogExist) {
-        myCloudDialog = new CloudDialog ();
-        myCloudDialog->setWindowTitle("Cloud parameters");
-        dialogExist = true;
-    }
-    myCloudDialog->show();
-    updateDialog();
-}
-
-void Cloud::updateDialog()
-{
-    if (dialogExist)
-        myCloudDialog->linkCloud(this, myCloudVis);
 }
 
 void Cloud::setMidiChannel(int newMidiChannel)
@@ -469,15 +431,15 @@ bool Cloud::getLockedState()
 
 bool Cloud::dialogLocked()
 {
+    if (!locked)
+        return false;
+
     QMessageBox msgBox;
     msgBox.setText("This cloud is locked, impossible to change parameters.");
     msgBox.setInformativeText("Do you want to unlock the cloud ?");
     msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     msgBox.setDefaultButton(QMessageBox::No);
-    if (msgBox.exec() == QMessageBox::No)
-        locked = true;
-    else
-        locked = false;
+    locked = msgBox.exec() == QMessageBox::No;
     return locked;
 }
 
@@ -668,7 +630,6 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
 void Cloud::setPitchLFOFreq(float pfreq)
 {
     pitchLFOFreq = fabs(pfreq);
-    updateDialog();
 }
 
 void Cloud::setPitchLFOAmount(float lfoamt)
@@ -677,7 +638,6 @@ void Cloud::setPitchLFOAmount(float lfoamt)
         lfoamt = 0.0f;
     }
     pitchLFOAmount = lfoamt;
-    updateDialog();
 }
 
 float Cloud::getPitchLFOFreq()
@@ -702,7 +662,6 @@ void Cloud::setSpatialMode(int theMode, int channelNumber = -1)
     // eventually swap out for azimuth instead of single channel
     if (channelNumber >= 0)
         channelLocation = channelNumber;
-    updateDialog();
 }
 
 int Cloud::getSpatialMode()

@@ -22,12 +22,14 @@ public:
     void setDisableAllWidgets(bool disable);
 
 private slots:
+    void autoUpdate();
+
     void on_dial_Overlap_valueChanged(int value);
 
     void on_doubleSpinBox_Overlap_valueChanged(double arg1);
 
     void on_dial_Grains_valueChanged(int value);
-    
+
     void on_doubleSpinBox_Grains_valueChanged(double arg1);
 
     void on_doubleSpinBox_Y_valueChanged(double arg1);

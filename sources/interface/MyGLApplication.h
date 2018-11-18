@@ -39,6 +39,7 @@ public:
     void addSample();
     void showDialogVolumeEnvelope(SceneCloud *selectedCloudToVolumeEnvelope);
     void showCloudDialog(SceneCloud *selectedCloud);
+    void destroyCloudDialog(unsigned selectedCloudId);
     void midiNoteOn (int midiChannelToPlay, int midiKeyToPlay, int midiVeloToPlay);
     void midiNoteOff (int midiChannelToStop, int midiKeyToStop);
 

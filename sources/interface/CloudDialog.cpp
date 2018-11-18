@@ -10,12 +10,22 @@ CloudDialog::CloudDialog(QWidget *parent) :
     // std::cout << "cloud dialog construct" << std::endl;
     setModal(false);
     ui->setupUi(this);
+
+    QTimer *tmAutoUpdate = new QTimer(this);
+    connect(tmAutoUpdate, &QTimer::timeout, this, &CloudDialog::autoUpdate);
+    tmAutoUpdate->start(500);
 }
 
 CloudDialog::~CloudDialog()
 {
     // std::cout << "cloud dialog destruct" << std::endl;
     delete ui;
+}
+
+void CloudDialog::autoUpdate()
+{
+    if (cloudRef && cloudVisRef)
+        linkCloud(cloudRef, cloudVisRef);
 }
 
 void CloudDialog::linkCloud(Cloud *cloudLinked, CloudVis *cloudVisLinked)

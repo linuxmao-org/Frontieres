@@ -873,12 +873,6 @@ void Scene::changeParamEnvelopeVolume(SceneCloud *selectedCloud)
     cloudToChangePEV->setEnvelopeVolumeParam(localParamEnv);
 }
 
-void Scene::showSceneCloudDialog(SceneCloud *selectedCloud)
-{
-
-    selectedCloud->cloud.get()->showDialog(selectedCloud->view.get());
-}
-
 
 // destructor
 SceneSample::~SceneSample()

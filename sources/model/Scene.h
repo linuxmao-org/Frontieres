@@ -76,7 +76,6 @@ public:
     int getNumCloud(SceneCloud *cloudCurrent);
 
     void changeParamEnvelopeVolume ( SceneCloud *selectedCloud);
-    void showSceneCloudDialog(SceneCloud *selectedCloud);
 
     SceneSample *selectedSample();
     SceneCloud *selectedCloud();

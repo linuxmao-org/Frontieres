@@ -198,39 +198,33 @@ void CloudVis::getTriggerPos(unsigned int idx, double *playPos,
 void CloudVis::setFixedXRandExtent(float X)
 {
     xRandExtent = X;
-    myCloud->updateDialog();
 }
 
 void CloudVis::setFixedYRandExtent(float Y)
 {
     yRandExtent = Y;
-    myCloud->updateDialog();
 }
 void CloudVis::setFixedRandExtent(float X, float Y)
 {
     setFixedXRandExtent(X);
     setFixedYRandExtent(Y);
-    myCloud->updateDialog();
 }
 void CloudVis::setXRandExtent(float mouseX)
 {
     xRandExtent = fabs(mouseX - gcX);
     if (xRandExtent < 2.0f)
         xRandExtent = 0.0f;
-    myCloud->updateDialog();
 }
 void CloudVis::setYRandExtent(float mouseY)
 {
     yRandExtent = fabs(mouseY - gcY);
     if (yRandExtent < 2.0f)
         yRandExtent = 0.0f;
-    myCloud->updateDialog();
 }
 void CloudVis::setRandExtent(float mouseX, float mouseY)
 {
     setXRandExtent(mouseX);
     setYRandExtent(mouseY);
-    myCloud->updateDialog();
 }
 float CloudVis::getXRandExtent()
 {
@@ -261,7 +255,6 @@ void CloudVis::updateCloudPosition(float x, float y)
         float newGrainY = myGrainsV[i]->getY() + yDiff;
         myGrainsV[i]->moveTo(newGrainX, newGrainY);
     }
-    myCloud->updateDialog();
 }
 
 void CloudVis::updateGrainPosition(int idx, float x, float y)

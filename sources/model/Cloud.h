@@ -46,7 +46,6 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QTranslator>
-#include <QMessageBox>
 #include "model/Adsr.h"
 #include "dsp/Window.h"
 
@@ -71,7 +70,6 @@ using namespace std;
 // forward declarations
 class Cloud;
 class CloudVis;
-class CloudDialog;
 
 // class interface
 class Cloud {
@@ -158,12 +156,6 @@ public:
     void setEnvelopeVolumeParam (ParamEnv envelopeVolumeParamToSet);
     ParamEnv getEnvelopeVolumeParam ();
 
-    // params dialog
-    void setDialogExist(bool exist);
-    bool getDialogExist();
-    void showDialog(CloudVis *selectedCloudVis);
-    void updateDialog();
-
     // midi notes
     void setMidiChannel(int newMidiChannel);
     void setMidiNote(int newMidiNote);
@@ -229,10 +221,6 @@ private:
 
     // envelope
     Env *envelopeVolume;
-
-    // params dialog
-    bool dialogExist = false;
-    CloudDialog *myCloudDialog;
 
     // midi params
     int midiChannel = 0;
