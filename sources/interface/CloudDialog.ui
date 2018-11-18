@@ -176,7 +176,7 @@ border-bottom-left-radius: 9px;
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton">
+          <widget class="QPushButton" name="pushButton_Envelope">
            <property name="text">
             <string>Envelope (e)</string>
            </property>
@@ -965,6 +965,9 @@ border-bottom-left-radius: 9px;
                   </property>
                   <item>
                    <widget class="QDial" name="dial_X">
+                    <property name="enabled">
+                     <bool>true</bool>
+                    </property>
                     <property name="cursor">
                      <cursorShape>OpenHandCursor</cursorShape>
                     </property>
@@ -1011,6 +1014,9 @@ border-bottom-left-radius: 9px;
                </item>
                <item>
                 <widget class="QDoubleSpinBox" name="doubleSpinBox_X">
+                 <property name="enabled">
+                  <bool>true</bool>
+                 </property>
                  <property name="wrapping">
                   <bool>false</bool>
                  </property>
@@ -2212,6 +2218,13 @@ border-bottom-left-radius: 9px;
                 <widget class="QLabel" name="label_Num">
                  <property name="text">
                   <string/>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="0">
+                <widget class="QCheckBox" name="checkBox_Locked">
+                 <property name="text">
+                  <string>Locked</string>
                  </property>
                 </widget>
                </item>

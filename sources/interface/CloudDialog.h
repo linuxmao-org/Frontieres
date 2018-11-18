@@ -19,6 +19,7 @@ public:
     explicit CloudDialog(QWidget *parent = 0);
     ~CloudDialog();
     void linkCloud (Cloud *cloudLinked, CloudVis *cloudVisLinked);
+    void setDisableAllWidgets(bool disable);
 
 private slots:
     void on_dial_Overlap_valueChanged(int value);
@@ -96,6 +97,8 @@ private slots:
     void on_radioButton_Direction_Random_clicked(bool checked);
 
     void on_pushButton_clicked();
+
+    void on_checkBox_Locked_toggled(bool checked);
 
 private:
     Ui::CloudDialog *ui;

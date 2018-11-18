@@ -298,6 +298,9 @@ void MyGLScreen::mouseMoveEvent(QMouseEvent *event)
     SceneCloud *selectedCloud = scene->selectedCloud();
 
     if (selectedCloud) {
+        if (selectedCloud->cloud->getLockedState())
+            if (selectedCloud->cloud->dialogLocked())
+                return;
         selectedCloud->view->updateCloudPosition(mouseX, mouseY);
     }
     else {
@@ -397,6 +400,13 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
     Scene *scene = ::currentScene;
     SceneSample *selectedSample = scene->selectedSample();
     SceneCloud *selectedCloud = scene->selectedCloud();
+
+    if (selectedCloud and selectedCloud->cloud->getLockedState())
+        if ((event->key() != Qt::Key_Escape)
+                & (event->key() != Qt::Key_P)
+                & (event->key() != Qt::Key_Slash))
+            if (selectedCloud->cloud->dialogLocked())
+                return;
 
     switch (event->key()) {
 

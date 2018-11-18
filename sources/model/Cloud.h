@@ -46,6 +46,7 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QTranslator>
+#include <QMessageBox>
 #include "model/Adsr.h"
 #include "dsp/Window.h"
 
@@ -169,6 +170,11 @@ public:
     int getMidiChannel();
     int getMidiNote();
 
+    // lock flag
+    void setLockedState(bool newLockedState);
+    bool getLockedState();
+    bool dialogLocked();
+
 protected:
     // update internal trigger point
     void updateBangTime();
@@ -231,6 +237,9 @@ private:
     // midi params
     int midiChannel = 0;
     int midiNote;
+
+    // lock switch
+    bool locked = false;
 };
 
 #endif

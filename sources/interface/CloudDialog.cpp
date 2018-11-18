@@ -39,6 +39,7 @@ void CloudDialog::linkCloud(Cloud *cloudLinked, CloudVis *cloudVisLinked)
     ui->label_Id_Value->setText(QString::number(cloudLinked->getId()));
     //ui->label_Num_Value->setValue(cloudLinked->getNum());
     ui->checkBox_Active->setChecked(cloudLinked->getActiveState());
+    ui->checkBox_Locked->setChecked(cloudLinked->getLockedState());
     switch (cloudLinked->getDirection()) {
     case FORWARD:
         ui->radioButton_Direction_Forward->setChecked(true);
@@ -88,6 +89,39 @@ void CloudDialog::linkCloud(Cloud *cloudLinked, CloudVis *cloudVisLinked)
         break;
     }
     linking = false;
+}
+
+void CloudDialog::setDisableAllWidgets(bool disabled)
+{
+    ui->checkBox_Active->setDisabled(disabled);
+    ui->dial_Duration->setDisabled(disabled);
+    ui->dial_Grains->setDisabled(disabled);
+    ui->dial_LFO_Amp->setDisabled(disabled);
+    ui->dial_LFO_Freq->setDisabled(disabled);
+    ui->dial_Overlap->setDisabled(disabled);
+    ui->dial_Pitch->setDisabled(disabled);
+    ui->dial_X->setDisabled(disabled);
+    ui->dial_X_Extent->setDisabled(disabled);
+    ui->dial_Y->setDisabled(disabled);
+    ui->dial_Y_Extent->setDisabled(disabled);
+    ui->doubleSpinBox_Duration->setDisabled(disabled);
+    ui->doubleSpinBox_Grains->setDisabled(disabled);
+    ui->doubleSpinBox_LFO_Amp->setDisabled(disabled);
+    ui->doubleSpinBox_LFO_Freq->setDisabled(disabled);
+    ui->doubleSpinBox_Midi_Channel->setDisabled(disabled);
+    ui->doubleSpinBox_Midi_Note->setDisabled(disabled);
+    ui->doubleSpinBox_Overlap->setDisabled(disabled);
+    ui->doubleSpinBox_Pitch->setDisabled(disabled);
+    ui->doubleSpinBox_Volume->setDisabled(disabled);
+    ui->doubleSpinBox_X->setDisabled(disabled);
+    ui->doubleSpinBox_X_Extent->setDisabled(disabled);
+    ui->doubleSpinBox_Y->setDisabled(disabled);
+    ui->doubleSpinBox_Y_Extent->setDisabled(disabled);
+    ui->groupBox_Balance->setDisabled(disabled);
+    ui->groupBox_Direction->setDisabled(disabled);
+    ui->groupBox_Window->setDisabled(disabled);
+    ui->pushButton_Envelope->setDisabled(disabled);
+    ui->verticalSlider_Volume->setDisabled(disabled);
 }
 
 void CloudDialog::on_dial_Overlap_valueChanged(int value)
@@ -239,6 +273,12 @@ void CloudDialog::on_checkBox_Active_toggled(bool checked)
 {
     if (!linking)
         cloudRef->setActiveState(checked);
+}
+
+void CloudDialog::on_checkBox_Locked_toggled(bool checked)
+{
+    cloudRef->setLockedState(checked);
+    setDisableAllWidgets(checked);
 }
 
 void CloudDialog::on_radioButton_Window_Hanning_toggled(bool checked)

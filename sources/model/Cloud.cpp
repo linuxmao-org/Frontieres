@@ -455,6 +455,30 @@ int Cloud::getMidiNote()
     return midiNote;
 }
 
+void Cloud::setLockedState(bool newLockedState)
+{
+    locked = newLockedState;
+}
+
+bool Cloud::getLockedState()
+{
+    return locked;
+}
+
+bool Cloud::dialogLocked()
+{
+    QMessageBox msgBox;
+    msgBox.setText("This cloud is locked, impossible to change parameters.");
+    msgBox.setInformativeText("Do you want to unlock the cloud ?");
+    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    msgBox.setDefaultButton(QMessageBox::No);
+    if (msgBox.exec() == QMessageBox::No)
+        locked = true;
+    else
+        locked = false;
+    return locked;
+}
+
 // print information
 void Cloud::describe(std::ostream &out)
 {
