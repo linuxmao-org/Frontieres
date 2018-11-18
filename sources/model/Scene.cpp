@@ -834,7 +834,7 @@ void Scene::deselect(int shapeType)
 void Scene::midiNoteOn(int midiChannelToPlay, int midiNoteToPlay, int midiVeloToPlay)
 {
     for (int i = 0, n = m_clouds.size(); i < n; i++) {
-        if ((m_clouds[i]->cloud->getMidiChannel() ==  midiChannelToPlay) &
+        if ((m_clouds[i]->cloud->getMidiChannel() ==  midiChannelToPlay + 1) &
                 (m_clouds[i]->cloud.get()->getMidiNote() ==  midiNoteToPlay)) {
             m_clouds[i]->cloud.get()->setActiveState(true);
 
@@ -845,7 +845,7 @@ void Scene::midiNoteOn(int midiChannelToPlay, int midiNoteToPlay, int midiVeloTo
 void Scene::midiNoteOff(int midiChannelToStop, int midiNoteToStop)
 {
     for (int i = 0, n = m_clouds.size(); i < n; i++) {
-        if ((m_clouds[i]->cloud.get()->getMidiChannel() ==  midiChannelToStop) &
+        if ((m_clouds[i]->cloud.get()->getMidiChannel() ==  midiChannelToStop + 1) &
                 (m_clouds[i]->cloud.get()->getMidiNote() ==  midiNoteToStop)) {
             m_clouds[i]->cloud.get()->setActiveState(false);
         }
