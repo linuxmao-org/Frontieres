@@ -45,7 +45,10 @@
 #include <QDir>
 #include <QJsonObject>
 #include <QJsonArray>
+#include <QTranslator>
 #include "model/Adsr.h"
+#include "dsp/Window.h"
+
 class Grain;
 struct SceneSample;
 
@@ -129,7 +132,7 @@ public:
     void setId(int cloudId);
 
     // register visualization
-    void registerVis(CloudVis *myVis);
+    void registerCloudVis(CloudVis *cloudVisToRegister);
 
     // turn on/off
     void toggleActive();
@@ -137,8 +140,9 @@ public:
     bool getActiveState();
 
 
-    // return number of Grains
+    // number of Grains
     unsigned int getNumGrains();
+    void setNumGrains(unsigned int newNumGrains);
 
     // update after a change of sample set
     void updateSampleSet();
@@ -151,6 +155,17 @@ public:
     Env getEnvelopeVolume ();
     void setEnvelopeVolumeParam (ParamEnv envelopeVolumeParamToSet);
     ParamEnv getEnvelopeVolumeParam ();
+
+    // midi notes
+    void setMidiChannel(int newMidiChannel);
+    void setMidiNote(int newMidiNote);
+    int getMidiChannel();
+    int getMidiNote();
+
+    // lock flag
+    void setLockedState(bool newLockedState);
+    bool getLockedState();
+    bool dialogLocked();
 
 protected:
     // update internal trigger point
@@ -176,7 +191,7 @@ private:
     int side;
 
     // registered visualization
-    CloudVis *myVis;
+    CloudVis *myCloudVis;
 
     // spatialization
     double *channelMults;
@@ -206,6 +221,13 @@ private:
 
     // envelope
     Env *envelopeVolume;
+
+    // midi params
+    int midiChannel = 0;
+    int midiNote;
+
+    // lock switch
+    bool locked = false;
 };
 
 #endif

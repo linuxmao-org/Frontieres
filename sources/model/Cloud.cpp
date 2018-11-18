@@ -30,8 +30,8 @@
 #include "model/Grain.h"
 #include "model/ParamCloud.h"
 #include "visual/CloudVis.h"
-#include "dsp/Window.h"
 #include "utility/GTime.h"
+#include <QMessageBox>
 
 extern unsigned int samp_rate;
 extern unsigned int g_buffSize;
@@ -39,8 +39,6 @@ extern CloudParams g_defaultCloudParams;
 
 // ids
 static unsigned int cloudId = 0;
-
-
 // Destructor
 Cloud::~Cloud()
 {
@@ -114,7 +112,7 @@ Cloud::Cloud(VecSceneSample *sampleSet, float theNumGrains)
     //spatialMode = UNITY;
     spatialMode = g_defaultCloudParams.spatialMode;
     //channelLocation = -1;
-    channelLocation = g_defaultCloudParams.chanelLocation;
+    channelLocation = g_defaultCloudParams.channelLocation;
     //myDirMode = RANDOM_DIR;
     myDirMode = g_defaultCloudParams.dirMode;
 
@@ -154,10 +152,10 @@ Cloud::Cloud(VecSceneSample *sampleSet, float theNumGrains)
     setActiveState(g_defaultCloudParams.activateState);
 }
 // register controller for communication with view
-void Cloud::registerVis(CloudVis *vis)
+void Cloud::registerCloudVis(CloudVis *cloudVisToRegister)
 {
-    myVis = vis;
-    myVis->setDuration(duration);
+    myCloudVis = cloudVisToRegister;
+    myCloudVis->setDuration(duration);
 }
 
 // turn on/off
@@ -214,13 +212,13 @@ int Cloud::getWindowType()
 void Cloud::addGrain()
 {
     addFlag = true;
-    myVis->addGrain();
+    myCloudVis->addGrain();
 }
 
 void Cloud::removeGrain()
 {
     removeFlag = true;
-    myVis->removeGrain();
+    myCloudVis->removeGrain();
 }
 
 // return id for grain
@@ -268,8 +266,8 @@ void Cloud::setDurationMs(float theDur)
         updateBangTime();
 
         // notify visualization
-        if (myVis)
-            myVis->setDuration(duration);
+        if (myCloudVis)
+            myCloudVis->setDuration(duration);
     }
 }
 
@@ -379,6 +377,11 @@ unsigned int Cloud::getNumGrains()
     return myGrains.size();
 }
 
+void Cloud::setNumGrains(unsigned int newNumGrains)
+{
+    numGrains = newNumGrains;
+}
+
 // update after a change of sample set
 void Cloud::updateSampleSet()
 {
@@ -396,6 +399,50 @@ ParamEnv Cloud::getEnvelopeVolumeParam ()
     return envelopeVolume->getParam();
 }
 
+void Cloud::setMidiChannel(int newMidiChannel)
+{
+    midiChannel = newMidiChannel;
+}
+
+void Cloud::setMidiNote(int newMidiNote)
+{
+    midiNote = newMidiNote;
+}
+
+int Cloud::getMidiChannel()
+{
+    return midiChannel;
+}
+
+int Cloud::getMidiNote()
+{
+    return midiNote;
+}
+
+void Cloud::setLockedState(bool newLockedState)
+{
+    locked = newLockedState;
+}
+
+bool Cloud::getLockedState()
+{
+    return locked;
+}
+
+bool Cloud::dialogLocked()
+{
+    if (!locked)
+        return false;
+
+    QMessageBox msgBox;
+    msgBox.setText("This cloud is locked, impossible to change parameters.");
+    msgBox.setInformativeText("Do you want to unlock the cloud ?");
+    msgBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    msgBox.setDefaultButton(QMessageBox::No);
+    locked = msgBox.exec() == QMessageBox::No;
+    return locked;
+}
+
 // print information
 void Cloud::describe(std::ostream &out)
 {
@@ -407,7 +454,9 @@ void Cloud::describe(std::ostream &out)
     out << "- direction : " << getDirection() << "\n";
     out << "- window type : " << getWindowType() << "\n";
     out << "- spatial mode : " << getSpatialMode() << "\n";
-    out << "- spatial chanel : " << getSpatialChannel() << "\n";
+    out << "- spatial channel : " << getSpatialChannel() << "\n";
+    out << "- midi channel : " << getMidiChannel() << "\n";
+    out << "- midi note : " << getMidiNote() << "\n";
     out << "- volume DB : " << getVolumeDb() << "\n";
     out << "- volume envelope L1 : " << getEnvelopeVolumeParam().l1 << "\n";
     out << "- volume envelope L2 : " << getEnvelopeVolumeParam().l2 << "\n";
@@ -520,8 +569,8 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
                     }
                     // TODO:  get position vector for grain with idx nextGrain from controller
                     // udate positions vector (currently randomized)q
-                    if (myVis)
-                        myVis->getTriggerPos(nextGrain, playPositions, playVols, duration);
+                    if (myCloudVis)
+                        myCloudVis->getTriggerPos(nextGrain, playPositions, playVols, duration);
                 }
 
                 // get next pitch (using LFO) -  eventually generalize to an applyLFOs method (if LFO control will be exerted over multiple params)

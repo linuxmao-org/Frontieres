@@ -38,6 +38,7 @@
 #include "interface/MyGLApplication.h"
 #include "interface/MyGLWindow.h"
 
+#include "model/Cloud.h"
 // graphics includes
 #ifdef __MACOSX_CORE__
 #include <OpenGL/OpenGL.h>
@@ -116,6 +117,11 @@ void CloudVis::describe(std::ostream &out)
     out << "- Y : " << getY() << "\n";
     out << "- X extent : " << getXRandExtent() << "\n";
     out << "- Y extent : " << getYRandExtent() << "\n";
+}
+
+void CloudVis::registerCloud(Cloud *cloudToRegister)
+{
+    myCloud = cloudToRegister;
 }
 
 // return cloud x
@@ -228,7 +234,15 @@ float CloudVis::getYRandExtent()
 {
     return yRandExtent;
 }
+void CloudVis::setX(int newX)
+{
+    updateCloudPosition(newX, gcY);
+}
 
+void CloudVis::setY(int newY)
+{
+    updateCloudPosition(gcX, newY);
+}
 //
 void CloudVis::updateCloudPosition(float x, float y)
 {

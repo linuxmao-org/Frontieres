@@ -21,6 +21,7 @@
 
 #include "MyGLApplication.h"
 #include "MyGLWindow.h"
+#include "CloudDialog.h"
 #include "Frontieres.h"
 #include "I18n.h"
 #include "model/Sample.h"
@@ -28,6 +29,7 @@
 #include <QLibraryInfo>
 #include <QTimer>
 #include <QDebug>
+#include <map>
 
 struct MyGLApplication::Impl {
     // translator of the internal parts of Qt
@@ -41,6 +43,10 @@ struct MyGLApplication::Impl {
 
     // graphics window
     MyGLWindow *window = nullptr;
+
+    // cloud dialogs, according to cloud ID
+    std::map<unsigned, CloudDialog *> cloudDialogs;
+
     void onIdle();
 };
 
@@ -166,6 +172,49 @@ void MyGLApplication::addSample()
 void MyGLApplication::showDialogVolumeEnvelope(SceneCloud *selectedCloudToVolumeEnvelope)
 {
     currentScene->changeParamEnvelopeVolume(selectedCloudToVolumeEnvelope);
+}
+
+void MyGLApplication::showCloudDialog(SceneCloud *selectedCloud)
+{
+    unsigned id = selectedCloud->cloud->getId();
+
+    CloudDialog *&dlgslot = P->cloudDialogs[id];
+    CloudDialog *dlg = dlgslot;
+
+    if (!dlg) {
+        // if not existing, create it and insert it in the map
+        dlg = new CloudDialog;
+        dlg->setWindowTitle(tr("Cloud parameters"));
+        dlgslot = dlg;
+    }
+
+    dlg->show();
+    dlg->linkCloud(selectedCloud->cloud.get(), selectedCloud->view.get());
+}
+
+void MyGLApplication::destroyCloudDialog(unsigned selectedCloudId)
+{
+    auto it = P->cloudDialogs.find(selectedCloudId);
+
+    if (it == P->cloudDialogs.end())
+        return;  // not found
+
+    CloudDialog *dlg = it->second;
+    if (!dlg)
+        return;
+
+    delete dlg;
+    P->cloudDialogs.erase(it);
+}
+
+void MyGLApplication::midiNoteOn(int midiChannelToPlay, int midiKeyToPlay, int midiVeloToPlay)
+{
+    currentScene->midiNoteOn(midiChannelToPlay, midiKeyToPlay, midiVeloToPlay);
+}
+
+void MyGLApplication::midiNoteOff(int midiChannelToStop, int midiKeyToStop)
+{
+    currentScene->midiNoteOff(midiChannelToStop, midiKeyToStop);
 }
 
 void MyGLApplication::Impl::onIdle()

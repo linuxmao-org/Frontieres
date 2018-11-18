@@ -44,6 +44,7 @@
 #include "theglobals.h"
 class SceneSample;
 class GrainVis;
+class Cloud;
 
 typedef std::vector<std::unique_ptr<SceneSample>> VecSceneSample;
 
@@ -76,6 +77,8 @@ public:
     float getX();
     // get my y coordinate
     float getY();
+    void setX(int newX);
+    void setY(int newY);
 
     // randomness params for grain positions
     float getXRandExtent();
@@ -93,6 +96,9 @@ public:
     // print information
     void describe(std::ostream &out);
 
+    // register model
+    void registerCloud(Cloud *cloudToRegister);
+
 protected:
 private:
     bool isOn, isSelected;
@@ -106,7 +112,8 @@ private:
     float gcX, gcY;
     float selRad, lambda, maxSelRad, minSelRad, targetRad;
     unsigned int numGrains;
-
+    // registered visualization
+    Cloud *myCloud;
     // grain visualizations
     std::vector<GrainVis *> myGrainsV;
     // registered sample visuals
