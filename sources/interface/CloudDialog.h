@@ -98,9 +98,9 @@ private slots:
 
     void on_radioButton_Direction_Random_clicked(bool checked);
 
-    void on_pushButton_clicked();
-
     void on_checkBox_Locked_toggled(bool checked);
+
+    void on_pushButton_Envelope_clicked();
 
 private:
     Ui::CloudDialog *ui;
