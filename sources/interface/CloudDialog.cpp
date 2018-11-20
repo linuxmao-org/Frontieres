@@ -7,7 +7,6 @@ CloudDialog::CloudDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::CloudDialog)
 {
-    // std::cout << "cloud dialog construct" << std::endl;
     setModal(false);
     ui->setupUi(this);
 
@@ -18,7 +17,6 @@ CloudDialog::CloudDialog(QWidget *parent) :
 
 CloudDialog::~CloudDialog()
 {
-    // std::cout << "cloud dialog destruct" << std::endl;
     delete ui;
 }
 
@@ -33,71 +31,85 @@ void CloudDialog::linkCloud(Cloud *cloudLinked, CloudVis *cloudVisLinked)
     linking = true;
     cloudRef = cloudLinked;
     cloudVisRef = cloudVisLinked;
-    ui->doubleSpinBox_Duration->setValue(cloudLinked->getDurationMs());
-    ui->doubleSpinBox_Grains ->setValue(cloudLinked->getNumGrains());
-    ui->doubleSpinBox_LFO_Amp->setValue(cloudLinked->getPitchLFOAmount());
-    ui->doubleSpinBox_LFO_Freq->setValue(cloudLinked->getPitchLFOFreq());
-    ui->doubleSpinBox_Overlap->setValue(cloudLinked->getOverlap());
-    ui->doubleSpinBox_Volume->setValue(cloudLinked->getVolumeDb());
-    ui->doubleSpinBox_Pitch->setValue(12*log2(cloudLinked->getPitch()));
+    if (cloudLinked->changedDurationMs())
+        ui->doubleSpinBox_Duration->setValue(cloudLinked->getDurationMs());
+    if (cloudLinked->changedNumGrains())
+        ui->doubleSpinBox_Grains ->setValue(cloudLinked->getNumGrains());
+    if (cloudLinked->changedPitchLFOAmount())
+        ui->doubleSpinBox_LFO_Amp->setValue(cloudLinked->getPitchLFOAmount());
+    if (cloudLinked->changedPitchLFOFreq())
+        ui->doubleSpinBox_LFO_Freq->setValue(cloudLinked->getPitchLFOFreq());
+    if (cloudLinked->changedOverlap())
+        ui->doubleSpinBox_Overlap->setValue(cloudLinked->getOverlap());
+    if (cloudLinked->changedVolumeDb())
+        ui->doubleSpinBox_Volume->setValue(cloudLinked->getVolumeDb());
+    if (cloudLinked->changedPitch())
+        ui->doubleSpinBox_Pitch->setValue(12*log2(cloudLinked->getPitch()));
+    //if (cloudVisLinked->
     ui->doubleSpinBox_X_Extent->setValue(cloudVisLinked->getXRandExtent());
     ui->doubleSpinBox_Y_Extent->setValue(cloudVisLinked->getYRandExtent());
     ui->doubleSpinBox_X->setValue(cloudVisLinked->getX());
     ui->doubleSpinBox_Y->setValue(cloudVisLinked->getY());
-    ui->doubleSpinBox_Midi_Channel->setValue(cloudLinked->getMidiChannel());
-    ui->doubleSpinBox_Midi_Note->setValue(cloudLinked->getMidiNote());
+    if (cloudLinked->getMidiChannel())
+        ui->doubleSpinBox_Midi_Channel->setValue(cloudLinked->getMidiChannel());
+    if (cloudLinked->changedMidiNote())
+        ui->doubleSpinBox_Midi_Note->setValue(cloudLinked->getMidiNote());
     ui->label_Id_Value->setText(QString::number(cloudLinked->getId()));
     //ui->label_Num_Value->setValue(cloudLinked->getNum());
     ui->checkBox_Active->setChecked(cloudLinked->getActiveState());
     ui->checkBox_Locked->setChecked(cloudLinked->getLockedState());
-    switch (cloudLinked->getDirection()) {
-    case FORWARD:
-        ui->radioButton_Direction_Forward->setChecked(true);
-        break;
-    case BACKWARD:
-        ui->radioButton_Direction_Backward->setChecked(true);
-        break;
-    case RANDOM_DIR:
+    if (cloudLinked->changedDirection())
+        switch (cloudLinked->getDirection()) {
+        case FORWARD:
+            ui->radioButton_Direction_Forward->setChecked(true);
+            break;
+        case BACKWARD:
+            ui->radioButton_Direction_Backward->setChecked(true);
+            break;
+        case RANDOM_DIR:
             ui->radioButton_Direction_Random->setChecked(true);
-        break;
-    default :
-        break;
-    }
-    switch (cloudLinked->getSpatialMode()) {
-    case UNITY:
-        ui->radioButton_Balance_Unity->setChecked(true);
-        break;
-    case STEREO:
-        ui->radioButton_Balance_Stereo->setChecked(true);
-        break;
-    case AROUND:
+            break;
+        default :
+            break;
+        }
+    if (cloudLinked->getSpatialMode())
+        switch (cloudLinked->getSpatialMode()) {
+        case UNITY:
+            ui->radioButton_Balance_Unity->setChecked(true);
+            break;
+        case STEREO:
+            ui->radioButton_Balance_Stereo->setChecked(true);
+            break;
+        case AROUND:
             ui->radioButton_Balance_Around->setChecked(true);
-        break;
-    default :
-        break;
-    }
-    switch (cloudLinked->getWindowType()) {
-    case HANNING:
-        ui->radioButton_Window_Hanning->setChecked(true);
-        break;
-    case TRIANGLE:
-        ui->radioButton_Window_Triangle->setChecked(true);
-        break;
-    case EXPDEC:
-        ui->radioButton_Window_Expdec->setChecked(true);
-        break;
-    case REXPDEC:
-        ui->radioButton_Window_Rexpdec->setChecked(true);
-        break;
-    case SINC:
+            break;
+        default :
+            break;
+        }
+    if (cloudLinked->getWindowType())
+        switch (cloudLinked->getWindowType()) {
+        case HANNING:
+            ui->radioButton_Window_Hanning->setChecked(true);
+            break;
+        case TRIANGLE:
+            ui->radioButton_Window_Triangle->setChecked(true);
+            break;
+        case EXPDEC:
+            ui->radioButton_Window_Expdec->setChecked(true);
+            break;
+        case REXPDEC:
+            ui->radioButton_Window_Rexpdec->setChecked(true);
+            break;
+        case SINC:
             ui->radioButton_Window_Sinc->setChecked(true);
-        break;
-    case RANDOM_WIN:
+            break;
+        case RANDOM_WIN:
             ui->radioButton_Window_Random->setChecked(true);
-        break;
-    default :
-        break;
-    }
+            break;
+        default :
+            break;
+        }
+    cloudRef->changesDone(false);
     linking = false;
 }
 
@@ -252,7 +264,7 @@ void CloudDialog::on_doubleSpinBox_Pitch_valueChanged(double arg1)
 {
     ui->dial_Pitch->setValue(arg1 * 100);
     if (!linking)
-        cloudRef->setPitch(pow(2, (double) (arg1 / 12)));
+        cloudRef->setPitch(pow(2, (float) (arg1 / 12)));
 }
 
 void CloudDialog::on_verticalSlider_Volume_valueChanged(int value)

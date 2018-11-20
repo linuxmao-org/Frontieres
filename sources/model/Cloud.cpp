@@ -201,6 +201,7 @@ void Cloud::setWindowType(int winType)
             myGrains[i]->setWindow(windowType);
         }
     }
+    changed_windowType = true;
 }
 
 int Cloud::getWindowType()
@@ -208,17 +209,28 @@ int Cloud::getWindowType()
     return windowType;
 }
 
+bool Cloud::changedWindowType()
+{
+    return changed_windowType;
+}
 
 void Cloud::addGrain()
 {
     addFlag = true;
     myCloudVis->addGrain();
+    changed_numGrains = true;
 }
 
 void Cloud::removeGrain()
 {
     removeFlag = true;
     myCloudVis->removeGrain();
+    changed_numGrains = true;
+}
+
+bool Cloud::changedNumGrains()
+{
+    return changed_numGrains;changedDirection();
 }
 
 // return id for grain
@@ -248,11 +260,17 @@ void Cloud::setOverlap(float target)
 
     //  cout<<"overlap set" << overlap << endl;
     updateBangTime();
+    changed_overlap = true;
 }
 
 float Cloud::getOverlap()
 {
     return overlapNorm;
+}
+
+bool Cloud::changedOverlap()
+{
+    return changed_overlap;
 }
 
 // duration
@@ -268,6 +286,7 @@ void Cloud::setDurationMs(float theDur)
         // notify visualization
         if (myCloudVis)
             myCloudVis->setDuration(duration);
+        changed_duration = true;
     }
 }
 
@@ -288,11 +307,17 @@ void Cloud::setPitch(float targetPitch)
     pitch = targetPitch;
     for (int i = 0; i < myGrains.size(); i++)
         myGrains[i]->setPitch(targetPitch);
+    changed_pitch = true;
 }
 
 float Cloud::getPitch()
 {
     return pitch;
+}
+
+bool Cloud::changedPitch()
+{
+    return changed_pitch;
 }
 
 
@@ -317,11 +342,17 @@ void Cloud::setVolumeDb(float volDb)
 
     for (int i = 0; i < myGrains.size(); i++)
         myGrains[i]->setVolume(normedVol);
+    changed_volumeDB = true;
 }
 
 float Cloud::getVolumeDb()
 {
     return volumeDb;
+}
+
+bool Cloud::changedVolumeDb()
+{
+    return changed_volumeDB;
 }
 
 
@@ -355,6 +386,7 @@ void Cloud::setDirection(int dirMode)
     default:
         break;
     }
+    changed_myDirMode = true;
 }
 
 
@@ -364,10 +396,20 @@ int Cloud::getDirection()
     return myDirMode;
 }
 
+bool Cloud::changedDirection()
+{
+    return changed_myDirMode;
+}
+
 // return duration in ms
 float Cloud::getDurationMs()
 {
     return duration;
+}
+
+bool Cloud::changedDurationMs()
+{
+    return changed_duration;
 }
 
 
@@ -379,7 +421,10 @@ unsigned int Cloud::getNumGrains()
 
 void Cloud::setNumGrains(unsigned int newNumGrains)
 {
-    numGrains = newNumGrains;
+    while (numGrains < newNumGrains)
+        addGrain();
+    while (numGrains > newNumGrains)
+        removeGrain();
 }
 
 // update after a change of sample set
@@ -402,11 +447,14 @@ ParamEnv Cloud::getEnvelopeVolumeParam ()
 void Cloud::setMidiChannel(int newMidiChannel)
 {
     midiChannel = newMidiChannel;
+    changed_midiChannel = true;
 }
 
 void Cloud::setMidiNote(int newMidiNote)
 {
     midiNote = newMidiNote;
+    //if (!editingDialog)
+    changed_midiNote = true;
 }
 
 int Cloud::getMidiChannel()
@@ -417,6 +465,16 @@ int Cloud::getMidiChannel()
 int Cloud::getMidiNote()
 {
     return midiNote;
+}
+
+bool Cloud::changedMidiChannel()
+{
+    return changed_midiChannel;
+}
+
+bool Cloud::changedMidiNote()
+{
+    return changed_midiNote;
 }
 
 void Cloud::setLockedState(bool newLockedState)
@@ -441,6 +499,32 @@ bool Cloud::dialogLocked()
     msgBox.setDefaultButton(QMessageBox::No);
     locked = msgBox.exec() == QMessageBox::No;
     return locked;
+}
+
+void Cloud::changesDone(bool done)
+{
+    changed_duration = done;
+    changed_midiChannel = done;
+    changed_midiNote = done;
+    changed_numGrains = done;
+    changed_overlap = done;
+    changed_pitch = done;
+    changed_pitchLFOAmount = done;
+    changed_pitchLFOFreq = done;
+    changed_volumeDB = done;
+    changed_windowType = done;
+    changed_myDirMode = done;
+    changed_spatialMode = done;
+}
+
+bool Cloud::getEditingdialog()
+{
+    return editingDialog;
+}
+
+void Cloud::setEditingDialog(bool editing)
+{
+    editingDialog = editing;
 }
 
 // print information
@@ -630,6 +714,7 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
 void Cloud::setPitchLFOFreq(float pfreq)
 {
     pitchLFOFreq = fabs(pfreq);
+    changed_pitchLFOFreq = true;
 }
 
 void Cloud::setPitchLFOAmount(float lfoamt)
@@ -638,6 +723,7 @@ void Cloud::setPitchLFOAmount(float lfoamt)
         lfoamt = 0.0f;
     }
     pitchLFOAmount = lfoamt;
+    changed_pitchLFOAmount = true;
 }
 
 float Cloud::getPitchLFOFreq()
@@ -645,9 +731,19 @@ float Cloud::getPitchLFOFreq()
     return pitchLFOFreq;
 }
 
+bool Cloud::changedPitchLFOFreq()
+{
+    return changed_pitchLFOFreq;
+}
+
 float Cloud::getPitchLFOAmount()
 {
     return pitchLFOAmount;
+}
+
+bool Cloud::changedPitchLFOAmount()
+{
+    return changed_pitchLFOAmount;
 }
 
 
@@ -662,6 +758,7 @@ void Cloud::setSpatialMode(int theMode, int channelNumber = -1)
     // eventually swap out for azimuth instead of single channel
     if (channelNumber >= 0)
         channelLocation = channelNumber;
+    changed_spatialMode = true;
 }
 
 int Cloud::getSpatialMode()
@@ -671,6 +768,11 @@ int Cloud::getSpatialMode()
 int Cloud::getSpatialChannel()
 {
     return channelLocation;
+}
+
+bool Cloud::changedSpatialMode()
+{
+    return changed_spatialMode;
 }
 
 // spatialization logic
