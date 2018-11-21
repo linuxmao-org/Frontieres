@@ -421,9 +421,9 @@ unsigned int Cloud::getNumGrains()
 
 void Cloud::setNumGrains(unsigned int newNumGrains)
 {
-    while (numGrains < newNumGrains)
+    while (myGrains.size() < newNumGrains)
         addGrain();
-    while (numGrains > newNumGrains)
+    while (myGrains.size() > newNumGrains)
         removeGrain();
 }
 

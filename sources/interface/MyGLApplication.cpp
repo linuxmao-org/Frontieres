@@ -187,7 +187,6 @@ void MyGLApplication::showCloudDialog(SceneCloud *selectedCloud)
         dlg->setWindowTitle(tr("Cloud parameters"));
         dlgslot = dlg;
     }
-
     dlg->show();
     selectedCloud->cloud.get()->changesDone(true);
     dlg->linkCloud(selectedCloud->cloud.get(), selectedCloud->view.get());
