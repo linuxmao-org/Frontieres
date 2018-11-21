@@ -421,10 +421,12 @@ unsigned int Cloud::getNumGrains()
 
 void Cloud::setNumGrains(unsigned int newNumGrains)
 {
-    while (myGrains.size() < newNumGrains)
-        addGrain();
-    while (myGrains.size() > newNumGrains)
-        removeGrain();
+    if (newNumGrains < myGrains.size())
+        for (int i=1; i <= (myGrains.size() - newNumGrains); ++i)
+            removeGrain();
+    else
+        for (int i=1; i <= (newNumGrains - myGrains.size()); ++i)
+            addGrain();
 }
 
 // update after a change of sample set
