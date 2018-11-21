@@ -96,6 +96,12 @@ bool MyGLApplication::loadSceneFile()
     if (nameSceneFile.empty())
         return false;
 
+    // delete cloudMaps if existing
+
+    while (P->cloudDialogs.size() > 0){
+        destroyCloudDialog(P->cloudDialogs.begin()->first);
+    }
+
     // load the scene and its samples
     Scene *scene = new Scene;
     QFile sceneFile(QString::fromStdString(nameSceneFile));
