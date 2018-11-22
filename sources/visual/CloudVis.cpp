@@ -124,6 +124,14 @@ void CloudVis::registerCloud(Cloud *cloudToRegister)
     myCloud = cloudToRegister;
 }
 
+void CloudVis::changesDone(bool done)
+{
+    changed_gcX= done;
+    changed_gcY = done;
+    changed_xRandExtent = done;
+    changed_yRandExtent = done;
+}
+
 // return cloud x
 float CloudVis::getX()
 {
@@ -198,28 +206,43 @@ void CloudVis::getTriggerPos(unsigned int idx, double *playPos,
 void CloudVis::setFixedXRandExtent(float X)
 {
     xRandExtent = X;
+    changed_xRandExtent = true;
 }
 
 void CloudVis::setFixedYRandExtent(float Y)
 {
     yRandExtent = Y;
+    changed_yRandExtent = true;
 }
 void CloudVis::setFixedRandExtent(float X, float Y)
 {
     setFixedXRandExtent(X);
     setFixedYRandExtent(Y);
 }
+
+bool CloudVis::changedXRandExtent()
+{
+    return changed_xRandExtent;
+}
+
+bool CloudVis::changedYRandExtent()
+{
+    return changed_yRandExtent;
+}
+
 void CloudVis::setXRandExtent(float mouseX)
 {
     xRandExtent = fabs(mouseX - gcX);
     if (xRandExtent < 2.0f)
         xRandExtent = 0.0f;
+    changed_xRandExtent = true;
 }
 void CloudVis::setYRandExtent(float mouseY)
 {
     yRandExtent = fabs(mouseY - gcY);
     if (yRandExtent < 2.0f)
         yRandExtent = 0.0f;
+    changed_yRandExtent = true;
 }
 void CloudVis::setRandExtent(float mouseX, float mouseY)
 {
@@ -243,6 +266,16 @@ void CloudVis::setY(int newY)
 {
     updateCloudPosition(gcX, newY);
 }
+
+bool CloudVis::changedGcX()
+{
+    return changed_gcX;
+}
+
+bool CloudVis::changedGcY()
+{
+    return changed_gcY;
+}
 //
 void CloudVis::updateCloudPosition(float x, float y)
 {
@@ -255,6 +288,8 @@ void CloudVis::updateCloudPosition(float x, float y)
         float newGrainY = myGrainsV[i]->getY() + yDiff;
         myGrainsV[i]->moveTo(newGrainX, newGrainY);
     }
+    changed_gcX = true;
+    changed_gcY = true;
 }
 
 void CloudVis::updateGrainPosition(int idx, float x, float y)

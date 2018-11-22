@@ -11,7 +11,8 @@ DEFINES += __UNIX_JACK__
 
 INCLUDEPATH += $$PWD/libraries/QtFont3D
 SOURCES += libraries/QtFont3D/QtFont3D.cpp
-HEADERS += libraries/QtFont3D/QtFont3D.h
+HEADERS += libraries/QtFont3D/QtFont3D.h \
+    sources/interface/OptionsDialog.h
 
 unix: {
   isEmpty(INSTALL_PREFIX) {
@@ -48,6 +49,7 @@ SOURCES += \
   sources/interface/StartDialog.cpp \
   sources/interface/AdsrDialog.cpp \
   sources/interface/CloudDialog.cpp \
+  sources/interface/OptionsDialog.cpp \
   sources/interface/Node.cpp \
   sources/dsp/Window.cpp \
   sources/model/Adsr.cpp \
@@ -77,6 +79,7 @@ HEADERS += \
   sources/interface/StartDialog.h \
   sources/interface/AdsrDialog.h \
   sources/interface/CloudDialog.h \
+  sources/interface/OptionsDialog.h \
   sources/interface/Node.h \
   sources/dsp/Window.h \
   sources/model/Adsr.h \
@@ -100,7 +103,8 @@ FORMS += \
   sources/interface/MyGLWindow.ui \
   sources/interface/StartDialog.ui \
   sources/interface/AdsrDialog.ui \
-  sources/interface/CloudDialog.ui
+  sources/interface/CloudDialog.ui \
+  sources/interface/OptionsDialog.ui
 
 # RtOsc
 INCLUDEPATH += $$PWD/libraries/rtosc/include

@@ -79,6 +79,8 @@ public:
     float getY();
     void setX(int newX);
     void setY(int newY);
+    bool changedGcX();
+    bool changedGcY();
 
     // randomness params for grain positions
     float getXRandExtent();
@@ -89,6 +91,8 @@ public:
     void setFixedXRandExtent(float X);
     void setFixedYRandExtent(float Y);
     void setFixedRandExtent(float X, float Y);
+    bool changedXRandExtent();
+    bool changedYRandExtent();
 
     // set the pulse duration (which determines the frequency of the pulse)
     void setDuration(float dur);
@@ -99,6 +103,9 @@ public:
     // register model
     void registerCloud(Cloud *cloudToRegister);
 
+    // changes done
+    void changesDone(bool done);
+
 protected:
 private:
     bool isOn, isSelected;
@@ -107,9 +114,13 @@ private:
     unsigned int screenWidth, screenHeight;
 
     float xRandExtent, yRandExtent;
+    bool changed_xRandExtent = false;
+    bool changed_yRandExtent = false;
 
     float freq;
     float gcX, gcY;
+    bool changed_gcX = false;
+    bool changed_gcY = false;
     float selRad, lambda, maxSelRad, minSelRad, targetRad;
     unsigned int numGrains;
     // registered visualization
