@@ -45,17 +45,19 @@ void CloudDialog::linkCloud(Cloud *cloudLinked, CloudVis *cloudVisLinked)
         ui->doubleSpinBox_Volume->setValue(cloudLinked->getVolumeDb());
     if (cloudLinked->changedPitch())
         ui->doubleSpinBox_Pitch->setValue(12*log2(cloudLinked->getPitch()));
-    //if (cloudVisLinked->
-    ui->doubleSpinBox_X_Extent->setValue(cloudVisLinked->getXRandExtent());
-    ui->doubleSpinBox_Y_Extent->setValue(cloudVisLinked->getYRandExtent());
-    ui->doubleSpinBox_X->setValue(cloudVisLinked->getX());
-    ui->doubleSpinBox_Y->setValue(cloudVisLinked->getY());
-    if (cloudLinked->getMidiChannel())
+    if (cloudVisLinked->changedXRandExtent())
+        ui->doubleSpinBox_X_Extent->setValue(cloudVisLinked->getXRandExtent());
+    if (cloudVisLinked->changedYRandExtent())
+        ui->doubleSpinBox_Y_Extent->setValue(cloudVisLinked->getYRandExtent());
+    if (cloudVisLinked->changedGcX())
+        ui->doubleSpinBox_X->setValue(cloudVisLinked->getX());
+    if (cloudVisLinked->changedGcY())
+        ui->doubleSpinBox_Y->setValue(cloudVisLinked->getY());
+    if (cloudLinked->changedMidiChannel())
         ui->doubleSpinBox_Midi_Channel->setValue(cloudLinked->getMidiChannel());
     if (cloudLinked->changedMidiNote())
         ui->doubleSpinBox_Midi_Note->setValue(cloudLinked->getMidiNote());
     ui->label_Id_Value->setText(QString::number(cloudLinked->getId()));
-    //ui->label_Num_Value->setValue(cloudLinked->getNum());
     ui->checkBox_Active->setChecked(cloudLinked->getActiveState());
     ui->checkBox_Locked->setChecked(cloudLinked->getLockedState());
     if (cloudLinked->changedDirection())
@@ -72,7 +74,7 @@ void CloudDialog::linkCloud(Cloud *cloudLinked, CloudVis *cloudVisLinked)
         default :
             break;
         }
-    if (cloudLinked->getSpatialMode())
+    if (cloudLinked->changedSpatialMode())
         switch (cloudLinked->getSpatialMode()) {
         case UNITY:
             ui->radioButton_Balance_Unity->setChecked(true);
@@ -86,7 +88,7 @@ void CloudDialog::linkCloud(Cloud *cloudLinked, CloudVis *cloudVisLinked)
         default :
             break;
         }
-    if (cloudLinked->getWindowType())
+    if (cloudLinked->changedWindowType())
         switch (cloudLinked->getWindowType()) {
         case HANNING:
             ui->radioButton_Window_Hanning->setChecked(true);

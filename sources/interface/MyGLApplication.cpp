@@ -96,11 +96,10 @@ bool MyGLApplication::loadSceneFile()
     if (nameSceneFile.empty())
         return false;
 
+
     // delete cloudMaps if existing
 
-    while (P->cloudDialogs.size() > 0){
-        destroyCloudDialog(P->cloudDialogs.begin()->first);
-    }
+    destroyAllCloudDialogs();
 
     // load the scene and its samples
     Scene *scene = new Scene;
@@ -221,6 +220,13 @@ void MyGLApplication::midiNoteOn(int midiChannelToPlay, int midiKeyToPlay, int m
 void MyGLApplication::midiNoteOff(int midiChannelToStop, int midiKeyToStop)
 {
     currentScene->midiNoteOff(midiChannelToStop, midiKeyToStop);
+}
+
+void MyGLApplication::destroyAllCloudDialogs()
+{
+    while (P->cloudDialogs.size() > 0){
+        destroyCloudDialog(P->cloudDialogs.begin()->first);
+    }
 }
 
 void MyGLApplication::Impl::onIdle()

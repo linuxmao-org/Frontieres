@@ -519,16 +519,6 @@ void Cloud::changesDone(bool done)
     changed_spatialMode = done;
 }
 
-bool Cloud::getEditingdialog()
-{
-    return editingDialog;
-}
-
-void Cloud::setEditingDialog(bool editing)
-{
-    editingDialog = editing;
-}
-
 // print information
 void Cloud::describe(std::ostream &out)
 {

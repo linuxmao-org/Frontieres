@@ -181,8 +181,6 @@ public:
 
     // changes done
     void changesDone(bool done);
-    bool getEditingdialog();
-    void setEditingDialog(bool editing);
 
 protected:
     // update internal trigger point
@@ -257,8 +255,6 @@ private:
 
     // lock switch
     bool locked = false;
-
-    bool editingDialog = false;
 };
 
 #endif

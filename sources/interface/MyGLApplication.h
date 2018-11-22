@@ -42,6 +42,7 @@ public:
     void destroyCloudDialog(unsigned selectedCloudId);
     void midiNoteOn (int midiChannelToPlay, int midiKeyToPlay, int midiVeloToPlay);
     void midiNoteOff (int midiChannelToStop, int midiKeyToStop);
+    void destroyAllCloudDialogs();
 
 private:
     struct Impl;
