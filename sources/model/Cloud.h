@@ -88,43 +88,53 @@ public:
     // set duration for all grains
     void setDurationMs(float theDur);
     float getDurationMs();
+    bool changedDurationMs();
 
 
     // overlap
     void setOverlap(float targetOverlap);
     float getOverlap();
+    bool changedOverlap();
 
     // pitch
     void setPitch(float targetPitch);
     float getPitch();
+    bool changedPitch();
 
     // pitch lfo methods
     void setPitchLFOFreq(float pfreq);
     float getPitchLFOFreq();
+    bool changedPitchLFOFreq();
     void setPitchLFOAmount(float lfoamt);
     float getPitchLFOAmount();
+    bool changedPitchLFOAmount();
 
     // direction
     void setDirection(int dirMode);
     int getDirection();
+    bool changedDirection();
 
     // add/remove grain
     void addGrain();
     void removeGrain();
+    bool changedNumGrains();
 
     // set window type
     void setWindowType(int windowType);
     int getWindowType();
+    bool changedWindowType();
 
 
     // spatialization methods (see enum for theMode.  channel number is optional and has default arg);
     void setSpatialMode(int theMode, int channelNumber);
     int getSpatialMode();
     int getSpatialChannel();
+    bool changedSpatialMode();
 
     // volume
     void setVolumeDb(float theVolDB);
     float getVolumeDb();
+    bool changedVolumeDb();
 
 
     // get unique id of cloud
@@ -161,11 +171,16 @@ public:
     void setMidiNote(int newMidiNote);
     int getMidiChannel();
     int getMidiNote();
+    bool changedMidiChannel();
+    bool changedMidiNote();
 
     // lock flag
     void setLockedState(bool newLockedState);
     bool getLockedState();
     bool dialogLocked();
+
+    // changes done
+    void changesDone(bool done);
 
 protected:
     // update internal trigger point
@@ -196,10 +211,12 @@ private:
     // spatialization
     double *channelMults;
     int spatialMode;
+    bool changed_spatialMode = false;
     int channelLocation;
 
     // volume
     float volumeDb, normedVol;
+    bool changed_volumeDB = false;
     float *envelopeVolumeBuff;
     double *intermediateBuff;
     enum EnvelopeAction { TriggerEnvelope = 1, ReleaseEnvelope = 2 };
@@ -211,10 +228,18 @@ private:
 
     // number of grains in this cloud
     unsigned int numGrains;
+    bool changed_numGrains = false;
 
     // cloud params
     float overlap, overlapNorm, pitch, duration, pitchLFOFreq, pitchLFOAmount;
     int myDirMode, windowType;
+    bool changed_overlap = false;
+    bool changed_pitch = false;
+    bool changed_duration = false;
+    bool changed_pitchLFOFreq = false;
+    bool changed_pitchLFOAmount = false;
+    bool changed_myDirMode = false;
+    bool changed_windowType = false;
 
     // audio files
     VecSceneSample *theSamples;
@@ -225,6 +250,8 @@ private:
     // midi params
     int midiChannel = 0;
     int midiNote;
+    bool changed_midiChannel = false;
+    bool changed_midiNote = false;
 
     // lock switch
     bool locked = false;

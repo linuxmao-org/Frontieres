@@ -442,13 +442,27 @@ bool Scene::loadCloudDefault(QFile &cloudFile)
     g_defaultCloudParams.midiChannel = objGrain["midi-channel"].toInt();
     g_defaultCloudParams.midiNote = objGrain["midi-note"].toInt();
     g_defaultCloudParams.volumeDB = objGrain["volume"].toDouble();
-    g_defaultCloudParams.envelope.l1 = objGrain["volume-envelope-L1"].toDouble();
-    g_defaultCloudParams.envelope.l2 = objGrain["volume-envelope-L2"].toDouble();
-    g_defaultCloudParams.envelope.l3 = objGrain["volume-envelope-L3"].toDouble();
-    g_defaultCloudParams.envelope.r1 = objGrain["volume-envelope-R1"].toDouble() / samp_rate;
-    g_defaultCloudParams.envelope.r2 = objGrain["volume-envelope-R2"].toDouble() / samp_rate;
-    g_defaultCloudParams.envelope.r3 = objGrain["volume-envelope-R3"].toDouble() / samp_rate;
-    g_defaultCloudParams.envelope.r4 = objGrain["volume-envelope-R4"].toDouble() / samp_rate;
+    ParamEnv cloudEnvelopeVolume;
+    {
+        double l1 = objGrain["volume-envelope-L1"].toDouble();
+        double l2 = objGrain["volume-envelope-L2"].toDouble();
+        double l3 = objGrain["volume-envelope-L3"].toDouble();
+        double tAtk = objGrain["volume-envelope-TAtk"].toDouble();
+        double tSta = objGrain["volume-envelope-TSta"].toDouble();
+        double tDec = objGrain["volume-envelope-TDec"].toDouble();
+        double tRel = objGrain["volume-envelope-TRel"].toDouble();
+        cloudEnvelopeVolume.setTimeBasedParameters(
+            l1, l2, l3,
+            tAtk, tSta, tDec, tRel,
+            samp_rate);
+    }
+    g_defaultCloudParams.envelope.l1 = cloudEnvelopeVolume.l1;
+    g_defaultCloudParams.envelope.l2 = cloudEnvelopeVolume.l2;
+    g_defaultCloudParams.envelope.l3 = cloudEnvelopeVolume.l3;
+    g_defaultCloudParams.envelope.r1 = cloudEnvelopeVolume.r1;
+    g_defaultCloudParams.envelope.r2 = cloudEnvelopeVolume.r2;
+    g_defaultCloudParams.envelope.r3 = cloudEnvelopeVolume.r3;
+    g_defaultCloudParams.envelope.r4 = cloudEnvelopeVolume.r4;
     g_defaultCloudParams.envelope.t1 = objGrain["volume-envelope-T1"].toInt();
     g_defaultCloudParams.envelope.t2 = objGrain["volume-envelope-T2"].toInt();
     g_defaultCloudParams.envelope.t3 = objGrain["volume-envelope-T3"].toInt();
@@ -526,6 +540,22 @@ bool Scene::saveCloud(QFile &cloudFile, SceneCloud *selectedCloudSave)
     objGrain["midi-channel"] = cloudToSave->getMidiChannel();
     objGrain["midi-note"] = cloudToSave->getMidiNote();
     objGrain["volume"] = cloudToSave->getVolumeDb();
+    const ParamEnv &cloudEnvelopeVolumeParam = cloudToSave->getEnvelopeVolumeParam();
+    {
+        float tAtk, tSta, tDec, tRel;
+        cloudEnvelopeVolumeParam.getTimeBasedParameters(tAtk, tSta, tDec, tRel, samp_rate);
+        objGrain["volume-envelope-L1"] = cloudEnvelopeVolumeParam.l1;
+        objGrain["volume-envelope-L2"] = cloudEnvelopeVolumeParam.l2;
+        objGrain["volume-envelope-L3"] = cloudEnvelopeVolumeParam.l3;
+        objGrain["volume-envelope-TAtk"] = tAtk;
+        objGrain["volume-envelope-TSta"] = tSta;
+        objGrain["volume-envelope-TDec"] = tDec;
+        objGrain["volume-envelope-TRel"] = tRel;
+    }
+    objGrain["volume-envelope-T1"] = cloudEnvelopeVolumeParam.t1;
+    objGrain["volume-envelope-T2"] = cloudEnvelopeVolumeParam.t2;
+    objGrain["volume-envelope-T3"] = cloudEnvelopeVolumeParam.t3;
+    objGrain["volume-envelope-T4"] = cloudEnvelopeVolumeParam.t4;
     objGrain["num-grains"] = (int)cloudToSave->getNumGrains();
     objGrain["active-state"] = cloudToSave->getActiveState();
     objGrain["x-rand-extent"] = cloudVisToSave->getXRandExtent();

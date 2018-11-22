@@ -983,7 +983,6 @@ int main(int argc, char **argv)
 
     std::string oscUrl = osc.getUrl();
     std::cout << "OSC address: " << oscUrl << "\n";
-    GLwindow->setupOscUrl(QString::fromStdString(oscUrl));
 
     // let Qt handle the current thread from here
     exitCode = app.exec();

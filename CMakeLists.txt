@@ -34,6 +34,7 @@ add_executable(Frontieres WIN32
   sources/interface/StartDialog.cpp
   sources/interface/AdsrDialog.cpp
   sources/interface/CloudDialog.cpp
+  sources/interface/OptionsDialog.cpp
   sources/interface/Node.cpp
   sources/dsp/Window.cpp
   sources/model/Adsr.cpp
@@ -79,6 +80,7 @@ target_include_directories(Frontieres
 
 qt5_wrap_ui(Frontieres_UI_SOURCES
   sources/interface/CloudDialog.ui
+  sources/interface/OptionsDialog.ui
   sources/interface/AdsrDialog.ui
   sources/interface/MyGLWindow.ui
   sources/interface/StartDialog.ui)

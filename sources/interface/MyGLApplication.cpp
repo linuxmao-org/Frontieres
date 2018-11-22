@@ -22,6 +22,7 @@
 #include "MyGLApplication.h"
 #include "MyGLWindow.h"
 #include "CloudDialog.h"
+#include "OptionsDialog.h"
 #include "Frontieres.h"
 #include "I18n.h"
 #include "model/Sample.h"
@@ -95,6 +96,11 @@ bool MyGLApplication::loadSceneFile()
     std::string nameSceneFile = Scene::askNameScene(FileDirection::Load);
     if (nameSceneFile.empty())
         return false;
+
+
+    // delete cloudMaps if existing
+
+    destroyAllCloudDialogs();
 
     // load the scene and its samples
     Scene *scene = new Scene;
@@ -187,8 +193,8 @@ void MyGLApplication::showCloudDialog(SceneCloud *selectedCloud)
         dlg->setWindowTitle(tr("Cloud parameters"));
         dlgslot = dlg;
     }
-
     dlg->show();
+    selectedCloud->cloud.get()->changesDone(true);
     dlg->linkCloud(selectedCloud->cloud.get(), selectedCloud->view.get());
 }
 
@@ -215,6 +221,19 @@ void MyGLApplication::midiNoteOn(int midiChannelToPlay, int midiKeyToPlay, int m
 void MyGLApplication::midiNoteOff(int midiChannelToStop, int midiKeyToStop)
 {
     currentScene->midiNoteOff(midiChannelToStop, midiKeyToStop);
+}
+
+void MyGLApplication::destroyAllCloudDialogs()
+{
+    while (P->cloudDialogs.size() > 0){
+        destroyCloudDialog(P->cloudDialogs.begin()->first);
+    }
+}
+
+void MyGLApplication::showOptionsDialog()
+{
+    OptionsDialog optionsDlg;
+    optionsDlg.exec();
 }
 
 void MyGLApplication::Impl::onIdle()

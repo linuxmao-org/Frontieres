@@ -57,12 +57,14 @@
      <string>&amp;Edit</string>
     </property>
     <addaction name="action_Add_sample"/>
+    <addaction name="separator"/>
+    <addaction name="action_Options"/>
    </widget>
    <widget class="QMenu" name="menu_OSC">
     <property name="title">
      <string>&amp;OSC</string>
     </property>
-    <addaction name="action_Start_controller"/>
+    <addaction name="action_Control"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Edit"/>
@@ -102,6 +104,16 @@
   <action name="action_Start_controller">
    <property name="text">
     <string>&amp;Start controller</string>
+   </property>
+  </action>
+  <action name="action_Options">
+   <property name="text">
+    <string>&amp;Options</string>
+   </property>
+  </action>
+  <action name="action_Control">
+   <property name="text">
+    <string>&amp;Control</string>
    </property>
   </action>
  </widget>
