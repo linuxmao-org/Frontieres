@@ -10,8 +10,10 @@ DEFINES += __LINUX_ALSASEQ__
 DEFINES += __UNIX_JACK__
 
 INCLUDEPATH += $$PWD/libraries/QtFont3D
-SOURCES += libraries/QtFont3D/QtFont3D.cpp
-HEADERS += libraries/QtFont3D/QtFont3D.h
+SOURCES += libraries/QtFont3D/QtFont3D.cpp \
+    sources/interface/OptionsDialog.cpp
+HEADERS += libraries/QtFont3D/QtFont3D.h \
+    sources/interface/OptionsDialog.h
 
 unix: {
   isEmpty(INSTALL_PREFIX) {
@@ -100,7 +102,8 @@ FORMS += \
   sources/interface/MyGLWindow.ui \
   sources/interface/StartDialog.ui \
   sources/interface/AdsrDialog.ui \
-  sources/interface/CloudDialog.ui
+  sources/interface/CloudDialog.ui \
+    sources/interface/OptionsDialog.ui
 
 # RtOsc
 INCLUDEPATH += $$PWD/libraries/rtosc/include

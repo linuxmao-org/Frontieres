@@ -43,6 +43,7 @@ public:
     void midiNoteOn (int midiChannelToPlay, int midiKeyToPlay, int midiVeloToPlay);
     void midiNoteOff (int midiChannelToStop, int midiKeyToStop);
     void destroyAllCloudDialogs();
+    void showOptionsDialog();
 
 private:
     struct Impl;

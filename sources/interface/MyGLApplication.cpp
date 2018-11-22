@@ -22,6 +22,7 @@
 #include "MyGLApplication.h"
 #include "MyGLWindow.h"
 #include "CloudDialog.h"
+#include "OptionsDialog.h"
 #include "Frontieres.h"
 #include "I18n.h"
 #include "model/Sample.h"
@@ -227,6 +228,12 @@ void MyGLApplication::destroyAllCloudDialogs()
     while (P->cloudDialogs.size() > 0){
         destroyCloudDialog(P->cloudDialogs.begin()->first);
     }
+}
+
+void MyGLApplication::showOptionsDialog()
+{
+    OptionsDialog optionsDlg;
+    optionsDlg.exec();
 }
 
 void MyGLApplication::Impl::onIdle()

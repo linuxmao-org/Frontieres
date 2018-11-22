@@ -36,11 +36,7 @@ public:
     ~MyGLWindow();
     void initialize();
     void setMenuBarVisible(bool visible);
-    void setupOscUrl(const QString &oscUrl);
     MyGLScreen *screen() const;
-
-public slots:
-    void on_action_Start_controller_triggered();
 
 private:
     struct Impl;
