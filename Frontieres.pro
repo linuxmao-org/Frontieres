@@ -10,8 +10,7 @@ DEFINES += __LINUX_ALSASEQ__
 DEFINES += __UNIX_JACK__
 
 INCLUDEPATH += $$PWD/libraries/QtFont3D
-SOURCES += libraries/QtFont3D/QtFont3D.cpp \
-    sources/interface/OptionsDialog.cpp
+SOURCES += libraries/QtFont3D/QtFont3D.cpp
 HEADERS += libraries/QtFont3D/QtFont3D.h \
     sources/interface/OptionsDialog.h
 
@@ -50,6 +49,7 @@ SOURCES += \
   sources/interface/StartDialog.cpp \
   sources/interface/AdsrDialog.cpp \
   sources/interface/CloudDialog.cpp \
+  sources/interface/OptionsDialog.cpp \
   sources/interface/Node.cpp \
   sources/dsp/Window.cpp \
   sources/model/Adsr.cpp \
@@ -79,6 +79,7 @@ HEADERS += \
   sources/interface/StartDialog.h \
   sources/interface/AdsrDialog.h \
   sources/interface/CloudDialog.h \
+  sources/interface/OptionsDialog.h \
   sources/interface/Node.h \
   sources/dsp/Window.h \
   sources/model/Adsr.h \
@@ -103,7 +104,7 @@ FORMS += \
   sources/interface/StartDialog.ui \
   sources/interface/AdsrDialog.ui \
   sources/interface/CloudDialog.ui \
-    sources/interface/OptionsDialog.ui
+  sources/interface/OptionsDialog.ui
 
 # RtOsc
 INCLUDEPATH += $$PWD/libraries/rtosc/include
