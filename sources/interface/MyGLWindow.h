@@ -35,6 +35,7 @@ public:
     MyGLWindow();
     ~MyGLWindow();
     void initialize();
+    void closeEvent(QCloseEvent *e);
     void setMenuBarVisible(bool visible);
     MyGLScreen *screen() const;
 
