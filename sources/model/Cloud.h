@@ -169,8 +169,10 @@ public:
     // midi notes
     void setMidiChannel(int newMidiChannel);
     void setMidiNote(int newMidiNote);
+    void setMidiVelocity(int newMidiVelocity);
     int getMidiChannel();
     int getMidiNote();
+    int getMidiVelocity();
     bool changedMidiChannel();
     bool changedMidiNote();
 
@@ -255,6 +257,7 @@ private:
     int midiNote;
     bool changed_midiChannel = false;
     bool changed_midiNote = false;
+    int midiVelocity = 127;
 
     // lock switch
     bool locked = false;
