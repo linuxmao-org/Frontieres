@@ -54,7 +54,7 @@ void MyGLWindow::initialize()
     P->ui.setupUi(this);
     MyGLScreen *screen = this->screen();
 
-    connect(this, SIGNAL(close()), this, SLOT(closeEvent(QCloseEvent *e)));
+    //connect(this, SIGNAL(close()), this, SLOT(closeEvent(QCloseEvent *e)));
 
     connect(P->ui.action_Quit, &QAction::triggered,
             qApp, &QApplication::quit);
