@@ -498,6 +498,11 @@ void Cloud::setMidiNote(int newMidiNote)
     changed_midiNote = true;
 }
 
+void Cloud::setMidiVelocity(int newMidiVelocity)
+{
+    midiVelocity = newMidiVelocity;
+}
+
 int Cloud::getMidiChannel()
 {
     return midiChannel;
@@ -506,6 +511,11 @@ int Cloud::getMidiChannel()
 int Cloud::getMidiNote()
 {
     return midiNote;
+}
+
+int Cloud::getMidiVelocity()
+{
+    return midiVelocity;
 }
 
 bool Cloud::changedMidiChannel()
@@ -658,7 +668,9 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
         }
         removeFlag = false;
     }
-
+    // end midi note, come back to velocity max
+    if ((envelopeVolume->state() == Env::State::Off) && (midiVelocity != 127))
+        setMidiVelocity(127);
     if (envelopeVolume->state() != Env::State::Off) {
         // initialize play positions array
         double playPositions[theSamples->size()];
@@ -739,7 +751,7 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
             }
             for (int i = 0; i < numFrames; ++i) {
                 for (int j = 0; j < MY_CHANNELS; ++j)
-                    accumBuff[i * MY_CHANNELS + j] += intermediateBuff[i * MY_CHANNELS + j] * envelopeVolumeBuff[i];
+                    accumBuff[i * MY_CHANNELS + j] += intermediateBuff[i * MY_CHANNELS + j] * envelopeVolumeBuff[i] * ((float) midiVelocity / 127);
             }
         }
     }
