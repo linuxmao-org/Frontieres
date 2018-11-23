@@ -112,6 +112,30 @@ rtosc::Ports cloud {
          float arg = rtosc_argument(msg, 0).f;
          sceneCloud->cloud->setSpatialMode(arg, -1);
      }},
+    {"midiChannel:f", rDoc("MidiChannel"), nullptr,
+     [](const char *msg, rtosc::RtData &data) {
+         SceneCloud *sceneCloud = (SceneCloud *)data.obj;
+         float arg = rtosc_argument(msg, 0).f;
+         sceneCloud->cloud->setMidiChannel(arg);
+     }},
+    {"midiNote:f", rDoc("MidiNote"), nullptr,
+     [](const char *msg, rtosc::RtData &data) {
+         SceneCloud *sceneCloud = (SceneCloud *)data.obj;
+         float arg = rtosc_argument(msg, 0).f;
+         sceneCloud->cloud->setMidiNote(arg);
+     }},
+    {"active:f", rDoc("Active"), nullptr,
+     [](const char *msg, rtosc::RtData &data) {
+         SceneCloud *sceneCloud = (SceneCloud *)data.obj;
+         float arg = rtosc_argument(msg, 0).f;
+         sceneCloud->cloud->setActiveState(arg);
+     }},
+    {"locked:f", rDoc("Locked"), nullptr,
+     [](const char *msg, rtosc::RtData &data) {
+         SceneCloud *sceneCloud = (SceneCloud *)data.obj;
+         float arg = rtosc_argument(msg, 0).f;
+         sceneCloud->cloud->setLockedState(arg);
+     }},
     {"x:f", rDoc("X"), nullptr,
      [](const char *msg, rtosc::RtData &data) {
          SceneCloud *sceneCloud = (SceneCloud *)data.obj;

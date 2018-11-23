@@ -182,6 +182,9 @@ public:
     // changes done
     void changesDone(bool done);
 
+    // message when osc or midi want to change locked cloud
+    void showMessageLocked();
+
 protected:
     // update internal trigger point
     void updateBangTime();
