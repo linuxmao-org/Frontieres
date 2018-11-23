@@ -54,6 +54,8 @@ void MyGLWindow::initialize()
     P->ui.setupUi(this);
     MyGLScreen *screen = this->screen();
 
+    connect(this, SIGNAL(close()), this, SLOT(closeEvent(QCloseEvent *e)));
+
     connect(P->ui.action_Quit, &QAction::triggered,
             qApp, &QApplication::quit);
     connect(P->ui.action_Load_scene, &QAction::triggered,
@@ -75,6 +77,11 @@ void MyGLWindow::initialize()
     format.setDepthBufferSize(24);
     format.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
     screen->setFormat(format);
+}
+
+void MyGLWindow::closeEvent(QCloseEvent *e)
+{
+    theApplication->destroyAllCloudDialogs();
 }
 
 void MyGLWindow::setMenuBarVisible(bool visible)
