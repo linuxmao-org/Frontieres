@@ -570,7 +570,7 @@ void Cloud::changesDone(bool done)
 
 void Cloud::showMessageLocked()
 {
-    cout << "cloud locked, no change" << endl;
+    // cout << "cloud locked, no change" << endl;
 }
 
 // print information
