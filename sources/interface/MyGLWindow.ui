@@ -66,8 +66,15 @@
     </property>
     <addaction name="action_Control"/>
    </widget>
+   <widget class="QMenu" name="menu_Midi">
+    <property name="title">
+     <string>&amp;Midi</string>
+    </property>
+    <addaction name="action_Combi"/>
+   </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Edit"/>
+   <addaction name="menu_Midi"/>
    <addaction name="menu_OSC"/>
   </widget>
   <action name="action_Load_scene">
@@ -114,6 +121,11 @@
   <action name="action_Control">
    <property name="text">
     <string>&amp;Control</string>
+   </property>
+  </action>
+  <action name="action_Combi">
+   <property name="text">
+    <string>&amp;Combinations</string>
    </property>
   </action>
  </widget>

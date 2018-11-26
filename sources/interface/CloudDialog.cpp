@@ -58,6 +58,8 @@ void CloudDialog::linkCloud(Cloud *cloudLinked, CloudVis *cloudVisLinked)
     if (cloudLinked->changedMidiNote())
         ui->doubleSpinBox_Midi_Note->setValue(cloudLinked->getMidiNote());
     ui->label_Id_Value->setText(QString::number(cloudLinked->getId()));
+  //  if (cloudLinked->changedName())
+        ui->lineEdit_Name->setText(cloudLinked->getName());
     ui->checkBox_Active->setChecked(cloudLinked->getActiveState());
     ui->checkBox_Locked->setChecked(cloudLinked->getLockedState());
     if (cloudLinked->changedDirection())
@@ -117,6 +119,7 @@ void CloudDialog::linkCloud(Cloud *cloudLinked, CloudVis *cloudVisLinked)
 
 void CloudDialog::setDisableAllWidgets(bool disabled)
 {
+    ui->lineEdit_Name->setDisabled(disabled);
     ui->checkBox_Active->setDisabled(disabled);
     ui->dial_Duration->setDisabled(disabled);
     ui->dial_Grains->setDisabled(disabled);
@@ -383,4 +386,10 @@ void CloudDialog::on_pushButton_Envelope_clicked()
     localParamEnv = cloudRef->getEnvelopeVolumeParam();
     cloudRef->getEnvelopeVolume().envDialogShow(localParamEnv);
     cloudRef->setEnvelopeVolumeParam(localParamEnv);
+}
+
+void CloudDialog::on_lineEdit_Name_textEdited(const QString &arg1)
+{
+    if (!linking)
+        cloudRef->setName(arg1);
 }

@@ -102,6 +102,8 @@ private slots:
 
     void on_pushButton_Envelope_clicked();
 
+    void on_lineEdit_Name_textEdited(const QString &arg1);
+
 private:
     Ui::CloudDialog *ui;
     bool linking = false;

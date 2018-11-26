@@ -141,6 +141,9 @@ public:
     unsigned int getId();
     void setId(int cloudId);
 
+    void setName(QString newName);
+    QString getName();
+
     // register visualization
     void registerCloudVis(CloudVis *cloudVisToRegister);
 
@@ -196,6 +199,8 @@ protected:
 
 private:
     unsigned int myId;  // unique id
+
+    QString myName;
 
     bool isActive;  // on/off state
     bool awaitingPlay;  // triggered but not ready to play?

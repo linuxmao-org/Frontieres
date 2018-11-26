@@ -248,6 +248,16 @@ void Cloud::setId(int cloudId)
     myId = cloudId;
 }
 
+void Cloud::setName(QString newName)
+{
+    myName = newName;
+}
+
+QString Cloud::getName()
+{
+    return myName;
+}
+
 // overlap (input on 0 to 1 scale)
 void Cloud::setOverlap(float target)
 {
@@ -570,7 +580,7 @@ void Cloud::changesDone(bool done)
 
 void Cloud::showMessageLocked()
 {
-    // cout << "cloud locked, no change" << endl;
+    cout << "cloud locked, no change" << endl;
 }
 
 // print information

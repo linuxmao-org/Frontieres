@@ -200,6 +200,7 @@ bool Scene::load(QFile &sceneFile)
         m_clouds.emplace_back(sceneCloud);
 
         int cloudId = objGrain["id"].toInt();
+        QString cloudName = objGrain["name"].toString();
         double cloudDuration = objGrain["duration"].toDouble();
         double cloudOverlap = objGrain["overlap"].toDouble();
         double cloudPitch = objGrain["pitch"].toDouble();
@@ -278,6 +279,7 @@ bool Scene::load(QFile &sceneFile)
         cloudToLoad->registerCloudVis(cloudVisToLoad);
         cloudVisToLoad->registerCloud(cloudToLoad);
         cloudToLoad->setId(cloudId);
+        cloudToLoad->setName(cloudName);
         cloudToLoad->setDurationMs(cloudDuration);
         cloudToLoad->setOverlap(cloudOverlap);
         cloudToLoad->setPitch(cloudPitch);
@@ -364,6 +366,7 @@ bool Scene::save(QFile &sceneFile)
 
         QJsonObject objGrain;
         objGrain["id"] = (int)cloudToSave->getId();
+        objGrain["name"] = cloudToSave->getName();
         objGrain["duration"] = cloudToSave->getDurationMs();
         objGrain["overlap"] = cloudToSave->getOverlap();
         objGrain["pitch"] = cloudToSave->getPitch();

@@ -21,6 +21,7 @@
 
 #include <QApplication>
 #include <memory>
+#include "CombiDialog.h"
 #include "model/Scene.h"
 
 class MyGLWindow;
@@ -46,6 +47,7 @@ public:
     void midiNoteOff (int midiChannelToStop, int midiKeyToStop);
     void destroyAllCloudDialogs();
     void showOptionsDialog();
+    void showCombiDialog();
 
 signals:
     void oscMessageArrived(const QByteArray &message);
@@ -53,6 +55,7 @@ signals:
 private:
     struct Impl;
     std::unique_ptr<Impl> P;
+    CombiDialog *combiDialog;
 };
 
 #define theApplication \
