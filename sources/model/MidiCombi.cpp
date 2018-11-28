@@ -1,4 +1,4 @@
-#include "Combination.h"
+#include "MidiCombi.h"
 
 Combination::Combination()
 {
@@ -27,6 +27,11 @@ void Combination::setName(QString newName)
 Note Combination::getNote(int numNote)
 {
     return note[numNote];
+}
+
+void Combination::setNote(Note newNote, int numNote)
+{
+    note[numNote] = newNote;
 }
 
 QString Combination::getName()

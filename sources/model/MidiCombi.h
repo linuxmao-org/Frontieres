@@ -25,6 +25,8 @@
 
 #include <vector>
 #include <QString>
+#include <iostream>
+#include "stdio.h"
 
 struct VeloArray {
     int min;
@@ -51,9 +53,10 @@ public:
     void removeCloud(int noteForRemove, int cldId);
     void setName(QString newName);
     Note getNote(int numNote);
+    void setNote(Note newNote, int numNote);
     QString getName();
 private:
-    QString myName;
+    QString myName = "";
     Note note[128];
 };
 

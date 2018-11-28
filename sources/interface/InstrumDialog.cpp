@@ -1,5 +1,5 @@
-#include "InstrumentDialog.h"
-#include "ui_InstrumentDialog.h"
+#include "InstrumDialog.h"
+#include "ui_InstrumDialog.h"
 
 InstrumentDialog::InstrumentDialog(QWidget *parent) :
     QDialog(parent),
@@ -11,4 +11,9 @@ InstrumentDialog::InstrumentDialog(QWidget *parent) :
 InstrumentDialog::~InstrumentDialog()
 {
     delete ui;
+}
+
+void InstrumentDialog::init(Scene *currentScene)
+{
+    instrumentScene = currentScene;
 }

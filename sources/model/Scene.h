@@ -27,6 +27,8 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include "model/MidiBank.h"
+
 struct SceneSample;
 struct SceneCloud;
 struct Sample;
@@ -38,7 +40,6 @@ class QFile;
 
 typedef std::vector<std::unique_ptr<SceneSample>> VecSceneSample;
 typedef std::vector<std::unique_ptr<SceneCloud>> VecSceneCloud;
-typedef std::vector<std::unique_ptr<SceneCloud>> VecMidiCloud;
 
 extern unsigned int samp_rate;
 
@@ -89,7 +90,6 @@ public:
     std::vector<std::string> m_audioPaths;
     VecSceneSample m_samples;
     VecSceneCloud m_clouds;
-    VecMidiCloud midi_clouds;
 
     // Samples
     std::unique_ptr<SampleSet> m_sampleSet;
@@ -103,6 +103,9 @@ public:
     // midi notes
     void midiNoteOn (int midiChannelToPlay, int midiNoteToPlay, int midiVeloToPlay);
     void midiNoteOff (int midiChannelToStop, int midiNoteToStop);
+
+    // midi combinations bank
+    MidiBank m_midiBank;
 };
 
 struct SceneSample {

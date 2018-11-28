@@ -11,14 +11,20 @@ DEFINES += __UNIX_JACK__
 
 INCLUDEPATH += $$PWD/libraries/QtFont3D
 SOURCES += libraries/QtFont3D/QtFont3D.cpp \
-    sources/model/Combination.cpp \
-    sources/interface/InstrumentDialog.cpp \
-    sources/interface/CombiDialog.cpp
+    sources/interface/CombiDialog.cpp \
+    sources/interface/BankDialog.cpp \
+    sources/model/MidiBank.cpp \
+    sources/model/MidiCombi.cpp \
+    sources/interface/InstrumDialog.cpp \
+    sources/model/MidiInstrum.cpp
 HEADERS += libraries/QtFont3D/QtFont3D.h \
     sources/interface/OptionsDialog.h \
-    sources/model/Combination.h \
-    sources/interface/InstrumentDialog.h \
-    sources/interface/CombiDialog.h
+    sources/interface/InstrumDialog.h \
+    sources/interface/CombiDialog.h \
+    sources/interface/BankDialog.h \
+    sources/model/MidiBank.h \
+    sources/model/MidiCombi.h \
+    sources/model/MidiInstrum.h
 
 unix: {
   isEmpty(INSTALL_PREFIX) {
@@ -111,8 +117,9 @@ FORMS += \
   sources/interface/AdsrDialog.ui \
   sources/interface/CloudDialog.ui \
   sources/interface/OptionsDialog.ui \
-    sources/interface/InstrumentDialog.ui \
-    sources/interface/CombiDialog.ui
+    sources/interface/CombiDialog.ui \
+    sources/interface/BankDialog.ui \
+    sources/interface/InstrumDialog.ui
 
 # RtOsc
 INCLUDEPATH += $$PWD/libraries/rtosc/include

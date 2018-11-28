@@ -5,7 +5,9 @@
 #include <QtCore>
 #include <QtGui>
 #include <QTreeWidgetItem>
-#include "model/Combination.h"
+#include <QCloseEvent>
+#include "model/MidiCombi.h"
+#include "model/Scene.h"
 
 
 
@@ -23,6 +25,7 @@ public:
     void resetTreeCombi();
     void treeNotesAddChild(QTreeWidgetItem *parent, QString cldId, QString cldName, QString veloMin, QString veloMax);
     void addCloudToDialog(QString cldId, QString cldName);
+    void initCombi(Scene *currentScene, unsigned numCombi);
 
 private slots:
     void on_pushButton_AddCloud_clicked();
@@ -31,10 +34,15 @@ private slots:
 
     void on_pushButton_RemoveCloud_clicked();
 
+    void on_lineEdit_Name_textEdited(const QString &arg1);
+
 private:
+    void closeEvent(QCloseEvent *bar);
     Ui::CombiDialog *ui;
     Combination myCombi;
     QMap<QString, QString> cloudIdName;
+    Scene *combiScene;
+    int myNumCombi;
 
 };
 

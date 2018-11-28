@@ -69,7 +69,12 @@ void MyGLWindow::initialize()
     connect(P->ui.action_Control, &QAction::triggered,
             this, []() { theApplication->showOptionsDialog(); });
     connect(P->ui.action_Combi, &QAction::triggered,
+            this, []() { theApplication->showMidiBankDialog(); });
+    connect(P->ui.action_Instrument, &QAction::triggered,
+            this, []() { theApplication->showMidiInstrumentDialog(); });
+    connect(P->ui.actionCombi, &QAction::triggered,
             this, []() { theApplication->showCombiDialog(); });
+
 
 
     // initial window settings

@@ -8,7 +8,7 @@ CombiDialog::CombiDialog(QWidget *parent) :
     ui(new Ui::CombiDialog)
 {
     ui->setupUi(this);
-    resetTreeCombi();
+    //resetTreeCombi();
     QStringList labelsTreeCombi = {"Num", "Name", "Velocity min", "velocity max"};
     QStringList labelsTreeCloud = {"Id", "Name"};
     ui->treeWidget_Combi->setHeaderLabels(labelsTreeCombi);
@@ -61,6 +61,15 @@ void CombiDialog::addCloudToDialog(QString cldId, QString cldName)
     ui->treeWidget_Clouds->addTopLevelItem(itm);
 }
 
+void CombiDialog::initCombi(Scene *currentScene, unsigned numCombi)
+{
+    combiScene = currentScene;
+    myNumCombi = numCombi;
+    myCombi = combiScene->m_midiBank.findCombi(numCombi);
+    ui->lineEdit_Name->setText(myCombi.getName());
+    resetTreeCombi();
+}
+
 void CombiDialog::on_pushButton_AddCloud_clicked()
 {
     if (ui->label_cloudId->text().toInt() == 0)
@@ -82,4 +91,15 @@ void CombiDialog::on_pushButton_RemoveCloud_clicked()
         myCombi.removeCloud(i, ui->label_cloudId->text().toInt());
     }
     resetTreeCombi();
+}
+
+void CombiDialog::closeEvent(QCloseEvent *bar)
+{
+    combiScene->m_midiBank.updateCombi(&myCombi, myNumCombi);
+    bar->accept();
+}
+
+void CombiDialog::on_lineEdit_Name_textEdited(const QString &arg1)
+{
+    myCombi.setName(ui->lineEdit_Name->text());
 }

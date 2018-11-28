@@ -70,7 +70,9 @@
     <property name="title">
      <string>&amp;Midi</string>
     </property>
+    <addaction name="action_Instrument"/>
     <addaction name="action_Combi"/>
+    <addaction name="actionCombi"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Edit"/>
@@ -126,6 +128,16 @@
   <action name="action_Combi">
    <property name="text">
     <string>&amp;Combinations</string>
+   </property>
+  </action>
+  <action name="action_Instrument">
+   <property name="text">
+    <string>&amp;Instrument</string>
+   </property>
+  </action>
+  <action name="actionCombi">
+   <property name="text">
+    <string>Combi</string>
    </property>
   </action>
  </widget>
