@@ -192,8 +192,14 @@ void MyGLApplication::showCloudDialog(SceneCloud *selectedCloud)
         dlg = new CloudDialog;
         dlg->setWindowTitle(tr("Cloud parameters"));
         dlgslot = dlg;
+        dlg->show();
     }
-    dlg->show();
+    else {
+        QPoint posdlg = dlg->pos();
+        dlg->hide();
+        dlg->show();
+        dlg->move(posdlg);
+    }
     selectedCloud->cloud.get()->changesDone(true);
     dlg->linkCloud(selectedCloud->cloud.get(), selectedCloud->view.get());
 }

@@ -182,6 +182,10 @@ bool Cloud::getActiveState()
 // set window type
 void Cloud::setWindowType(int winType)
 {
+    if (locked) {
+        showMessageLocked();
+        return;
+    }
     int numWins = Window::Instance().numWindows();
     windowType = winType % numWins;
 
@@ -247,6 +251,10 @@ void Cloud::setId(int cloudId)
 // overlap (input on 0 to 1 scale)
 void Cloud::setOverlap(float target)
 {
+    if (locked) {
+        showMessageLocked();
+        return;
+    }
     if (target > 1.0f)
         target = 1.0f;
     else if (target < 0.0f)
@@ -276,6 +284,10 @@ bool Cloud::changedOverlap()
 // duration
 void Cloud::setDurationMs(float theDur)
 {
+    if (locked) {
+        showMessageLocked();
+        return;
+    }
     if (theDur >= 1.0f) {
         duration = theDur;
         for (int i = 0; i < myGrains.size(); i++)
@@ -301,6 +313,10 @@ void Cloud::updateBangTime()
 // pitch
 void Cloud::setPitch(float targetPitch)
 {
+    if (locked) {
+        showMessageLocked();
+        return;
+    }
     if (targetPitch < 0.0001) {
         targetPitch = 0.0001;
     }
@@ -326,6 +342,10 @@ bool Cloud::changedPitch()
 //-----------------------------------------------------------------
 void Cloud::setVolumeDb(float volDb)
 {
+    if (locked) {
+        showMessageLocked();
+        return;
+    }
     // max = 6 db, min = -60 db
     if (volDb > 6.0) {
         volDb = 6.0;
@@ -359,6 +379,10 @@ bool Cloud::changedVolumeDb()
 // direction mode
 void Cloud::setDirection(int dirMode)
 {
+    if (locked) {
+        showMessageLocked();
+        return;
+    }
     myDirMode = dirMode % 3;
     if (myDirMode < 0) {
         myDirMode = 2;
@@ -421,6 +445,10 @@ unsigned int Cloud::getNumGrains()
 
 void Cloud::setNumGrains(unsigned int newNumGrains)
 {
+    if (locked) {
+        showMessageLocked();
+        return;
+    }
     if (newNumGrains < myGrains.size())
         for (int i=1; i <= (myGrains.size() - newNumGrains); ++i)
             removeGrain();
@@ -438,6 +466,10 @@ void Cloud::updateSampleSet()
 
 void Cloud::setEnvelopeVolumeParam (ParamEnv envelopeVolumeParamToSet)
 {
+    if (locked) {
+        showMessageLocked();
+        return;
+    }
     envelopeVolume->setParam(envelopeVolumeParamToSet);
 }
 
@@ -448,15 +480,27 @@ ParamEnv Cloud::getEnvelopeVolumeParam ()
 
 void Cloud::setMidiChannel(int newMidiChannel)
 {
+    if (locked) {
+        showMessageLocked();
+        return;
+    }
     midiChannel = newMidiChannel;
     changed_midiChannel = true;
 }
 
 void Cloud::setMidiNote(int newMidiNote)
 {
+    if (locked) {
+        showMessageLocked();
+        return;
+    }
     midiNote = newMidiNote;
-    //if (!editingDialog)
     changed_midiNote = true;
+}
+
+void Cloud::setMidiVelocity(int newMidiVelocity)
+{
+    midiVelocity = newMidiVelocity;
 }
 
 int Cloud::getMidiChannel()
@@ -467,6 +511,11 @@ int Cloud::getMidiChannel()
 int Cloud::getMidiNote()
 {
     return midiNote;
+}
+
+int Cloud::getMidiVelocity()
+{
+    return midiVelocity;
 }
 
 bool Cloud::changedMidiChannel()
@@ -517,6 +566,11 @@ void Cloud::changesDone(bool done)
     changed_windowType = done;
     changed_myDirMode = done;
     changed_spatialMode = done;
+}
+
+void Cloud::showMessageLocked()
+{
+    // cout << "cloud locked, no change" << endl;
 }
 
 // print information
@@ -614,7 +668,9 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
         }
         removeFlag = false;
     }
-
+    // end midi note, come back to velocity max
+    if ((envelopeVolume->state() == Env::State::Off) && (midiVelocity != 127))
+        setMidiVelocity(127);
     if (envelopeVolume->state() != Env::State::Off) {
         // initialize play positions array
         double playPositions[theSamples->size()];
@@ -695,7 +751,7 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
             }
             for (int i = 0; i < numFrames; ++i) {
                 for (int j = 0; j < MY_CHANNELS; ++j)
-                    accumBuff[i * MY_CHANNELS + j] += intermediateBuff[i * MY_CHANNELS + j] * envelopeVolumeBuff[i];
+                    accumBuff[i * MY_CHANNELS + j] += intermediateBuff[i * MY_CHANNELS + j] * envelopeVolumeBuff[i] * ((float) midiVelocity / 127);
             }
         }
     }
@@ -705,12 +761,20 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
 // pitch lfo methods
 void Cloud::setPitchLFOFreq(float pfreq)
 {
+    if (locked) {
+        showMessageLocked();
+        return;
+    }
     pitchLFOFreq = fabs(pfreq);
     changed_pitchLFOFreq = true;
 }
 
 void Cloud::setPitchLFOAmount(float lfoamt)
 {
+    if (locked) {
+        showMessageLocked();
+        return;
+    }
     if (lfoamt < 0.0) {
         lfoamt = 0.0f;
     }
@@ -742,6 +806,10 @@ bool Cloud::changedPitchLFOAmount()
 // spatialization methods
 void Cloud::setSpatialMode(int theMode, int channelNumber = -1)
 {
+    if (locked) {
+        showMessageLocked();
+        return;
+    }
     spatialMode = theMode % 3;
     if (spatialMode < 0) {
         spatialMode = 2;

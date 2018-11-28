@@ -866,8 +866,8 @@ void Scene::midiNoteOn(int midiChannelToPlay, int midiNoteToPlay, int midiVeloTo
     for (int i = 0, n = m_clouds.size(); i < n; i++) {
         if ((m_clouds[i]->cloud->getMidiChannel() ==  midiChannelToPlay + 1) &
                 (m_clouds[i]->cloud.get()->getMidiNote() ==  midiNoteToPlay)) {
+            m_clouds[i]->cloud.get()->setMidiVelocity(midiVeloToPlay);
             m_clouds[i]->cloud.get()->setActiveState(true);
-
         }
     }
 }

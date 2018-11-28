@@ -26,6 +26,8 @@
 class MyGLWindow;
 
 class MyGLApplication : public QApplication {
+    Q_OBJECT
+
 public:
     MyGLApplication(int &argc, char *argv[]);
     ~MyGLApplication();
@@ -44,6 +46,9 @@ public:
     void midiNoteOff (int midiChannelToStop, int midiKeyToStop);
     void destroyAllCloudDialogs();
     void showOptionsDialog();
+
+signals:
+    void oscMessageArrived(const QByteArray &message);
 
 private:
     struct Impl;
