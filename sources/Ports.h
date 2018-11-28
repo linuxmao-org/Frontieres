@@ -25,9 +25,13 @@
 namespace Ports {
 
 // the root of input OSC message dispatch
-extern rtosc::Ports root;
+extern rtosc::Ports rtRoot;
+// the root of input OSC message dispatch [Non-RT]
+extern rtosc::Ports nonRtRoot;
 
 // the subpath /cloud
-extern rtosc::Ports cloud;
+extern rtosc::Ports rtCloud;
+// the subpath /cloud [Non-RT]
+extern rtosc::Ports nonRtCloud;
 
 }  // namespace Ports

@@ -171,7 +171,7 @@ void drawAxis();
 int audioCallback(void *outputBuffer, void *inputBuffer, unsigned int numFrames,
                   double streamTime, RtAudioStreamStatus status, void *userData);
 void processMidiMessage(const unsigned char *message, unsigned length);
-void processOscMessage(const char *message, size_t length);
+void processOscMessage(const char *message, size_t length, rtosc::Ports &ports);
 void midiInCallback(double timeStamp, std::vector<unsigned char> *message, void *userData);
 void oscCallback(const char *msg, size_t length, void *);
 
@@ -237,7 +237,7 @@ int audioCallback(void *outputBuffer, void *inputBuffer, unsigned int numFrames,
             theOscInBuffer->discard(oscMessageSize);
         else {
             theOscInBuffer->get(oscMessageBuffer, oscMessageSize);
-            processOscMessage(oscMessageBuffer, oscMessageSize);
+            processOscMessage(oscMessageBuffer, oscMessageSize, Ports::rtRoot);
         }
     }
 
@@ -308,7 +308,7 @@ void processMidiMessage(const unsigned char *message, unsigned length)
 }
 
 // OSC processing routing
-void processOscMessage(const char *message, size_t length)
+void processOscMessage(const char *message, size_t length, rtosc::Ports &ports)
 {
     rtosc::RtData d;
     d.obj = ::currentScene;
@@ -316,7 +316,7 @@ void processOscMessage(const char *message, size_t length)
     if (!d.obj)
         return;
 
-    Ports::root.dispatch(message, d, true);
+    ports.dispatch(message, d, true);
 }
 
 //================================================================================
@@ -359,6 +359,9 @@ void oscCallback(const char *msg, size_t length, void *)
     buffer.put(length);
     // write the message body
     buffer.put(msg, length);
+
+    // also send message to UI
+    Q_EMIT theApplication->oscMessageArrived(QByteArray(msg, length));
 }
 
 //================================================================================
@@ -983,6 +986,12 @@ int main(int argc, char **argv)
 
     std::string oscUrl = osc.getUrl();
     std::cout << "OSC address: " << oscUrl << "\n";
+
+    QObject::connect(
+        &app, &MyGLApplication::oscMessageArrived,
+        &app, [](const QByteArray &message)
+                  { processOscMessage(message.data(), message.size(), Ports::nonRtRoot); },
+        Qt::QueuedConnection);
 
     // let Qt handle the current thread from here
     exitCode = app.exec();

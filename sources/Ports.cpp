@@ -27,31 +27,44 @@
 
 namespace Ports {
 
-rtosc::Ports root {
-    {"cloud/", rDoc("Cloud"), &Ports::cloud,
+static void dispatch_cloud(
+    const char *msg, rtosc::RtData &data, rtosc::Ports &ports)
+{
+    // remove "cloud/" part of message
+    SNIP;
+
+    // read <id-cloud/> and remove it
+    unsigned cloudId;
+    if (sscanf(msg, "%u/", &cloudId) != 1)
+        return;
+    SNIP;
+
+    // find cloud by its ID
+    Scene *scene = (Scene *)data.obj;
+    SceneCloud *cloud = scene->findCloudById(cloudId);
+    if (!cloud)
+        return;
+
+    // dispatch to the "cloud/" sub-root
+    data.obj = cloud;
+    ports.dispatch(msg, data);
+}
+
+rtosc::Ports rtRoot {
+    {"cloud/", rDoc("Cloud"), &Ports::rtCloud,
      [](const char *msg, rtosc::RtData &data) {
-         // remove "cloud/" part of message
-         SNIP;
-
-         // read <id-cloud/> and remove it
-         unsigned cloudId;
-         if (sscanf(msg, "%u/", &cloudId) != 1)
-             return;
-         SNIP;
-
-         // find cloud by its ID
-         Scene *scene = (Scene *)data.obj;
-         SceneCloud *cloud = scene->findCloudById(cloudId);
-         if (!cloud)
-             return;
-
-         // dispatch to the "cloud/" sub-root
-         data.obj = cloud;
-         Ports::cloud.dispatch(msg, data);
+         dispatch_cloud(msg, data, Ports::rtCloud);
      }},
 };
 
-rtosc::Ports cloud {
+rtosc::Ports nonRtRoot {
+    {"cloud/", rDoc("Cloud"), &Ports::rtCloud,
+     [](const char *msg, rtosc::RtData &data) {
+         dispatch_cloud(msg, data, Ports::nonRtCloud);
+     }},
+};
+
+rtosc::Ports rtCloud {
     {"volume:f", rDoc("Volume"), nullptr,
      [](const char *msg, rtosc::RtData &data) {
          SceneCloud *sceneCloud = (SceneCloud *)data.obj;
@@ -136,6 +149,9 @@ rtosc::Ports cloud {
          int arg = rtosc_argument(msg, 0).f;
          sceneCloud->cloud->setLockedState(arg);
      }},
+};
+
+rtosc::Ports nonRtCloud {
     {"x:f", rDoc("X"), nullptr,
      [](const char *msg, rtosc::RtData &data) {
          SceneCloud *sceneCloud = (SceneCloud *)data.obj;
