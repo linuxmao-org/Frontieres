@@ -182,7 +182,7 @@ bool Cloud::getActiveState()
 // set window type
 void Cloud::setWindowType(int winType)
 {
-    if (locked){
+    if (locked) {
         showMessageLocked();
         return;
     }
@@ -251,7 +251,7 @@ void Cloud::setId(int cloudId)
 // overlap (input on 0 to 1 scale)
 void Cloud::setOverlap(float target)
 {
-    if (locked){
+    if (locked) {
         showMessageLocked();
         return;
     }
@@ -284,7 +284,7 @@ bool Cloud::changedOverlap()
 // duration
 void Cloud::setDurationMs(float theDur)
 {
-    if (locked){
+    if (locked) {
         showMessageLocked();
         return;
     }
@@ -313,7 +313,7 @@ void Cloud::updateBangTime()
 // pitch
 void Cloud::setPitch(float targetPitch)
 {
-    if (locked){
+    if (locked) {
         showMessageLocked();
         return;
     }
@@ -342,7 +342,7 @@ bool Cloud::changedPitch()
 //-----------------------------------------------------------------
 void Cloud::setVolumeDb(float volDb)
 {
-    if (locked){
+    if (locked) {
         showMessageLocked();
         return;
     }
@@ -379,7 +379,7 @@ bool Cloud::changedVolumeDb()
 // direction mode
 void Cloud::setDirection(int dirMode)
 {
-    if (locked){
+    if (locked) {
         showMessageLocked();
         return;
     }
@@ -445,7 +445,7 @@ unsigned int Cloud::getNumGrains()
 
 void Cloud::setNumGrains(unsigned int newNumGrains)
 {
-    if (locked){
+    if (locked) {
         showMessageLocked();
         return;
     }
@@ -466,7 +466,7 @@ void Cloud::updateSampleSet()
 
 void Cloud::setEnvelopeVolumeParam (ParamEnv envelopeVolumeParamToSet)
 {
-    if (locked){
+    if (locked) {
         showMessageLocked();
         return;
     }
@@ -480,7 +480,7 @@ ParamEnv Cloud::getEnvelopeVolumeParam ()
 
 void Cloud::setMidiChannel(int newMidiChannel)
 {
-    if (locked){
+    if (locked) {
         showMessageLocked();
         return;
     }
@@ -490,7 +490,7 @@ void Cloud::setMidiChannel(int newMidiChannel)
 
 void Cloud::setMidiNote(int newMidiNote)
 {
-    if (locked){
+    if (locked) {
         showMessageLocked();
         return;
     }
@@ -761,7 +761,7 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
 // pitch lfo methods
 void Cloud::setPitchLFOFreq(float pfreq)
 {
-    if (locked){
+    if (locked) {
         showMessageLocked();
         return;
     }
@@ -771,7 +771,7 @@ void Cloud::setPitchLFOFreq(float pfreq)
 
 void Cloud::setPitchLFOAmount(float lfoamt)
 {
-    if (locked){
+    if (locked) {
         showMessageLocked();
         return;
     }
@@ -806,7 +806,7 @@ bool Cloud::changedPitchLFOAmount()
 // spatialization methods
 void Cloud::setSpatialMode(int theMode, int channelNumber = -1)
 {
-    if (locked){
+    if (locked) {
         showMessageLocked();
         return;
     }
