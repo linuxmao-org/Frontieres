@@ -28,6 +28,7 @@
 #include <vector>
 #include <memory>
 #include "model/MidiBank.h"
+#include "model/MidiInstrum.h"
 
 struct SceneSample;
 struct SceneCloud;
@@ -104,8 +105,9 @@ public:
     void midiNoteOn (int midiChannelToPlay, int midiNoteToPlay, int midiVeloToPlay);
     void midiNoteOff (int midiChannelToStop, int midiNoteToStop);
 
-    // midi combinations bank
+    // midi combinations bank and channels
     MidiBank m_midiBank;
+    MidiInstrument m_midiInstrument;
 };
 
 struct SceneSample {

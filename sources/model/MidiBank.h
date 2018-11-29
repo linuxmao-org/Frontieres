@@ -11,7 +11,8 @@ public:
     bool existCombi(int numCombi);
     void createCombi(int newNumCombi);
     Combination findCombi(int numCombi);
-    void updateCombi(Combination *newCombi, int numCombi);
+    void updateCombi(Combination newCombi, int numCombi);
+    void deleteCombi(int numCombi);
 private:
     QMap<unsigned, Combination> myBank;
 };

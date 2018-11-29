@@ -17,10 +17,15 @@ public:
     explicit InstrumentDialog(QWidget *parent = 0);
     ~InstrumentDialog();
     void init(Scene *currentScene);
+    void resetCombiNamesMidiChannels();
+
+private slots:
+    void on_treeWidget_itemDoubleClicked(QTreeWidgetItem *item, int column);
 
 private:
     Ui::InstrumentDialog *ui;
-    Scene *instrumentScene;
+    BankDialog *bankDialog;
+    Scene *instrumScene;
 };
 
 #endif // INSTRUMENTDIALOG_H

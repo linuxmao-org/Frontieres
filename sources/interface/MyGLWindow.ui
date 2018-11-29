@@ -72,7 +72,6 @@
     </property>
     <addaction name="action_Instrument"/>
     <addaction name="action_Combi"/>
-    <addaction name="actionCombi"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Edit"/>
@@ -137,7 +136,7 @@
   </action>
   <action name="actionCombi">
    <property name="text">
-    <string>Combi</string>
+    <string>C&amp;ombi</string>
    </property>
   </action>
  </widget>

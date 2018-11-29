@@ -72,10 +72,6 @@ void MyGLWindow::initialize()
             this, []() { theApplication->showMidiBankDialog(); });
     connect(P->ui.action_Instrument, &QAction::triggered,
             this, []() { theApplication->showMidiInstrumentDialog(); });
-    connect(P->ui.actionCombi, &QAction::triggered,
-            this, []() { theApplication->showCombiDialog(); });
-
-
 
     // initial window settings
     QSurfaceFormat format = QSurfaceFormat::defaultFormat();

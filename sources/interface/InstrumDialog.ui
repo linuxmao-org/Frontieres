@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>655</width>
-    <height>458</height>
+    <height>372</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,8 +16,11 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QTreeWidget" name="treeWidget">
+     <property name="alternatingRowColors">
+      <bool>true</bool>
+     </property>
      <property name="columnCount">
-      <number>2</number>
+      <number>3</number>
      </property>
      <column>
       <property name="text">
@@ -27,6 +30,11 @@
      <column>
       <property name="text">
        <string notr="true">2</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string notr="true">3</string>
       </property>
      </column>
     </widget>

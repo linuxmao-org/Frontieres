@@ -242,25 +242,11 @@ void MyGLApplication::showOptionsDialog()
     optionsDlg.exec();
 }
 
-void MyGLApplication::showCombiDialog()
-{
-  /*  combiDialog = new CombiDialog;
-    combiDialog->setWindowTitle(tr("Combination"));
-    Combination *myCombi = new Combination;
-    for (int i = 0; i < currentScene->m_clouds.size(); i++) {
-        Cloud *l_cloud = currentScene->m_clouds[i]->cloud.get();
-        combiDialog->addCloudToDialog(QString::number(l_cloud->getId()), l_cloud->getName());
-    }
-    combiDialog->initCombi(myCombi);
-    combiDialog->setModal(true);
-    combiDialog->exec();*/
-}
-
 void MyGLApplication::showMidiBankDialog()
 {
     bankDialog = new BankDialog;
     bankDialog->setWindowTitle(tr("Combinations"));
-    bankDialog->init(currentScene);
+    bankDialog->init(currentScene, EDIT, -1);
     bankDialog->setModal(true);
     bankDialog->exec();
 }

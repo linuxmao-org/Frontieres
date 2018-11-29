@@ -22,14 +22,21 @@ Combination MidiBank::findCombi(int numCombi)
     return myBank[numCombi];
 }
 
-void MidiBank::updateCombi(Combination *newCombi, int numCombi)
+void MidiBank::updateCombi(Combination newCombi, int numCombi)
 {
-    myBank[numCombi] = *newCombi;
-    for (unsigned i = 0; i < 128; i++){
+    myBank[numCombi] = newCombi;
+   /* for (unsigned i = 0; i < 128; i++){
         myBank[numCombi].setNote(newCombi->getNote(i), i);
         for (unsigned j = 0; j < newCombi->getNote(i).cloudLayer.size(); j++){
 
         }
-    }
+    }*/
 
+}
+
+void MidiBank::deleteCombi(int numCombi)
+{
+    if (existCombi(numCombi)){
+        myBank.remove(numCombi);
+    }
 }

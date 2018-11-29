@@ -95,7 +95,7 @@ void CombiDialog::on_pushButton_RemoveCloud_clicked()
 
 void CombiDialog::closeEvent(QCloseEvent *bar)
 {
-    combiScene->m_midiBank.updateCombi(&myCombi, myNumCombi);
+    combiScene->m_midiBank.updateCombi(myCombi, myNumCombi);
     bar->accept();
 }
 

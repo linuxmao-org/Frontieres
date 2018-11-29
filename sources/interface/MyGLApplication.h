@@ -50,7 +50,6 @@ public:
     void midiNoteOff (int midiChannelToStop, int midiKeyToStop);
     void destroyAllCloudDialogs();
     void showOptionsDialog();
-    void showCombiDialog();
     void showMidiBankDialog();
     void showMidiInstrumentDialog();
 
