@@ -192,7 +192,7 @@ void Cloud::setActiveMidiState(bool activateMidiState, int l_midiNote, int l_mid
                 i = actualyPlayedMidi;
             }
         }
-        if (notePlayedPlace > 0) {
+        if (notePlayedPlace > - 1) {
            // note already played, delete note, move all newer notes
            deletePlayedCloudMidi(notePlayedPlace);
            newNoteToPlay = actualyPlayedMidi;
@@ -209,11 +209,18 @@ void Cloud::setActiveMidiState(bool activateMidiState, int l_midiNote, int l_mid
                 actualyPlayedMidi++;
             }
         }
+        // calculate pitch
+        int ecartNotes = l_midiNote - midiNote;
+        float musicalPitch = (12*log2(pitch));
+        float newMusicalPitch = musicalPitch + ecartNotes;
+        float newPitch = (pow(2, (float) (newMusicalPitch / 12)));
+std::cout << "l_midinote=" <<l_midiNote<<",midiNote="<<midiNote<<std::endl;
+std::cout << "pitch=" <<pitch<<",newPitch="<<newPitch<<std::endl;
         // create note on top
         playedCloudMidi[newNoteToPlay].midiNote = l_midiNote;
-        playedCloudMidi[newNoteToPlay].pitch = pitch; // TO DO calculate pitch
+        playedCloudMidi[newNoteToPlay].pitch = newPitch;
         playedCloudMidi[newNoteToPlay].velocity = l_midiVelo;
-        playedCloudMidi[newNoteToPlay].envelopeVolume = envelopeVolume;
+        playedCloudMidi[newNoteToPlay].envelopeVolume->setParam(envelopeVolume->getParam());
         playedCloudMidi[newNoteToPlay].envelopeAction.store(TriggerEnvelope);
         playedCloudMidi[newNoteToPlay].isActive = true;
     }
@@ -227,7 +234,8 @@ void Cloud::setActiveMidiState(bool activateMidiState, int l_midiNote, int l_mid
                 i = actualyPlayedMidi;
             }
         }
-        if (notePlayedPlace > 0) {
+                   std::cout << "notePlayedPlace=" << notePlayedPlace << std::endl;
+        if (notePlayedPlace > -1) {
             playedCloudMidi[notePlayedPlace].envelopeAction.store(ReleaseEnvelope);
         }
     }
@@ -783,7 +791,8 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
                                                           GTime::instance().sec));
                     myGrains[nextGrain]->setPitch(nextPitch);
                 }
-
+                else
+                    myGrains[nextGrain]->setPitch(pitch);
 
                 // update spatialization/get new channel multiplier set
                 updateSpatialization();
@@ -830,24 +839,24 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
 
     for (int ii = 0; ii < actualyPlayedMidi; ii++){
         int midiEnvelopeAction = playedCloudMidi[ii].envelopeAction.exchange(0);
-          std::cout << "midiEnvelopeAction=" <<midiEnvelopeAction<< std::endl;
+   //       std::cout << "midiEnvelopeAction=" <<midiEnvelopeAction<< std::endl;
+     //     std::cout << "envelope state=" << (int) playedCloudMidi[ii].envelopeVolume->state() << std::endl;
         switch (midiEnvelopeAction) {
             case TriggerEnvelope:
-            std::cout << "trigger" << std::endl;
+//                std::cout << "trigger" << std::endl;
                 playedCloudMidi[ii].envelopeVolume->trigger();
                 break;
             case ReleaseEnvelope:
-                std::cout << "release" << std::endl;
+  //              std::cout << "release" << std::endl;
                 playedCloudMidi[ii].envelopeVolume->release();
                 break;
             default:
-            std::cout << "autre ?" << std::endl;
+       //     std::cout << "autre ?" << std::endl;
                 break;
         }
         playedCloudMidi[ii].envelopeVolume->generate(playedCloudMidi[ii].envelopeVolumeBuff, numFrames);
-                std::cout << "midi poly, actualyPlayedMidi= "<<actualyPlayedMidi<<",ii=" << ii <<std::endl;
+           //     std::cout << "midi poly, actualyPlayedMidi= "<<actualyPlayedMidi<<",ii=" << ii <<std::endl;
         if (playedCloudMidi[ii].envelopeVolume->state() != Env::State::Off) {
-//                 std::cout << "midi poly" <<std::endl;
             // initialize play positions array
             double playPositions[theSamples->size()];
             double playVols[theSamples->size()];
@@ -861,7 +870,6 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
 
             // fill buffer
             for (int j = 0; j < (numFrames / (frameSkip)); j++) {
-   //              std::cout << "midi poly, boucle j="<<j <<std::endl;
                 // check for bang
                 if ((local_time > bang_time) || (awaitingPlay)) {
 
@@ -888,6 +896,8 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
                                                               GTime::instance().sec));
                         myGrains[nextGrain]->setPitch(nextPitch);
                     }
+                    else
+                        myGrains[nextGrain]->setPitch(playedCloudMidi[ii].pitch);
 
 
                     // update spatialization/get new channel multiplier set
@@ -923,11 +933,9 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
                 // iterate over all grains
                 memset(intermediateBuff, 0, numFrames * MY_CHANNELS * sizeof(intermediateBuff[0]));
                 for (int k = 0; k < myGrains.size(); k++) {
-      //              std::cout << "midi poly, boucle k="<<k <<std::endl;
                     myGrains[k]->nextBuffer(intermediateBuff, frameSkip, nextFrame, k);
                 }
                 for (int i = 0; i < numFrames; ++i) {
-      //              std::cout << "midi poly, boucle i="<<i <<std::endl;
                     for (int j = 0; j < MY_CHANNELS; ++j)
                         accumBuff[i * MY_CHANNELS + j] += intermediateBuff[i * MY_CHANNELS + j] * playedCloudMidi[ii].envelopeVolumeBuff[i] * ((float) playedCloudMidi[ii].velocity / 127);
                 }
@@ -1088,12 +1096,14 @@ void Cloud::deletePlayedCloudMidi(int l_numCloudMidi)
 
 CloudMidi::~CloudMidi()
 {
+    delete envelopeVolume;
     delete[] envelopeVolumeBuff;
     //delete[] intermediateBuff;
 }
 
 CloudMidi::CloudMidi()
 {
+    envelopeVolume = new Env;
     envelopeVolumeBuff = new float[g_buffSize];
     //intermediateBuff = new double[g_buffSize * MY_CHANNELS];
     envelopeAction.store(0);

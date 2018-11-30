@@ -405,6 +405,14 @@ bool Scene::save(QFile &sceneFile)
         docGrains.append(objGrain);
     }
 
+    // midi combinations
+    QJsonArray docCombis;
+    for (int i = 0; i <= 127; i++){
+        if (m_midiBank.existCombi(i)) {
+
+        }
+    }
+
     docRoot["samples"] = docSamples;
     docRoot["clouds"] = docGrains;
 
@@ -881,7 +889,8 @@ void Scene::midiNoteOn(int midiChannelToPlay, int midiNoteToPlay, int midiVeloTo
 void Scene::midiNoteOff(int midiChannelToStop, int midiNoteToStop)
 {
     std::cout << "midi in note off, channel = "<< midiChannelToStop << ", note = "<< midiNoteToStop<<  std::endl;
-    int l_numCombi = m_midiInstrument.getMidiCombi(midiChannelToStop);
+    int l_numCombi = m_midiInstrument.getMidiCombi(midiChannelToStop + 1);
+    std::cout << "l_numCombi=" << l_numCombi << std::endl;
     if (l_numCombi != -1){
         Note l_note = m_midiBank.findCombi(l_numCombi).getNote(midiNoteToStop);
         for (int i = 0; i < l_note.cloudLayer.size(); i++){
