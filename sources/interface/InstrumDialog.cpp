@@ -25,8 +25,6 @@ void InstrumentDialog::resetCombiNamesMidiChannels()
     for (int i = 1; i <= 16; i++){
         QTreeWidgetItem *itm = new QTreeWidgetItem(ui->treeWidget);
         int l_numCombiChannel = instrumScene->m_midiInstrument.getMidiCombi(i);
-        std::cout << "i=" << i << std::endl;
-        std::cout << "l_numCombiChannel=" << l_numCombiChannel << std::endl;
         if (l_numCombiChannel != -1) {
             itm->setText(1, QString::number(l_numCombiChannel));
             itm->setText(2, instrumScene->m_midiBank.findCombi(l_numCombiChannel).getName());

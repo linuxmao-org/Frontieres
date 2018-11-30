@@ -866,21 +866,26 @@ void Scene::deselect(int shapeType)
 
 void Scene::midiNoteOn(int midiChannelToPlay, int midiNoteToPlay, int midiVeloToPlay)
 {
-    for (int i = 0, n = m_clouds.size(); i < n; i++) {
-        if ((m_clouds[i]->cloud->getMidiChannel() ==  midiChannelToPlay + 1) &
-                (m_clouds[i]->cloud.get()->getMidiNote() ==  midiNoteToPlay)) {
-            m_clouds[i]->cloud.get()->setMidiVelocity(midiVeloToPlay);
-            m_clouds[i]->cloud.get()->setActiveState(true);
+    std::cout << "midi in note on, channel = "<< midiChannelToPlay << ", note = "<< midiNoteToPlay<< ", velo =" << midiVeloToPlay << std::endl;
+    int l_numCombi = m_midiInstrument.getMidiCombi(midiChannelToPlay + 1);
+    if (l_numCombi != -1){
+        Note l_note = m_midiBank.findCombi(l_numCombi).getNote(midiNoteToPlay);
+        for (int i = 0; i < l_note.cloudLayer.size(); i++){
+            if ((midiVeloToPlay >= l_note.cloudLayer[i].velocity.min) && (midiVeloToPlay <= l_note.cloudLayer[i].velocity.max)){
+                findCloudById(l_note.cloudLayer[i].cloudId)->cloud.get()->setActiveMidiState(true, midiNoteToPlay, midiVeloToPlay);
+            }
         }
     }
 }
 
 void Scene::midiNoteOff(int midiChannelToStop, int midiNoteToStop)
 {
-    for (int i = 0, n = m_clouds.size(); i < n; i++) {
-        if ((m_clouds[i]->cloud.get()->getMidiChannel() ==  midiChannelToStop + 1) &
-                (m_clouds[i]->cloud.get()->getMidiNote() ==  midiNoteToStop)) {
-            m_clouds[i]->cloud.get()->setActiveState(false);
+    std::cout << "midi in note off, channel = "<< midiChannelToStop << ", note = "<< midiNoteToStop<<  std::endl;
+    int l_numCombi = m_midiInstrument.getMidiCombi(midiChannelToStop);
+    if (l_numCombi != -1){
+        Note l_note = m_midiBank.findCombi(l_numCombi).getNote(midiNoteToStop);
+        for (int i = 0; i < l_note.cloudLayer.size(); i++){
+            findCloudById(l_note.cloudLayer[i].cloudId)->cloud.get()->setActiveMidiState(false, midiNoteToStop, 127);
         }
     }
 }

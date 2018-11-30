@@ -173,6 +173,66 @@ void Cloud::setActiveState(bool activateState)
     isActive = activateState;
 }
 
+void Cloud::setActiveMidiState(bool activateMidiState, int l_midiNote, int l_midiVelo)
+{
+//    std:cout << "setactivatemidistate, activateMidiState =" << activateMidiState<< ",l_midiNote="<<l_midiNote<<",l_midiVelo="<<l_midiVelo <<std::endl;
+    if (activateMidiState){
+        // midi note on
+        int notePlayedPlace = - 1;
+        int newNoteToPlay = - 1;
+        for (int i = 0; i < actualyPlayedMidi; i++){
+            if (playedCloudMidi[i].envelopeVolume->state() == Env::State::Off ){
+               // delete MidiNote if envelope state is off
+               deletePlayedCloudMidi(i);
+               i--;
+            }
+            if (playedCloudMidi[i].midiNote == l_midiNote){
+                // midinote already played found
+                notePlayedPlace = i;
+                i = actualyPlayedMidi;
+            }
+        }
+        if (notePlayedPlace > 0) {
+           // note already played, delete note, move all newer notes
+           deletePlayedCloudMidi(notePlayedPlace);
+           newNoteToPlay = actualyPlayedMidi;
+        }
+        else {
+            // new note to play
+            if (actualyPlayedMidi == g_maxMidiVoices){
+                // max polyphony found, delete oldest note, move all newer notes
+                deletePlayedCloudMidi(0);
+                newNoteToPlay = actualyPlayedMidi;
+            }
+            else {
+                newNoteToPlay = actualyPlayedMidi;
+                actualyPlayedMidi++;
+            }
+        }
+        // create note on top
+        playedCloudMidi[newNoteToPlay].midiNote = l_midiNote;
+        playedCloudMidi[newNoteToPlay].pitch = pitch; // TO DO calculate pitch
+        playedCloudMidi[newNoteToPlay].velocity = l_midiVelo;
+        playedCloudMidi[newNoteToPlay].envelopeVolume = envelopeVolume;
+        playedCloudMidi[newNoteToPlay].envelopeAction.store(TriggerEnvelope);
+        playedCloudMidi[newNoteToPlay].isActive = true;
+    }
+    else {
+        // midi note off
+                std::cout << "cloud note off" << std::endl;
+        int notePlayedPlace = - 1;
+        for (int i = 0; i < actualyPlayedMidi; i++){
+            if (playedCloudMidi[i].midiNote == l_midiNote){
+                notePlayedPlace = i;
+                i = actualyPlayedMidi;
+            }
+        }
+        if (notePlayedPlace > 0) {
+            playedCloudMidi[notePlayedPlace].envelopeAction.store(ReleaseEnvelope);
+        }
+    }
+}
+
 bool Cloud::getActiveState()
 {
     return isActive;
@@ -627,9 +687,9 @@ Env Cloud::getEnvelopeVolume()
 // compute audio
 void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
 {
-    int envelopeAction = this->envelopeAction.exchange(0);
+    int l_envelopeAction = this->envelopeAction.exchange(0);
 
-    switch (envelopeAction) {
+    switch (l_envelopeAction) {
     case TriggerEnvelope:
         envelopeVolume->trigger();
         break;
@@ -678,6 +738,7 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
         }
         removeFlag = false;
     }
+    // direct playing
     // end midi note, come back to velocity max
     if ((envelopeVolume->state() == Env::State::Off) && (midiVelocity != 127))
         setMidiVelocity(127);
@@ -765,6 +826,116 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
             }
         }
     }
+    // midi playing
+
+    for (int ii = 0; ii < actualyPlayedMidi; ii++){
+        int midiEnvelopeAction = playedCloudMidi[ii].envelopeAction.exchange(0);
+          std::cout << "midiEnvelopeAction=" <<midiEnvelopeAction<< std::endl;
+        switch (midiEnvelopeAction) {
+            case TriggerEnvelope:
+            std::cout << "trigger" << std::endl;
+                playedCloudMidi[ii].envelopeVolume->trigger();
+                break;
+            case ReleaseEnvelope:
+                std::cout << "release" << std::endl;
+                playedCloudMidi[ii].envelopeVolume->release();
+                break;
+            default:
+            std::cout << "autre ?" << std::endl;
+                break;
+        }
+        playedCloudMidi[ii].envelopeVolume->generate(playedCloudMidi[ii].envelopeVolumeBuff, numFrames);
+                std::cout << "midi poly, actualyPlayedMidi= "<<actualyPlayedMidi<<",ii=" << ii <<std::endl;
+        if (playedCloudMidi[ii].envelopeVolume->state() != Env::State::Off) {
+//                 std::cout << "midi poly" <<std::endl;
+            // initialize play positions array
+            double playPositions[theSamples->size()];
+            double playVols[theSamples->size()];
+
+            // buffer variables
+            unsigned int nextFrame = 0;
+
+            // compute sub_buffers for reduced function calls
+            int frameSkip = numFrames / 2;
+
+
+            // fill buffer
+            for (int j = 0; j < (numFrames / (frameSkip)); j++) {
+   //              std::cout << "midi poly, boucle j="<<j <<std::endl;
+                // check for bang
+                if ((local_time > bang_time) || (awaitingPlay)) {
+
+                    // debug
+                    // cout << "bang " << nextGrain << endl;
+                    // reset local
+                    if (!awaitingPlay) {
+                        local_time = 0;
+                        // clear play and volume buffs
+                        for (int i = 0; i < theSamples->size(); i++) {
+                            playPositions[i] = (double)(-1.0);
+                            playVols[i] = (double)0.0;
+                        }
+                        // TODO:  get position vector for grain with idx nextGrain from controller
+                        // udate positions vector (currently randomized)q
+                        if (myCloudVis)
+                            myCloudVis->getTriggerPos(nextGrain, playPositions, playVols, duration);
+                    }
+
+                    // get next pitch (using LFO) -  eventually generalize to an applyLFOs method (if LFO control will be exerted over multiple params)
+                    if ((pitchLFOAmount > 0.0f) && (pitchLFOFreq > 0.0f)) {
+                        float nextPitch =
+                            fabs(playedCloudMidi[ii].pitch + pitchLFOAmount * sin(2 * PI * pitchLFOFreq *
+                                                              GTime::instance().sec));
+                        myGrains[nextGrain]->setPitch(nextPitch);
+                    }
+
+
+                    // update spatialization/get new channel multiplier set
+                    updateSpatialization();
+                    myGrains[nextGrain]->setChannelMultipliers(channelMults);
+
+                    // trigger grain
+                    awaitingPlay = myGrains[nextGrain]->playMe(playPositions, playVols);
+
+                    // only advance if next grain is playable.  otherwise, cycle
+                    // through again to wait for playback
+                    if (!awaitingPlay) {
+                        // queue next grain for trigger
+                        nextGrain++;
+                        // wrap grain idx
+                        if (nextGrain >= myGrains.size())
+                            nextGrain = 0;
+                    }
+                    else {
+                        // debug
+                        // cout << "playback delayed "<< endl;
+                    }
+                }
+                // advance time
+                local_time += frameSkip;
+
+                // sample offset (1 sample at a time for now)
+                nextFrame = j * frameSkip;
+                // iterate over all grains
+                //for (int k = 0; k < myGrains.size(); k++) {
+                 //  myGrains[k]->nextBuffer(accumBuff, frameSkip, nextFrame, k);
+                //}
+                // iterate over all grains
+                memset(intermediateBuff, 0, numFrames * MY_CHANNELS * sizeof(intermediateBuff[0]));
+                for (int k = 0; k < myGrains.size(); k++) {
+      //              std::cout << "midi poly, boucle k="<<k <<std::endl;
+                    myGrains[k]->nextBuffer(intermediateBuff, frameSkip, nextFrame, k);
+                }
+                for (int i = 0; i < numFrames; ++i) {
+      //              std::cout << "midi poly, boucle i="<<i <<std::endl;
+                    for (int j = 0; j < MY_CHANNELS; ++j)
+                        accumBuff[i * MY_CHANNELS + j] += intermediateBuff[i * MY_CHANNELS + j] * playedCloudMidi[ii].envelopeVolumeBuff[i] * ((float) playedCloudMidi[ii].velocity / 127);
+                }
+            }
+        }
+
+    }
+
 }
 
 
@@ -898,4 +1069,32 @@ void Cloud::updateSpatialization()
     default:
         break;
     }
+}
+
+void Cloud::deletePlayedCloudMidi(int l_numCloudMidi)
+{
+    for (int i = l_numCloudMidi; i < actualyPlayedMidi; i++){
+        int j = i + 1;
+      //  playedCloudMidi[i] = playedCloudMidi[j];
+        playedCloudMidi[i].midiNote = playedCloudMidi[i + 1].midiNote;
+        playedCloudMidi[i].pitch = playedCloudMidi[i + 1].pitch;
+        playedCloudMidi[i].velocity = playedCloudMidi[i + 1].velocity;
+        playedCloudMidi[i].envelopeVolume = playedCloudMidi[i + 1].envelopeVolume;
+        playedCloudMidi[i].envelopeAction.store(playedCloudMidi[i + 1].envelopeAction);
+        playedCloudMidi[i].isActive = true;
+    }
+    actualyPlayedMidi--;
+}
+
+CloudMidi::~CloudMidi()
+{
+    delete[] envelopeVolumeBuff;
+    //delete[] intermediateBuff;
+}
+
+CloudMidi::CloudMidi()
+{
+    envelopeVolumeBuff = new float[g_buffSize];
+    //intermediateBuff = new double[g_buffSize * MY_CHANNELS];
+    envelopeAction.store(0);
 }

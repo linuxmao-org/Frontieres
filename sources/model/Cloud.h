@@ -43,6 +43,7 @@
 #include <ctime>
 #include <QFile>
 #include <QDir>
+#include <QMap>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QTranslator>
@@ -54,6 +55,8 @@ struct SceneSample;
 
 typedef std::vector<std::unique_ptr<SceneSample>> VecSceneSample;
 
+int const g_maxMidiVoices(32);
+
 // direction modes
 enum { FORWARD, BACKWARD, RANDOM_DIR };
 
@@ -64,12 +67,34 @@ enum {
     AROUND
 };  // eventually include channel list specification and VBAP?
 
+enum EnvelopeAction { TriggerEnvelope = 1, ReleaseEnvelope = 2 };
+
 using namespace std;
 
 
 // forward declarations
 class Cloud;
 class CloudVis;
+
+// midi polyphonic
+
+class CloudMidi {
+public:
+    // destructor
+    ~CloudMidi();
+
+    // constructor
+    CloudMidi();
+    // cloud parameters duplicated for each midi note
+    int midiNote = - 1;
+    float pitch;
+    bool isActive = false;
+    int velocity;
+    float *envelopeVolumeBuff;
+//    double *intermediateBuff;
+    std::atomic<int> envelopeAction;
+    Env *envelopeVolume;
+};
 
 // class interface
 class Cloud {
@@ -150,6 +175,7 @@ public:
     // turn on/off
     void toggleActive();
     void setActiveState(bool activateState);
+    void setActiveMidiState(bool activateMidiState, int l_midiNote, int l_midiVelo);
     bool getActiveState();
 
 
@@ -229,13 +255,12 @@ private:
     bool changed_volumeDB = false;
     float *envelopeVolumeBuff;
     double *intermediateBuff;
-    enum EnvelopeAction { TriggerEnvelope = 1, ReleaseEnvelope = 2 };
+    //enum EnvelopeAction { TriggerEnvelope = 1, ReleaseEnvelope = 2 };
     std::atomic<int> envelopeAction;
 
 
     // vector of grains
     vector<Grain *> myGrains;
-
     // number of grains in this cloud
     unsigned int numGrains;
     bool changed_numGrains = false;
@@ -266,6 +291,12 @@ private:
 
     // lock switch
     bool locked = false;
+
+    // midi polyphony
+    CloudMidi playedCloudMidi[g_maxMidiVoices];
+    int actualyPlayedMidi = 0;
+    void deletePlayedCloudMidi(int l_numCloudMidi);
+
 };
 
 #endif
