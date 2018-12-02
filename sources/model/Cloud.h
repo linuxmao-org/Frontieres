@@ -96,6 +96,7 @@ public:
     Env *envelopeVolume;
     // vector of grains
     vector<Grain *> myGrains;
+    bool addFlag, removeFlag;  // add/remove requests submitted?
 };
 
 // class interface

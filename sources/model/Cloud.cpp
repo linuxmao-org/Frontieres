@@ -311,6 +311,11 @@ void Cloud::addGrain()
 {
     addFlag = true;
     myCloudVis->addGrain();
+    for (int i = 0; i < g_maxMidiVoices; i++)
+        if (i <= actualyPlayedMidi)
+            playedCloudMidi[i]->addFlag = true;
+        else
+            playedCloudMidi[i]->myGrains.push_back(new Grain(theSamples, duration, pitch));
     changed_numGrains = true;
 }
 
@@ -318,6 +323,11 @@ void Cloud::removeGrain()
 {
     removeFlag = true;
     myCloudVis->removeGrain();
+    for (int i = 0; i < g_maxMidiVoices; i++)
+        if (i <= actualyPlayedMidi)
+            playedCloudMidi[i]->removeFlag = true;
+        else
+            playedCloudMidi[i]->myGrains.pop_back();
     changed_numGrains = true;
 }
 
@@ -859,6 +869,46 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
     // midi playing
     //debug : std::cout << "actualyPlayedMidi=" <<actualyPlayedMidi<< std::endl;
     for (int ii = 0; ii < actualyPlayedMidi; ii++){
+
+        if (playedCloudMidi[ii]->addFlag == true) {
+            playedCloudMidi[ii]->addFlag = false;
+            playedCloudMidi[ii]->myGrains.push_back(new Grain(theSamples, duration, playedCloudMidi[ii]->pitch));
+            size_t idx = playedCloudMidi[ii]->myGrains.size() - 1;
+            playedCloudMidi[ii]->myGrains[idx]->setWindow(windowType);
+            switch (myDirMode) {
+            case FORWARD:
+                playedCloudMidi[ii]->myGrains[idx]->setDirection(1.0);
+                break;
+            case BACKWARD:
+                playedCloudMidi[ii]->myGrains[idx]->setDirection(-1.0);
+                break;
+            case RANDOM_DIR:
+                if (randf() > 0.5)
+                    playedCloudMidi[ii]->myGrains[idx]->setDirection(1.0);
+                else
+                    playedCloudMidi[ii]->myGrains[idx]->setDirection(-1.0);
+                break;
+
+            default:
+                break;
+            }
+
+            playedCloudMidi[ii]->myGrains[idx]->setVolume(normedVol);
+            //numGrains += 1;
+            setOverlap(overlapNorm);
+        }
+
+        if (playedCloudMidi[ii]->removeFlag == true) {
+            if (playedCloudMidi[ii]->myGrains.size() > 1) {
+                if (nextGrain >= playedCloudMidi[ii]->myGrains.size() - 1) {
+                    nextGrain = 0;
+                }
+                playedCloudMidi[ii]->myGrains.pop_back();
+                setOverlap(overlapNorm);
+            }
+            playedCloudMidi[ii]->removeFlag = false;
+        }
+
         int midiEnvelopeAction = playedCloudMidi[ii]->envelopeAction.exchange(0);
         //debug : std::cout << "midiEnvelopeAction=" <<midiEnvelopeAction<< std::endl;
         //debug : std::cout << "envelope state=" << (int) playedCloudMidi[ii]->envelopeVolume->state() << std::endl;
@@ -1136,6 +1186,8 @@ CloudMidi::CloudMidi(VecSceneSample *sampleSet, float theNumGrains, float theDur
     envelopeVolumeBuff = new float[g_buffSize];
     intermediateBuff = new double[g_buffSize * MY_CHANNELS];
     envelopeAction.store(0);
+    addFlag = false;
+    removeFlag = false;
     // populate grain cloud
     for (int i = 0; i < theNumGrains; i++) {
         myGrains.push_back(new Grain(sampleSet, theDuration, thePitch));
