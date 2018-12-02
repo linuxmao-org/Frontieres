@@ -10,21 +10,8 @@ DEFINES += __LINUX_ALSASEQ__
 DEFINES += __UNIX_JACK__
 
 INCLUDEPATH += $$PWD/libraries/QtFont3D
-SOURCES += libraries/QtFont3D/QtFont3D.cpp \
-    sources/interface/CombiDialog.cpp \
-    sources/interface/BankDialog.cpp \
-    sources/model/MidiBank.cpp \
-    sources/model/MidiCombi.cpp \
-    sources/interface/InstrumDialog.cpp \
-    sources/model/MidiInstrum.cpp
-HEADERS += libraries/QtFont3D/QtFont3D.h \
-    sources/interface/OptionsDialog.h \
-    sources/interface/InstrumDialog.h \
-    sources/interface/CombiDialog.h \
-    sources/interface/BankDialog.h \
-    sources/model/MidiBank.h \
-    sources/model/MidiCombi.h \
-    sources/model/MidiInstrum.h
+SOURCES += libraries/QtFont3D/QtFont3D.cpp
+HEADERS += libraries/QtFont3D/QtFont3D.h
 
 unix: {
   isEmpty(INSTALL_PREFIX) {
@@ -56,6 +43,9 @@ SOURCES += \
   sources/Ports.cpp \
   sources/MyRtAudio.cpp \
   sources/MyRtOsc.cpp \
+  sources/interface/CombiDialog.cpp \
+  sources/interface/BankDialog.cpp \
+  sources/interface/InstrumDialog.cpp \
   sources/interface/MyGLApplication.cpp \
   sources/interface/MyGLWindow.cpp \
   sources/interface/StartDialog.cpp \
@@ -64,6 +54,9 @@ SOURCES += \
   sources/interface/OptionsDialog.cpp \
   sources/interface/Node.cpp \
   sources/dsp/Window.cpp \
+  sources/model/MidiBank.cpp \
+  sources/model/MidiCombi.cpp \
+  sources/model/MidiInstrum.cpp \
   sources/model/Adsr.cpp \
   sources/model/Sample.cpp \
   sources/model/Grain.cpp \
@@ -86,6 +79,10 @@ HEADERS += \
   sources/Ports.h \
   sources/MyRtAudio.h \
   sources/MyRtOsc.h \
+  sources/interface/OptionsDialog.h \
+  sources/interface/InstrumDialog.h \
+  sources/interface/CombiDialog.h \
+  sources/interface/BankDialog.h \
   sources/interface/MyGLApplication.h \
   sources/interface/MyGLWindow.h \
   sources/interface/StartDialog.h \
@@ -94,6 +91,9 @@ HEADERS += \
   sources/interface/OptionsDialog.h \
   sources/interface/Node.h \
   sources/dsp/Window.h \
+  sources/model/MidiBank.h \
+  sources/model/MidiCombi.h \
+  sources/model/MidiInstrum.h \
   sources/model/Adsr.h \
   sources/model/Sample.h \
   sources/model/Cloud.h \
@@ -117,9 +117,9 @@ FORMS += \
   sources/interface/AdsrDialog.ui \
   sources/interface/CloudDialog.ui \
   sources/interface/OptionsDialog.ui \
-    sources/interface/CombiDialog.ui \
-    sources/interface/BankDialog.ui \
-    sources/interface/InstrumDialog.ui
+  sources/interface/CombiDialog.ui \
+  sources/interface/BankDialog.ui \
+  sources/interface/InstrumDialog.ui
 
 # RtOsc
 INCLUDEPATH += $$PWD/libraries/rtosc/include
