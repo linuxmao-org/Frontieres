@@ -874,7 +874,7 @@ void Scene::deselect(int shapeType)
 
 void Scene::midiNoteOn(int midiChannelToPlay, int midiNoteToPlay, int midiVeloToPlay)
 {
-    std::cout << "midi in note on, channel = "<< midiChannelToPlay << ", note = "<< midiNoteToPlay<< ", velo =" << midiVeloToPlay << std::endl;
+    //std::cout << "midi in note on, channel = "<< midiChannelToPlay << ", note = "<< midiNoteToPlay<< ", velo =" << midiVeloToPlay << std::endl;
     int l_numCombi = m_midiInstrument.getMidiCombi(midiChannelToPlay + 1);
     if (l_numCombi != -1){
         Note l_note = m_midiBank.findCombi(l_numCombi).getNote(midiNoteToPlay);
@@ -888,9 +888,9 @@ void Scene::midiNoteOn(int midiChannelToPlay, int midiNoteToPlay, int midiVeloTo
 
 void Scene::midiNoteOff(int midiChannelToStop, int midiNoteToStop)
 {
-    std::cout << "midi in note off, channel = "<< midiChannelToStop << ", note = "<< midiNoteToStop<<  std::endl;
+//    std::cout << "midi in note off, channel = "<< midiChannelToStop << ", note = "<< midiNoteToStop<<  std::endl;
     int l_numCombi = m_midiInstrument.getMidiCombi(midiChannelToStop + 1);
-    std::cout << "l_numCombi=" << l_numCombi << std::endl;
+//    std::cout << "l_numCombi=" << l_numCombi << std::endl;
     if (l_numCombi != -1){
         Note l_note = m_midiBank.findCombi(l_numCombi).getNote(midiNoteToStop);
         for (int i = 0; i < l_note.cloudLayer.size(); i++){

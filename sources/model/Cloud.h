@@ -84,16 +84,18 @@ public:
     ~CloudMidi();
 
     // constructor
-    CloudMidi();
+    CloudMidi(VecSceneSample *sampleSet, float theNumGrains, float theDuration, float thePitch);
     // cloud parameters duplicated for each midi note
     int midiNote = - 1;
     float pitch;
     bool isActive = false;
     int velocity;
     float *envelopeVolumeBuff;
-//    double *intermediateBuff;
+    double *intermediateBuff;
     std::atomic<int> envelopeAction;
     Env *envelopeVolume;
+    // vector of grains
+    vector<Grain *> myGrains;
 };
 
 // class interface
@@ -293,7 +295,7 @@ private:
     bool locked = false;
 
     // midi polyphony
-    CloudMidi playedCloudMidi[g_maxMidiVoices];
+    CloudMidi *playedCloudMidi[g_maxMidiVoices];
     int actualyPlayedMidi = 0;
     void deletePlayedCloudMidi(int l_numCloudMidi);
 
