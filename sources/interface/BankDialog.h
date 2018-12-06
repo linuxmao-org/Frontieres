@@ -5,6 +5,7 @@
 #include <QDialog>
 #include <QMenu>
 #include <QMessageBox>
+#include <mutex>
 #include "model/Scene.h"
 #include "model/Cloud.h"
 #include "CombiDialog.h"

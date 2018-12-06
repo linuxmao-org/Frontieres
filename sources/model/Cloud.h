@@ -55,7 +55,7 @@ struct SceneSample;
 
 typedef std::vector<std::unique_ptr<SceneSample>> VecSceneSample;
 
-int const g_maxMidiVoices(128);
+int constexpr g_maxMidiVoices(128);
 
 // direction modes
 enum { FORWARD, BACKWARD, RANDOM_DIR };
@@ -110,7 +110,7 @@ public:
     Cloud(VecSceneSample *sampleSet, float theNumGrains);
 
     // compute next buffer of audio (accumulate from grains)
-    void nextBuffer(double *accumBuff, unsigned int numFrames);
+    void nextBuffer(float *accumBuff, unsigned int numFrames);
 
     // CLOUD PARAMETER accessors/mutators
     // set duration for all grains

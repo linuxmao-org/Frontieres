@@ -36,7 +36,7 @@
 
 
 // create BUFFERPREC datatype
-#define BUFFERPREC double
+#define BUFFERPREC float
 // create rtaudio format
 #define MY_FORMAT RTAUDIO_FLOAT64
 // create soxr format

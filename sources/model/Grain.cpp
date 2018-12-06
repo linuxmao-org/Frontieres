@@ -351,7 +351,7 @@ void Grain::nextBuffer(double *accumBuff, unsigned int numFrames,
         int nextSample = -1;
 
         // waveform params
-        double *wave = NULL;
+        float *wave = NULL;
         int channels = 0;
         unsigned int frames = 0;
 
@@ -362,10 +362,10 @@ void Grain::nextBuffer(double *accumBuff, unsigned int numFrames,
         double atten = 0.0;
 
         // output values
-        double nextAmp = 0.0;
-        double monoWaveVal = 0.0;
-        double stereoLeftVal = 0.0;
-        double stereoRightVal = 0.0;
+        float nextAmp = 0.0;
+        float monoWaveVal = 0.0;
+        float stereoLeftVal = 0.0;
+        float stereoRightVal = 0.0;
 
 
         // iterate over requested number of samples
@@ -422,7 +422,7 @@ void Grain::nextBuffer(double *accumBuff, unsigned int numFrames,
 
                         // get next linearly interpolated sample val and make sure we are still inside
                         if ((flooredIdx >= 0) && ((flooredIdx + 1) < (frames - 1))) {
-                            nextAmp = (((double)1.0 - nu) * wave[(unsigned long)flooredIdx] +
+                            nextAmp = (((float)1.0 - nu) * wave[(unsigned long)flooredIdx] +
                                        nu * wave[(unsigned long)flooredIdx + 1]) *
                                       nextMult * atten;
 

@@ -329,7 +329,7 @@ void SampleVis::setUps()
 //    lastY = (float)y;
 //}
 
-void SampleVis::associateSample(double *theBuff, unsigned long buffFrames, unsigned int buffChans, const string &name)
+void SampleVis::associateSample(float *theBuff, unsigned long buffFrames, unsigned int buffChans, const string &name)
 {
 
     myBuff = theBuff;

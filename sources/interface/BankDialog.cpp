@@ -57,8 +57,11 @@ void BankDialog::on_treeWidget_itemDoubleClicked(QTreeWidgetItem *item, int colu
     case EDIT: {
         selectedCombi = item->text(0).toInt();
         if (selectedCombi >= 0){
-            if (! bankScene->m_midiBank.existCombi(selectedCombi))
+            if (! bankScene->m_midiBank.existCombi(selectedCombi)){
+                //std::unique_lock<std::mutex> lock(::currentSceneMutex);
                 bankScene->m_midiBank.createCombi(selectedCombi);
+                //lock.unlock();
+            }
             combiDialog = new CombiDialog;
             combiDialog->setWindowTitle(tr("Combination"));
             for (unsigned i = 0; i < bankScene->m_clouds.size(); i++) {

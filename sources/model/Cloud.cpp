@@ -79,7 +79,7 @@ Cloud::~Cloud()
     if (channelMults)
         delete[] channelMults;
     for (int i = 0; i < g_maxMidiVoices; i++){
-        delete &playedCloudMidi[i];
+        delete playedCloudMidi[i];
     }
 }
 
@@ -228,9 +228,9 @@ void Cloud::setActiveMidiState(bool activateMidiState, int l_midiNote, int l_mid
             playedCloudMidi[l_midiNote]->myGrains.push_back(new Grain(theSamples, duration, pitch));*/
         // calculate pitch
         int ecartNotes = l_midiNote - midiNote;
-        float musicalPitch = (12*log2(pitch));
+        float musicalPitch = (12*log2f(pitch));
         float newMusicalPitch = musicalPitch + ecartNotes;
-        float newPitch = (pow(2, (float) (newMusicalPitch / 12)));
+        float newPitch = (powf(2, (float) (newMusicalPitch / 12)));
         // create note on top
         playedCloudMidi[l_midiNote]->pitch = newPitch;
         playedCloudMidi[l_midiNote]->velocity = l_midiVelo;
@@ -795,7 +795,7 @@ Env Cloud::getEnvelopeVolume()
 
 
 // compute audio
-void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
+void Cloud::nextBuffer(float *accumBuff, unsigned int numFrames)
 {
     int l_envelopeAction = this->envelopeAction.exchange(0);
 
@@ -889,7 +889,7 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
                 // get next pitch (using LFO) -  eventually generalize to an applyLFOs method (if LFO control will be exerted over multiple params)
                 if ((pitchLFOAmount > 0.0f) && (pitchLFOFreq > 0.0f)) {
                     float nextPitch =
-                        fabs(pitch + pitchLFOAmount * sin(2 * PI * pitchLFOFreq *
+                        fabsf(pitch + pitchLFOAmount * sinf(2 * PI * pitchLFOFreq *
                                                           GTime::instance().sec));
                     myGrains[nextGrain]->setPitch(nextPitch);
                 }
@@ -1036,7 +1036,7 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
                         // get next pitch (using LFO) -  eventually generalize to an applyLFOs method (if LFO control will be exerted over multiple params)
                         if ((pitchLFOAmount > 0.0f) && (pitchLFOFreq > 0.0f)) {
                             float nextPitch =
-                                fabs(playedCloudMidi[ii]->pitch + pitchLFOAmount * sin(2 * PI * pitchLFOFreq *
+                                fabsf(playedCloudMidi[ii]->pitch + pitchLFOAmount * sinf(2 * PI * pitchLFOFreq *
                                                                   GTime::instance().sec));
                             playedCloudMidi[ii]->myGrains[nextGrain]->setPitch(nextPitch);
                         }
@@ -1102,7 +1102,7 @@ void Cloud::setPitchLFOFreq(float pfreq)
         showMessageLocked();
         return;
     }
-    pitchLFOFreq = fabs(pfreq);
+    pitchLFOFreq = fabsf(pfreq);
     changed_pitchLFOFreq = true;
 }
 
