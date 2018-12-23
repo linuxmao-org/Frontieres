@@ -191,52 +191,52 @@ bool Scene::load(QFile &sceneFile)
              << ", y : " << ySample << "\n";
     }
 
-    QJsonArray docGrains = docRoot["clouds"].toArray();
+    QJsonArray docClouds = docRoot["clouds"].toArray();
     m_clouds.clear();
-    m_clouds.reserve(docGrains.size());
-    for (const QJsonValue &jsonElement : docGrains) { // samples
-        QJsonObject objGrain = jsonElement.toObject();
+    m_clouds.reserve(docClouds.size());
+    for (const QJsonValue &jsonElement : docClouds) { // samples
+        QJsonObject objCloud = jsonElement.toObject();
         SceneCloud *sceneCloud = new SceneCloud;
         m_clouds.emplace_back(sceneCloud);
 
-        int cloudId = objGrain["id"].toInt();
-        QString cloudName = objGrain["name"].toString();
-        double cloudDuration = objGrain["duration"].toDouble();
-        double cloudOverlap = objGrain["overlap"].toDouble();
-        double cloudPitch = objGrain["pitch"].toDouble();
-        double cloudPitchLFOFreq = objGrain["pitch-lfo-freq"].toDouble();
-        double cloudPitchLFOAmount = objGrain["pitch-lfo-amount"].toDouble();
-        int cloudDirection = objGrain["direction"].toInt();
-        int cloudWindowType = objGrain["window-type"].toInt();
-        int cloudSpatialMode = objGrain["spatial-mode"].toInt();
-        int cloudSpatialChannel = objGrain["spatial-channel"].toInt();
-        int cloudMidiChannel = objGrain["midi-channel"].toInt();
-        int cloudMidiNote = objGrain["midi-note"].toInt();
-        double cloudVolumeDb = objGrain["volume"].toDouble();
+        int cloudId = objCloud["id"].toInt();
+        QString cloudName = objCloud["name"].toString();
+        double cloudDuration = objCloud["duration"].toDouble();
+        double cloudOverlap = objCloud["overlap"].toDouble();
+        double cloudPitch = objCloud["pitch"].toDouble();
+        double cloudPitchLFOFreq = objCloud["pitch-lfo-freq"].toDouble();
+        double cloudPitchLFOAmount = objCloud["pitch-lfo-amount"].toDouble();
+        int cloudDirection = objCloud["direction"].toInt();
+        int cloudWindowType = objCloud["window-type"].toInt();
+        int cloudSpatialMode = objCloud["spatial-mode"].toInt();
+        int cloudSpatialChannel = objCloud["spatial-channel"].toInt();
+        int cloudMidiChannel = objCloud["midi-channel"].toInt();
+        int cloudMidiNote = objCloud["midi-note"].toInt();
+        double cloudVolumeDb = objCloud["volume"].toDouble();
         ParamEnv cloudEnvelopeVolume;
         {
-            double l1 = objGrain["volume-envelope-L1"].toDouble();
-            double l2 = objGrain["volume-envelope-L2"].toDouble();
-            double l3 = objGrain["volume-envelope-L3"].toDouble();
-            double tAtk = objGrain["volume-envelope-TAtk"].toDouble();
-            double tSta = objGrain["volume-envelope-TSta"].toDouble();
-            double tDec = objGrain["volume-envelope-TDec"].toDouble();
-            double tRel = objGrain["volume-envelope-TRel"].toDouble();
+            double l1 = objCloud["volume-envelope-L1"].toDouble();
+            double l2 = objCloud["volume-envelope-L2"].toDouble();
+            double l3 = objCloud["volume-envelope-L3"].toDouble();
+            double tAtk = objCloud["volume-envelope-TAtk"].toDouble();
+            double tSta = objCloud["volume-envelope-TSta"].toDouble();
+            double tDec = objCloud["volume-envelope-TDec"].toDouble();
+            double tRel = objCloud["volume-envelope-TRel"].toDouble();
             cloudEnvelopeVolume.setTimeBasedParameters(
                 l1, l2, l3,
                 tAtk, tSta, tDec, tRel,
                 samp_rate);
         }
-        cloudEnvelopeVolume.t1 = objGrain["volume-envelope-T1"].toInt();
-        cloudEnvelopeVolume.t2 = objGrain["volume-envelope-T2"].toInt();
-        cloudEnvelopeVolume.t3 = objGrain["volume-envelope-T3"].toInt();
-        cloudEnvelopeVolume.t4 = objGrain["volume-envelope-T4"].toInt();
-        int cloudNumGrains = objGrain["num-grains"].toInt();
-        int cloudActiveState = objGrain["active-state"].toBool();
-        double cloudX = objGrain["x"].toDouble();
-        double cloudY = objGrain["y"].toDouble();
-        double cloudXRandExtent = objGrain["x-rand-extent"].toDouble();
-        double cloudYRandExtent = objGrain["y-rand-extent"].toDouble();
+        cloudEnvelopeVolume.t1 = objCloud["volume-envelope-T1"].toInt();
+        cloudEnvelopeVolume.t2 = objCloud["volume-envelope-T2"].toInt();
+        cloudEnvelopeVolume.t3 = objCloud["volume-envelope-T3"].toInt();
+        cloudEnvelopeVolume.t4 = objCloud["volume-envelope-T4"].toInt();
+        int cloudNumGrains = objCloud["num-grains"].toInt();
+        int cloudActiveState = objCloud["active-state"].toBool();
+        double cloudX = objCloud["x"].toDouble();
+        double cloudY = objCloud["y"].toDouble();
+        double cloudXRandExtent = objCloud["x-rand-extent"].toDouble();
+        double cloudYRandExtent = objCloud["y-rand-extent"].toDouble();
         cout << "cloud " << m_clouds.size() << " :" << "\n";
         cout << "id " << cloudId << " :" << "\n";
         cout << "duration = " << cloudDuration << "\n";
@@ -298,6 +298,54 @@ bool Scene::load(QFile &sceneFile)
         cloudToLoad->setEnvelopeVolumeParam(cloudEnvelopeVolume);
     }
 
+    // midi combis
+
+    QJsonArray docCombis = docRoot["combis"].toArray();
+    for (const QJsonValue &jsonElementCombi : docCombis) { // combis
+        Combination l_combi;
+
+        QJsonObject objCombi = jsonElementCombi.toObject();
+
+        int l_numCombi = objCombi["num"].toInt();
+        QString l_nameCombi = objCombi["name"].toString();
+
+        m_midiBank.createCombi(l_numCombi);
+        l_combi.setName(l_nameCombi);
+
+        QJsonArray docNotes = objCombi["notes"].toArray();
+        for (const QJsonValue &jsonElementNote : docNotes) { // notes
+            QJsonObject objNote = jsonElementNote.toObject();
+            int l_numNote = objNote["num"].toInt();
+            QJsonArray docLayers = objNote["layers"].toArray();
+            Note l_note = l_combi.getNote(l_numNote);
+            l_note.cloudLayer.clear();
+            l_note.cloudLayer.reserve(docLayers.size());
+            for (const QJsonValue &jsonElementLayer : docLayers) { // layers
+                QJsonObject objLayer = jsonElementLayer.toObject();
+                Layer l_layer;
+                l_layer.cloudId = objLayer["cloud id"].toInt();
+                l_layer.velocity.max = objLayer["velocity max"].toInt();
+                l_layer.velocity.min = objLayer["velocity min"].toInt();
+                l_note.cloudLayer.emplace_back(l_layer);
+            }
+            l_combi.setNote(l_note, l_numNote);
+        }
+        m_midiBank.updateCombi(l_combi, l_numCombi);
+    }
+
+    // midi instrument
+
+    QJsonArray docInstruments = docRoot["instruments"].toArray();
+    for (const QJsonValue &jsonElementInstrument : docInstruments) { // instruments
+        QJsonObject objInstrument = jsonElementInstrument.toObject();
+
+        int l_channel= objInstrument["channel"].toInt();
+        int l_numCombi = objInstrument["combi"].toInt();
+
+        m_midiInstrument.setMidiCombi(l_channel, l_numCombi);
+    }
+
+
     return true;
 }
 
@@ -351,8 +399,8 @@ bool Scene::save(QFile &sceneFile)
         docSamples.append(objSample);
     }
 
-    // grainclouds
-    QJsonArray docGrains;
+    // clouds
+    QJsonArray docClouds;
     for (int i = 0, n = m_clouds.size(); i < n; i++) {
         SceneCloud *cloud = m_clouds[i].get();
         Cloud *cloudToSave = cloud->cloud.get();
@@ -364,57 +412,98 @@ bool Scene::save(QFile &sceneFile)
         out << "Cloud Vis " << i << ":";
         cloudVisToSave->describe(out);
 
-        QJsonObject objGrain;
-        objGrain["id"] = (int)cloudToSave->getId();
-        objGrain["name"] = cloudToSave->getName();
-        objGrain["duration"] = cloudToSave->getDurationMs();
-        objGrain["overlap"] = cloudToSave->getOverlap();
-        objGrain["pitch"] = cloudToSave->getPitch();
-        objGrain["pitch-lfo-freq"] = cloudToSave->getPitchLFOFreq();
-        objGrain["pitch-lfo-amount"] = cloudToSave->getPitchLFOAmount();
-        objGrain["direction"] = cloudToSave->getDirection();
-        objGrain["window-type"] = cloudToSave->getWindowType();
-        objGrain["spatial-mode"] = cloudToSave->getSpatialMode();
-        objGrain["spatial-channel"] = cloudToSave->getSpatialChannel();
-        objGrain["midi-channel"] = cloudToSave->getMidiChannel();
-        objGrain["midi-note"] = cloudToSave->getMidiNote();
-        objGrain["volume"] = cloudToSave->getVolumeDb();
+        QJsonObject objCloud;
+        objCloud["id"] = (int)cloudToSave->getId();
+        objCloud["name"] = cloudToSave->getName();
+        objCloud["duration"] = cloudToSave->getDurationMs();
+        objCloud["overlap"] = cloudToSave->getOverlap();
+        objCloud["pitch"] = cloudToSave->getPitch();
+        objCloud["pitch-lfo-freq"] = cloudToSave->getPitchLFOFreq();
+        objCloud["pitch-lfo-amount"] = cloudToSave->getPitchLFOAmount();
+        objCloud["direction"] = cloudToSave->getDirection();
+        objCloud["window-type"] = cloudToSave->getWindowType();
+        objCloud["spatial-mode"] = cloudToSave->getSpatialMode();
+        objCloud["spatial-channel"] = cloudToSave->getSpatialChannel();
+        objCloud["midi-channel"] = cloudToSave->getMidiChannel();
+        objCloud["midi-note"] = cloudToSave->getMidiNote();
+        objCloud["volume"] = cloudToSave->getVolumeDb();
         const ParamEnv &cloudEnvelopeVolumeParam = cloudToSave->getEnvelopeVolumeParam();
         {
             float tAtk, tSta, tDec, tRel;
             cloudEnvelopeVolumeParam.getTimeBasedParameters(tAtk, tSta, tDec, tRel, samp_rate);
-            objGrain["volume-envelope-L1"] = cloudEnvelopeVolumeParam.l1;
-            objGrain["volume-envelope-L2"] = cloudEnvelopeVolumeParam.l2;
-            objGrain["volume-envelope-L3"] = cloudEnvelopeVolumeParam.l3;
-            objGrain["volume-envelope-TAtk"] = tAtk;
-            objGrain["volume-envelope-TSta"] = tSta;
-            objGrain["volume-envelope-TDec"] = tDec;
-            objGrain["volume-envelope-TRel"] = tRel;
+            objCloud["volume-envelope-L1"] = cloudEnvelopeVolumeParam.l1;
+            objCloud["volume-envelope-L2"] = cloudEnvelopeVolumeParam.l2;
+            objCloud["volume-envelope-L3"] = cloudEnvelopeVolumeParam.l3;
+            objCloud["volume-envelope-TAtk"] = tAtk;
+            objCloud["volume-envelope-TSta"] = tSta;
+            objCloud["volume-envelope-TDec"] = tDec;
+            objCloud["volume-envelope-TRel"] = tRel;
         }
-        objGrain["volume-envelope-T1"] = cloudEnvelopeVolumeParam.t1;
-        objGrain["volume-envelope-T2"] = cloudEnvelopeVolumeParam.t2;
-        objGrain["volume-envelope-T3"] = cloudEnvelopeVolumeParam.t3;
-        objGrain["volume-envelope-T4"] = cloudEnvelopeVolumeParam.t4;
-        objGrain["num-grains"] = (int)cloudToSave->getNumGrains();
-        objGrain["active-state"] = cloudToSave->getActiveState();
-        objGrain["x"] = cloudVisToSave->getX();
-        objGrain["y"] = cloudVisToSave->getY();
-        objGrain["x-rand-extent"] = cloudVisToSave->getXRandExtent();
-        objGrain["y-rand-extent"] = cloudVisToSave->getYRandExtent();
+        objCloud["volume-envelope-T1"] = cloudEnvelopeVolumeParam.t1;
+        objCloud["volume-envelope-T2"] = cloudEnvelopeVolumeParam.t2;
+        objCloud["volume-envelope-T3"] = cloudEnvelopeVolumeParam.t3;
+        objCloud["volume-envelope-T4"] = cloudEnvelopeVolumeParam.t4;
+        objCloud["num-grains"] = (int)cloudToSave->getNumGrains();
+        objCloud["active-state"] = cloudToSave->getActiveState();
+        objCloud["x"] = cloudVisToSave->getX();
+        objCloud["y"] = cloudVisToSave->getY();
+        objCloud["x-rand-extent"] = cloudVisToSave->getXRandExtent();
+        objCloud["y-rand-extent"] = cloudVisToSave->getYRandExtent();
 
-        docGrains.append(objGrain);
+        docClouds.append(objCloud);
     }
 
     // midi combinations
+
     QJsonArray docCombis;
     for (int i = 0; i <= 127; i++){
         if (m_midiBank.existCombi(i)) {
+            QJsonObject objCombi;
+            objCombi["num"] = i;
+            objCombi["name"] = m_midiBank.findCombi(i).getName();
+            QJsonArray docNotes;
+            for (int j = 0; j <= 127; j++){
+                int n_layers = m_midiBank.findCombi(i).getNote(j).cloudLayer.size();
+                if (n_layers > 0) {
+                    QJsonObject objNote;
+                    objNote["num"] = j;
+                    QJsonArray docLayers;
+                    for (int k = 0; k < n_layers; k++) {
+                        QJsonObject objLayer;
+                        objLayer["num"] = k;
+                        objLayer["cloud id"] = m_midiBank.findCombi(i).getNote(j).cloudLayer[k].cloudId;
+                        objLayer["velocity min"] = m_midiBank.findCombi(i).getNote(j).cloudLayer[k].velocity.min;
+                        objLayer["velocity max"] = m_midiBank.findCombi(i).getNote(j).cloudLayer[k].velocity.max;
 
+                        docLayers.append(objLayer);
+                    }
+
+                    objNote["layers"] = docLayers;
+                    docNotes.append(objNote);
+                }
+            }
+
+            objCombi["notes"] = docNotes;
+            docCombis.append(objCombi);
         }
     }
 
+    // midi instrument
+
+    QJsonArray docInstruments;
+    for (int i = 1; i <= 16; i++){
+        QJsonObject objInstrument;
+        objInstrument["channel"] = i;
+        objInstrument["combi"] = m_midiInstrument.getMidiCombi(i);
+
+        docInstruments.append(objInstrument);
+    }
+
+
     docRoot["samples"] = docSamples;
-    docRoot["clouds"] = docGrains;
+    docRoot["clouds"] = docClouds;
+    docRoot["combis"] = docCombis;
+    docRoot["instruments"] = docInstruments;
 
     QJsonDocument document;
     document.setObject(docRoot);
@@ -440,28 +529,28 @@ bool Scene::loadCloudDefault(QFile &cloudFile)
 
     QJsonObject docRoot = doc.object();
 
-    QJsonObject objGrain = docRoot["cloud"].toObject();
-    g_defaultCloudParams.duration = objGrain["duration"].toDouble();
-    g_defaultCloudParams.overlap = objGrain["overlap"].toDouble();
-    g_defaultCloudParams.pitch = objGrain["pitch"].toDouble();
-    g_defaultCloudParams.pitchLFOFreq = objGrain["pitch-lfo-freq"].toDouble();
-    g_defaultCloudParams.pitchLFOAmount = objGrain["pitch-lfo-amount"].toDouble();
-    g_defaultCloudParams.dirMode = objGrain["direction"].toInt();
-    g_defaultCloudParams.windowType = objGrain["window-type"].toInt();
-    g_defaultCloudParams.spatialMode = objGrain["spatial-mode"].toInt();
-    g_defaultCloudParams.channelLocation = objGrain["spatial-channel"].toInt();
-    g_defaultCloudParams.midiChannel = objGrain["midi-channel"].toInt();
-    g_defaultCloudParams.midiNote = objGrain["midi-note"].toInt();
-    g_defaultCloudParams.volumeDB = objGrain["volume"].toDouble();
+    QJsonObject objCloud = docRoot["cloud"].toObject();
+    g_defaultCloudParams.duration = objCloud["duration"].toDouble();
+    g_defaultCloudParams.overlap = objCloud["overlap"].toDouble();
+    g_defaultCloudParams.pitch = objCloud["pitch"].toDouble();
+    g_defaultCloudParams.pitchLFOFreq = objCloud["pitch-lfo-freq"].toDouble();
+    g_defaultCloudParams.pitchLFOAmount = objCloud["pitch-lfo-amount"].toDouble();
+    g_defaultCloudParams.dirMode = objCloud["direction"].toInt();
+    g_defaultCloudParams.windowType = objCloud["window-type"].toInt();
+    g_defaultCloudParams.spatialMode = objCloud["spatial-mode"].toInt();
+    g_defaultCloudParams.channelLocation = objCloud["spatial-channel"].toInt();
+    g_defaultCloudParams.midiChannel = objCloud["midi-channel"].toInt();
+    g_defaultCloudParams.midiNote = objCloud["midi-note"].toInt();
+    g_defaultCloudParams.volumeDB = objCloud["volume"].toDouble();
     ParamEnv cloudEnvelopeVolume;
     {
-        double l1 = objGrain["volume-envelope-L1"].toDouble();
-        double l2 = objGrain["volume-envelope-L2"].toDouble();
-        double l3 = objGrain["volume-envelope-L3"].toDouble();
-        double tAtk = objGrain["volume-envelope-TAtk"].toDouble();
-        double tSta = objGrain["volume-envelope-TSta"].toDouble();
-        double tDec = objGrain["volume-envelope-TDec"].toDouble();
-        double tRel = objGrain["volume-envelope-TRel"].toDouble();
+        double l1 = objCloud["volume-envelope-L1"].toDouble();
+        double l2 = objCloud["volume-envelope-L2"].toDouble();
+        double l3 = objCloud["volume-envelope-L3"].toDouble();
+        double tAtk = objCloud["volume-envelope-TAtk"].toDouble();
+        double tSta = objCloud["volume-envelope-TSta"].toDouble();
+        double tDec = objCloud["volume-envelope-TDec"].toDouble();
+        double tRel = objCloud["volume-envelope-TRel"].toDouble();
         cloudEnvelopeVolume.setTimeBasedParameters(
             l1, l2, l3,
             tAtk, tSta, tDec, tRel,
@@ -474,14 +563,14 @@ bool Scene::loadCloudDefault(QFile &cloudFile)
     g_defaultCloudParams.envelope.r2 = cloudEnvelopeVolume.r2;
     g_defaultCloudParams.envelope.r3 = cloudEnvelopeVolume.r3;
     g_defaultCloudParams.envelope.r4 = cloudEnvelopeVolume.r4;
-    g_defaultCloudParams.envelope.t1 = objGrain["volume-envelope-T1"].toInt();
-    g_defaultCloudParams.envelope.t2 = objGrain["volume-envelope-T2"].toInt();
-    g_defaultCloudParams.envelope.t3 = objGrain["volume-envelope-T3"].toInt();
-    g_defaultCloudParams.envelope.t4 = objGrain["volume-envelope-T4"].toInt();
-    g_defaultCloudParams.numGrains = objGrain["num-grains"].toInt();
-    g_defaultCloudParams.activateState = objGrain["active-state"].toBool();
-    g_defaultCloudParams.xRandExtent = objGrain["x-rand-extent"].toDouble();
-    g_defaultCloudParams.yRandExtent = objGrain["y-rand-extent"].toDouble();
+    g_defaultCloudParams.envelope.t1 = objCloud["volume-envelope-T1"].toInt();
+    g_defaultCloudParams.envelope.t2 = objCloud["volume-envelope-T2"].toInt();
+    g_defaultCloudParams.envelope.t3 = objCloud["volume-envelope-T3"].toInt();
+    g_defaultCloudParams.envelope.t4 = objCloud["volume-envelope-T4"].toInt();
+    g_defaultCloudParams.numGrains = objCloud["num-grains"].toInt();
+    g_defaultCloudParams.activateState = objCloud["active-state"].toBool();
+    g_defaultCloudParams.xRandExtent = objCloud["x-rand-extent"].toDouble();
+    g_defaultCloudParams.yRandExtent = objCloud["y-rand-extent"].toDouble();
 
     cout << "duration = " << g_defaultCloudParams.duration << "\n";
     cout << "overlap = " << g_defaultCloudParams.overlap << "\n";
@@ -538,41 +627,41 @@ bool Scene::saveCloud(QFile &cloudFile, SceneCloud *selectedCloudSave)
     out << "Grain Cloud " << cloudToSave->getId() << "\n";
     cloudToSave->describe(out);
 
-    QJsonObject objGrain;
-    objGrain["duration"] = cloudToSave->getDurationMs();
-    objGrain["overlap"] = cloudToSave->getOverlap();
-    objGrain["pitch"] = cloudToSave->getPitch();
-    objGrain["pitch-lfo-freq"] = cloudToSave->getPitchLFOFreq();
-    objGrain["pitch-lfo-amount"] = cloudToSave->getPitchLFOAmount();
-    objGrain["direction"] = cloudToSave->getDirection();
-    objGrain["window-type"] = cloudToSave->getWindowType();
-    objGrain["spatial-mode"] = cloudToSave->getSpatialMode();
-    objGrain["spatial-channel"] = cloudToSave->getSpatialChannel();
-    objGrain["midi-channel"] = cloudToSave->getMidiChannel();
-    objGrain["midi-note"] = cloudToSave->getMidiNote();
-    objGrain["volume"] = cloudToSave->getVolumeDb();
+    QJsonObject objCloud;
+    objCloud["duration"] = cloudToSave->getDurationMs();
+    objCloud["overlap"] = cloudToSave->getOverlap();
+    objCloud["pitch"] = cloudToSave->getPitch();
+    objCloud["pitch-lfo-freq"] = cloudToSave->getPitchLFOFreq();
+    objCloud["pitch-lfo-amount"] = cloudToSave->getPitchLFOAmount();
+    objCloud["direction"] = cloudToSave->getDirection();
+    objCloud["window-type"] = cloudToSave->getWindowType();
+    objCloud["spatial-mode"] = cloudToSave->getSpatialMode();
+    objCloud["spatial-channel"] = cloudToSave->getSpatialChannel();
+    objCloud["midi-channel"] = cloudToSave->getMidiChannel();
+    objCloud["midi-note"] = cloudToSave->getMidiNote();
+    objCloud["volume"] = cloudToSave->getVolumeDb();
     const ParamEnv &cloudEnvelopeVolumeParam = cloudToSave->getEnvelopeVolumeParam();
     {
         float tAtk, tSta, tDec, tRel;
         cloudEnvelopeVolumeParam.getTimeBasedParameters(tAtk, tSta, tDec, tRel, samp_rate);
-        objGrain["volume-envelope-L1"] = cloudEnvelopeVolumeParam.l1;
-        objGrain["volume-envelope-L2"] = cloudEnvelopeVolumeParam.l2;
-        objGrain["volume-envelope-L3"] = cloudEnvelopeVolumeParam.l3;
-        objGrain["volume-envelope-TAtk"] = tAtk;
-        objGrain["volume-envelope-TSta"] = tSta;
-        objGrain["volume-envelope-TDec"] = tDec;
-        objGrain["volume-envelope-TRel"] = tRel;
+        objCloud["volume-envelope-L1"] = cloudEnvelopeVolumeParam.l1;
+        objCloud["volume-envelope-L2"] = cloudEnvelopeVolumeParam.l2;
+        objCloud["volume-envelope-L3"] = cloudEnvelopeVolumeParam.l3;
+        objCloud["volume-envelope-TAtk"] = tAtk;
+        objCloud["volume-envelope-TSta"] = tSta;
+        objCloud["volume-envelope-TDec"] = tDec;
+        objCloud["volume-envelope-TRel"] = tRel;
     }
-    objGrain["volume-envelope-T1"] = cloudEnvelopeVolumeParam.t1;
-    objGrain["volume-envelope-T2"] = cloudEnvelopeVolumeParam.t2;
-    objGrain["volume-envelope-T3"] = cloudEnvelopeVolumeParam.t3;
-    objGrain["volume-envelope-T4"] = cloudEnvelopeVolumeParam.t4;
-    objGrain["num-grains"] = (int)cloudToSave->getNumGrains();
-    objGrain["active-state"] = cloudToSave->getActiveState();
-    objGrain["x-rand-extent"] = cloudVisToSave->getXRandExtent();
-    objGrain["y-rand-extent"] = cloudVisToSave->getYRandExtent();
+    objCloud["volume-envelope-T1"] = cloudEnvelopeVolumeParam.t1;
+    objCloud["volume-envelope-T2"] = cloudEnvelopeVolumeParam.t2;
+    objCloud["volume-envelope-T3"] = cloudEnvelopeVolumeParam.t3;
+    objCloud["volume-envelope-T4"] = cloudEnvelopeVolumeParam.t4;
+    objCloud["num-grains"] = (int)cloudToSave->getNumGrains();
+    objCloud["active-state"] = cloudToSave->getActiveState();
+    objCloud["x-rand-extent"] = cloudVisToSave->getXRandExtent();
+    objCloud["y-rand-extent"] = cloudVisToSave->getYRandExtent();
 
-    docRoot["cloud"] = objGrain;
+    docRoot["cloud"] = objCloud;
 
     QJsonDocument document;
     document.setObject(docRoot);
