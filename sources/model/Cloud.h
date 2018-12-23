@@ -110,7 +110,7 @@ public:
     Cloud(VecSceneSample *sampleSet, float theNumGrains);
 
     // compute next buffer of audio (accumulate from grains)
-    void nextBuffer(float *accumBuff, unsigned int numFrames);
+    void nextBuffer(double *accumBuff, unsigned int numFrames);
 
     // CLOUD PARAMETER accessors/mutators
     // set duration for all grains
