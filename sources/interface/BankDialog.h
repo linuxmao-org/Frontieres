@@ -6,6 +6,7 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <mutex>
+#include "Frontieres.h"
 #include "model/Scene.h"
 #include "model/Cloud.h"
 #include "CombiDialog.h"

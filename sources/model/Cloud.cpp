@@ -387,7 +387,8 @@ void Cloud::removeGrain()
         if (playedCloudMidi[i]->isActive)
             playedCloudMidi[i]->removeFlag = true;
         else
-            playedCloudMidi[i]->myGrains.pop_back();
+            delete playedCloudMidi[i]->myGrains.back();
+            //playedCloudMidi[i]->myGrains.pop_back();
     changed_numGrains = true;
 }
 
@@ -843,7 +844,8 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
             if (nextGrain >= myGrains.size() - 1) {
                 nextGrain = 0;
             }
-            myGrains.pop_back();
+            delete myGrains.back();
+            //myGrains.pop_back();
             setOverlap(overlapNorm);
         }
         removeFlag = false;
@@ -975,7 +977,8 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
                     if (nextGrain >= playedCloudMidi[ii]->myGrains.size() - 1) {
                         nextGrain = 0;
                     }
-                    playedCloudMidi[ii]->myGrains.pop_back();
+                    delete playedCloudMidi[ii]->myGrains.back();
+                    //playedCloudMidi[ii]->myGrains.pop_back();
                     setOverlap(overlapNorm);
                 }
                 playedCloudMidi[ii]->removeFlag = false;
