@@ -1,7 +1,11 @@
 #include "interface/CloudDialog.h"
 #include "ui_CloudDialog.h"
+#include "model/ParamCloud.h"
 #include <iostream>
 #include <stdio.h>
+
+extern ValueMin g_cloudValueMin;
+extern ValueMax g_cloudValueMax;
 
 CloudDialog::CloudDialog(QWidget *parent) :
     QDialog(parent),
@@ -9,6 +13,11 @@ CloudDialog::CloudDialog(QWidget *parent) :
 {
     setModal(false);
     ui->setupUi(this);
+
+    ui->doubleSpinBox_Volume->setMinimum(g_cloudValueMin.volumeDB);
+    ui->doubleSpinBox_Volume->setMaximum(g_cloudValueMax.volumeDB);
+    ui->verticalSlider_Volume->setMinimum(g_cloudValueMin.volumeDB * 1000);
+    ui->verticalSlider_Volume->setMaximum(g_cloudValueMax.volumeDB * 1000);
 
     QTimer *tmAutoUpdate = new QTimer(this);
     connect(tmAutoUpdate, &QTimer::timeout, this, &CloudDialog::autoUpdate);
@@ -22,8 +31,10 @@ CloudDialog::~CloudDialog()
 
 void CloudDialog::autoUpdate()
 {
+    std::cout<<"entree autoupdate"<<std::endl;
     if (cloudRef && cloudVisRef)
         linkCloud(cloudRef, cloudVisRef);
+    std::cout<<"sortie autoupdate"<<std::endl;
 }
 
 void CloudDialog::linkCloud(Cloud *cloudLinked, CloudVis *cloudVisLinked)
