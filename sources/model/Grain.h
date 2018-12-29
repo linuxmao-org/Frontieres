@@ -115,7 +115,7 @@ private:
     // grain parameters
     float duration, queuedDuration;
     double winDurationSamps;
-    double pitch, queuedPitch;
+    double pitch, queuedPitch, pitchCent;
     double direction, queuedDirection;
     double playInc;
 

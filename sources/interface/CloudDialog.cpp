@@ -19,6 +19,57 @@ CloudDialog::CloudDialog(QWidget *parent) :
     ui->verticalSlider_Volume->setMinimum(g_cloudValueMin.volumeDB * 1000);
     ui->verticalSlider_Volume->setMaximum(g_cloudValueMax.volumeDB * 1000);
 
+    ui->doubleSpinBox_Grains->setMinimum(g_cloudValueMin.numGrains);
+    ui->doubleSpinBox_Grains->setMaximum(g_cloudValueMax.numGrains);
+    ui->dial_Grains->setMinimum(g_cloudValueMin.numGrains);
+    ui->dial_Grains->setMaximum(g_cloudValueMax.numGrains);
+
+    ui->doubleSpinBox_Duration->setMinimum(g_cloudValueMin.duration);
+    ui->doubleSpinBox_Duration->setMaximum(g_cloudValueMax.duration);
+    ui->dial_Duration->setMinimum(g_cloudValueMin.duration);
+    ui->dial_Duration->setMaximum(g_cloudValueMax.duration);
+
+    ui->doubleSpinBox_Overlap->setMinimum(g_cloudValueMin.overlap);
+    ui->doubleSpinBox_Overlap->setMaximum(g_cloudValueMax.overlap);
+    ui->dial_Overlap->setMaximum(g_cloudValueMax.overlap * 100);
+    ui->dial_Overlap->setMinimum(g_cloudValueMin.overlap * 100);
+
+    ui->doubleSpinBox_Pitch->setMinimum(g_cloudValueMin.pitch);
+    ui->doubleSpinBox_Pitch->setMaximum(g_cloudValueMax.pitch);
+    ui->dial_Pitch->setMaximum(g_cloudValueMax.pitch * 100);
+    ui->dial_Pitch->setMinimum(g_cloudValueMin.pitch * 100);
+
+    ui->doubleSpinBox_LFO_Freq->setMinimum(g_cloudValueMin.pitchLFOFreq);
+    ui->doubleSpinBox_LFO_Freq->setMaximum(g_cloudValueMax.pitchLFOFreq);
+    ui->dial_LFO_Freq->setMaximum(g_cloudValueMax.pitchLFOFreq * 100);
+    ui->dial_LFO_Freq->setMinimum(g_cloudValueMin.pitchLFOFreq * 100);
+
+    ui->doubleSpinBox_LFO_Amp->setMinimum(g_cloudValueMin.pitchLFOAmount);
+    ui->doubleSpinBox_LFO_Amp->setMaximum(g_cloudValueMax.pitchLFOAmount);
+    ui->dial_LFO_Amp->setMaximum(g_cloudValueMax.pitchLFOAmount * 1000);
+    ui->dial_LFO_Amp->setMinimum(g_cloudValueMin.pitchLFOAmount * 1000);
+
+    ui->doubleSpinBox_X->setMinimum(g_cloudValueMin.x);
+    ui->doubleSpinBox_X->setMaximum(g_cloudValueMax.x);
+    ui->dial_X->setMaximum(g_cloudValueMax.x);
+    ui->dial_X->setMinimum(g_cloudValueMin.x);
+
+    ui->doubleSpinBox_Y->setMinimum(g_cloudValueMin.y);
+    ui->doubleSpinBox_Y->setMaximum(g_cloudValueMax.y);
+    ui->dial_Y->setMaximum(g_cloudValueMax.y);
+    ui->dial_Y->setMinimum(g_cloudValueMin.y);
+
+    ui->doubleSpinBox_X_Extent->setMinimum(g_cloudValueMin.xRandExtent);
+    ui->doubleSpinBox_X_Extent->setMaximum(g_cloudValueMax.xRandExtent);
+    ui->dial_X_Extent->setMaximum(g_cloudValueMax.xRandExtent);
+    ui->dial_X_Extent->setMinimum(g_cloudValueMin.xRandExtent);
+
+    ui->doubleSpinBox_Y_Extent->setMinimum(g_cloudValueMin.yRandExtent);
+    ui->doubleSpinBox_Y_Extent->setMaximum(g_cloudValueMax.yRandExtent);
+    ui->dial_Y_Extent->setMaximum(g_cloudValueMax.yRandExtent);
+    ui->dial_X_Extent->setMinimum(g_cloudValueMin.yRandExtent);
+
+
     QTimer *tmAutoUpdate = new QTimer(this);
     connect(tmAutoUpdate, &QTimer::timeout, this, &CloudDialog::autoUpdate);
     tmAutoUpdate->start(500);
@@ -31,14 +82,14 @@ CloudDialog::~CloudDialog()
 
 void CloudDialog::autoUpdate()
 {
-    std::cout<<"entree autoupdate"<<std::endl;
     if (cloudRef && cloudVisRef)
         linkCloud(cloudRef, cloudVisRef);
-    std::cout<<"sortie autoupdate"<<std::endl;
 }
 
 void CloudDialog::linkCloud(Cloud *cloudLinked, CloudVis *cloudVisLinked)
 {
+    if (editing == true)
+        return;
     linking = true;
     cloudRef = cloudLinked;
     cloudVisRef = cloudVisLinked;
@@ -55,7 +106,8 @@ void CloudDialog::linkCloud(Cloud *cloudLinked, CloudVis *cloudVisLinked)
     if (cloudLinked->changedVolumeDb())
         ui->doubleSpinBox_Volume->setValue(cloudLinked->getVolumeDb());
     if (cloudLinked->changedPitch())
-        ui->doubleSpinBox_Pitch->setValue(12*log2(cloudLinked->getPitch()));
+        //ui->doubleSpinBox_Pitch->setValue(12*log2(cloudLinked->getPitch()));
+        ui->doubleSpinBox_Pitch->setValue(cloudLinked->getPitch());
     if (cloudVisLinked->changedXRandExtent())
         ui->doubleSpinBox_X_Extent->setValue(cloudVisLinked->getXRandExtent());
     if (cloudVisLinked->changedYRandExtent())
@@ -214,25 +266,57 @@ void CloudDialog::on_dial_X_valueChanged(int value)
 void CloudDialog::on_dial_X_Extent_valueChanged(int value)
 {
     ui->doubleSpinBox_X_Extent->setValue(value);
+    update_X_Extent();
 }
 
 void CloudDialog::on_doubleSpinBox_X_Extent_valueChanged(double arg1)
 {
     ui->dial_X_Extent->setValue((int) arg1);
-    if (!linking)
-        cloudVisRef->setFixedXRandExtent((int) arg1);
+    if (!linking){
+        editing = true;
+        passageValue = (double) arg1;
+    }
+}
+
+void CloudDialog::on_doubleSpinBox_X_Extent_editingFinished()
+{
+    update_X_Extent();
+}
+
+void CloudDialog::update_X_Extent()
+{
+    if (!linking){
+        cloudVisRef->setFixedXRandExtent((int) passageValue);
+        editing = false;
+    }
 }
 
 void CloudDialog::on_dial_Y_Extent_valueChanged(int value)
 {
     ui->doubleSpinBox_Y_Extent->setValue(value);
+    update_Y_Extent();
 }
 
 void CloudDialog::on_doubleSpinBox_Y_Extent_valueChanged(double arg1)
 {
     ui->dial_Y_Extent->setValue((int) arg1);
-    if (!linking)
-        cloudVisRef->setFixedYRandExtent((int) arg1);
+    if (!linking){
+        editing = true;
+        passageValue = (double) arg1;
+    }
+}
+
+void CloudDialog::update_Y_Extent()
+{
+    if (!linking){
+        cloudVisRef->setFixedYRandExtent((int) passageValue);
+        editing = false;
+    }
+}
+
+void CloudDialog::on_doubleSpinBox_Y_Extent_editingFinished()
+{
+    update_Y_Extent();
 }
 
 void CloudDialog::on_dial_LFO_Freq_valueChanged(int value)
@@ -280,7 +364,8 @@ void CloudDialog::on_doubleSpinBox_Pitch_valueChanged(double arg1)
 {
     ui->dial_Pitch->setValue(arg1 * 100);
     if (!linking)
-        cloudRef->setPitch(pow(2, (float) (arg1 / 12)));
+        //cloudRef->setPitch(pow(2, (float) (arg1 / 12)));
+        cloudRef->setPitch(arg1);
 }
 
 void CloudDialog::on_verticalSlider_Volume_valueChanged(int value)
@@ -404,3 +489,5 @@ void CloudDialog::on_lineEdit_Name_textEdited(const QString &arg1)
     if (!linking)
         cloudRef->setName(arg1);
 }
+
+

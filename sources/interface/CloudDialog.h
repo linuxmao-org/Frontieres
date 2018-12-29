@@ -44,9 +44,17 @@ private slots:
 
     void on_doubleSpinBox_X_Extent_valueChanged(double arg1);
 
+    void on_doubleSpinBox_X_Extent_editingFinished();
+
+    void update_X_Extent();
+
     void on_dial_Y_Extent_valueChanged(int value);
 
     void on_doubleSpinBox_Y_Extent_valueChanged(double arg1);
+
+    void on_doubleSpinBox_Y_Extent_editingFinished();
+
+    void update_Y_Extent();
 
     void on_dial_LFO_Freq_valueChanged(int value);
 
@@ -107,6 +115,8 @@ private slots:
 private:
     Ui::CloudDialog *ui;
     bool linking = false;
+    bool editing = false;
+    double passageValue;
     Cloud *cloudRef;
     CloudVis *cloudVisRef;
 };

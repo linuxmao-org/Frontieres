@@ -219,7 +219,7 @@ void Grain::setDurationMs(float dur)
 void Grain::setPitch(float newPitch)
 {
     // get absolute value
-    queuedPitch = newPitch;
+    queuedPitch = pow(2, (float) (newPitch / 12));
     if (queuedPitch != pitch)
         newParam = true;
 }

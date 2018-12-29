@@ -385,30 +385,20 @@ void Cloud::addGrain()
 
 void Cloud::removeGrain()
 {
-    std::cout<<"entree removegrain"<<std::endl;
-    std::cout << "myGrains.size()="<<myGrains.size()<<std::endl;
-    std::cout << "g_cloudValueMin.numGrains="<<g_cloudValueMin.numGrains<<std::endl;
-    std::cout << "g_maxMidiVoices="<<g_maxMidiVoices<<std::endl;
     if (myGrains.size() == g_cloudValueMin.numGrains)
         return;
     removeFlag = true;
     myCloudVis->removeGrain();
     for (int i = 0; i < g_maxMidiVoices; i++) {
-        std::cout << "i="<<i<<std::endl;
-        std::cout << "playedCloudMidi[i]->isActive="<<playedCloudMidi[i]->isActive<<std::endl;
         if (playedCloudMidi[i]->isActive){
-
             playedCloudMidi[i]->removeFlag = true;
         }
         else {
-             std::cout <<"avant delete"<<std::endl;
-            //delete playedCloudMidi[i]->myGrains.back();
-                   std::cout <<"apres delete"<<std::endl;
+            delete playedCloudMidi[i]->myGrains[playedCloudMidi[i]->myGrains.size()-1];
             playedCloudMidi[i]->myGrains.pop_back();
         }
     }
     changed_numGrains = true;
-    std::cout<<"sortie removegrain"<<std::endl;
 }
 
 bool Cloud::changedNumGrains()
@@ -444,20 +434,15 @@ void Cloud::setOverlap(float target)
         showMessageLocked();
         return;
     }
-    if (target > 1.0f)
-        target = 1.0f;
-    else if (target < 0.0f)
-        target = 0.0f;
-    overlapNorm = target;
-    // oops wrong!//overlap = ((float)(myGrains->size()))*0.25f*exp(log(2.0f)*target);
+    if (target <= g_cloudValueMax.overlap && target >= g_cloudValueMin.overlap) {
+        overlapNorm = target;
+        float num = (float)myGrains.size();
 
-    float num = (float)myGrains.size();
+        overlap = exp(log(num) * target);
 
-    overlap = exp(log(num) * target);
-
-    //  cout<<"overlap set" << overlap << endl;
-    updateBangTime();
-    changed_overlap = true;
+        updateBangTime();
+        changed_overlap = true;
+    }
 }
 
 float Cloud::getOverlap()
@@ -477,7 +462,7 @@ void Cloud::setDurationMs(float theDur)
         showMessageLocked();
         return;
     }
-    if (theDur >= 1.0f) {
+    if (theDur >= g_cloudValueMin.duration && theDur <=g_cloudValueMax.duration) {
         duration = theDur;
         for (int i = 0; i < myGrains.size(); i++)
             myGrains[i]->setDurationMs(duration);
@@ -506,13 +491,12 @@ void Cloud::setPitch(float targetPitch)
         showMessageLocked();
         return;
     }
-    if (targetPitch < 0.0001) {
-        targetPitch = 0.0001;
+    if (targetPitch >= g_cloudValueMin.pitch && targetPitch <= g_cloudValueMax.pitch) {
+        pitch = targetPitch;
+        for (int i = 0; i < myGrains.size(); i++)
+            myGrains[i]->setPitch(targetPitch);
+        changed_pitch = true;
     }
-    pitch = targetPitch;
-    for (int i = 0; i < myGrains.size(); i++)
-        myGrains[i]->setPitch(targetPitch);
-    changed_pitch = true;
 }
 
 float Cloud::getPitch()
@@ -536,22 +520,16 @@ void Cloud::setVolumeDb(float volDb)
         return;
     }
     // max = 6 db, min = -60 db
-    if (volDb > g_cloudValueMax.volumeDB) {
-        volDb = g_cloudValueMax.volumeDB;
+    if (volDb <= g_cloudValueMax.volumeDB && volDb >= g_cloudValueMin.volumeDB) {
+       volumeDb = volDb;
+
+       // convert to 0-1 representation
+        normedVol = pow(10.0, volDb * 0.05);
+
+        for (int i = 0; i < myGrains.size(); i++)
+            myGrains[i]->setVolume(normedVol);
+        changed_volumeDB = true;
     }
-
-    if (volDb < g_cloudValueMin.volumeDB) {
-        volDb = g_cloudValueMin.volumeDB;
-    }
-
-    volumeDb = volDb;
-
-    // convert to 0-1 representation
-    normedVol = pow(10.0, volDb * 0.05);
-
-    for (int i = 0; i < myGrains.size(); i++)
-        myGrains[i]->setVolume(normedVol);
-    changed_volumeDB = true;
 }
 
 float Cloud::getVolumeDb()
@@ -817,7 +795,7 @@ Env Cloud::getEnvelopeVolume()
 // compute audio
 void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
 {
-    std::cout<<"entree nextbuffer cloud"<<std::endl;
+    //debug: std::cout<<"entree nextbuffer cloud"<<std::endl;
     int l_envelopeAction = this->envelopeAction.exchange(0);
 
     switch (l_envelopeAction) {
@@ -860,14 +838,11 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
     }
 
     if (removeFlag == true) {
-          std::cout <<"removeflag cloud"<<std::endl;
         if (myGrains.size() > 1) {
             if (nextGrain >= myGrains.size() - 1) {
                 nextGrain = 0;
             }
-              std::cout <<"avant delete"<<std::endl;
-            //delete myGrains.back();
-                std::cout <<"apres delete"<<std::endl;
+            delete myGrains[myGrains.size() - 1];
             myGrains.pop_back();
             setOverlap(overlapNorm);
         }
@@ -965,9 +940,9 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
     // midi playing
     //debug : std::cout << "actualyPlayedMidi=" <<actualyPlayedMidi<< std::endl;
     for (int ii = 0; ii < g_maxMidiVoices; ii++){
- std::cout <<"ii="<<ii<<"playedCloudMidi[ii]->isActive="<<playedCloudMidi[ii]->isActive<<std::endl;
+        //debug: std::cout <<"ii="<<ii<<"playedCloudMidi[ii]->isActive="<<playedCloudMidi[ii]->isActive<<std::endl;
         if (playedCloudMidi[ii]->isActive){
-             std::cout <<"isactive"<<std::endl;
+            // std::cout <<"isactive"<<std::endl;
             //std::cout<<"boucle jeu, ii="<<ii<<" isactive = "<<playedCloudMidi[ii]->isActive<<std::endl;
             if (playedCloudMidi[ii]->addFlag == true) {
                 playedCloudMidi[ii]->addFlag = false;
@@ -997,22 +972,22 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
             }
 
             if (playedCloudMidi[ii]->removeFlag == true) {
-                      std::cout <<"remove flag, ii="<<ii<<std::endl;
-                       std::cout <<"playedCloudMidi[ii]->myGrains.size()="<<playedCloudMidi[ii]->myGrains.size()<<std::endl;
+                //debug: std::cout <<"remove flag, ii="<<ii<<std::endl;
+                //debug: std::cout <<"playedCloudMidi[ii]->myGrains.size()="<<playedCloudMidi[ii]->myGrains.size()<<std::endl;
                 if (playedCloudMidi[ii]->myGrains.size() > 1) {
                     if (nextGrain >= playedCloudMidi[ii]->myGrains.size() - 1) {
                         nextGrain = 0;
                     }
-                    //delete playedCloudMidi[ii]->myGrains.back();
+                    delete playedCloudMidi[ii]->myGrains[playedCloudMidi[ii]->myGrains.size()-1];
                     playedCloudMidi[ii]->myGrains.pop_back();
                     setOverlap(overlapNorm);
                 }
                 playedCloudMidi[ii]->removeFlag = false;
             }
-            //std::cout<<"boucle jeu, avant envelope"<<std::endl;
+            //debug: std::cout<<"boucle jeu, avant envelope"<<std::endl;
             int midiEnvelopeAction = playedCloudMidi[ii]->envelopeAction.exchange(0);
             //debug: std::cout << "midiEnvelopeAction=" <<midiEnvelopeAction<< std::endl;
-            std::cout << "envelope state=" << (int) playedCloudMidi[ii]->envelopeVolume->state() << std::endl;
+            //debug: std::cout << "envelope state=" << (int) playedCloudMidi[ii]->envelopeVolume->state() << std::endl;
             switch (midiEnvelopeAction) {
                 case TriggerEnvelope:
                     //debug : std::cout << "trigger" << std::endl;
@@ -1121,7 +1096,7 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
         }
 
     }
-std::cout<<"sortie nextbuffer cloud"<<std::endl;
+    //debug: std::cout<<"sortie nextbuffer cloud"<<std::endl;
 }
 
 // pitch lfo methods
@@ -1131,8 +1106,10 @@ void Cloud::setPitchLFOFreq(float pfreq)
         showMessageLocked();
         return;
     }
-    pitchLFOFreq = fabsf(pfreq);
-    changed_pitchLFOFreq = true;
+    if (pfreq >= g_cloudValueMin.pitchLFOFreq && pfreq <= g_cloudValueMax.pitchLFOFreq) {
+        pitchLFOFreq = fabsf(pfreq);
+        changed_pitchLFOFreq = true;
+    }
 }
 
 void Cloud::setPitchLFOAmount(float lfoamt)
@@ -1141,11 +1118,10 @@ void Cloud::setPitchLFOAmount(float lfoamt)
         showMessageLocked();
         return;
     }
-    if (lfoamt < 0.0) {
-        lfoamt = 0.0f;
+    if (lfoamt >= g_cloudValueMin.pitchLFOAmount && lfoamt <= g_cloudValueMax.pitchLFOAmount) {
+        pitchLFOAmount = lfoamt;
+        changed_pitchLFOAmount = true;
     }
-    pitchLFOAmount = lfoamt;
-    changed_pitchLFOAmount = true;
 }
 
 float Cloud::getPitchLFOFreq()

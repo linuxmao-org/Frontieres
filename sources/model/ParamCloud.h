@@ -64,8 +64,8 @@ struct ValueMin
     const float duration = 1;
     const float overlap = 0;
     const float pitch = -60;
-    const float pitchLFOFreq = 100;
-    const float pitchLFOAmount = 100;
+    const float pitchLFOFreq = 0;
+    const float pitchLFOAmount = 0;
     const float volumeDB = -60;
     const int numGrains = 1;
     const float xRandExtent = 0;
