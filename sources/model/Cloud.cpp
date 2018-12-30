@@ -487,6 +487,7 @@ void Cloud::updateBangTime()
 // pitch
 void Cloud::setPitch(float targetPitch)
 {
+    std::cout << "entree cloud::setpitch, pitch ="<< targetPitch<<std::endl;
     if (locked) {
         showMessageLocked();
         return;
@@ -888,9 +889,10 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
 
                 // get next pitch (using LFO) -  eventually generalize to an applyLFOs method (if LFO control will be exerted over multiple params)
                 if ((pitchLFOAmount > 0.0f) && (pitchLFOFreq > 0.0f)) {
-                    float nextPitch =
-                        fabsf(pitch + pitchLFOAmount * sinf(2 * PI * pitchLFOFreq *
-                                                          GTime::instance().sec));
+                    //float nextPitch = fabsf(pitch + pitchLFOAmount * sinf(2 * PI * pitchLFOFreq * GTime::instance().sec));
+                    float pitchPow = pow(2, (pitch / 12));
+                    float nextPitchPow = fabsf(pitchPow + pitchLFOAmount * sinf(2 * PI * pitchLFOFreq * GTime::instance().sec));
+                    float nextPitch = 12 * log2(nextPitchPow);
                     myGrains[nextGrain]->setPitch(nextPitch);
                 }
                 else
@@ -1039,9 +1041,10 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
 
                         // get next pitch (using LFO) -  eventually generalize to an applyLFOs method (if LFO control will be exerted over multiple params)
                         if ((pitchLFOAmount > 0.0f) && (pitchLFOFreq > 0.0f)) {
-                            float nextPitch =
-                                fabsf(playedCloudMidi[ii]->pitch + pitchLFOAmount * sinf(2 * PI * pitchLFOFreq *
-                                                                  GTime::instance().sec));
+                            //float nextPitch = fabsf(playedCloudMidi[ii]->pitch + pitchLFOAmount * sinf(2 * PI * pitchLFOFreq * GTime::instance().sec));
+                            float pitchPow = pow(2, (playedCloudMidi[ii]->pitch / 12));
+                            float nextPitchPow = fabsf(pitchPow + pitchLFOAmount * sinf(2 * PI * pitchLFOFreq * GTime::instance().sec));
+                            float nextPitch = 12 * log2(nextPitchPow);
                             playedCloudMidi[ii]->myGrains[nextGrain]->setPitch(nextPitch);
                         }
                         else

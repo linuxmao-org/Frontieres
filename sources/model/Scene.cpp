@@ -802,7 +802,7 @@ void Scene::initDefaultCloudParams()
     g_defaultCloudParams.duration = 500.0;
     g_defaultCloudParams.overlap = 1.0f;
     g_defaultCloudParams.pitch = 0.0f;
-    g_defaultCloudParams.pitchLFOFreq = 0.01f;
+    g_defaultCloudParams.pitchLFOFreq = 0.00f;
     g_defaultCloudParams.pitchLFOAmount = 0.00f;
     g_defaultCloudParams.windowType = HANNING;
     g_defaultCloudParams.spatialMode= UNITY;

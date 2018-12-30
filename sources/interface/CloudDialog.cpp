@@ -242,25 +242,54 @@ void CloudDialog::on_doubleSpinBox_Y_valueChanged(double arg1)
 {
     ui->dial_Y->setValue((int) arg1);
     if (!linking)
-        cloudVisRef->setY((int) arg1);
-
+        editing = true;
+        passageValue = (double) arg1;
 }
 
 void CloudDialog::on_dial_Y_valueChanged(int value)
 {
     ui->doubleSpinBox_Y->setValue(value);
+    update_Y();
+}
+
+void CloudDialog::on_doubleSpinBox_Y_editingFinished()
+{
+    update_Y();
+}
+
+void CloudDialog::update_Y()
+{
+    if (!linking){
+        cloudVisRef->setY((int) passageValue);
+        editing = false;
+    }
 }
 
 void CloudDialog::on_doubleSpinBox_X_valueChanged(double arg1)
 {
     ui->dial_X->setValue((int) arg1);
     if (!linking)
-        cloudVisRef->setX((int) arg1);
+        editing = true;
+        passageValue = (double) arg1;
 }
 
 void CloudDialog::on_dial_X_valueChanged(int value)
 {
     ui->doubleSpinBox_X->setValue(value);
+    update_X();
+}
+
+void CloudDialog::on_doubleSpinBox_X_editingFinished()
+{
+    update_X();
+}
+
+void CloudDialog::update_X()
+{
+    if (!linking){
+        cloudVisRef->setX((int) passageValue);
+        editing = false;
+    }
 }
 
 void CloudDialog::on_dial_X_Extent_valueChanged(int value)
@@ -489,5 +518,3 @@ void CloudDialog::on_lineEdit_Name_textEdited(const QString &arg1)
     if (!linking)
         cloudRef->setName(arg1);
 }
-
-

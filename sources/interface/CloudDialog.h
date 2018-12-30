@@ -36,9 +36,17 @@ private slots:
 
     void on_dial_Y_valueChanged(int value);
 
+    void on_doubleSpinBox_Y_editingFinished();
+
+    void update_Y();
+
     void on_doubleSpinBox_X_valueChanged(double arg1);
 
     void on_dial_X_valueChanged(int value);
+
+    void on_doubleSpinBox_X_editingFinished();
+
+    void update_X();
 
     void on_dial_X_Extent_valueChanged(int value);
 

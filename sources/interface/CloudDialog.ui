@@ -915,7 +915,7 @@ border-bottom-left-radius: 9px;
                   <enum>QAbstractSpinBox::UpDownArrows</enum>
                  </property>
                  <property name="keyboardTracking">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                  <property name="showGroupSeparator" stdset="0">
                   <bool>false</bool>
@@ -1089,7 +1089,7 @@ border-bottom-left-radius: 9px;
                   <enum>QAbstractSpinBox::UpDownArrows</enum>
                  </property>
                  <property name="keyboardTracking">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                  <property name="showGroupSeparator" stdset="0">
                   <bool>false</bool>
@@ -1932,7 +1932,7 @@ border-bottom-left-radius: 9px;
                   <enum>QAbstractSpinBox::UpDownArrows</enum>
                  </property>
                  <property name="keyboardTracking">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                  <property name="showGroupSeparator" stdset="0">
                   <bool>false</bool>
