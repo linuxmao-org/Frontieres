@@ -127,6 +127,7 @@ private:
     double passageValue;
     Cloud *cloudRef;
     CloudVis *cloudVisRef;
+    bool autoUpdating = false;
 };
 
 #endif // CLOUDDIALOG_H

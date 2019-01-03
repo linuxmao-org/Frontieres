@@ -84,7 +84,7 @@ public:
     ~CloudMidi();
 
     // constructor
-    CloudMidi(VecSceneSample *sampleSet, float theNumGrains, float theDuration, float thePitch);
+    CloudMidi(VecSceneSample *sampleSet, float theNumGrains, float theDuration, float thePitch, int theWindowType);
     // cloud parameters duplicated for each midi note
     // int midiNote = - 1;
     float pitch;

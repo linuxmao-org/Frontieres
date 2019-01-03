@@ -53,7 +53,7 @@ CloudMidi::~CloudMidi()
 
 }
 
-CloudMidi::CloudMidi(VecSceneSample *sampleSet, float theNumGrains, float theDuration, float thePitch)
+CloudMidi::CloudMidi(VecSceneSample *sampleSet, float theNumGrains, float theDuration, float thePitch, int theWindowType)
 {
     envelopeVolume = new Env;
     envelopeVolumeBuff = new float[g_buffSize];
@@ -65,6 +65,7 @@ CloudMidi::CloudMidi(VecSceneSample *sampleSet, float theNumGrains, float theDur
     // populate grain cloud
     for (int i = 0; i < theNumGrains; i++) {
         myGrains.push_back(new Grain(sampleSet, theDuration, thePitch));
+        myGrains[i]->setWindow(theWindowType);
     }
 }
 
@@ -184,8 +185,11 @@ Cloud::Cloud(VecSceneSample *sampleSet, float theNumGrains)
     setActiveState(g_defaultCloudParams.activateState);
 
     //midi polyphony
+    midiChannel = g_defaultCloudParams.midiChannel;
+    midiNote = g_defaultCloudParams.midiNote;
+
     for (int i = 0; i < g_maxMidiVoices; i++){
-          CloudMidi *l_CloudMidi = new CloudMidi(sampleSet, numGrains, duration, pitch);
+          CloudMidi *l_CloudMidi = new CloudMidi(sampleSet, numGrains, duration, pitch, windowType);
           playedCloudMidi[i] = l_CloudMidi;
     }
 
@@ -355,6 +359,10 @@ void Cloud::setWindowType(int winType)
             // cout << "windowtype " << windowType << endl;
             myGrains[i]->setWindow(windowType);
         }
+    }
+    for (int i = 0; i < g_maxMidiVoices; i++){
+        for (int j = 0; j < playedCloudMidi[i]->myGrains.size(); j++)
+            playedCloudMidi[i]->myGrains[j]->setWindow(windowType);
     }
     changed_windowType = true;
 }
@@ -1042,13 +1050,14 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
                         // get next pitch (using LFO) -  eventually generalize to an applyLFOs method (if LFO control will be exerted over multiple params)
                         if ((pitchLFOAmount > 0.0f) && (pitchLFOFreq > 0.0f)) {
                             //float nextPitch = fabsf(playedCloudMidi[ii]->pitch + pitchLFOAmount * sinf(2 * PI * pitchLFOFreq * GTime::instance().sec));
-                            float pitchPow = pow(2, (playedCloudMidi[ii]->pitch / 12));
+                            float pitchPow = pow(2, ((pitch + ii - midiNote) / 12));
                             float nextPitchPow = fabsf(pitchPow + pitchLFOAmount * sinf(2 * PI * pitchLFOFreq * GTime::instance().sec));
                             float nextPitch = 12 * log2(nextPitchPow);
                             playedCloudMidi[ii]->myGrains[nextGrain]->setPitch(nextPitch);
                         }
                         else
-                            playedCloudMidi[ii]->myGrains[nextGrain]->setPitch(playedCloudMidi[ii]->pitch);
+                            //playedCloudMidi[ii]->myGrains[nextGrain]->setPitch(playedCloudMidi[ii]->pitch);
+                            playedCloudMidi[ii]->myGrains[nextGrain]->setPitch(pitch + ii - midiNote);
 
 
                         // update spatialization/get new channel multiplier set
@@ -1092,7 +1101,8 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
                         for (int j = 0; j < MY_CHANNELS; ++j)
                             accumBuff[i * MY_CHANNELS + j] += playedCloudMidi[ii]->intermediateBuff[i * MY_CHANNELS + j]
                                                               * playedCloudMidi[ii]->envelopeVolumeBuff[i]
-                                                              * ((float) playedCloudMidi[ii]->velocity / 127);
+                                                              * (((float) playedCloudMidi[ii]->velocity + 127) * g_cloudValueMin.midiVelocityBoost / 100) / 127;
+                                                              //* ((float) playedCloudMidi[ii]->velocity / 127);
                     }
                 }
             }

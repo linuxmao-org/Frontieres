@@ -67,6 +67,7 @@ struct ValueMin
     const float pitchLFOFreq = 0;
     const float pitchLFOAmount = 0;
     const float volumeDB = -60;
+    const int midiVelocityBoost = 50; // % to boost volume for small velocity
     const int numGrains = 1;
     const float xRandExtent = 0;
     const float yRandExtent = 0;

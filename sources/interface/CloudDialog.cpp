@@ -82,8 +82,10 @@ CloudDialog::~CloudDialog()
 
 void CloudDialog::autoUpdate()
 {
+    autoUpdating = true;
     if (cloudRef && cloudVisRef)
         linkCloud(cloudRef, cloudVisRef);
+    autoUpdating = false;
 }
 
 void CloudDialog::linkCloud(Cloud *cloudLinked, CloudVis *cloudVisLinked)
@@ -122,6 +124,7 @@ void CloudDialog::linkCloud(Cloud *cloudLinked, CloudVis *cloudVisLinked)
         ui->doubleSpinBox_Midi_Note->setValue(cloudLinked->getMidiNote());
     ui->label_Id_Value->setText(QString::number(cloudLinked->getId()));
   //  if (cloudLinked->changedName())
+    if (autoUpdating == false)
         ui->lineEdit_Name->setText(cloudLinked->getName());
     ui->checkBox_Active->setChecked(cloudLinked->getActiveState());
     ui->checkBox_Locked->setChecked(cloudLinked->getLockedState());

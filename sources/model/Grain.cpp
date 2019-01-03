@@ -218,10 +218,8 @@ void Grain::setDurationMs(float dur)
 //-----------------------------------------------------------------------------
 void Grain::setPitch(float newPitch)
 {
-    std::cout << "entree grain::setpitch, pitch ="<< newPitch<<std::endl;
     // get absolute value
     queuedPitch = pow(2, (float) (newPitch / 12));
-    std::cout << "entree grain::setpitch, queuedPitch ="<< queuedPitch<<std::endl;
     if (queuedPitch != pitch)
         newParam = true;
 }
@@ -275,7 +273,6 @@ void Grain::updateParams()
 
     // all params have been updated
     newParam = false;
-       std::cout << "surtie grain::updateparams, pitch ="<< pitch<<std::endl;
 }
 
 
