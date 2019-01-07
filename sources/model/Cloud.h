@@ -47,6 +47,8 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QTranslator>
+#include <mutex>
+#include "Frontieres.h"
 #include "model/Adsr.h"
 #include "dsp/Window.h"
 
