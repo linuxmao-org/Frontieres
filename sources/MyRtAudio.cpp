@@ -89,6 +89,7 @@ void MyRtAudio::openStream(RtAudioCallback callback)
     // create stream options
     RtAudio::StreamOptions options;
     options.streamName = "Frontieres";
+    options.flags = RTAUDIO_JACK_DONT_CONNECT;
 
     RtAudio::StreamParameters iParams, oParams;
     // i/o params

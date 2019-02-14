@@ -145,6 +145,8 @@ Cloud::Cloud(VecSceneSample *sampleSet, float theNumGrains)
     //spatialMode = UNITY;
     spatialMode = g_defaultCloudParams.spatialMode;
     //channelLocation = -1;
+    myOutputFirstNumber = g_defaultCloudParams.outputFirst;
+    myOutputLastNumber = g_defaultCloudParams.outputLast;
     channelLocation = g_defaultCloudParams.channelLocation;
     //myDirMode = RANDOM_DIR;
     myDirMode = g_defaultCloudParams.dirMode;
@@ -1014,7 +1016,8 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
                 myGrains[k]->nextBuffer(intermediateBuff, frameSkip, nextFrame, k);
             }
             for (int i = 0; i < numFrames; ++i) {
-                for (int j = 0; j < MY_CHANNELS; ++j)
+                //for (int j = 0; j < MY_CHANNELS; ++j)
+                for (int j = myOutputFirstNumber; j <= myOutputLastNumber; ++j)
                     accumBuff[i * MY_CHANNELS + j] += intermediateBuff[i * MY_CHANNELS + j] * envelopeVolumeBuff[i] * ((float) midiVelocity / 127);
             }
         }
@@ -1169,7 +1172,8 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
                     }
                     //debug : std::cout<<"boucle temp, ii="<<ii<<",playedCloudMidi[ii]->midiNote="<<playedCloudMidi[ii]->midiNote<<",playedCloudMidi[ii]->velocity="<<playedCloudMidi[ii]->velocity<<std::endl;
                     for (int i = 0; i < numFrames; ++i) {
-                        for (int j = 0; j < MY_CHANNELS; ++j)
+                        //for (int j = 0; j < MY_CHANNELS; ++j)
+                        for (int j = myOutputFirstNumber; j <= myOutputLastNumber; ++j)
                             accumBuff[i * MY_CHANNELS + j] += playedCloudMidi[ii]->intermediateBuff[i * MY_CHANNELS + j]
                                                               * playedCloudMidi[ii]->envelopeVolumeBuff[i]
                                                               * (((float) playedCloudMidi[ii]->velocity + 127) * g_cloudValueMin.midiVelocityBoost / 100) / 127;
@@ -1261,6 +1265,30 @@ bool Cloud::changedSpatialMode()
     return changed_spatialMode;
 }
 
+void Cloud::setOutputFirst(int myOutput)
+{
+    myOutputFirstNumber = myOutput;
+    updateSpatialization();
+    changed_spatialMode = true;
+}
+
+void Cloud::setOutputLast(int myOutput)
+{
+    myOutputLastNumber = myOutput;
+    updateSpatialization();
+    changed_spatialMode = true;
+}
+
+int Cloud::getOutputFirst()
+{
+    return myOutputFirstNumber;
+}
+
+int Cloud::getOutputLast()
+{
+    return myOutputLastNumber;
+}
+
 // spatialization logic
 void Cloud::updateSpatialization()
 {
@@ -1269,7 +1297,10 @@ void Cloud::updateSpatialization()
     switch (spatialMode) {
     case UNITY:
         for (int i = 0; i < MY_CHANNELS; i++) {
-            channelMults[i] = 0.999f;
+            if (i >= myOutputFirstNumber && i <= myOutputLastNumber)
+                channelMults[i] = 0.999f;
+            else
+                channelMults[i] = 0.0f;
         }
         break;
     case STEREO:
@@ -1277,7 +1308,7 @@ void Cloud::updateSpatialization()
         if (stereoSide == 0) {  // left
             for (int i = 0; i < MY_CHANNELS; i++) {
                 channelMults[i] = 0.0f;
-                if ((i % 2) == 0)
+                if ((i % 2) == 0 && (i >= myOutputFirstNumber && i <= myOutputLastNumber))
                     channelMults[i] = 0.999f;
                 else
                     channelMults[i] = 0.0f;
@@ -1290,7 +1321,8 @@ void Cloud::updateSpatialization()
                 if ((i % 2) == 0)
                     channelMults[i] = 0.0f;
                 else
-                    channelMults[i] = 0.999f;
+                    if (i >= myOutputFirstNumber && i <= myOutputLastNumber)
+                        channelMults[i] = 0.999f;
             }
             stereoSide = 0;
         }
@@ -1304,7 +1336,8 @@ void Cloud::updateSpatialization()
 
         channelMults[currentAroundChan] = 0.999;
         currentAroundChan += side * 2;
-        if ((currentAroundChan > MY_CHANNELS) || (currentAroundChan < 0)) {
+//        if ((currentAroundChan > MY_CHANNELS) || (currentAroundChan < 0)) {
+        if ((currentAroundChan > myOutputLastNumber) || (currentAroundChan < myOutputFirstNumber)) {
             side = -1 * side;
             currentAroundChan += side * 3;
         }

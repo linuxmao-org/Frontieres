@@ -120,6 +120,10 @@ private slots:
 
     void on_lineEdit_Name_textEdited(const QString &arg1);
 
+    void on_doubleSpinBox_Output_First_valueChanged(double arg1);
+
+    void on_doubleSpinBox_Output_Last_valueChanged(double arg1);
+
 private:
     Ui::CloudDialog *ui;
     bool linking = false;

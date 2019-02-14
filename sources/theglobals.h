@@ -42,7 +42,7 @@
 // create soxr format
 #define MY_RESAMPLER_FORMAT_I SOXR_FLOAT64_I
 // number of output channels
-#define MY_CHANNELS 2
+#define MY_CHANNELS 16
 
 // window length
 #define WINDOW_LEN 2048

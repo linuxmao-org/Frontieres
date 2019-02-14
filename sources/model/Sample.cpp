@@ -214,7 +214,7 @@ Sample *SampleSet::loadFile(const std::string &path)
         sample->resampleTo(::samp_rate);
     }
 
-    cout << counter << endl;
+    //cout << counter << endl;
 
     // don't forget to close the file
     sf_close(infile);

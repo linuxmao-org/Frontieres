@@ -161,6 +161,12 @@ public:
     int getSpatialChannel();
     bool changedSpatialMode();
 
+    // output channel
+    void setOutputFirst(int myOutput);
+    void setOutputLast(int myOutput);
+    int getOutputFirst();
+    int getOutputLast();
+
     // volume
     void setVolumeDb(float theVolDB);
     float getVolumeDb();
@@ -274,7 +280,7 @@ private:
 
     // cloud params
     float overlap, overlapNorm, pitch, duration, pitchLFOFreq, pitchLFOAmount;
-    int myDirMode, windowType;
+    int myDirMode, windowType, myOutputFirstNumber, myOutputLastNumber;
     bool changed_overlap = false;
     bool changed_pitch = false;
     bool changed_duration = false;

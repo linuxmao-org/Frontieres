@@ -209,6 +209,8 @@ bool Scene::load(QFile &sceneFile)
         int cloudDirection = objCloud["direction"].toInt();
         int cloudWindowType = objCloud["window-type"].toInt();
         int cloudSpatialMode = objCloud["spatial-mode"].toInt();
+        int cloudOutputFirst = objCloud["output-first"].toInt();
+        int cloudOutputLast = objCloud["output-last"].toInt();
         int cloudSpatialChannel = objCloud["spatial-channel"].toInt();
         int cloudMidiChannel = objCloud["midi-channel"].toInt();
         int cloudMidiNote = objCloud["midi-note"].toInt();
@@ -248,6 +250,8 @@ bool Scene::load(QFile &sceneFile)
         cout << "window type = " << cloudWindowType << "\n";
         cout << "spatial mode = " << cloudSpatialMode << "\n";
         cout << "spatial channel = " << cloudSpatialChannel << "\n";
+        cout << "output first = " << cloudOutputFirst << "\n";
+        cout << "output last = " << cloudOutputLast << "\n";
         cout << "midi channel = " << cloudMidiChannel << "\n";
         cout << "midi note = " << cloudMidiNote << "\n";
         cout << "volume = " << cloudVolumeDb << "\n";
@@ -288,6 +292,8 @@ bool Scene::load(QFile &sceneFile)
         cloudToLoad->setDirection(cloudDirection);
         cloudToLoad->setWindowType(cloudWindowType);
         cloudToLoad->setSpatialMode(cloudSpatialMode,cloudSpatialChannel);
+        cloudToLoad->setOutputFirst(cloudOutputFirst);
+        cloudToLoad->setOutputLast(cloudOutputLast);
         cloudToLoad->setMidiChannel(cloudMidiChannel);
         cloudToLoad->setMidiNote(cloudMidiNote);
         cloudToLoad->setVolumeDb(cloudVolumeDb);
@@ -423,6 +429,8 @@ bool Scene::save(QFile &sceneFile)
         objCloud["direction"] = cloudToSave->getDirection();
         objCloud["window-type"] = cloudToSave->getWindowType();
         objCloud["spatial-mode"] = cloudToSave->getSpatialMode();
+        objCloud["output-first"] = cloudToSave->getOutputFirst();
+        objCloud["output-last"] = cloudToSave->getOutputLast();
         objCloud["spatial-channel"] = cloudToSave->getSpatialChannel();
         objCloud["midi-channel"] = cloudToSave->getMidiChannel();
         objCloud["midi-note"] = cloudToSave->getMidiNote();
@@ -537,6 +545,8 @@ bool Scene::loadCloudDefault(QFile &cloudFile)
     g_defaultCloudParams.pitchLFOAmount = objCloud["pitch-lfo-amount"].toDouble();
     g_defaultCloudParams.dirMode = objCloud["direction"].toInt();
     g_defaultCloudParams.windowType = objCloud["window-type"].toInt();
+    g_defaultCloudParams.outputFirst = objCloud["output-first"].toInt();
+    g_defaultCloudParams.outputLast = objCloud["output-last"].toInt();
     g_defaultCloudParams.spatialMode = objCloud["spatial-mode"].toInt();
     g_defaultCloudParams.channelLocation = objCloud["spatial-channel"].toInt();
     g_defaultCloudParams.midiChannel = objCloud["midi-channel"].toInt();
@@ -581,6 +591,8 @@ bool Scene::loadCloudDefault(QFile &cloudFile)
     cout << "window type = " << g_defaultCloudParams.windowType << "\n";
     cout << "spatial mode = " << g_defaultCloudParams.spatialMode << "\n";
     cout << "spatial channel = " << g_defaultCloudParams.channelLocation << "\n";
+    cout << "output first = " << g_defaultCloudParams.outputFirst << "\n";
+    cout << "output last = " << g_defaultCloudParams.outputLast << "\n";
     cout << "midi channel = " << g_defaultCloudParams.midiChannel << "\n";
     cout << "midi note = " << g_defaultCloudParams.midiNote << "\n";
     cout << "volume = " << g_defaultCloudParams.volumeDB << "\n";
@@ -637,6 +649,8 @@ bool Scene::saveCloud(QFile &cloudFile, SceneCloud *selectedCloudSave)
     objCloud["window-type"] = cloudToSave->getWindowType();
     objCloud["spatial-mode"] = cloudToSave->getSpatialMode();
     objCloud["spatial-channel"] = cloudToSave->getSpatialChannel();
+    objCloud["output-first"] = cloudToSave->getOutputFirst();
+    objCloud["output-last"] = cloudToSave->getOutputLast();
     objCloud["midi-channel"] = cloudToSave->getMidiChannel();
     objCloud["midi-note"] = cloudToSave->getMidiNote();
     objCloud["volume"] = cloudToSave->getVolumeDb();
@@ -805,7 +819,9 @@ void Scene::initDefaultCloudParams()
     g_defaultCloudParams.pitchLFOFreq = 0.00f;
     g_defaultCloudParams.pitchLFOAmount = 0.00f;
     g_defaultCloudParams.windowType = HANNING;
-    g_defaultCloudParams.spatialMode= UNITY;
+    g_defaultCloudParams.spatialMode = UNITY;
+    g_defaultCloudParams.outputFirst = 0;
+    g_defaultCloudParams.outputLast = MY_CHANNELS - 1;
     g_defaultCloudParams.channelLocation = -1;
     g_defaultCloudParams.numGrains = 8;
     g_defaultCloudParams.activateState = true;

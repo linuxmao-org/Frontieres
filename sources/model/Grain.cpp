@@ -32,7 +32,6 @@
 #include "model/Scene.h"
 #include "dsp/Window.h"
 #include "theglobals.h"
-
 extern unsigned int samp_rate;
 
 //-------------------AUDIO----------------------------------------------------//

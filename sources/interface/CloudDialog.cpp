@@ -69,6 +69,10 @@ CloudDialog::CloudDialog(QWidget *parent) :
     ui->dial_Y_Extent->setMaximum(g_cloudValueMax.yRandExtent);
     ui->dial_X_Extent->setMinimum(g_cloudValueMin.yRandExtent);
 
+    ui->doubleSpinBox_Output_First->setMinimum(0);
+    ui->doubleSpinBox_Output_Last->setMinimum(0);
+    ui->doubleSpinBox_Output_First->setMaximum(MY_CHANNELS - 1);
+    ui->doubleSpinBox_Output_Last->setMaximum(MY_CHANNELS - 1);
 
     QTimer *tmAutoUpdate = new QTimer(this);
     connect(tmAutoUpdate, &QTimer::timeout, this, &CloudDialog::autoUpdate);
@@ -118,8 +122,6 @@ void CloudDialog::linkCloud(Cloud *cloudLinked, CloudVis *cloudVisLinked)
         ui->doubleSpinBox_X->setValue(cloudVisLinked->getX());
     if (cloudVisLinked->changedGcY())
         ui->doubleSpinBox_Y->setValue(cloudVisLinked->getY());
-    if (cloudLinked->changedMidiChannel())
-        ui->doubleSpinBox_Midi_Channel->setValue(cloudLinked->getMidiChannel());
     if (cloudLinked->changedMidiNote())
         ui->doubleSpinBox_Midi_Note->setValue(cloudLinked->getMidiNote());
     ui->label_Id_Value->setText(QString::number(cloudLinked->getId()));
@@ -142,7 +144,7 @@ void CloudDialog::linkCloud(Cloud *cloudLinked, CloudVis *cloudVisLinked)
         default :
             break;
         }
-    if (cloudLinked->changedSpatialMode())
+    if (cloudLinked->changedSpatialMode()) {
         switch (cloudLinked->getSpatialMode()) {
         case UNITY:
             ui->radioButton_Balance_Unity->setChecked(true);
@@ -156,6 +158,9 @@ void CloudDialog::linkCloud(Cloud *cloudLinked, CloudVis *cloudVisLinked)
         default :
             break;
         }
+        ui->doubleSpinBox_Output_First->setValue(cloudLinked->getOutputFirst());
+        ui->doubleSpinBox_Output_Last->setValue(cloudLinked->getOutputLast());
+    }
     if (cloudLinked->changedWindowType())
         switch (cloudLinked->getWindowType()) {
         case HANNING:
@@ -201,7 +206,6 @@ void CloudDialog::setDisableAllWidgets(bool disabled)
     ui->doubleSpinBox_Grains->setDisabled(disabled);
     ui->doubleSpinBox_LFO_Amp->setDisabled(disabled);
     ui->doubleSpinBox_LFO_Freq->setDisabled(disabled);
-    ui->doubleSpinBox_Midi_Channel->setDisabled(disabled);
     ui->doubleSpinBox_Midi_Note->setDisabled(disabled);
     ui->doubleSpinBox_Overlap->setDisabled(disabled);
     ui->doubleSpinBox_Pitch->setDisabled(disabled);
@@ -211,6 +215,8 @@ void CloudDialog::setDisableAllWidgets(bool disabled)
     ui->doubleSpinBox_Y->setDisabled(disabled);
     ui->doubleSpinBox_Y_Extent->setDisabled(disabled);
     ui->groupBox_Balance->setDisabled(disabled);
+    ui->doubleSpinBox_Output_First->setDisabled(disabled);
+    ui->doubleSpinBox_Output_Last->setDisabled(disabled);
     ui->groupBox_Direction->setDisabled(disabled);
     ui->groupBox_Window->setDisabled(disabled);
     ui->pushButton_Envelope->setDisabled(disabled);
@@ -520,4 +526,26 @@ void CloudDialog::on_lineEdit_Name_textEdited(const QString &arg1)
 {
     if (!linking)
         cloudRef->setName(arg1);
+}
+
+void CloudDialog::on_doubleSpinBox_Output_First_valueChanged(double arg1)
+{
+    if (!linking)
+        if (ui->doubleSpinBox_Output_Last->value() >= arg1)
+            cloudRef->setOutputFirst(arg1);
+        else {
+            ui->doubleSpinBox_Output_First->setValue(ui->doubleSpinBox_Output_Last->value());
+            cloudRef->setOutputFirst(ui->doubleSpinBox_Output_Last->value());
+        }
+}
+
+void CloudDialog::on_doubleSpinBox_Output_Last_valueChanged(double arg1)
+{
+    if (!linking)
+        if (ui->doubleSpinBox_Output_First->value() <= arg1)
+            cloudRef->setOutputLast(arg1);
+        else {
+            ui->doubleSpinBox_Output_Last->setValue(ui->doubleSpinBox_Output_First->value());
+            cloudRef->setOutputLast(ui->doubleSpinBox_Output_First->value());
+        }
 }

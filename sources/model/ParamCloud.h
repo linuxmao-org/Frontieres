@@ -34,6 +34,8 @@ struct CloudParams
     int dirMode;
     int windowType;
     int spatialMode;
+    int outputFirst;
+    int outputLast;
     int channelLocation;
     int midiChannel;
     int midiNote;
