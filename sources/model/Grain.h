@@ -100,6 +100,9 @@ public:
     // update after a change of sample set
     void updateSampleSet();
 
+    //
+    void updateWave(unsigned int numFrames);
+
 protected:
     // makes temp  params permanent
     void updateParams();
@@ -115,7 +118,7 @@ private:
     // grain parameters
     float duration, queuedDuration;
     double winDurationSamps;
-    double pitch, queuedPitch;
+    double pitch, queuedPitch, pitchCent;
     double direction, queuedDirection;
     double playInc;
 
@@ -145,6 +148,9 @@ private:
     //-1 means not in current samplefile
     std::unique_ptr<double[]> playPositions;
     std::unique_ptr<double[]> playVols;
+
+    double *waveBuff;
+
 };
 
 #endif

@@ -54,8 +54,6 @@ void MyGLWindow::initialize()
     P->ui.setupUi(this);
     MyGLScreen *screen = this->screen();
 
-    //connect(this, SIGNAL(close()), this, SLOT(closeEvent(QCloseEvent *e)));
-
     connect(P->ui.action_Quit, &QAction::triggered,
             qApp, &QApplication::quit);
     connect(P->ui.action_Load_scene, &QAction::triggered,
@@ -70,7 +68,10 @@ void MyGLWindow::initialize()
             this, []() { theApplication->showOptionsDialog(); });
     connect(P->ui.action_Control, &QAction::triggered,
             this, []() { theApplication->showOptionsDialog(); });
-
+    connect(P->ui.action_Combi, &QAction::triggered,
+            this, []() { theApplication->showMidiBankDialog(); });
+    connect(P->ui.action_Instrument, &QAction::triggered,
+            this, []() { theApplication->showMidiInstrumentDialog(); });
 
     // initial window settings
     QSurfaceFormat format = QSurfaceFormat::defaultFormat();

@@ -242,6 +242,24 @@ void MyGLApplication::showOptionsDialog()
     optionsDlg.exec();
 }
 
+void MyGLApplication::showMidiBankDialog()
+{
+    bankDialog = new BankDialog;
+    bankDialog->setWindowTitle(tr("Combinations"));
+    bankDialog->init(currentScene, EDIT, -1);
+    bankDialog->setModal(true);
+    bankDialog->exec();
+}
+
+void MyGLApplication::showMidiInstrumentDialog()
+{
+    instrumentDialog = new InstrumentDialog;
+    instrumentDialog->setWindowTitle(tr("Midi instrument"));
+    instrumentDialog->init(currentScene);
+    instrumentDialog->setModal(true);
+    instrumentDialog->exec();
+}
+
 void MyGLApplication::Impl::onIdle()
 {
     window->screen()->update();

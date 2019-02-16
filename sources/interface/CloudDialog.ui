@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>858</width>
-    <height>400</height>
+    <height>483</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -218,6 +218,47 @@ border-bottom-left-radius: 9px;
          <property name="bottomMargin">
           <number>0</number>
          </property>
+         <item>
+          <widget class="QFrame" name="frame_5">
+           <property name="frameShape">
+            <enum>QFrame::Box</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QFormLayout" name="formLayout_2">
+            <property name="horizontalSpacing">
+             <number>4</number>
+            </property>
+            <property name="leftMargin">
+             <number>2</number>
+            </property>
+            <property name="topMargin">
+             <number>2</number>
+            </property>
+            <property name="rightMargin">
+             <number>2</number>
+            </property>
+            <property name="bottomMargin">
+             <number>2</number>
+            </property>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_Name">
+              <property name="text">
+               <string>Name : </string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="lineEdit_Name">
+              <property name="clearButtonEnabled">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
          <item>
           <widget class="QFrame" name="frame_knobs">
            <property name="frameShape">
@@ -874,7 +915,7 @@ border-bottom-left-radius: 9px;
                   <enum>QAbstractSpinBox::UpDownArrows</enum>
                  </property>
                  <property name="keyboardTracking">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                  <property name="showGroupSeparator" stdset="0">
                   <bool>false</bool>
@@ -1048,7 +1089,7 @@ border-bottom-left-radius: 9px;
                   <enum>QAbstractSpinBox::UpDownArrows</enum>
                  </property>
                  <property name="keyboardTracking">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                  <property name="showGroupSeparator" stdset="0">
                   <bool>false</bool>
@@ -1723,7 +1764,7 @@ border-bottom-left-radius: 9px;
                   <enum>QAbstractSpinBox::UpDownArrows</enum>
                  </property>
                  <property name="keyboardTracking">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                  <property name="showGroupSeparator" stdset="0">
                   <bool>false</bool>
@@ -1891,7 +1932,7 @@ border-bottom-left-radius: 9px;
                   <enum>QAbstractSpinBox::UpDownArrows</enum>
                  </property>
                  <property name="keyboardTracking">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                  <property name="showGroupSeparator" stdset="0">
                   <bool>false</bool>
@@ -1946,235 +1987,7 @@ border-bottom-left-radius: 9px;
          <property name="spacing">
           <number>0</number>
          </property>
-         <item row="1" column="0">
-          <widget class="QFrame" name="frame_Balance">
-           <property name="frameShape">
-            <enum>QFrame::Box</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_11">
-            <property name="sizeConstraint">
-             <enum>QLayout::SetMaximumSize</enum>
-            </property>
-            <property name="leftMargin">
-             <number>0</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QGroupBox" name="groupBox_Balance">
-              <property name="title">
-               <string>Balance (t)</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_12">
-               <item>
-                <widget class="QRadioButton" name="radioButton_Balance_Unity">
-                 <property name="text">
-                  <string>Unit&amp;y</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QRadioButton" name="radioButton_Balance_Stereo">
-                 <property name="text">
-                  <string>S&amp;tereo</string>
-                 </property>
-                 <property name="autoExclusive">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QRadioButton" name="radioButton_Balance_Around">
-                 <property name="text">
-                  <string>&amp;Around</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                 <property name="autoExclusive">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
          <item row="0" column="0">
-          <widget class="QFrame" name="frame_Window">
-           <property name="frameShape">
-            <enum>QFrame::Box</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_8">
-            <property name="sizeConstraint">
-             <enum>QLayout::SetMaximumSize</enum>
-            </property>
-            <property name="leftMargin">
-             <number>0</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QGroupBox" name="groupBox_Window">
-              <property name="title">
-               <string>Window (w)</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_9">
-               <item>
-                <widget class="QRadioButton" name="radioButton_Window_Hanning">
-                 <property name="text">
-                  <string>&amp;Hanning</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QRadioButton" name="radioButton_Window_Triangle">
-                 <property name="text">
-                  <string>&amp;Triangle</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                 <property name="autoExclusive">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QRadioButton" name="radioButton_Window_Expdec">
-                 <property name="text">
-                  <string>E&amp;xpdec</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QRadioButton" name="radioButton_Window_Rexpdec">
-                 <property name="text">
-                  <string>&amp;Rexpdec</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QRadioButton" name="radioButton_Window_Sinc">
-                 <property name="text">
-                  <string>&amp;Sinc</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QRadioButton" name="radioButton_Window_Random">
-                 <property name="text">
-                  <string>&amp;Random</string>
-                 </property>
-                 <property name="autoExclusive">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QFrame" name="frame_Direction">
-           <property name="frameShape">
-            <enum>QFrame::Box</enum>
-           </property>
-           <property name="frameShadow">
-            <enum>QFrame::Raised</enum>
-           </property>
-           <layout class="QVBoxLayout" name="verticalLayout_4">
-            <property name="sizeConstraint">
-             <enum>QLayout::SetMaximumSize</enum>
-            </property>
-            <property name="leftMargin">
-             <number>0</number>
-            </property>
-            <property name="topMargin">
-             <number>0</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QGroupBox" name="groupBox_Direction">
-              <property name="title">
-               <string>Direction (f)</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_3">
-               <item>
-                <widget class="QRadioButton" name="radioButton_Direction_Forward">
-                 <property name="text">
-                  <string>&amp;Forward</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                 <property name="autoExclusive">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QRadioButton" name="radioButton_Direction_Backward">
-                 <property name="text">
-                  <string>&amp;Backward</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QRadioButton" name="radioButton_Direction_Random">
-                 <property name="text">
-                  <string>&amp;Random</string>
-                 </property>
-                 <property name="autoExclusive">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="0" column="1">
           <widget class="QFrame" name="frame_Cloud">
            <property name="frameShape">
             <enum>QFrame::Box</enum>
@@ -2240,134 +2053,30 @@ border-bottom-left-radius: 9px;
                 </widget>
                </item>
                <item row="3" column="0">
-                <widget class="QCheckBox" name="checkBox_Active">
-                 <property name="text">
-                  <string>Active</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="1">
-                <widget class="QLabel" name="label_Num_Value">
-                 <property name="text">
-                  <string/>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="0">
                 <widget class="QLabel" name="label_Num">
                  <property name="text">
                   <string/>
                  </property>
                 </widget>
                </item>
-               <item row="4" column="0">
+               <item row="3" column="1">
+                <widget class="QLabel" name="label_Num_Value">
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="0">
+                <widget class="QCheckBox" name="checkBox_Active">
+                 <property name="text">
+                  <string>Active</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="6" column="0">
                 <widget class="QCheckBox" name="checkBox_Locked">
                  <property name="text">
                   <string>Locked</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
-             <widget class="QFrame" name="frame_Midi_Channel">
-              <property name="frameShape">
-               <enum>QFrame::Box</enum>
-              </property>
-              <property name="frameShadow">
-               <enum>QFrame::Raised</enum>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_40">
-               <property name="spacing">
-                <number>2</number>
-               </property>
-               <property name="sizeConstraint">
-                <enum>QLayout::SetMaximumSize</enum>
-               </property>
-               <property name="leftMargin">
-                <number>0</number>
-               </property>
-               <property name="topMargin">
-                <number>0</number>
-               </property>
-               <property name="rightMargin">
-                <number>0</number>
-               </property>
-               <property name="bottomMargin">
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="QFrame" name="frame_Label_Midi_Chanel">
-                 <property name="frameShape">
-                  <enum>QFrame::Box</enum>
-                 </property>
-                 <property name="frameShadow">
-                  <enum>QFrame::Raised</enum>
-                 </property>
-                 <layout class="QVBoxLayout" name="verticalLayout_41">
-                  <property name="leftMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="topMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="rightMargin">
-                   <number>0</number>
-                  </property>
-                  <property name="bottomMargin">
-                   <number>0</number>
-                  </property>
-                  <item>
-                   <widget class="QLabel" name="label_Midi_Channel">
-                    <property name="autoFillBackground">
-                     <bool>false</bool>
-                    </property>
-                    <property name="frameShape">
-                     <enum>QFrame::StyledPanel</enum>
-                    </property>
-                    <property name="text">
-                     <string>Midi Channel</string>
-                    </property>
-                    <property name="alignment">
-                     <set>Qt::AlignCenter</set>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-               <item>
-                <widget class="QDoubleSpinBox" name="doubleSpinBox_Midi_Channel">
-                 <property name="wrapping">
-                  <bool>false</bool>
-                 </property>
-                 <property name="frame">
-                  <bool>true</bool>
-                 </property>
-                 <property name="buttonSymbols">
-                  <enum>QAbstractSpinBox::UpDownArrows</enum>
-                 </property>
-                 <property name="keyboardTracking">
-                  <bool>false</bool>
-                 </property>
-                 <property name="showGroupSeparator" stdset="0">
-                  <bool>false</bool>
-                 </property>
-                 <property name="decimals">
-                  <number>0</number>
-                 </property>
-                 <property name="minimum">
-                  <double>0.000000000000000</double>
-                 </property>
-                 <property name="maximum">
-                  <double>16.000000000000000</double>
-                 </property>
-                 <property name="singleStep">
-                  <double>1.000000000000000</double>
-                 </property>
-                 <property name="value">
-                  <double>0.000000000000000</double>
                  </property>
                 </widget>
                </item>
@@ -2472,6 +2181,445 @@ border-bottom-left-radius: 9px;
                  </property>
                  <property name="value">
                   <double>69.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QFrame" name="frame_Direction">
+           <property name="frameShape">
+            <enum>QFrame::Box</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_4">
+            <property name="sizeConstraint">
+             <enum>QLayout::SetMaximumSize</enum>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QGroupBox" name="groupBox_Direction">
+              <property name="title">
+               <string>Direction (f)</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_3">
+               <item>
+                <widget class="QRadioButton" name="radioButton_Direction_Forward">
+                 <property name="text">
+                  <string>&amp;Forward</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                 <property name="autoExclusive">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="radioButton_Direction_Backward">
+                 <property name="text">
+                  <string>&amp;Backward</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="radioButton_Direction_Random">
+                 <property name="text">
+                  <string>&amp;Random</string>
+                 </property>
+                 <property name="autoExclusive">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QFrame" name="frame_Balance">
+           <property name="frameShape">
+            <enum>QFrame::Box</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_11">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QGroupBox" name="groupBox_Balance">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="title">
+               <string>Balance (t)</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_12">
+               <item>
+                <widget class="QRadioButton" name="radioButton_Balance_Unity">
+                 <property name="text">
+                  <string>Unit&amp;y</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="radioButton_Balance_Stereo">
+                 <property name="text">
+                  <string>S&amp;tereo</string>
+                 </property>
+                 <property name="autoExclusive">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="radioButton_Balance_Around">
+                 <property name="text">
+                  <string>&amp;Around</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                 <property name="autoExclusive">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QFrame" name="frame_Outputs_First">
+              <property name="frameShape">
+               <enum>QFrame::Box</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Raised</enum>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_47">
+               <property name="spacing">
+                <number>2</number>
+               </property>
+               <property name="sizeConstraint">
+                <enum>QLayout::SetMaximumSize</enum>
+               </property>
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QFrame" name="frame_Label_Outputs_First">
+                 <property name="frameShape">
+                  <enum>QFrame::Box</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Raised</enum>
+                 </property>
+                 <layout class="QVBoxLayout" name="verticalLayout_48">
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <widget class="QLabel" name="label_Outputs_First">
+                    <property name="autoFillBackground">
+                     <bool>false</bool>
+                    </property>
+                    <property name="frameShape">
+                     <enum>QFrame::StyledPanel</enum>
+                    </property>
+                    <property name="text">
+                     <string>First output</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item>
+                <widget class="QDoubleSpinBox" name="doubleSpinBox_Output_First">
+                 <property name="wrapping">
+                  <bool>false</bool>
+                 </property>
+                 <property name="frame">
+                  <bool>true</bool>
+                 </property>
+                 <property name="buttonSymbols">
+                  <enum>QAbstractSpinBox::UpDownArrows</enum>
+                 </property>
+                 <property name="keyboardTracking">
+                  <bool>false</bool>
+                 </property>
+                 <property name="showGroupSeparator" stdset="0">
+                  <bool>false</bool>
+                 </property>
+                 <property name="decimals">
+                  <number>0</number>
+                 </property>
+                 <property name="minimum">
+                  <double>0.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>15.000000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>1.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QFrame" name="frame_Outputs_Last">
+              <property name="frameShape">
+               <enum>QFrame::Box</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Raised</enum>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_49">
+               <property name="spacing">
+                <number>2</number>
+               </property>
+               <property name="sizeConstraint">
+                <enum>QLayout::SetMaximumSize</enum>
+               </property>
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QFrame" name="frame_Label_Outputs_Last">
+                 <property name="frameShape">
+                  <enum>QFrame::Box</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Raised</enum>
+                 </property>
+                 <layout class="QVBoxLayout" name="verticalLayout_50">
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <widget class="QLabel" name="label_Outputs_Last">
+                    <property name="autoFillBackground">
+                     <bool>false</bool>
+                    </property>
+                    <property name="frameShape">
+                     <enum>QFrame::StyledPanel</enum>
+                    </property>
+                    <property name="text">
+                     <string>Last output</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+               <item>
+                <widget class="QDoubleSpinBox" name="doubleSpinBox_Output_Last">
+                 <property name="wrapping">
+                  <bool>false</bool>
+                 </property>
+                 <property name="frame">
+                  <bool>true</bool>
+                 </property>
+                 <property name="buttonSymbols">
+                  <enum>QAbstractSpinBox::UpDownArrows</enum>
+                 </property>
+                 <property name="keyboardTracking">
+                  <bool>false</bool>
+                 </property>
+                 <property name="showGroupSeparator" stdset="0">
+                  <bool>false</bool>
+                 </property>
+                 <property name="decimals">
+                  <number>0</number>
+                 </property>
+                 <property name="minimum">
+                  <double>0.000000000000000</double>
+                 </property>
+                 <property name="maximum">
+                  <double>15.000000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>1.000000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.000000000000000</double>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QFrame" name="frame_Window">
+           <property name="frameShape">
+            <enum>QFrame::Box</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Raised</enum>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout_8">
+            <property name="sizeConstraint">
+             <enum>QLayout::SetMaximumSize</enum>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QGroupBox" name="groupBox_Window">
+              <property name="title">
+               <string>Window (w)</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_9">
+               <item>
+                <widget class="QRadioButton" name="radioButton_Window_Hanning">
+                 <property name="text">
+                  <string>&amp;Hanning</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="radioButton_Window_Triangle">
+                 <property name="text">
+                  <string>&amp;Triangle</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                 <property name="autoExclusive">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="radioButton_Window_Expdec">
+                 <property name="text">
+                  <string>E&amp;xpdec</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="radioButton_Window_Rexpdec">
+                 <property name="text">
+                  <string>&amp;Rexpdec</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="radioButton_Window_Sinc">
+                 <property name="text">
+                  <string>&amp;Sinc</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="radioButton_Window_Random">
+                 <property name="text">
+                  <string>&amp;Random</string>
+                 </property>
+                 <property name="autoExclusive">
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>

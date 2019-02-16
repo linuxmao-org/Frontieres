@@ -36,7 +36,13 @@ add_executable(Frontieres WIN32
   sources/interface/CloudDialog.cpp
   sources/interface/OptionsDialog.cpp
   sources/interface/Node.cpp
+  sources/interface/CombiDialog.cpp
+  sources/interface/BankDialog.cpp
+  sources/interface/InstrumDialog.cpp
   sources/dsp/Window.cpp
+  sources/model/MidiBank.cpp
+  sources/model/MidiCombi.cpp
+  sources/model/MidiInstrum.cpp
   sources/model/Adsr.cpp
   sources/model/Sample.cpp
   sources/model/Grain.cpp
@@ -79,6 +85,9 @@ target_include_directories(Frontieres
   PRIVATE "${OPENGL_INCLUDE_DIR}" ${JACK_INCLUDE_DIRS} ${ALSA_INCLUDE_DIRS} ${SNDFILE_INCLUDE_DIRS} ${SOXR_INCLUDE_DIRS} ${LIBLO_INCLUDE_DIRS})
 
 qt5_wrap_ui(Frontieres_UI_SOURCES
+  sources/interface/CombiDialog.ui
+  sources/interface/BankDialog.ui
+  sources/interface/InstrumDialog.ui
   sources/interface/CloudDialog.ui
   sources/interface/OptionsDialog.ui
   sources/interface/AdsrDialog.ui
