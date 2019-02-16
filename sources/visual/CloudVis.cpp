@@ -329,6 +329,7 @@ void CloudVis::removeGrain()
     //    removeFlag = true;
     if (numGrains > 1) {
         // delete object
+        delete myGrainsV[myGrainsV.size() - 1];
         myGrainsV.pop_back();
         numGrains = myGrainsV.size();
     }

@@ -43,9 +43,12 @@
 #include <ctime>
 #include <QFile>
 #include <QDir>
+#include <QMap>
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QTranslator>
+#include <mutex>
+#include "Frontieres.h"
 #include "model/Adsr.h"
 #include "dsp/Window.h"
 
@@ -53,6 +56,8 @@ class Grain;
 struct SceneSample;
 
 typedef std::vector<std::unique_ptr<SceneSample>> VecSceneSample;
+
+int constexpr g_maxMidiVoices(128);
 
 // direction modes
 enum { FORWARD, BACKWARD, RANDOM_DIR };
@@ -64,12 +69,37 @@ enum {
     AROUND
 };  // eventually include channel list specification and VBAP?
 
+enum EnvelopeAction { TriggerEnvelope = 1, ReleaseEnvelope = 2 };
+
 using namespace std;
 
 
 // forward declarations
 class Cloud;
 class CloudVis;
+
+// midi polyphonic
+
+class CloudMidi {
+public:
+    // destructor
+    ~CloudMidi();
+
+    // constructor
+    CloudMidi(VecSceneSample *sampleSet, float theNumGrains, float theDuration, float thePitch, int theWindowType);
+    // cloud parameters duplicated for each midi note
+    // int midiNote = - 1;
+    float pitch;
+    bool isActive = false;
+    int velocity;
+    float *envelopeVolumeBuff;
+    double *intermediateBuff;
+    std::atomic<int> envelopeAction;
+    Env *envelopeVolume;
+    // vector of grains
+    vector<Grain *> myGrains;
+    bool addFlag, removeFlag;  // add/remove requests submitted?
+};
 
 // class interface
 class Cloud {
@@ -131,6 +161,12 @@ public:
     int getSpatialChannel();
     bool changedSpatialMode();
 
+    // output channel
+    void setOutputFirst(int myOutput);
+    void setOutputLast(int myOutput);
+    int getOutputFirst();
+    int getOutputLast();
+
     // volume
     void setVolumeDb(float theVolDB);
     float getVolumeDb();
@@ -141,12 +177,16 @@ public:
     unsigned int getId();
     void setId(int cloudId);
 
+    void setName(QString newName);
+    QString getName();
+
     // register visualization
     void registerCloudVis(CloudVis *cloudVisToRegister);
 
     // turn on/off
     void toggleActive();
     void setActiveState(bool activateState);
+    void setActiveMidiState(bool activateMidiState, int l_midiNote, int l_midiVelo);
     bool getActiveState();
 
 
@@ -176,6 +216,8 @@ public:
     bool changedMidiChannel();
     bool changedMidiNote();
 
+    void cleanMidiClouds();
+
     // lock flag
     void setLockedState(bool newLockedState);
     bool getLockedState();
@@ -196,6 +238,8 @@ protected:
 
 private:
     unsigned int myId;  // unique id
+
+    QString myName;
 
     bool isActive;  // on/off state
     bool awaitingPlay;  // triggered but not ready to play?
@@ -224,20 +268,19 @@ private:
     bool changed_volumeDB = false;
     float *envelopeVolumeBuff;
     double *intermediateBuff;
-    enum EnvelopeAction { TriggerEnvelope = 1, ReleaseEnvelope = 2 };
+    //enum EnvelopeAction { TriggerEnvelope = 1, ReleaseEnvelope = 2 };
     std::atomic<int> envelopeAction;
 
 
     // vector of grains
     vector<Grain *> myGrains;
-
     // number of grains in this cloud
     unsigned int numGrains;
     bool changed_numGrains = false;
 
     // cloud params
     float overlap, overlapNorm, pitch, duration, pitchLFOFreq, pitchLFOAmount;
-    int myDirMode, windowType;
+    int myDirMode, windowType, myOutputFirstNumber, myOutputLastNumber;
     bool changed_overlap = false;
     bool changed_pitch = false;
     bool changed_duration = false;
@@ -261,6 +304,12 @@ private:
 
     // lock switch
     bool locked = false;
+
+    // midi polyphony
+    CloudMidi *playedCloudMidi[g_maxMidiVoices];
+    //int actualyPlayedMidi = 0;
+    //void deletePlayedCloudMidi(int l_numCloudMidi);
+
 };
 
 #endif

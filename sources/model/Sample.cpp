@@ -184,7 +184,7 @@ Sample *SampleSet::loadFile(const std::string &path)
 
     Sample *sample = new Sample(theFileName, path, sfinfo.channels,
                                          sfinfo.frames, sfinfo.samplerate,
-                                         new double[fullSize]());
+                                         new BUFFERPREC[fullSize]());
     fileSet.push_back(sample);
 
 
@@ -214,7 +214,7 @@ Sample *SampleSet::loadFile(const std::string &path)
         sample->resampleTo(::samp_rate);
     }
 
-    cout << counter << endl;
+    //cout << counter << endl;
 
     // don't forget to close the file
     sf_close(infile);

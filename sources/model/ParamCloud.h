@@ -34,6 +34,8 @@ struct CloudParams
     int dirMode;
     int windowType;
     int spatialMode;
+    int outputFirst;
+    int outputLast;
     int channelLocation;
     int midiChannel;
     int midiNote;
@@ -43,4 +45,34 @@ struct CloudParams
     float xRandExtent;
     float yRandExtent;
     ParamEnv envelope;
+};
+struct ValueMax
+{
+    const float duration = 5000;
+    const float overlap = 1;
+    const float pitch = 60;
+    const float pitchLFOFreq = 100;
+    const float pitchLFOAmount = 100;
+    const float volumeDB = 10;
+    const int numGrains = 50;
+    const float xRandExtent = 2000;
+    const float yRandExtent = 2000;
+    const float x = 2000;
+    const float y = 2000;
+};
+
+struct ValueMin
+{
+    const float duration = 1;
+    const float overlap = 0;
+    const float pitch = -60;
+    const float pitchLFOFreq = 0;
+    const float pitchLFOAmount = 0;
+    const float volumeDB = -60;
+    const int midiVelocityBoost = 50; // % to boost volume for small velocity
+    const int numGrains = 1;
+    const float xRandExtent = 0;
+    const float yRandExtent = 0;
+    const float x = -2000;
+    const float y = -2000;
 };

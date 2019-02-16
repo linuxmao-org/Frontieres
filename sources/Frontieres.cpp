@@ -160,6 +160,9 @@ long lastDragY = veryHighNumber;
 
 // text renderer
 QtFont3D *text_renderer = NULL;
+
+ValueMin g_cloudValueMin;
+ValueMax g_cloudValueMax;
 CloudParams g_defaultCloudParams;
 //--------------------------------------------------------------------------------
 // FUNCTION PROTOTYPES

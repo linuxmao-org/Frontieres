@@ -21,7 +21,11 @@
 
 #include <QApplication>
 #include <memory>
+#include "CombiDialog.h"
+#include "BankDialog.h"
+#include "InstrumDialog.h"
 #include "model/Scene.h"
+#include "model/MidiCombi.h"
 
 class MyGLWindow;
 
@@ -46,6 +50,8 @@ public:
     void midiNoteOff (int midiChannelToStop, int midiKeyToStop);
     void destroyAllCloudDialogs();
     void showOptionsDialog();
+    void showMidiBankDialog();
+    void showMidiInstrumentDialog();
 
 signals:
     void oscMessageArrived(const QByteArray &message);
@@ -53,6 +59,10 @@ signals:
 private:
     struct Impl;
     std::unique_ptr<Impl> P;
+    Combination *myCombi;
+    CombiDialog *combiDialog;
+    BankDialog *bankDialog;
+    InstrumentDialog *instrumentDialog;
 };
 
 #define theApplication \

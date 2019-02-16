@@ -36,17 +36,33 @@ private slots:
 
     void on_dial_Y_valueChanged(int value);
 
+    void on_doubleSpinBox_Y_editingFinished();
+
+    void update_Y();
+
     void on_doubleSpinBox_X_valueChanged(double arg1);
 
     void on_dial_X_valueChanged(int value);
+
+    void on_doubleSpinBox_X_editingFinished();
+
+    void update_X();
 
     void on_dial_X_Extent_valueChanged(int value);
 
     void on_doubleSpinBox_X_Extent_valueChanged(double arg1);
 
+    void on_doubleSpinBox_X_Extent_editingFinished();
+
+    void update_X_Extent();
+
     void on_dial_Y_Extent_valueChanged(int value);
 
     void on_doubleSpinBox_Y_Extent_valueChanged(double arg1);
+
+    void on_doubleSpinBox_Y_Extent_editingFinished();
+
+    void update_Y_Extent();
 
     void on_dial_LFO_Freq_valueChanged(int value);
 
@@ -102,11 +118,20 @@ private slots:
 
     void on_pushButton_Envelope_clicked();
 
+    void on_lineEdit_Name_textEdited(const QString &arg1);
+
+    void on_doubleSpinBox_Output_First_valueChanged(double arg1);
+
+    void on_doubleSpinBox_Output_Last_valueChanged(double arg1);
+
 private:
     Ui::CloudDialog *ui;
     bool linking = false;
+    bool editing = false;
+    double passageValue;
     Cloud *cloudRef;
     CloudVis *cloudVisRef;
+    bool autoUpdating = false;
 };
 
 #endif // CLOUDDIALOG_H
