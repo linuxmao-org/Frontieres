@@ -250,9 +250,10 @@ void CloudDialog::on_dial_Grains_valueChanged(int value)
 void CloudDialog::on_doubleSpinBox_Y_valueChanged(double arg1)
 {
     ui->dial_Y->setValue((int) arg1);
-    if (!linking)
+    if (!linking){
         editing = true;
         passageValue = (double) arg1;
+    }
 }
 
 void CloudDialog::on_dial_Y_valueChanged(int value)
@@ -277,9 +278,10 @@ void CloudDialog::update_Y()
 void CloudDialog::on_doubleSpinBox_X_valueChanged(double arg1)
 {
     ui->dial_X->setValue((int) arg1);
-    if (!linking)
+    if (!linking) {
         editing = true;
         passageValue = (double) arg1;
+    }
 }
 
 void CloudDialog::on_dial_X_valueChanged(int value)

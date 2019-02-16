@@ -891,51 +891,7 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
         break;
     }
     envelopeVolume->generate(envelopeVolumeBuff, numFrames);
-    /*if (addFlag == true) {
-        addFlag = false;
-        myGrains.push_back(new Grain(theSamples, duration, pitch));
-        size_t idx = myGrains.size() - 1;
-        myGrains[idx]->setWindow(windowType);
-        switch (myDirMode) {
-        case FORWARD:
-            myGrains[idx]->setDirection(1.0);
-            break;
-        case BACKWARD:
-            myGrains[idx]->setDirection(-1.0);
-            break;
-        case RANDOM_DIR:
-            if (randf() > 0.5)
-                myGrains[idx]->setDirection(1.0);
-            else
-                myGrains[idx]->setDirection(-1.0);
-            break;
 
-        default:
-            break;
-        }
-
-        myGrains[idx]->setVolume(normedVol);
-        numGrains += 1;
-        setOverlap(overlapNorm);
-    }
-
-    if (removeFlag == true) {
-        if (myGrains.size() > 1) {
-            if (nextGrain >= myGrains.size() - 1) {
-                nextGrain = 0;
-            }
-            delete myGrains[myGrains.size() - 1];
-            myGrains.pop_back();
-            setOverlap(overlapNorm);
-        }
-        removeFlag = false;
-    }
-    // direct playing
-    // end midi note, come back to velocity max
-
-    if ((envelopeVolume->state() == Env::State::Off) && (midiVelocity != 127))
-        setMidiVelocity(127);
-    */
     if (envelopeVolume->state() != Env::State::Off) {
         // initialize play positions array
         double playPositions[theSamples->size()];
@@ -1027,48 +983,6 @@ void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
     for (int ii = 0; ii < g_maxMidiVoices; ii++){
         //debug: std::cout <<"ii="<<ii<<"playedCloudMidi[ii]->isActive="<<playedCloudMidi[ii]->isActive<<std::endl;
         if (playedCloudMidi[ii]->isActive){
-            // std::cout <<"isactive"<<std::endl;
-            //std::cout<<"boucle jeu, ii="<<ii<<" isactive = "<<playedCloudMidi[ii]->isActive<<std::endl;
-            /*if (playedCloudMidi[ii]->addFlag == true) {
-                playedCloudMidi[ii]->addFlag = false;
-                playedCloudMidi[ii]->myGrains.push_back(new Grain(theSamples, duration, playedCloudMidi[ii]->pitch));
-                size_t idx = playedCloudMidi[ii]->myGrains.size() - 1;
-                playedCloudMidi[ii]->myGrains[idx]->setWindow(windowType);
-                switch (myDirMode) {
-                case FORWARD:
-                    playedCloudMidi[ii]->myGrains[idx]->setDirection(1.0);
-                    break;
-                case BACKWARD:
-                    playedCloudMidi[ii]->myGrains[idx]->setDirection(-1.0);
-                    break;
-                case RANDOM_DIR:
-                    if (randf() > 0.5)
-                        playedCloudMidi[ii]->myGrains[idx]->setDirection(1.0);
-                    else
-                        playedCloudMidi[ii]->myGrains[idx]->setDirection(-1.0);
-                    break;
-
-                default:
-                    break;
-                }
-                playedCloudMidi[ii]->myGrains[idx]->setVolume(normedVol);
-                //numGrains += 1;
-                setOverlap(overlapNorm);
-            }
-
-            if (playedCloudMidi[ii]->removeFlag == true) {
-                //debug: std::cout <<"remove flag, ii="<<ii<<std::endl;
-                //debug: std::cout <<"playedCloudMidi[ii]->myGrains.size()="<<playedCloudMidi[ii]->myGrains.size()<<std::endl;
-                if (playedCloudMidi[ii]->myGrains.size() > 1) {
-                    if (nextGrain >= playedCloudMidi[ii]->myGrains.size() - 1) {
-                        nextGrain = 0;
-                    }
-                    delete playedCloudMidi[ii]->myGrains[playedCloudMidi[ii]->myGrains.size()-1];
-                    playedCloudMidi[ii]->myGrains.pop_back();
-                    setOverlap(overlapNorm);
-                }
-                playedCloudMidi[ii]->removeFlag = false;
-            }*/
             int midiEnvelopeAction = playedCloudMidi[ii]->envelopeAction.exchange(0);
             //debug: std::cout << "midiEnvelopeAction=" <<midiEnvelopeAction<< std::endl;
             //debug: std::cout << "envelope state=" << (int) playedCloudMidi[ii]->envelopeVolume->state() << std::endl;
