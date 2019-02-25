@@ -1,0 +1,10 @@
+/Makefile
+/.qmake.stash
+/*.pro.user
+ui_*.h
+moc_*.cpp
+moc_predefs.h
+*.o
+*.exe
+/Frontieres
+/build/
