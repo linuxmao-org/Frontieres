@@ -79,7 +79,6 @@ HEADERS += \
   sources/Ports.h \
   sources/MyRtAudio.h \
   sources/MyRtOsc.h \
-  sources/interface/OptionsDialog.h \
   sources/interface/InstrumDialog.h \
   sources/interface/CombiDialog.h \
   sources/interface/BankDialog.h \
