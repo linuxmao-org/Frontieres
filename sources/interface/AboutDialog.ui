@@ -63,7 +63,7 @@
    <item>
     <widget class="QLabel" name="label_5">
      <property name="text">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Authors:&lt;/span&gt; Jean Pierre Cimalando, Olivier Flatrès, Christopher Carlson (Borderlands)&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Contributors:&lt;/span&gt; Olivier Humbert&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Authors:&lt;/span&gt; Jean Pierre Cimalando, Olivier Flatrès, Christopher Carlson &lt;a href=&quot;http://www.borderlands-granular.com/app/&quot;(&gt;Borderlands&lt;/a&gt;)&lt;br/&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Contributors:&lt;/span&gt; Olivier Humbert&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="textFormat">
       <enum>Qt::RichText</enum>
