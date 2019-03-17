@@ -891,6 +891,11 @@ int main(int argc, char **argv)
 
     //-------------App Initialization--------//
 
+    // init openGL format for anti-aliasing
+    QSurfaceFormat openGLFormat = QSurfaceFormat::defaultFormat();
+    openGLFormat.setSamples(4);
+    QSurfaceFormat::setDefaultFormat(openGLFormat);
+
     // init Qt application
     MyGLApplication app(argc, argv);
     app.setApplicationName("Frontieres");
