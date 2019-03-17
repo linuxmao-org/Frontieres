@@ -894,12 +894,14 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
         if (selectedCloud) {
             theApplication->showDialogVolumeEnvelope(selectedCloud);
         }
+        break;
     }
     case Qt::Key_P: {
         // all parameters in a separate window
         if (selectedCloud) {
            theApplication->showCloudDialog(selectedCloud);
         }
+        break;
     }
     default:
         break;
