@@ -24,7 +24,6 @@
 #include "CloudDialog.h"
 #include "OptionsDialog.h"
 #include "Frontieres.h"
-#include "I18n.h"
 #include "model/Sample.h"
 #include <QTranslator>
 #include <QLibraryInfo>
@@ -154,8 +153,8 @@ bool MyGLApplication::saveCloudFile(SceneCloud *selectedCloudSave)
 void MyGLApplication::addSample()
 {
     QStringList qSampleFiles = QFileDialog::getOpenFileNames(
-        nullptr, _Q("", "Load sample"),
-        QString(), _Q("", "Sample files (*.*)"));
+        nullptr, tr("Load sample"),
+        QString(), tr("Sample files (*.*)"));
     QString qSampleFile;
     for (int i = 0 ; i < qSampleFiles.count() ; i++) {
         qSampleFile = (qSampleFiles.at(i));

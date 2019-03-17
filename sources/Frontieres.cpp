@@ -75,9 +75,6 @@
 // time
 #include "utility/GTime.h"
 
-// internationalization
-#include "I18n.h"
-
 // Qt application
 #include "interface/MyGLApplication.h"
 #include "interface/MyGLWindow.h"
@@ -446,7 +443,7 @@ void printUsage()
     glColor4f(insColor, insColor, insColor, theA);
     // key info
     draw_string(screenWidth / 2.0f + 0.2f * (float)screenWidth + 10.0,
-                (float)screenHeight / 2.0f + 30.0, 0.5f, _Q("", "CLICK TO START"),
+                (float)screenHeight / 2.0f + 30.0, 0.5f, QObject::tr("CLICK TO START"),
                 (float)screenWidth * 0.04f);
 
     theA = 0.6f + 0.2 * sin(1.0 * PI * GTime::instance().sec);
@@ -454,7 +451,7 @@ void printUsage()
     glColor4f(insColor, insColor, insColor, theA);
     // key info
     draw_string(screenWidth / 2.0f + 0.2f * (float)screenWidth + 10.0,
-                (float)screenHeight / 2.0f + 50.0, 0.5f, _Q("", "ESCAPE TO QUIT"),
+                (float)screenHeight / 2.0f + 50.0, 0.5f, QObject::tr("ESCAPE TO QUIT"),
                 (float)screenWidth * 0.04f);
 /*
     theA = 0.6f + 0.2 * sin(1.1 * PI * GTime::instance().sec);
@@ -463,7 +460,7 @@ void printUsage()
     // key info
     draw_string(screenWidth / 2.0f + 0.2f * (float)screenWidth + 10.0,
                 (float)screenHeight / 2.0f + 70.0, 0.5f,
-                _Q("", "PUT THE SAMPLES IN ~/.Frontieres/loops"), (float)screenWidth * 0.04f);*/
+                QObject::tr("PUT THE SAMPLES IN ~/.Frontieres/loops"), (float)screenWidth * 0.04f);*/
 }
 
 
@@ -491,14 +488,14 @@ void printParam()
 
         switch (currentParam) {
         case NUMGRAINS:
-            myValue = _S("", "Grains: ");
+            myValue = QObject::tr("Grains: ").toStdString();
             sinput << theCloud.getNumGrains();
             myValue = myValue + sinput.str();
             draw_string((GLfloat)mouseX, (GLfloat)(screenHeight - mouseY), 0.0,
                         myValue.c_str(), 100.0f);
             break;
         case DURATION:
-            myValue = _S("", "Duration: ");
+            myValue = QObject::tr("Duration: ").toStdString();
             if (paramString == "") {
                 sinput << theCloud.getDurationMs();
                 myValue = myValue + sinput.str() + " ms";
@@ -513,22 +510,22 @@ void printParam()
         case WINDOW:
             switch (theCloud.getWindowType()) {
             case HANNING:
-                myValue = _S("", "Window: HANNING");
+                myValue = QObject::tr("Window: HANNING").toStdString();
                 break;
             case TRIANGLE:
-                myValue = _S("", "Window: TRIANGLE");
+                myValue = QObject::tr("Window: TRIANGLE").toStdString();
                 break;
             case REXPDEC:
-                myValue = _S("", "Window: REXPDEC");
+                myValue = QObject::tr("Window: REXPDEC").toStdString();
                 break;
             case EXPDEC:
-                myValue = _S("", "Window: EXPDEC");
+                myValue = QObject::tr("Window: EXPDEC").toStdString();
                 break;
             case SINC:
-                myValue = _S("", "Window: SINC");
+                myValue = QObject::tr("Window: SINC").toStdString();
                 break;
             case RANDOM_WIN:
-                myValue = _S("", "Window: RANDOM_WIN");
+                myValue = QObject::tr("Window: RANDOM_WIN").toStdString();
                 break;
             default:
                 myValue = "";
@@ -539,21 +536,21 @@ void printParam()
                         myValue.c_str(), 100.0f);
             break;
         case MOTIONX:
-            myValue = _S("", "X: ");
+            myValue = QObject::tr("X: ").toStdString();
             sinput << theCloudVis.getXRandExtent();
             myValue = myValue + sinput.str();
             draw_string((GLfloat)mouseX, (GLfloat)(screenHeight - mouseY), 0.0,
                         myValue.c_str(), 100.0f);
             break;
         case MOTIONY:
-            myValue = _S("", "Y: ");
+            myValue = QObject::tr("Y: ").toStdString();
             sinput << theCloudVis.getYRandExtent();
             myValue = myValue + sinput.str();
             draw_string((GLfloat)mouseX, (GLfloat)(screenHeight - mouseY), 0.0,
                         myValue.c_str(), 100.0f);
             break;
         case MOTIONXY:
-            myValue = _S("", "X,Y: ");
+            myValue = QObject::tr("X,Y: ").toStdString();
             sinput << theCloudVis.getXRandExtent();
             myValue = myValue + sinput.str() + ", ";
             sinput2 << theCloudVis.getYRandExtent();
@@ -565,13 +562,13 @@ void printParam()
         case DIRECTION:
             switch (theCloud.getDirection()) {
             case FORWARD:
-                myValue = _S("", "Direction: FORWARD");
+                myValue = QObject::tr("Direction: FORWARD").toStdString();
                 break;
             case BACKWARD:
-                myValue = _S("", "Direction: BACKWARD");
+                myValue = QObject::tr("Direction: BACKWARD").toStdString();
                 break;
             case RANDOM_DIR:
-                myValue = _S("", "Direction: RANDOM");
+                myValue = QObject::tr("Direction: RANDOM").toStdString();
                 break;
             default:
                 myValue = "";
@@ -584,13 +581,13 @@ void printParam()
         case SPATIALIZE:
             switch (theCloud.getSpatialMode()) {
             case UNITY:
-                myValue = _S("", "Spatial Mode: UNITY");
+                myValue = QObject::tr("Spatial Mode: UNITY").toStdString();
                 break;
             case STEREO:
-                myValue = _S("", "Spatial Mode: STEREO");
+                myValue = QObject::tr("Spatial Mode: STEREO").toStdString();
                 break;
             case AROUND:
-                myValue = _S("", "Spatial Mode: AROUND");
+                myValue = QObject::tr("Spatial Mode: AROUND").toStdString();
                 break;
             default:
                 myValue = "";
@@ -600,7 +597,7 @@ void printParam()
                         myValue.c_str(), 100.0f);
             break;
         case VOLUME:
-            myValue = _S("", "Volume (dB): ");
+            myValue = QObject::tr("Volume (dB): ").toStdString();
             if (paramString == "") {
                 sinput << theCloud.getVolumeDb();
                 myValue = myValue + sinput.str();
@@ -612,7 +609,7 @@ void printParam()
                         myValue.c_str(), 100.0f);
             break;
         case OVERLAP:
-            myValue = _S("", "Overlap: ");
+            myValue = QObject::tr("Overlap: ").toStdString();
             if (paramString == "") {
                 sinput << theCloud.getOverlap();
                 myValue = myValue + sinput.str();
@@ -625,7 +622,7 @@ void printParam()
             //            myValue = "Duration (ms): " + theCloud->getDurationMs();
             break;
         case PITCH:
-            myValue = _S("", "Pitch: ");
+            myValue = QObject::tr("Pitch: ").toStdString();
             if (paramString == "") {
                 sinput << theCloud.getPitch();
                 myValue = myValue + sinput.str();
@@ -639,7 +636,7 @@ void printParam()
             break;
 
         case P_LFO_FREQ:
-            myValue = _S("", "Pitch LFO Freq: ");
+            myValue = QObject::tr("Pitch LFO Freq: ").toStdString();
             if (paramString == "") {
                 sinput << theCloud.getPitchLFOFreq();
                 myValue = myValue + sinput.str();
@@ -652,7 +649,7 @@ void printParam()
             //            myValue = "Duration (ms): " + theCloud->getDurationMs();
             break;
         case P_LFO_AMT:
-            myValue = _S("", "Pitch LFO Amount: ");
+            myValue = QObject::tr("Pitch LFO Amount: ").toStdString();
             if (paramString == "") {
                 sinput << theCloud.getPitchLFOAmount();
                 myValue = myValue + sinput.str();
@@ -665,7 +662,7 @@ void printParam()
             //            myValue = "Duration (ms): " + theCloud->getDurationMs();
             break;
         case NUM:
-            myValue = _S("", "Cloud ID/Num: ")
+            myValue = QObject::tr("Cloud ID/Num: ").toStdString()
                     + std::to_string(theCloud.getId())
                     + "/" + std::to_string(currentScene->getNumCloud(selectedCloud)+1);
             draw_string((GLfloat)mouseX, (GLfloat)(screenHeight - mouseY), 0.0,
@@ -683,7 +680,7 @@ void printParam()
 
         switch (currentParam) {
         case NAME:
-            myValue = _S("", "Sample: ") + theSampleVis.getName();
+            myValue = QObject::tr("Sample: ").toStdString() + theSampleVis.getName();
             draw_string((GLfloat)mouseX, (GLfloat)(screenHeight - mouseY), 0.0,
                         myValue.c_str(), 100.0f);
             break;

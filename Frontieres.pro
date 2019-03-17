@@ -121,6 +121,9 @@ FORMS += \
   sources/interface/InstrumDialog.ui \
   sources/interface/AboutDialog.ui
 
+TRANSLATIONS += \
+  translations/Frontieres_fr_FR.ts
+
 # RtOsc
 INCLUDEPATH += $$PWD/libraries/rtosc/include
 
