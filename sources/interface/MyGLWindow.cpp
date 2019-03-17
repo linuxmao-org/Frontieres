@@ -73,6 +73,41 @@ void MyGLWindow::initialize()
     connect(P->ui.action_Instrument, &QAction::triggered,
             this, []() { theApplication->showMidiInstrumentDialog(); });
 
+    connect(P->ui.actionCloud, &QAction::triggered,
+            screen, &MyGLScreen::keyAction_Cloud);
+    connect(P->ui.actionGrain, &QAction::triggered,
+            screen, &MyGLScreen::keyAction_Grain);
+    connect(P->ui.actionXmotion, &QAction::triggered,
+            screen, &MyGLScreen::keyAction_MotionX);
+    connect(P->ui.actionYmotion, &QAction::triggered,
+            screen, &MyGLScreen::keyAction_MotionY);
+    connect(P->ui.actionXYmotion, &QAction::triggered,
+            screen, &MyGLScreen::keyAction_MotionXY);
+    connect(P->ui.actionSpatialMode, &QAction::triggered,
+            screen, &MyGLScreen::keyAction_SpatialMode);
+    connect(P->ui.actionOverlap, &QAction::triggered,
+            screen, &MyGLScreen::keyAction_Overlap);
+    connect(P->ui.actionWindow, &QAction::triggered,
+            screen, &MyGLScreen::keyAction_Window);
+    connect(P->ui.actionVolume, &QAction::triggered,
+            screen, &MyGLScreen::keyAction_Volume);
+    connect(P->ui.actionDuration, &QAction::triggered,
+            screen, &MyGLScreen::keyAction_Duration);
+    connect(P->ui.actionLfoFrequency, &QAction::triggered,
+            screen, &MyGLScreen::keyAction_LfoFreq);
+    connect(P->ui.actionLfoAmount, &QAction::triggered,
+            screen, &MyGLScreen::keyAction_LfoAmount);
+    connect(P->ui.actionPitch, &QAction::triggered,
+            screen, &MyGLScreen::keyAction_Pitch);
+    connect(P->ui.actionActive, &QAction::triggered,
+            screen, &MyGLScreen::keyAction_Active);
+    connect(P->ui.actionEditEnvelope, &QAction::triggered,
+            screen, &MyGLScreen::keyAction_EditEnvelope);
+    connect(P->ui.actionEditCloud, &QAction::triggered,
+            screen, &MyGLScreen::keyAction_EditCloud);
+    connect(P->ui.actionFullScreen, &QAction::triggered,
+            screen, &MyGLScreen::keyAction_FullScreen);
+
     // initial window settings
     QSurfaceFormat format = QSurfaceFormat::defaultFormat();
     format.setDepthBufferSize(24);
@@ -197,6 +232,298 @@ void MyGLScreen::resizeGL(int w, int h)
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glTranslatef(-position.x, -position.y, -position.z);  // translate the screen to the position of our camera
+}
+
+void MyGLScreen::keyAction_FullScreen()
+{
+    MyGLWindow *win = static_cast<MyGLWindow *>(window());
+    Qt::WindowStates state = win->windowState() ^ Qt::WindowFullScreen;
+    win->setWindowState(state);
+    win->setMenuBarVisible(!(state & Qt::WindowFullScreen));
+}
+
+void MyGLScreen::keyAction_SpatialMode(int dir)
+{
+    Scene *scene = ::currentScene;
+    SceneCloud *selectedCloud = scene->selectedCloud();
+
+    paramString = "";
+    if (selectedCloud) {
+        if (currentParam != SPATIALIZE) {
+            currentParam = SPATIALIZE;
+        }
+        else {
+            int theSpat = selectedCloud->cloud->getSpatialMode();
+            selectedCloud->cloud->setSpatialMode(theSpat + dir, -1);
+        }
+    }
+}
+
+void MyGLScreen::keyAction_Overlap(int dir)
+{
+    Scene *scene = ::currentScene;
+    SceneCloud *selectedCloud = scene->selectedCloud();
+
+    paramString = "";
+    if (selectedCloud) {
+        if (currentParam != OVERLAP) {
+            currentParam = OVERLAP;
+        }
+        else {
+            float theOver = selectedCloud->cloud->getOverlap();
+            selectedCloud->cloud->setOverlap(theOver + dir * 0.01f);
+        }
+    }
+}
+
+void MyGLScreen::keyAction_MotionX()
+{
+    Scene *scene = ::currentScene;
+    SceneCloud *selectedCloud = scene->selectedCloud();
+
+    paramString = "";
+    if (selectedCloud) {
+        currentParam = MOTIONX;
+    }
+}
+
+void MyGLScreen::keyAction_MotionY()
+{
+    Scene *scene = ::currentScene;
+    SceneCloud *selectedCloud = scene->selectedCloud();
+
+    paramString = "";
+    if (selectedCloud) {
+        currentParam = MOTIONY;
+    }
+}
+
+void MyGLScreen::keyAction_MotionXY()
+{
+    Scene *scene = ::currentScene;
+    SceneCloud *selectedCloud = scene->selectedCloud();
+
+    paramString = "";
+    if (selectedCloud) {
+        currentParam = MOTIONXY;
+        // toggle selection modes
+        dragMode = RESIZE;
+    }
+}
+
+void MyGLScreen::keyAction_Direction(int dir)
+{
+    Scene *scene = ::currentScene;
+    SceneSample *selectedSample = scene->selectedSample();
+    SceneCloud *selectedCloud = scene->selectedCloud();
+
+    paramString = "";
+    if (selectedCloud) {
+        if (currentParam != DIRECTION) {
+            currentParam = DIRECTION;
+        }
+        else {
+            int theDir = selectedCloud->cloud->getDirection();
+            selectedCloud->cloud->setDirection(theDir + dir);
+        }
+    }
+    if (selectedSample) {
+        selectedSample->view->toggleOrientation();
+    }
+}
+
+void MyGLScreen::keyAction_Window(int dir)
+{
+    Scene *scene = ::currentScene;
+    SceneCloud *selectedCloud = scene->selectedCloud();
+
+    paramString = "";
+    if (selectedCloud) {
+        if (currentParam != WINDOW) {
+            currentParam = WINDOW;
+        }
+        else {
+            int theWin = selectedCloud->cloud->getWindowType();
+            selectedCloud->cloud->setWindowType(theWin + dir);
+        }
+    }
+}
+
+void MyGLScreen::keyAction_Volume(int dir)
+{
+    Scene *scene = ::currentScene;
+    SceneCloud *selectedCloud = scene->selectedCloud();
+
+    // cloud volume
+    paramString = "";
+    if (selectedCloud) {
+        if (currentParam != VOLUME) {
+            currentParam = VOLUME;
+        }
+        else {
+            float theVol = selectedCloud->cloud->getVolumeDb();
+            selectedCloud->cloud->setVolumeDb(theVol + dir * 0.5f);
+        }
+    }
+}
+
+void MyGLScreen::keyAction_Cloud(int dir)
+{
+    Scene *scene = ::currentScene;
+    SceneCloud *selectedCloud = scene->selectedCloud();
+
+    paramString = "";
+    scene->deselect(RECT);
+    std::lock_guard<std::mutex> lock(::currentSceneMutex);
+    if (dir < 0) {
+        if (!scene->m_clouds.empty()) {
+            scene->m_clouds.pop_back();
+            // cout << "cloud removed" << endl;
+        }
+        if (scene->m_clouds.empty()) {
+            scene->m_selectedCloud = -1;
+        }
+        else {
+            // still have a cloud so select
+            scene->m_selectedCloud = scene->m_clouds.size() - 1;
+            scene->m_clouds.back()->view->setSelectState(true);
+        }
+    }
+    else {
+        int numGrains = 8;  // initial number of grains
+        if (selectedCloud) {
+            if (!scene->m_clouds.empty()) {
+                selectedCloud->view->setSelectState(false);
+            }
+        }
+        scene->addNewCloud(numGrains);
+        scene->m_selectedCloud = scene->m_clouds.size() - 1;
+    }
+}
+
+void MyGLScreen::keyAction_Grain(int dir)
+{
+    Scene *scene = ::currentScene;
+    SceneCloud *selectedCloud = scene->selectedCloud();
+
+    paramString = "";
+    if (selectedCloud) {
+        if (currentParam != NUMGRAINS) {
+            currentParam = NUMGRAINS;
+        }
+        else {
+            if (dir < 0) {
+                selectedCloud->cloud->removeGrain();
+            }
+            else {
+                selectedCloud->cloud->addGrain();
+                // cout << "grain added" << endl;
+            }
+        }
+    }
+}
+
+void MyGLScreen::keyAction_Duration(int dir)
+{
+    Scene *scene = ::currentScene;
+    SceneCloud *selectedCloud = scene->selectedCloud();
+
+    paramString = "";
+    if (selectedCloud) {
+        if (currentParam != DURATION) {
+            currentParam = DURATION;
+        }
+        else {
+            float theDur = selectedCloud->cloud->getDurationMs();
+            selectedCloud->cloud->setDurationMs(theDur + dir * 5.0f);
+        }
+    }
+}
+
+void MyGLScreen::keyAction_LfoFreq(int dir)
+{
+    Scene *scene = ::currentScene;
+    SceneCloud *selectedCloud = scene->selectedCloud();
+
+    paramString = "";
+    if (selectedCloud) {
+        if (currentParam != P_LFO_FREQ) {
+            currentParam = P_LFO_FREQ;
+        }
+        else {
+            float theLFOFreq = selectedCloud->cloud->getPitchLFOFreq();
+            selectedCloud->cloud->setPitchLFOFreq(theLFOFreq + dir * 0.01f);
+        }
+    }
+}
+
+void MyGLScreen::keyAction_LfoAmount(int dir)
+{
+    Scene *scene = ::currentScene;
+    SceneCloud *selectedCloud = scene->selectedCloud();
+
+    if (selectedCloud) {
+        paramString = "";
+        if (currentParam != P_LFO_AMT) {
+            currentParam = P_LFO_AMT;
+        }
+        else {
+            float theLFOAmnt = selectedCloud->cloud->getPitchLFOAmount();
+            selectedCloud->cloud->setPitchLFOAmount(theLFOAmnt + dir * 0.001f);
+        }
+    }
+}
+
+void MyGLScreen::keyAction_Pitch(int dir)
+{
+    Scene *scene = ::currentScene;
+    SceneCloud *selectedCloud = scene->selectedCloud();
+
+    paramString = "";
+    if (selectedCloud) {
+        if (currentParam != PITCH) {
+            currentParam = PITCH;
+        }
+        else {
+            float thePitch = selectedCloud->cloud->getPitch();
+            selectedCloud->cloud->setPitch(thePitch + dir * 0.01f);
+        }
+    }
+}
+
+void MyGLScreen::keyAction_Active()
+{
+    Scene *scene = ::currentScene;
+    SceneCloud *selectedCloud = scene->selectedCloud();
+
+    paramString = "";
+    if (selectedCloud) {
+        selectedCloud->cloud->toggleActive();
+    }
+}
+
+void MyGLScreen::keyAction_EditEnvelope()
+{
+    Scene *scene = ::currentScene;
+    SceneCloud *selectedCloud = scene->selectedCloud();
+
+    // volume envelope
+    paramString = "";
+    if (selectedCloud) {
+        theApplication->showDialogVolumeEnvelope(selectedCloud);
+    }
+}
+
+void MyGLScreen::keyAction_EditCloud()
+{
+    Scene *scene = ::currentScene;
+    SceneCloud *selectedCloud = scene->selectedCloud();
+
+    // all parameters in a separate window
+    paramString = "";
+    if (selectedCloud) {
+        theApplication->showCloudDialog(selectedCloud);
+    }
 }
 
 void MyGLScreen::mousePressEvent(QMouseEvent *event)
@@ -530,288 +857,73 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Q:  // spatialization
         break;
 
-    case Qt::Key_O: {
-        MyGLWindow *win = static_cast<MyGLWindow *>(window());
-        Qt::WindowStates state = win->windowState() ^ Qt::WindowFullScreen;
-        win->setWindowState(state);
-        win->setMenuBarVisible(!(state & Qt::WindowFullScreen));
+    case Qt::Key_O:
+        keyAction_FullScreen();
         break;
-    }
 
     case Qt::Key_T:
-        paramString = "";
-        if (selectedCloud) {
-            if (currentParam != SPATIALIZE) {
-                currentParam = SPATIALIZE;
-            }
-            else {
-                if (modkey == Qt::ShiftModifier) {
-                    if (selectedCloud) {
-                        int theSpat = selectedCloud->cloud->getSpatialMode();
-                        selectedCloud->cloud->setSpatialMode(theSpat - 1, -1);
-                    }
-                }
-                else {
-                    if (selectedCloud) {
-                        int theSpat = selectedCloud->cloud->getSpatialMode();
-                        selectedCloud->cloud->setSpatialMode(theSpat + 1, -1);
-                    }
-                }
-            }
-        }
+        keyAction_SpatialMode((modkey == Qt::ShiftModifier) ? -1 : +1);
         break;
 
     case Qt::Key_S:  // overlap control
-        paramString = "";
-        if (currentParam != OVERLAP) {
-            currentParam = OVERLAP;
-        }
-        else {
-            if (modkey == Qt::ShiftModifier) {
-                if (selectedCloud) {
-                    float theOver = selectedCloud->cloud->getOverlap();
-                    selectedCloud->cloud->setOverlap(theOver - 0.01f);
-                }
-            }
-            else {
-                if (selectedCloud) {
-                    float theOver = selectedCloud->cloud->getOverlap();
-                    selectedCloud->cloud->setOverlap(theOver + 0.01f);
-                }
-            }
-        }
+        keyAction_Overlap((modkey == Qt::ShiftModifier) ? -1 : +1);
         break;
+
     case Qt::Key_R:
-        if (selectedCloud) {
-            currentParam = MOTIONXY;
-        }
-        // toggle selection modes
-        dragMode = RESIZE;
+        keyAction_MotionXY();
         break;
+
     case Qt::Key_F:  // direction
-        paramString = "";
-        if (selectedCloud) {
-            if (currentParam != DIRECTION) {
-                currentParam = DIRECTION;
-            }
-            else {
-                if (modkey == Qt::ShiftModifier) {
-                    if (selectedCloud) {
-                        int theDir = selectedCloud->cloud->getDirection();
-                        selectedCloud->cloud->setDirection(theDir - 1);
-                    }
-                }
-                else {
-                    if (selectedCloud) {
-                        int theDir = selectedCloud->cloud->getDirection();
-                        selectedCloud->cloud->setDirection(theDir + 1);
-                    }
-                }
-            }
-        }
-        if (selectedSample) {
-            selectedSample->view->toggleOrientation();
-        }
+        keyAction_Direction((modkey == Qt::ShiftModifier) ? -1 : +1);
         break;
+
 //    case Qt::Key_P:  // waveform display on/off
 //        break;
-    case Qt::Key_W:  // window editing for grain
-        paramString = "";
-        if (currentParam != WINDOW) {
-            currentParam = WINDOW;
-        }
-        else {
-            if (modkey == Qt::ShiftModifier) {
-                if (selectedCloud) {
-                    int theWin = selectedCloud->cloud->getWindowType();
-                    selectedCloud->cloud->setWindowType(theWin - 1);
-                }
-            }
-            else {
-                if (selectedCloud) {
-                    int theWin = selectedCloud->cloud->getWindowType();
-                    selectedCloud->cloud->setWindowType(theWin + 1);
-                }
-            }
-        }
 
+    case Qt::Key_W:  // window editing for grain
+        keyAction_Window((modkey == Qt::ShiftModifier) ? -1 : +1);
         break;
 
     case Qt::Key_B:
-        // cloud volume
-        paramString = "";
-        if (currentParam != VOLUME) {
-            currentParam = VOLUME;
-        }
-        else {
-            if (modkey == Qt::ShiftModifier) {
-                if (selectedCloud) {
-                    float theVol = selectedCloud->cloud->getVolumeDb();
-                    selectedCloud->cloud->setVolumeDb(theVol - 0.5f);
-                }
-            }
-            else {
-                if (selectedCloud) {
-                    float theVol = selectedCloud->cloud->getVolumeDb();
-                    selectedCloud->cloud->setVolumeDb(theVol + 0.5f);
-                }
-            }
-        }
-
-
+        keyAction_Volume((modkey == Qt::ShiftModifier) ? -1 : +1);
         break;
 
     case Qt::Key_Slash:  // switch to menu view
     case Qt::Key_Question:
         menuFlag = !menuFlag;
-
         break;
+
     case Qt::Key_G: {
-        paramString = "";
-        scene->deselect(RECT);
-        std::lock_guard<std::mutex> lock(::currentSceneMutex);
-        if (modkey == Qt::ShiftModifier) {
-            if (!scene->m_clouds.empty()) {
-                scene->m_clouds.pop_back();
-                // cout << "cloud removed" << endl;
-            }
-            if (scene->m_clouds.empty()) {
-                scene->m_selectedCloud = -1;
-            }
-            else {
-                // still have a cloud so select
-                scene->m_selectedCloud = scene->m_clouds.size() - 1;
-                scene->m_clouds.back()->view->setSelectState(true);
-            }
-            break;
-        }
-        else {
-            int numGrains = 8;  // initial number of grains
-            if (selectedCloud) {
-                if (!scene->m_clouds.empty()) {
-                    selectedCloud->view->setSelectState(false);
-                }
-            }
-            scene->addNewCloud(numGrains);
-            scene->m_selectedCloud = scene->m_clouds.size() - 1;
-        }
+        keyAction_Cloud((modkey == Qt::ShiftModifier) ? -1 : +1);
         break;
     }
+
     case Qt::Key_V:  // grains (add, delete)
-        paramString = "";
-        if (currentParam != NUMGRAINS) {
-            currentParam = NUMGRAINS;
-        }
-        else {
-            if (modkey == Qt::ShiftModifier) {
-                if (selectedCloud) {
-                    selectedCloud->cloud->removeGrain();
-                }
-            }
-            else {
-                if (selectedCloud) {
-                    selectedCloud->cloud->addGrain();
-                    // cout << "grain added" << endl;
-                }
-            }
-        }
+        keyAction_Grain((modkey == Qt::ShiftModifier) ? -1 : +1);
         break;
 
     case Qt::Key_D:
-        paramString = "";
-        if (currentParam != DURATION) {
-            currentParam = DURATION;
-        }
-        else {
-            if (modkey == Qt::ShiftModifier) {
-                if (selectedCloud) {
-                    float theDur = selectedCloud->cloud->getDurationMs();
-                    selectedCloud->cloud->setDurationMs(theDur - 5.0f);
-                }
-            }
-            else {
-                if (selectedCloud) {
-                    float theDur = selectedCloud->cloud->getDurationMs();
-                    selectedCloud->cloud->setDurationMs(theDur + 5.0f);
-                }
-            }
-        }
+        keyAction_Duration((modkey == Qt::ShiftModifier) ? -1 : +1);
         break;
 
     case Qt::Key_L:
-        paramString = "";
-        if (currentParam != P_LFO_FREQ) {
-            currentParam = P_LFO_FREQ;
-        }
-        else {
-            if (modkey == Qt::ShiftModifier) {
-                if (selectedCloud) {
-                    float theLFOFreq = selectedCloud->cloud->getPitchLFOFreq();
-                    selectedCloud->cloud->setPitchLFOFreq(theLFOFreq - 0.01f);
-                }
-            }
-            else {
-                if (selectedCloud) {
-                    float theLFOFreq = selectedCloud->cloud->getPitchLFOFreq();
-                    selectedCloud->cloud->setPitchLFOFreq(theLFOFreq + 0.01f);
-                }
-            }
-        }
+        keyAction_LfoFreq((modkey == Qt::ShiftModifier) ? -1 : +1);
         break;
 
     case Qt::Key_K:
-        paramString = "";
-        if (currentParam != P_LFO_AMT) {
-            currentParam = P_LFO_AMT;
-        }
-        else {
-            if (modkey == Qt::ShiftModifier) {
-                if (selectedCloud) {
-                    float theLFOAmt = selectedCloud->cloud->getPitchLFOAmount();
-                    selectedCloud->cloud->setPitchLFOAmount(theLFOAmt - 0.001f);
-                }
-            }
-            else {
-                if (selectedCloud) {
-                    float theLFOAmnt = selectedCloud->cloud->getPitchLFOAmount();
-                    selectedCloud->cloud->setPitchLFOAmount(theLFOAmnt + 0.001f);
-                }
-            }
-        }
+        keyAction_LfoAmount((modkey == Qt::ShiftModifier) ? -1 : +1);
         break;
 
     case Qt::Key_X:
-        paramString = "";
-        if (selectedCloud) {
-            currentParam = MOTIONX;
-        }
+        keyAction_MotionX();
         break;
+
     case Qt::Key_Y:
-        paramString = "";
-        if (selectedCloud) {
-            currentParam = MOTIONY;
-        }
+        keyAction_MotionY();
         break;
 
     case Qt::Key_Z:
-        paramString = "";
-        if (currentParam != PITCH) {
-            currentParam = PITCH;
-        }
-        else {
-            if (modkey == Qt::ShiftModifier) {
-                if (selectedCloud) {
-                    float thePitch = selectedCloud->cloud->getPitch();
-                    selectedCloud->cloud->setPitch(thePitch - 0.01f);
-                }
-            }
-            else {
-                if (selectedCloud) {
-                    float thePitch = selectedCloud->cloud->getPitch();
-                    selectedCloud->cloud->setPitch(thePitch + 0.01f);
-                }
-            }
-        }
+        keyAction_Pitch((modkey == Qt::ShiftModifier) ? -1 : +1);
         break;
 
     case Qt::Key_Minus:
@@ -839,10 +951,7 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
 
         break;
     case Qt::Key_A:
-        paramString = "";
-        if (selectedCloud) {
-            selectedCloud->cloud->toggleActive();
-        }
+        keyAction_Active();
         break;
 
     case Qt::Key_Left:
@@ -890,17 +999,11 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
         break;
     }
     case Qt::Key_E: {
-        // volume envelope
-        if (selectedCloud) {
-            theApplication->showDialogVolumeEnvelope(selectedCloud);
-        }
+        keyAction_EditEnvelope();
         break;
     }
     case Qt::Key_P: {
-        // all parameters in a separate window
-        if (selectedCloud) {
-           theApplication->showCloudDialog(selectedCloud);
-        }
+        keyAction_EditCloud();
         break;
     }
     default:
