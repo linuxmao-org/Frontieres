@@ -37,13 +37,6 @@
 #include <ctime>
 #include <Stk.h>
 
-#ifdef __MACOSX_CORE__
-#include <OpenGL/OpenGL.h>
-#else
-#include <GL/gl.h>
-#include <GL/glu.h>
-#endif
-
 
 // forward declarations
 class Sample;

@@ -40,10 +40,8 @@
 
 #include "model/Cloud.h"
 // graphics includes
-#ifdef __MACOSX_CORE__
-#include <OpenGL/OpenGL.h>
-#else
-#include <GL/gl.h>
+#include <qopengl.h>
+#ifndef __APPLE__
 #include <GL/glu.h>
 #endif
 

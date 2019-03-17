@@ -37,6 +37,9 @@
 #include "interface/MyGLApplication.h"
 #include "interface/MyGLWindow.h"
 
+// graphics includes
+#include <qopengl.h>
+
 // destructor
 SampleVis::~SampleVis()
 {

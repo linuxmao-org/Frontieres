@@ -31,13 +31,6 @@
 #define CLOUD_VIS_H
 
 
-// graphics includes
-#ifdef __MACOSX_CORE__
-#include <OpenGL/OpenGL.h>
-#else
-#include <GL/gl.h>
-#include <GL/glu.h>
-#endif
 #include <vector>
 #include <memory>
 #include <iostream>
