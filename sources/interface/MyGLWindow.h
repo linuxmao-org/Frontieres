@@ -39,6 +39,9 @@ public:
     void setMenuBarVisible(bool visible);
     MyGLScreen *screen() const;
 
+public slots:
+    void on_actionAbout_triggered();
+
 private:
     struct Impl;
     std::unique_ptr<Impl> P;

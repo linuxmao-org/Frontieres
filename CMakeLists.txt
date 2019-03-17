@@ -92,7 +92,8 @@ qt5_wrap_ui(Frontieres_UI_SOURCES
   sources/interface/OptionsDialog.ui
   sources/interface/AdsrDialog.ui
   sources/interface/MyGLWindow.ui
-  sources/interface/StartDialog.ui)
+  sources/interface/StartDialog.ui
+  sources/interface/AboutDialog.ui)
 
 target_sources(Frontieres PRIVATE ${Frontieres_UI_SOURCES})
 target_link_libraries(Frontieres PRIVATE Qt5::Widgets Qt5::OpenGL)

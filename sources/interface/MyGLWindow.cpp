@@ -22,6 +22,7 @@
 #include "interface/MyGLWindow.h"
 #include "interface/MyGLApplication.h"
 #include "ui_MyGLWindow.h"
+#include "ui_AboutDialog.h"
 #include "model/Cloud.h"
 #include "model/Scene.h"
 #include "visual/CloudVis.h"
@@ -128,6 +129,14 @@ void MyGLWindow::setMenuBarVisible(bool visible)
 MyGLScreen *MyGLWindow::screen() const
 {
     return P->ui.screen;
+}
+
+void MyGLWindow::on_actionAbout_triggered()
+{
+    QDialog dlg;
+    Ui::AboutDialog ui;
+    ui.setupUi(&dlg);
+    dlg.exec();
 }
 
 // the openGL screen

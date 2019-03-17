@@ -95,11 +95,18 @@
     <addaction name="actionEditEnvelope"/>
     <addaction name="actionFullScreen"/>
    </widget>
+   <widget class="QMenu" name="menu_Help">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="actionAbout"/>
+   </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Commands"/>
    <addaction name="menu_Edit"/>
    <addaction name="menu_Midi"/>
    <addaction name="menu_OSC"/>
+   <addaction name="menu_Help"/>
   </widget>
   <action name="action_Load_scene">
    <property name="text">
@@ -245,6 +252,11 @@
   <action name="actionEditEnvelope">
    <property name="text">
     <string>Edit envelope (&amp;E)</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About &amp;Frontières</string>
    </property>
   </action>
  </widget>
