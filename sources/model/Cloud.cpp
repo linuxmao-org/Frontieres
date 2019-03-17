@@ -875,7 +875,7 @@ Env Cloud::getEnvelopeVolume()
 
 
 // compute audio
-void Cloud::nextBuffer(double *accumBuff, unsigned int numFrames)
+void Cloud::nextBuffer(BUFFERPREC *accumBuff, unsigned int numFrames)
 {
     // debug std::cout<<"entree nextbuffer cloud"<<std::endl;
     int l_envelopeAction = this->envelopeAction.exchange(0);

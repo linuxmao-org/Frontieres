@@ -36,11 +36,11 @@
 
 
 // create BUFFERPREC datatype
-#define BUFFERPREC double
+#define BUFFERPREC float
 // create rtaudio format
-#define MY_FORMAT RTAUDIO_FLOAT64
+#define MY_FORMAT RTAUDIO_FLOAT32
 // create soxr format
-#define MY_RESAMPLER_FORMAT_I SOXR_FLOAT64_I
+#define MY_RESAMPLER_FORMAT_I SOXR_FLOAT32_I
 // number of output channels
 #define MY_CHANNELS 16
 

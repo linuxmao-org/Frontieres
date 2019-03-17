@@ -83,7 +83,7 @@ public:
     bool select(float x, float y);
 
     void toggleWaveDisplay();
-    void associateSample(double *theBuff, unsigned long buffFrames, unsigned int buffChans, const string &name);
+    void associateSample(BUFFERPREC *theBuff, unsigned long buffFrames, unsigned int buffChans, const string &name);
     // return id
     // unsigned int getId();
 
@@ -121,7 +121,7 @@ private:
     bool isSelected;
     float colR, colG, colB, colA;
     float minDim;
-    double *myBuff;
+    BUFFERPREC *myBuff;
     double startTime;
     float ups;
     unsigned long myBuffFrames;

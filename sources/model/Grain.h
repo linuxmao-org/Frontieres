@@ -148,9 +148,6 @@ private:
     //-1 means not in current samplefile
     std::unique_ptr<double[]> playPositions;
     std::unique_ptr<double[]> playVols;
-
-    double *waveBuff;
-
 };
 
 #endif

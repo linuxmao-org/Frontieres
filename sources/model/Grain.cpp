@@ -350,7 +350,7 @@ void Grain::nextBuffer(double *accumBuff, unsigned int numFrames,
         int nextSample = -1;
 
         // waveform params
-        double *wave = NULL;
+        BUFFERPREC *wave = NULL;
         int channels = 0;
         unsigned int frames = 0;
 

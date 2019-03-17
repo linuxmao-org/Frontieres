@@ -101,7 +101,7 @@ void MyRtAudio::openStream(RtAudioCallback callback)
     oParams.firstChannel = 0;
 
     // open stream
-    audio->openStream(&oParams, &iParams, RTAUDIO_FLOAT64, mySRate,
+    audio->openStream(&oParams, &iParams, myFormat, mySRate,
                       myBufferSize, callback, NULL, &options);
 }
 
