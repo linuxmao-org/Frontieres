@@ -64,7 +64,7 @@ target_include_directories(Frontieres
 include(FindPkgConfig)
 
 target_compile_definitions(Frontieres
-  PRIVATE "__LINUX_ALSASEQ__=" "__UNIX_JACK__="
+  PRIVATE "__LINUX_ALSASEQ__=" "__LINUX_ALSA__=" "__LINUX_PULSE__="
   PRIVATE "INSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\""
   PRIVATE "DATA_ROOT_DIR=\"${CMAKE_INSTALL_FULL_DATAROOTDIR}\"")
 
@@ -75,14 +75,15 @@ find_package(ALSA REQUIRED)
 find_package(Threads REQUIRED)
 
 include(FindPkgConfig)
+pkg_check_modules(PULSE libpulse-simple REQUIRED)
 pkg_check_modules(SNDFILE sndfile REQUIRED)
 pkg_check_modules(SOXR soxr REQUIRED)
 pkg_check_modules(LIBLO liblo REQUIRED)
 
 target_link_libraries(Frontieres
-  PRIVATE ${OPENGL_LIBRARIES} ${JACK_LIBRARIES} ${ALSA_LIBRARIES} ${SNDFILE_LIBRARIES} ${SOXR_LIBRARIES} ${LIBLO_LIBRARIES} "${CMAKE_THREAD_LIBS_INIT}")
+  PRIVATE ${OPENGL_LIBRARIES} ${JACK_LIBRARIES} ${PULSE_LIBRARIES} ${ALSA_LIBRARIES} ${SNDFILE_LIBRARIES} ${SOXR_LIBRARIES} ${LIBLO_LIBRARIES} "${CMAKE_THREAD_LIBS_INIT}")
 target_include_directories(Frontieres
-  PRIVATE "${OPENGL_INCLUDE_DIR}" ${JACK_INCLUDE_DIRS} ${ALSA_INCLUDE_DIRS} ${SNDFILE_INCLUDE_DIRS} ${SOXR_INCLUDE_DIRS} ${LIBLO_INCLUDE_DIRS})
+  PRIVATE "${OPENGL_INCLUDE_DIR}" ${JACK_INCLUDE_DIRS} ${PULSE_INCLUDE_DIRS} ${ALSA_INCLUDE_DIRS} ${SNDFILE_INCLUDE_DIRS} ${SOXR_INCLUDE_DIRS} ${LIBLO_INCLUDE_DIRS})
 
 qt5_wrap_ui(Frontieres_UI_SOURCES
   sources/interface/CombiDialog.ui

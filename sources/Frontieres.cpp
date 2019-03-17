@@ -56,7 +56,6 @@
 #include "dsp/Window.h"
 
 // midi related
-#include <RtMidi.h>
 #include <ring_buffer.h>
 
 // OSC related
@@ -93,9 +92,7 @@ using namespace std;
 // Shared Data Structures, Global parameters
 //-----------------------------------------------------------------------------
 // audio system
-MyRtAudio *theAudio = NULL;
-// midi system
-RtMidiIn *theMidiIn = NULL;
+AbstractAudio *theAudio = NULL;
 // buffer of midi input messages
 Ring_Buffer *theMidiInBuffer = NULL;
 // buffer of OSC input messages
@@ -112,6 +109,8 @@ Scene *currentScene = nullptr;
 // current scene mutex
 std::mutex currentSceneMutex;
 
+// number of output channels
+int theChannelCount = 16;
 // sample rate - Hz
 unsigned int samp_rate = 0;
 
@@ -163,11 +162,10 @@ CloudParams g_defaultCloudParams;
 void updateMouseCoords(int x, int y);
 void draw_string(GLfloat x, GLfloat y, GLfloat z, const QString &str, GLfloat scale);
 void drawAxis();
-int audioCallback(void *outputBuffer, void *inputBuffer, unsigned int numFrames,
-                  double streamTime, RtAudioStreamStatus status, void *userData);
+void audioCallback(BUFFERPREC *out, unsigned int numFrames, void *userData);
 void processMidiMessage(const unsigned char *message, unsigned length);
 void processOscMessage(const char *message, size_t length, rtosc::Ports &ports);
-void midiInCallback(double timeStamp, std::vector<unsigned char> *message, void *userData);
+void midiInCallback(const unsigned char *message, unsigned size, void *userData);
 void oscCallback(const char *msg, size_t length, void *);
 
 //--------------------------------------------------------------------------------
@@ -177,27 +175,12 @@ void oscCallback(const char *msg, size_t length, void *);
 void cleaningFunction()
 {
     if (theAudio != NULL) {
-        try {
-            theAudio->stopStream();
-            theAudio->closeStream();
-        }
-        catch (RtAudioError &err) {
-            err.printMessage();
-        }
         delete theAudio;
+        theAudio = NULL;
     }
-    if (theMidiIn != NULL) {
-        try {
-            theMidiIn->closePort();
-        }
-        catch (RtAudioError &err) {
-            err.printMessage();
-        }
-        delete theMidiIn;
-    }
-
     if (text_renderer != NULL) {
         delete text_renderer;
+        text_renderer = NULL;
     }
 }
 
@@ -207,8 +190,7 @@ void cleaningFunction()
 //================================================================================
 
 // audio callback
-int audioCallback(void *outputBuffer, void *inputBuffer, unsigned int numFrames,
-                  double streamTime, RtAudioStreamStatus status, void *userData)
+void audioCallback(BUFFERPREC *out, unsigned int numFrames, void *)
 {
     // process the midi messages
     unsigned char midiMessageSize;
@@ -237,10 +219,7 @@ int audioCallback(void *outputBuffer, void *inputBuffer, unsigned int numFrames,
     }
 
     // cast audio buffers
-    BUFFERPREC *out = (BUFFERPREC *)outputBuffer;
-    BUFFERPREC *in = (BUFFERPREC *)inputBuffer;
-
-    memset(out, 0, sizeof(BUFFERPREC) * numFrames * MY_CHANNELS);
+    memset(out, 0, sizeof(BUFFERPREC) * numFrames * theChannelCount);
     if (menuFlag == false) {
         std::unique_lock<std::mutex> lock(::currentSceneMutex, std::try_to_lock);
         if (lock.owns_lock()) {
@@ -253,7 +232,6 @@ int audioCallback(void *outputBuffer, void *inputBuffer, unsigned int numFrames,
     }
     GTime::instance().sec += numFrames * samp_time_sec;
     // cout << GTime::instance().sec<<endl;
-    return 0;
 }
 
 // midi processing routine
@@ -318,9 +296,8 @@ void processOscMessage(const char *message, size_t length, rtosc::Ports &ports)
 //   Midi Input Callback
 //================================================================================
 
-void midiInCallback(double, std::vector<unsigned char> *message, void *)
+void midiInCallback(const unsigned char *message, unsigned size, void *)
 {
-    size_t size = message->size();
     if (size >= 256)
         return;  // drop large messages
 
@@ -332,7 +309,7 @@ void midiInCallback(double, std::vector<unsigned char> *message, void *)
     // write the message header, a 8bit size field
     theMidiInBuffer->put((unsigned char)size);
     // write the message body
-    theMidiInBuffer->put(message->data(), size);
+    theMidiInBuffer->put(message, size);
 }
 
 //================================================================================
@@ -842,46 +819,41 @@ int main(int argc, char **argv)
 
     //-------------Audio Configuration-----------//
 
-    // configure RtAudio
-    // create the object
-    try {
-        theAudio = new MyRtAudio(1, MY_CHANNELS, &g_buffSize, MY_FORMAT, true);
+    // configure Jack or RtAudio
+    std::cerr << "* try JACK audio\n";
+    theAudio = new MyRtJack(theChannelCount);
+    // open audio stream/assign callback
+    if (!theAudio->openStream(&audioCallback, nullptr)) {
+        delete theAudio;
+        theAudio = nullptr;
     }
-    catch (RtAudioError &err) {
-        err.printMessage();
-        cleaningFunction();
-        exit(1);
+    if (!theAudio) {
+        std::cerr << "* try RtAudio\n";
+        theAudio = new MyRtAudio(theChannelCount);
+        if (!theAudio->openStream(&audioCallback, nullptr)) {
+            cleaningFunction();
+            return 1;
+        }
     }
-    try {
-        unsigned sampleRate = theAudio->getSampleRate();
-        ::samp_rate = sampleRate;
-        ::samp_time_sec = 1.0 / sampleRate;
-        Stk::setSampleRate(sampleRate);
-        // open audio stream/assign callback
-        theAudio->openStream(&audioCallback);
-        // get new buffer size
-        g_buffSize = theAudio->getBufferSize();
-        // report latency
-        theAudio->reportStreamLatency();
-    }
-    catch (RtAudioError &err) {
-        err.printMessage();
-        cleaningFunction();
-        exit(1);
-    }
+
+    std::cerr << "desired channels: " << theChannelCount << "\n";
+    theChannelCount = theAudio->getObtainedOutputChannels();
+    std::cerr << "obtained channels: " << theChannelCount << "\n";
+
+    unsigned sampleRate = theAudio->getSampleRate();
+    ::samp_rate = sampleRate;
+    ::samp_time_sec = 1.0 / sampleRate;
+    Stk::setSampleRate(sampleRate);
+
+    // get new buffer size
+    g_buffSize = theAudio->getBufferSize();
+    cerr << "obtained buffer size: " << g_buffSize << endl;
+    // report latency
+    cout << "stream latency: " << theAudio->getStreamLatency() << " frames" << endl;
 
     //-------------Midi Configuration-----------//
     theMidiInBuffer = new Ring_Buffer(1024);
-    try {
-        theMidiIn = new RtMidiIn(RtMidi::UNSPECIFIED, "Frontieres", theMidiInBuffer->capacity());
-        theMidiIn->setCallback(&midiInCallback);
-        theMidiIn->openVirtualPort();
-    }
-    catch (RtMidiError &err) {
-        err.printMessage();
-        cleaningFunction();
-        exit(1);
-    }
+    theAudio->openMidiInput(&midiInCallback, theMidiInBuffer->capacity(), nullptr);
 
     //-------------OSC Configuration-----------//
     theOscInBuffer = new Ring_Buffer(8192);

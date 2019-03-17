@@ -36,13 +36,9 @@
 
 
 // create BUFFERPREC datatype
-#define BUFFERPREC float
-// create rtaudio format
-#define MY_FORMAT RTAUDIO_FLOAT32
-// create soxr format
-#define MY_RESAMPLER_FORMAT_I SOXR_FLOAT32_I
+typedef float BUFFERPREC;
 // number of output channels
-#define MY_CHANNELS 16
+extern int theChannelCount;
 
 // window length
 #define WINDOW_LEN 2048

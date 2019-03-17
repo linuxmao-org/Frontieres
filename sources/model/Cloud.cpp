@@ -57,7 +57,7 @@ CloudMidi::CloudMidi(VecSceneSample *sampleSet, float theNumGrains, float theDur
 {
     envelopeVolume = new Env;
     envelopeVolumeBuff = new float[g_buffSize];
-    intermediateBuff = new double[g_buffSize * MY_CHANNELS];
+    intermediateBuff = new double[g_buffSize * theChannelCount];
     envelopeAction.store(0);
     isActive = false;
     addFlag = false;
@@ -90,6 +90,8 @@ Cloud::~Cloud()
 // Constructor
 Cloud::Cloud(VecSceneSample *sampleSet, float theNumGrains)
 {
+    unsigned channelCount = theChannelCount;
+
     // cloud id
     myId = ++cloudId;
 
@@ -132,8 +134,8 @@ Cloud::Cloud(VecSceneSample *sampleSet, float theNumGrains)
     //pitchLFOAmount = 0.0f;
     pitchLFOAmount = g_defaultCloudParams.pitchLFOAmount;
     // initialize channel multiplier array
-    channelMults = new double[MY_CHANNELS];
-    for (int i = 0; i < MY_CHANNELS; i++) {
+    channelMults = new double[channelCount];
+    for (int i = 0; i < channelCount; i++) {
         channelMults[i] = 0.999f;
     }
 
@@ -162,7 +164,7 @@ Cloud::Cloud(VecSceneSample *sampleSet, float theNumGrains)
     envelopeVolume = new Env;
     envelopeVolume->setParam(g_defaultCloudParams.envelope);
     envelopeVolumeBuff = new float[g_buffSize];
-    intermediateBuff = new double[g_buffSize * MY_CHANNELS];
+    intermediateBuff = new double[g_buffSize * channelCount];
 
     // initialize the envelope trigger flag
     envelopeAction.store(0);
@@ -877,6 +879,8 @@ Env Cloud::getEnvelopeVolume()
 // compute audio
 void Cloud::nextBuffer(BUFFERPREC *accumBuff, unsigned int numFrames)
 {
+    unsigned channelCount = theChannelCount;
+
     // debug std::cout<<"entree nextbuffer cloud"<<std::endl;
     int l_envelopeAction = this->envelopeAction.exchange(0);
 
@@ -967,14 +971,14 @@ void Cloud::nextBuffer(BUFFERPREC *accumBuff, unsigned int numFrames)
              //  myGrains[k]->nextBuffer(accumBuff, frameSkip, nextFrame, k);
             //}
             // iterate over all grains
-            memset(intermediateBuff, 0, numFrames * MY_CHANNELS * sizeof(intermediateBuff[0]));
+            memset(intermediateBuff, 0, numFrames * channelCount * sizeof(intermediateBuff[0]));
             for (int k = 0; k < myGrains.size(); k++) {
                 myGrains[k]->nextBuffer(intermediateBuff, frameSkip, nextFrame, k);
             }
             for (int i = 0; i < numFrames; ++i) {
-                //for (int j = 0; j < MY_CHANNELS; ++j)
+                //for (int j = 0; j < channelCount; ++j)
                 for (int j = myOutputFirstNumber; j <= myOutputLastNumber; ++j)
-                    accumBuff[i * MY_CHANNELS + j] += intermediateBuff[i * MY_CHANNELS + j] * envelopeVolumeBuff[i] * ((float) midiVelocity / 127);
+                    accumBuff[i * channelCount + j] += intermediateBuff[i * channelCount + j] * envelopeVolumeBuff[i] * ((float) midiVelocity / 127);
             }
         }
     }
@@ -1079,16 +1083,16 @@ void Cloud::nextBuffer(BUFFERPREC *accumBuff, unsigned int numFrames)
                      //  myGrains[k]->nextBuffer(accumBuff, frameSkip, nextFrame, k);
                     //}
                     // iterate over all grains
-                    memset(playedCloudMidi[ii]->intermediateBuff, 0, numFrames * MY_CHANNELS * sizeof(playedCloudMidi[ii]->intermediateBuff[0]));
+                    memset(playedCloudMidi[ii]->intermediateBuff, 0, numFrames * channelCount * sizeof(playedCloudMidi[ii]->intermediateBuff[0]));
                     //debug : std::cout << "playedCloudMidi[ii]->myGrains.size()="<< playedCloudMidi[ii]->myGrains.size()<<std::endl;
                     for (int k = 0; k < playedCloudMidi[ii]->myGrains.size(); k++) {
                         playedCloudMidi[ii]->myGrains[k]->nextBuffer(playedCloudMidi[ii]->intermediateBuff, frameSkip, nextFrame, k);
                     }
                     //debug : std::cout<<"boucle temp, ii="<<ii<<",playedCloudMidi[ii]->midiNote="<<playedCloudMidi[ii]->midiNote<<",playedCloudMidi[ii]->velocity="<<playedCloudMidi[ii]->velocity<<std::endl;
                     for (int i = 0; i < numFrames; ++i) {
-                        //for (int j = 0; j < MY_CHANNELS; ++j)
+                        //for (int j = 0; j < channelCount; ++j)
                         for (int j = myOutputFirstNumber; j <= myOutputLastNumber; ++j)
-                            accumBuff[i * MY_CHANNELS + j] += playedCloudMidi[ii]->intermediateBuff[i * MY_CHANNELS + j]
+                            accumBuff[i * channelCount + j] += playedCloudMidi[ii]->intermediateBuff[i * channelCount + j]
                                                               * playedCloudMidi[ii]->envelopeVolumeBuff[i]
                                                               * (((float) playedCloudMidi[ii]->velocity + 127) * g_cloudValueMin.midiVelocityBoost / 100) / 127;
                                                               //* ((float) playedCloudMidi[ii]->velocity / 127);
@@ -1206,11 +1210,12 @@ int Cloud::getOutputLast()
 // spatialization logic
 void Cloud::updateSpatialization()
 {
+    unsigned channelCount = theChannelCount;
 
     // currently assumes orientation L: 0,2,4,...  R: 1,3,5, etc (interleaved)
     switch (spatialMode) {
     case UNITY:
-        for (int i = 0; i < MY_CHANNELS; i++) {
+        for (int i = 0; i < channelCount; i++) {
             if (i >= myOutputFirstNumber && i <= myOutputLastNumber)
                 channelMults[i] = 0.999f;
             else
@@ -1220,7 +1225,7 @@ void Cloud::updateSpatialization()
     case STEREO:
 
         if (stereoSide == 0) {  // left
-            for (int i = 0; i < MY_CHANNELS; i++) {
+            for (int i = 0; i < channelCount; i++) {
                 channelMults[i] = 0.0f;
                 if ((i % 2) == 0 && (i >= myOutputFirstNumber && i <= myOutputLastNumber))
                     channelMults[i] = 0.999f;
@@ -1230,7 +1235,7 @@ void Cloud::updateSpatialization()
             stereoSide = 1;
         }
         else {  // right
-            for (int i = 0; i < MY_CHANNELS; i++) {
+            for (int i = 0; i < channelCount; i++) {
                 channelMults[i] = 0.0f;
                 if ((i % 2) == 0)
                     channelMults[i] = 0.0f;
@@ -1242,7 +1247,7 @@ void Cloud::updateSpatialization()
         }
         break;
     case AROUND:
-        for (int i = 0; i < MY_CHANNELS; i++) {
+        for (int i = 0; i < channelCount; i++) {
             channelMults[i] = 0;
         }
 
@@ -1250,12 +1255,12 @@ void Cloud::updateSpatialization()
 
         channelMults[currentAroundChan] = 0.999;
         currentAroundChan += side * 2;
-//        if ((currentAroundChan > MY_CHANNELS) || (currentAroundChan < 0)) {
+//        if ((currentAroundChan > channelCount) || (currentAroundChan < 0)) {
         if ((currentAroundChan > myOutputLastNumber) || (currentAroundChan < myOutputFirstNumber)) {
             side = -1 * side;
             currentAroundChan += side * 3;
         }
-        // currentAroundChan = currentAroundChan % MY_CHANNELS;
+        // currentAroundChan = currentAroundChan % channelCount;
         break;
 
     default:

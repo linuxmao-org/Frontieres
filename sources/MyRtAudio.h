@@ -33,55 +33,132 @@
 
 
 #include "RtAudio.h"
+#include "RtMidi.h"
+#include "theglobals.h"
+#include <vector>
+#include <memory>
 #include <cstdio>
-#include <stdio.h>
 #include <cstdlib>
-#include <stdlib.h>
 
-class MyRtAudio {
+class AbstractAudio {
+protected:
+    AbstractAudio() {}
 
 public:
-    // destructor
-    virtual ~MyRtAudio();
-
-    // constructor - args =
-    MyRtAudio(unsigned int numIns, unsigned int numOuts,
-              unsigned int *bufferSize, RtAudioFormat format, bool showWarnings);
-
+    virtual ~AbstractAudio() {}
 
     // set the audio callback and start the audio stream
-    void openStream(RtAudioCallback callback);
+    typedef void (*AudioCallback)(BUFFERPREC *out, unsigned int numFrames, void *userData);
+    virtual bool openStream(AudioCallback callback, void *userData) = 0;
 
     // report the current sample rate
-    unsigned int getSampleRate();
+    virtual unsigned int getSampleRate() = 0;
 
     // report the current buffer size
-    unsigned int getBufferSize();
+    virtual unsigned int getBufferSize() = 0;
+
+    // get the obtained channel count
+    virtual unsigned int getObtainedOutputChannels() = 0;
 
     // start audio stream
-    void startStream();
+    virtual bool startStream() = 0;
 
     // stop audio stream
-    void stopStream();
+    virtual bool stopStream() = 0;
 
-    // close audio stream
-    void closeStream();
+    // get the stream latency
+    virtual int getStreamLatency() = 0;
 
-    // report the stream latency
-    void reportStreamLatency();
-
+    // open MIDI input
+    typedef void (*ReceiveMidi)(const unsigned char *msg, unsigned length, void *userData);
+    virtual int openMidiInput(ReceiveMidi receive, unsigned bufferSize, void *userData) = 0;
 
 private:
+    AbstractAudio(const AbstractAudio &) = delete;
+    AbstractAudio &operator=(const AbstractAudio &) = delete;
+};
+
+//------------------------------------------------------------------------------
+class MyRtAudio : public AbstractAudio {
+
+public:
+    // constructor - args =
+    explicit MyRtAudio(unsigned int numOuts);
+
+    // set the audio callback and start the audio stream
+    bool openStream(AudioCallback callback, void *userData) override;
+
+    unsigned int getSampleRate() override;
+    unsigned int getBufferSize() override;
+    unsigned int getObtainedOutputChannels() override;
+    bool startStream() override;
+    bool stopStream() override;
+    int getStreamLatency() override;
+    int openMidiInput(ReceiveMidi receive, unsigned bufferSize, void *userData) override;
+
+private:
+    static void errorCallback(RtAudioError::Type type, const std::string &errorText);
+
     // rtaudio pointer
-    RtAudio *audio;
-    unsigned int numInputs;
+    std::unique_ptr<RtAudio> audio;
+    std::unique_ptr<RtMidiIn> midiIn;
     unsigned int numOutputs;
 
     // buffer size, sample rate, rt audio format
     // note: buffer size is handled as pointer to unsigned int passed in externally. this allows shared access, but is risky.
-    unsigned int *myBufferSize;
+    unsigned int myBufferSize;
     unsigned int mySRate;
-    RtAudioFormat myFormat;
+
+    static bool hasError;
+
+    AudioCallback audioCallback = nullptr;
+    void *audioUserData = nullptr;
+    ReceiveMidi receiveMidiIn = nullptr;
+    void *receiveMidiInUserData = nullptr;
+
+    static int rtaudioCallback(
+        void *outputBuffer, void *, unsigned int numFrames,
+        double, RtAudioStreamStatus, void *userData);
+    static void midiInCallback(double timeStamp, std::vector<unsigned char> *message, void *userData);
+};
+
+//------------------------------------------------------------------------------
+#include <jack/jack.h>
+#include <jack/midiport.h>
+
+class MyRtJack : public AbstractAudio {
+
+public:
+    // constructor - args =
+    explicit MyRtJack(unsigned int numOuts);
+
+    // set the audio callback and start the audio stream
+    bool openStream(AudioCallback callback, void *userData) override;
+
+    unsigned int getSampleRate() override;
+    unsigned int getBufferSize() override;
+    unsigned int getObtainedOutputChannels() override;
+    bool startStream() override;
+    bool stopStream() override;
+    int getStreamLatency() override;
+    int openMidiInput(ReceiveMidi receive, unsigned bufferSize, void *userData) override;
+
+private:
+    struct JackClientDeleter { void operator()(jack_client_t *x) const noexcept { jack_client_close(x); } };
+
+    AudioCallback audioCallback = nullptr;
+    void *audioUserData = nullptr;
+    ReceiveMidi receiveMidiIn = nullptr;
+    void *receiveMidiInUserData = nullptr;
+
+    std::unique_ptr<jack_client_t, JackClientDeleter> client;
+    std::vector<jack_port_t *> outputs;
+    jack_port_t *midiIn = nullptr;
+
+    unsigned numOutputs = 0;
+    std::unique_ptr<float[]> outputBuffer;
+
+    static int jackProcess(jack_nframes_t nframes, void *userData);
 };
 
 #endif
