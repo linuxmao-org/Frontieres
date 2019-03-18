@@ -944,6 +944,7 @@ int main(int argc, char **argv)
     app.startIdleCallback(fps);
 
     StartDialog startDlg;
+    startDlg.adjustSize();
     startDlg.exec();
 
     //
