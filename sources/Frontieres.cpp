@@ -84,6 +84,14 @@
 #include <QJsonObject>
 #include <QStandardPaths>
 
+#ifdef Q_OS_UNIX
+// signal handling
+#include <QSocketNotifier>
+#include <unistd.h>
+#include <signal.h>
+#include <sys/socket.h>
+#endif
+
 using namespace std;
 
 
@@ -806,6 +814,37 @@ int main(int argc, char **argv)
 {
     int exitCode = 0;
 
+#ifdef Q_OS_UNIX
+    //-------------Signal Handler-----------//
+    static int signalFds[2];
+    if (socketpair(AF_UNIX, SOCK_STREAM, 0, signalFds) != 0) {
+        perror("socketpair");
+    }
+    else {
+        struct sigaction sigActionTerm = {};
+        const int sigsTerm[] = {SIGINT, SIGTERM};
+
+        // define the signal handler for term signals
+        sigActionTerm.sa_handler = +[](int)
+            { char a = 1; write(signalFds[1], &a, 1); };
+        sigemptyset(&sigActionTerm.sa_mask);
+        for (int s : sigsTerm)
+            sigaddset(&sigActionTerm.sa_mask, s);
+        for (int s : sigsTerm) {
+            if (sigaction(s, &sigActionTerm, nullptr) != 0)
+                perror("sigaction");
+        }
+
+        // this thread just sleeps, its job is to be the signal catcher
+        std::thread sigThread([]() { for (;;) pause(); });
+        sigThread.detach();
+
+        // make sure only the above thread will receive the signal
+        if (pthread_sigmask(SIG_BLOCK, &sigActionTerm.sa_mask, nullptr) != 0)
+            perror("pthread_sigmask");
+    }
+#endif
+
     bool autoconnect = false;
 
     // init random number generator
@@ -816,6 +855,13 @@ int main(int argc, char **argv)
     app.setApplicationName("Frontieres");
     app.setApplicationDisplayName(u8"Frontières");
     app.setApplicationVersion(APP_VERSION);
+
+#ifdef Q_OS_UNIX
+    //-------------Signal Handler-----------//
+    QSocketNotifier signalFdNotifier(signalFds[0], QSocketNotifier::Read, &app);
+    QObject::connect(&signalFdNotifier, &QSocketNotifier::activated,
+                     &app, +[]() { std::cerr << "Interrupt\n"; theApplication->exit(1); });
+#endif
 
     //-------------Command Line-----------//
 
