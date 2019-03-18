@@ -308,9 +308,9 @@ void MyGLScreen::keyAction_MotionXY()
     paramString = "";
     if (selectedCloud) {
         currentParam = MOTIONXY;
-        // toggle selection modes
-        dragMode = RESIZE;
     }
+    // toggle selection modes
+    dragMode = RESIZE;
 }
 
 void MyGLScreen::keyAction_Direction(int dir)
