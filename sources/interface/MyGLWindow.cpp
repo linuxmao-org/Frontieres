@@ -30,6 +30,7 @@
 #include "Frontieres.h"
 #include "MyRtOsc.h"
 #include <QtFont3D.h>
+#include <QTextBrowser>
 #include <QMouseEvent>
 #include <QKeyEvent>
 #include <QProcess>
@@ -133,9 +134,49 @@ MyGLScreen *MyGLWindow::screen() const
 
 void MyGLWindow::on_actionAbout_triggered()
 {
-    QDialog dlg;
+    QDialog dlg(this);
     Ui::AboutDialog ui;
     ui.setupUi(&dlg);
+    dlg.exec();
+}
+
+void MyGLWindow::on_actionUserManual_triggered()
+{
+    QDialog dlg(this);
+
+    // build dialog with text browser inside
+    dlg.setWindowTitle(tr("User manual"));
+    QVBoxLayout *vl = new QVBoxLayout;
+    dlg.setLayout(vl);
+    vl->setContentsMargins(0, 0, 0, 0);
+    QTextBrowser *tb = new QTextBrowser;
+    vl->addWidget(tb);
+
+    // can visit external web pages
+    tb->setOpenExternalLinks(true);
+
+    // find manual according to language
+    QLocale loc = locale();
+    QString locName = loc.name();
+
+    // search files in order: (ex.) "fr_FR", "fr", "en"
+    QStringList paths;
+    QString pathTmpl = ":/docs/manual/%1/index.html";
+    paths << pathTmpl.arg(locName);
+    { int i = locName.indexOf('_');
+      if (i != -1) paths << pathTmpl.arg(locName.left(i)); }
+    paths << pathTmpl.arg("en");
+
+    // load the first one existing
+    for (const QString &path : paths) {
+        QFile docsFile(path);
+        if (docsFile.open(QFile::ReadOnly)) {
+            tb->setHtml(QString::fromUtf8(docsFile.readAll()));
+            break;
+        }
+    }
+
+    dlg.resize(600, 800);
     dlg.exec();
 }
 

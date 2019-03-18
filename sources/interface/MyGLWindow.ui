@@ -99,6 +99,8 @@
     <property name="title">
      <string>&amp;Help</string>
     </property>
+    <addaction name="actionUserManual"/>
+    <addaction name="separator"/>
     <addaction name="actionAbout"/>
    </widget>
    <addaction name="menu_File"/>
@@ -257,6 +259,11 @@
   <action name="actionAbout">
    <property name="text">
     <string>About &amp;Frontières</string>
+   </property>
+  </action>
+  <action name="actionUserManual">
+   <property name="text">
+    <string>User &amp;manual</string>
    </property>
   </action>
  </widget>

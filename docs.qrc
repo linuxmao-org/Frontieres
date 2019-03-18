@@ -1,0 +1,7 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+  <qresource>
+    <file>docs/manual/en/index.html</file>
+    <file>docs/manual/fr/index.html</file>
+  </qresource>
+</RCC>

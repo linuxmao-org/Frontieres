@@ -41,6 +41,7 @@ public:
 
 public slots:
     void on_actionAbout_triggered();
+    void on_actionUserManual_triggered();
 
 private:
     struct Impl;
