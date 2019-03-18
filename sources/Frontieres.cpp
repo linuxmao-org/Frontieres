@@ -817,6 +817,40 @@ int main(int argc, char **argv)
     srand(time(NULL));
     // start time
 
+    MyGLApplication app(argc, argv);
+    app.setApplicationName("Frontieres");
+    app.setApplicationDisplayName(u8"Frontières");
+    app.setApplicationVersion(APP_VERSION);
+
+    //-------------Command Line-----------//
+
+    std::unique_ptr<QCommandLineParser> cmdParser(new QCommandLineParser);
+    cmdParser->setApplicationDescription(QObject::tr("Interactive granular sampler"));
+    QCommandLineOption optHelp = cmdParser->addHelpOption();
+    QCommandLineOption optVersion = cmdParser->addVersionOption();
+
+    QCommandLineOption optNumChannels(
+        QStringList() << "c" << "channels",
+        QObject::tr("Set the number of output channels."),
+        QObject::tr("channel-count"));
+    cmdParser->addOption(optNumChannels);
+
+    cmdParser->process(app);
+
+    if (cmdParser->isSet(optHelp)) {
+        cmdParser->showHelp();
+        return 0;
+    }
+    if (cmdParser->isSet(optVersion)) {
+        cmdParser->showVersion();
+        return 0;
+    }
+
+    if (cmdParser->isSet(optNumChannels))
+        theChannelCount = cmdParser->value(optNumChannels).toUInt();
+
+    cmdParser.reset();
+
     //-------------Audio Configuration-----------//
 
     // configure Jack or RtAudio
@@ -866,9 +900,7 @@ int main(int argc, char **argv)
     QSurfaceFormat::setDefaultFormat(openGLFormat);
 
     // init Qt application
-    MyGLApplication app(argc, argv);
-    app.setApplicationName("Frontieres");
-    app.setApplicationDisplayName(u8"Frontières");
+    app.initializeInterface();
 
     //-------------Paths Initialization--------//
 #if defined(Q_OS_WIN)

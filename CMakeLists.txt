@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.3)
 
 # TODO Windows & Mac
 
-project(Frontieres LANGUAGES C CXX)
+project(Frontieres VERSION "0.0" LANGUAGES C CXX)
 
 enable_language(C)
 enable_language(CXX)
@@ -58,6 +58,8 @@ add_executable(Frontieres WIN32
   libraries/RtAudio.cpp
   libraries/RtMidi.cpp
   libraries/ring_buffer.cpp)
+target_compile_definitions(Frontieres
+  PRIVATE "APP_VERSION=\"${PROJECT_VERSION}\"")
 target_include_directories(Frontieres
   PRIVATE "sources" PRIVATE "libraries" PRIVATE "libraries/QtFont3D")
 
