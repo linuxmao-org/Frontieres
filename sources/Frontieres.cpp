@@ -410,37 +410,27 @@ void printUsage()
     int screenWidth = screen->width();
     int screenHeight = screen->height();
 
-    float smallSize = 0.03f;
-    float mediumSize = 0.04f;
     glLineWidth(2.0f);
     float theA = 0.6f + 0.2 * sin(0.8 * PI * GTime::instance().sec);
     glColor4f(theA, theA, theA, theA);
-    draw_string(screenWidth / 2.0f + 0.2f * (float)screenWidth, (float)screenHeight / 2.0f,
-                0.5f, u8"FRONTIÈRES", (float)screenWidth * 0.1f);
+    draw_string(screenWidth * 0.5f, screenHeight * 0.5f,
+                0.5f, u8"FRONTIÈRES", 250.0f);
 
     theA = 0.6f + 0.2 * sin(0.9 * PI * GTime::instance().sec);
     float insColor = theA * 0.4f;
     glColor4f(insColor, insColor, insColor, theA);
     // key info
-    draw_string(screenWidth / 2.0f + 0.2f * (float)screenWidth + 10.0,
-                (float)screenHeight / 2.0f + 30.0, 0.5f, QObject::tr("CLICK TO START"),
-                (float)screenWidth * 0.04f);
+    draw_string(screenWidth * 0.5f + 10.0,
+                screenHeight * 0.5f + 40.0, 0.5f, QObject::tr("CLICK TO START"),
+                125.0f);
 
     theA = 0.6f + 0.2 * sin(1.0 * PI * GTime::instance().sec);
     insColor = theA * 0.4f;
     glColor4f(insColor, insColor, insColor, theA);
     // key info
-    draw_string(screenWidth / 2.0f + 0.2f * (float)screenWidth + 10.0,
-                (float)screenHeight / 2.0f + 50.0, 0.5f, QObject::tr("ESCAPE TO QUIT"),
-                (float)screenWidth * 0.04f);
-/*
-    theA = 0.6f + 0.2 * sin(1.1 * PI * GTime::instance().sec);
-    insColor = theA * 0.4f;
-    glColor4f(insColor, insColor, insColor, theA);
-    // key info
-    draw_string(screenWidth / 2.0f + 0.2f * (float)screenWidth + 10.0,
-                (float)screenHeight / 2.0f + 70.0, 0.5f,
-                QObject::tr("PUT THE SAMPLES IN ~/.Frontieres/loops"), (float)screenWidth * 0.04f);*/
+    draw_string(screenWidth * 0.5f + 10.0,
+                screenHeight * 0.5f + 70.0, 0.5f, QObject::tr("ESCAPE TO QUIT"),
+                125.0f);
 }
 
 
