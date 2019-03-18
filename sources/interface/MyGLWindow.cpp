@@ -107,6 +107,8 @@ void MyGLWindow::initialize()
             screen, &MyGLScreen::keyAction_EditEnvelope);
     connect(P->ui.actionEditCloud, &QAction::triggered,
             screen, &MyGLScreen::keyAction_EditCloud);
+    connect(P->ui.actionSampleNames, &QAction::triggered,
+            screen, &MyGLScreen::keyAction_SampleNames);
     connect(P->ui.actionFullScreen, &QAction::triggered,
             screen, &MyGLScreen::keyAction_FullScreen);
 
@@ -565,6 +567,13 @@ void MyGLScreen::keyAction_EditCloud()
     if (selectedCloud) {
         theApplication->showCloudDialog(selectedCloud);
     }
+}
+
+void MyGLScreen::keyAction_SampleNames()
+{
+    // see name of cloud or sample
+    paramString = "";
+    showSampleNames = !showSampleNames;
 }
 
 void MyGLScreen::mousePressEvent(QMouseEvent *event)
@@ -1027,15 +1036,7 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
         break;
     }
     case Qt::Key_N: {
-        // see name of cloud or sample
-        if (selectedSample) {
-            currentParam = NAME;
-        }
-        else {
-            paramString = "";
-            if (currentParam != NUM)
-                currentParam = NUM;
-        }
+        keyAction_SampleNames();
         break;
     }
     case Qt::Key_C: {

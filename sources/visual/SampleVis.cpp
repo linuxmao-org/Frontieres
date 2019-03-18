@@ -360,7 +360,8 @@ void SampleVis::setWaveDisplayParams()
 // draw function
 void SampleVis::draw()
 {
-    glPushMatrix();
+    //glPushMatrix();
+
     // rect properties
     //
     //    if (colA > (aMax - 0.005)){
@@ -503,7 +504,14 @@ void SampleVis::draw()
             break;
         }
     }
-    glPopMatrix();
+
+    if (showSampleNames) {
+        glColor4f(1.0, 0.0, 0.0, 1.0);
+        QString text = QString::fromStdString(rName);
+        draw_string(rleft, screenHeight - rtop, 0.5f, text, screenWidth * 0.1f);
+    }
+
+    //glPopMatrix();
 }
 
 

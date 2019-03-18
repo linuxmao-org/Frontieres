@@ -75,6 +75,7 @@ public slots:
     void keyAction_Active();
     void keyAction_EditEnvelope();
     void keyAction_EditCloud();
+    void keyAction_SampleNames();
 
 protected:
     void initializeGL() override;

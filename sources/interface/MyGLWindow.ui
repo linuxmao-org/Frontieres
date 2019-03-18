@@ -93,6 +93,7 @@
     <addaction name="actionActive"/>
     <addaction name="actionEditCloud"/>
     <addaction name="actionEditEnvelope"/>
+    <addaction name="actionSampleNames"/>
     <addaction name="actionFullScreen"/>
    </widget>
    <widget class="QMenu" name="menu_Help">
@@ -264,6 +265,11 @@
   <action name="actionUserManual">
    <property name="text">
     <string>User &amp;manual</string>
+   </property>
+  </action>
+  <action name="actionSampleNames">
+   <property name="text">
+    <string>Sample names (&amp;N)</string>
    </property>
   </action>
  </widget>

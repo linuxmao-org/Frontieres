@@ -136,6 +136,9 @@ int rb_anchor_y = -1;
 // selection helper vars
 bool menuFlag = true;
 
+// sample name display
+bool showSampleNames = false;
+
 // flag indicating parameter change
 bool paramChanged = false;
 unsigned int currentParam = NUMGRAINS;
@@ -385,7 +388,7 @@ void drawAxis()
 // Display simple string
 // desc: from sndpeek source - Ge Wang, et al
 //-----------------------------------------------------------------------------
-void draw_string(GLfloat x, GLfloat y, GLfloat z, const QString &str, GLfloat scale = 1.0f)
+void draw_string(float x, float y, float z, const QString &str, float scale)
 {
     // get screen width and height
     MyGLScreen *screen = theApplication->GLwindow()->screen();

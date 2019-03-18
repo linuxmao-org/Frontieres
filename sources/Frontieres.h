@@ -78,6 +78,9 @@ extern std::mutex currentSceneMutex;
 // selection helper vars
 extern bool menuFlag;
 
+// sample name display
+extern bool showSampleNames;
+
 // cloud parameter changing
 enum {
     NUMGRAINS,
@@ -119,6 +122,8 @@ enum {
       //jpc: pour dessiner le texte à l'échelle en QtFont3D,
       //  j'ai mis un facteur qui donne à peu près comme le logiciel original.
 };
+
+void draw_string(float x, float y, float z, const QString &str, float scale = 1.0f);
 
 void updateMouseCoords(int x, int y);
 
