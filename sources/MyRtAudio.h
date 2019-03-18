@@ -156,12 +156,13 @@ private:
     ReceiveMidi receiveMidiIn = nullptr;
     void *receiveMidiInUserData = nullptr;
 
-    std::unique_ptr<jack_client_t, JackClientDeleter> client;
+    unsigned numOutputs = 0;
+    std::unique_ptr<float[]> outputBuffer;
+
     std::vector<jack_port_t *> outputs;
     jack_port_t *midiIn = nullptr;
 
-    unsigned numOutputs = 0;
-    std::unique_ptr<float[]> outputBuffer;
+    std::unique_ptr<jack_client_t, JackClientDeleter> client;
 
     static int jackProcess(jack_nframes_t nframes, void *userData);
 };
