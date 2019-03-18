@@ -338,12 +338,12 @@
     <message>
         <location filename="../sources/interface/MyGLApplication.cpp" line="162"/>
         <source>Load sample</source>
-        <translation>Charger l'échantillon</translation>
+        <translation>Charger l&apos;échantillon</translation>
     </message>
     <message>
         <location filename="../sources/interface/MyGLApplication.cpp" line="163"/>
         <source>Sample files (*.*)</source>
-        <translation>Fichiers d'échantillon (*.*)</translation>
+        <translation>Fichiers d&apos;échantillon (*.*)</translation>
     </message>
     <message>
         <location filename="../sources/interface/MyGLApplication.cpp" line="198"/>
@@ -546,7 +546,7 @@
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="258"/>
         <source>Edit envelope (&amp;E)</source>
-        <translation>Éditer l'enveloppe (&amp;E)</translation>
+        <translation>Éditer l&apos;enveloppe (&amp;E)</translation>
     </message>
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="263"/>
@@ -561,7 +561,7 @@
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="273"/>
         <source>Sample names (&amp;N)</source>
-        <translation>Noms d'échantillons (&amp;N)</translation>
+        <translation>Noms d&apos;échantillons (&amp;N)</translation>
     </message>
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="278"/>
@@ -625,154 +625,164 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="424"/>
+        <location filename="../sources/Frontieres.cpp" line="432"/>
         <source>CLICK TO START</source>
         <translation>CLIQUER POUR DÉMARRER</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="432"/>
+        <location filename="../sources/Frontieres.cpp" line="440"/>
         <source>ESCAPE TO QUIT</source>
         <translation>ÉCHAP POUR QUITTER</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="461"/>
+        <location filename="../sources/Frontieres.cpp" line="469"/>
         <source>Grains: </source>
         <translation>Grains : </translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="468"/>
+        <location filename="../sources/Frontieres.cpp" line="476"/>
         <source>Duration: </source>
         <translation>Durée : </translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="483"/>
+        <location filename="../sources/Frontieres.cpp" line="491"/>
         <source>Window: HANNING</source>
         <translation>Fenêtre : HANNING</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="486"/>
+        <location filename="../sources/Frontieres.cpp" line="494"/>
         <source>Window: TRIANGLE</source>
         <translation>Fenêtre : TRIANGLE</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="489"/>
+        <location filename="../sources/Frontieres.cpp" line="497"/>
         <source>Window: REXPDEC</source>
         <translation>Fenêtre : REXPDEC</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="492"/>
+        <location filename="../sources/Frontieres.cpp" line="500"/>
         <source>Window: EXPDEC</source>
         <translation>Fenêtre : EXPDEC</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="495"/>
+        <location filename="../sources/Frontieres.cpp" line="503"/>
         <source>Window: SINC</source>
         <translation>Fenêtre : SINC</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="498"/>
+        <location filename="../sources/Frontieres.cpp" line="506"/>
         <source>Window: RANDOM_WIN</source>
         <translation>Fenêtre : RANDOM_WIN</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="509"/>
+        <location filename="../sources/Frontieres.cpp" line="517"/>
         <source>X: </source>
-        <translation>>X : </translation>
+        <translation>&gt;X : </translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="516"/>
+        <location filename="../sources/Frontieres.cpp" line="524"/>
         <source>Y: </source>
         <translation>Y : </translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="523"/>
+        <location filename="../sources/Frontieres.cpp" line="531"/>
         <source>X,Y: </source>
         <translation>X, Y : </translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="535"/>
+        <location filename="../sources/Frontieres.cpp" line="543"/>
         <source>Direction: FORWARD</source>
         <translation>Direction : EN AVANT</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="538"/>
+        <location filename="../sources/Frontieres.cpp" line="546"/>
         <source>Direction: BACKWARD</source>
         <translation>Direction : EN ARRIÈRE</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="541"/>
+        <location filename="../sources/Frontieres.cpp" line="549"/>
         <source>Direction: RANDOM</source>
         <translation>Direction : HASARD</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="554"/>
+        <location filename="../sources/Frontieres.cpp" line="562"/>
         <source>Spatial Mode: UNITY</source>
         <translation>Balance panoramique : UNITÉ</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="557"/>
+        <location filename="../sources/Frontieres.cpp" line="565"/>
         <source>Spatial Mode: STEREO</source>
         <translation>Balance panoramique : STÉRÉO</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="560"/>
+        <location filename="../sources/Frontieres.cpp" line="568"/>
         <source>Spatial Mode: AROUND</source>
         <translation>Balance panoramique : AUTOUR</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="570"/>
+        <location filename="../sources/Frontieres.cpp" line="578"/>
         <source>Volume (dB): </source>
         <translation>Volume (dB) : </translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="582"/>
+        <location filename="../sources/Frontieres.cpp" line="590"/>
         <source>Overlap: </source>
         <translation>Chevauchement : </translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="595"/>
+        <location filename="../sources/Frontieres.cpp" line="603"/>
         <source>Pitch: </source>
         <translation>Tonalité : </translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="609"/>
+        <location filename="../sources/Frontieres.cpp" line="617"/>
         <source>Pitch LFO Freq: </source>
         <translation>Fréquence LFO de la tonalité : </translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="622"/>
+        <location filename="../sources/Frontieres.cpp" line="630"/>
         <source>Pitch LFO Amount: </source>
         <translation>Quantité LFO de la tonalité : </translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="635"/>
+        <location filename="../sources/Frontieres.cpp" line="643"/>
         <source>Cloud ID/Num: </source>
         <translation>ID/num nuage : </translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="653"/>
+        <location filename="../sources/Frontieres.cpp" line="661"/>
         <source>Sample: </source>
         <translation>Échantillon : </translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="825"/>
+        <location filename="../sources/Frontieres.cpp" line="872"/>
         <source>Interactive granular sampler</source>
         <translation>Échantillonneur granulaire interactif</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="831"/>
+        <location filename="../sources/Frontieres.cpp" line="878"/>
         <source>Set the number of output channels.</source>
         <translation>Paramétrer le nombre de canaux de sortie.</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="832"/>
+        <location filename="../sources/Frontieres.cpp" line="879"/>
         <source>channel-count</source>
         <translation>nombre-canaux</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="837"/>
+        <location filename="../sources/Frontieres.cpp" line="884"/>
         <source>Automatically connect audio streams to the output device.</source>
         <translation>Connecte automatiquement les flux audio au périphérique de sortie.</translation>
+    </message>
+    <message>
+        <location filename="../sources/Frontieres.cpp" line="889"/>
+        <source>Set the refresh rate in frames per second.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../sources/Frontieres.cpp" line="910"/>
+        <source>Invalid FPS value.</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../sources/model/Scene.cpp" line="64"/>
@@ -812,12 +822,12 @@
     <message>
         <location filename="../sources/model/Scene.cpp" line="757"/>
         <source>Could not find the sample file &quot;%1&quot;.</source>
-        <translation>Impossible de trouver le fichier d'échantillon &quot;%1&quot;.</translation>
+        <translation>Impossible de trouver le fichier d&apos;échantillon &quot;%1&quot;.</translation>
     </message>
     <message>
         <location filename="../sources/model/Scene.cpp" line="759"/>
         <source>Add a different sample directory</source>
-        <translation>Ajouter un répertoire d'échantillon différent</translation>
+        <translation>Ajouter un répertoire d&apos;échantillon différent</translation>
     </message>
     <message>
         <location filename="../sources/model/Scene.cpp" line="760"/>
@@ -827,7 +837,7 @@
     <message>
         <location filename="../sources/model/Scene.cpp" line="774"/>
         <source>Add sample directory</source>
-        <translation>Ajouter un répertoire d'échantillon</translation>
+        <translation>Ajouter un répertoire d&apos;échantillon</translation>
     </message>
 </context>
 <context>

@@ -813,6 +813,7 @@ void mousePassiveMotion(int x, int y)
 int main(int argc, char **argv)
 {
     int exitCode = 0;
+    double fps = 50;
 
 #ifdef Q_OS_UNIX
     //-------------Signal Handler-----------//
@@ -883,6 +884,12 @@ int main(int argc, char **argv)
             QObject::tr("Automatically connect audio streams to the output device."));
         cmdParser->addOption(optAutoconnect);
 
+        QCommandLineOption optFps(
+            QStringList() << "f" << "fps",
+            QObject::tr("Set the refresh rate in frames per second."),
+            QObject::tr("refresh-rate"));
+        cmdParser->addOption(optFps);
+
         cmdParser->process(app);
 
         if (cmdParser->isSet(optHelp)) {
@@ -898,6 +905,13 @@ int main(int argc, char **argv)
             theChannelCount = cmdParser->value(optNumChannels).toUInt();
         if (cmdParser->isSet(optAutoconnect))
             autoconnect = true;
+        if (cmdParser->isSet(optFps)) {
+            fps = cmdParser->value(optFps).toDouble();
+            if (fps < 1 || fps > 100) {
+                std::cerr << QObject::tr("Invalid FPS value.").toStdString() << "\n";
+                return 1;
+            }
+        }
     }
 
     cmdParser.reset();
@@ -986,7 +1000,6 @@ int main(int argc, char **argv)
     GLwindow->show();
 
 
-    double fps = 50;
     app.startIdleCallback(fps);
 
     StartDialog startDlg;
