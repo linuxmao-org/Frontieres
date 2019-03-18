@@ -845,7 +845,7 @@
     <message>
         <location filename="../sources/interface/StartDialog.ui" line="38"/>
         <source>Create a new workspace using a default sound set.</source>
-        <translation>Créer un nouvel espace de travail utilisant un ensemble de son par défaut.</translation>
+        <translation>Créer un nouvel espace de travail utilisant un ensemble de sons par défaut.</translation>
     </message>
     <message>
         <location filename="../sources/interface/StartDialog.ui" line="58"/>
