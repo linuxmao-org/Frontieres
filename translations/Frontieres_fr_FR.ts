@@ -772,7 +772,7 @@
     <message>
         <location filename="../sources/Frontieres.cpp" line="837"/>
         <source>Automatically connect audio streams to the output device.</source>
-        <translation>Connecte automatiquement les flux audio au périphérique de sortie</translation>
+        <translation>Connecte automatiquement les flux audio au périphérique de sortie.</translation>
     </message>
     <message>
         <location filename="../sources/model/Scene.cpp" line="64"/>
