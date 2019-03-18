@@ -481,17 +481,17 @@
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="193"/>
         <source>X motion (&amp;X)</source>
-        <translation>Geste X (&amp;X)</translation>
+        <translation>Mouvement X (&amp;X)</translation>
     </message>
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="198"/>
         <source>Y motion (&amp;Y)</source>
-        <translation>Geste Y (&amp;Y)</translation>
+        <translation>Mouvement Y (&amp;Y)</translation>
     </message>
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="203"/>
         <source>XY motion (&amp;R)</source>
-        <translation>Geste XY (&amp;R)</translation>
+        <translation>Mouvement XY (&amp;R)</translation>
     </message>
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="208"/>
