@@ -62,11 +62,6 @@ CloudVis::~CloudVis()
 CloudVis::CloudVis(float x, float y, unsigned int numGrainsVis,
                                  VecSceneSample *rects)
 {
-    // get screen width and height
-    MyGLScreen *screen = theApplication->GLwindow()->screen();
-    screenWidth = screen->width();
-    screenHeight = screen->height();
-
     startTime = GTime::instance().sec;
 
     updateCloudPosition(x, y);

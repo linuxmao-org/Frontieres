@@ -106,7 +106,6 @@ protected:
 
 private:
     unsigned int myId;
-    unsigned int screenWidth, screenHeight;
     float rWidth, rHeight;
     float rtop, rbot, rleft, rright;
     float rX, rY, rZ;
