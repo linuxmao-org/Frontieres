@@ -31,7 +31,7 @@
     <message>
         <location filename="../sources/interface/AboutDialog.ui" line="92"/>
         <source>This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, version 3.</source>
-        <translation>Ce programme est un logiciel libre : vous pouvez le redistribuer et/ou le modifier sous les termes de la licence publique général GNU telle que publiée par le Free Software Foundation, version 3.</translation>
+        <translation>Ce programme est un logiciel libre : vous pouvez le redistribuer et/ou le modifier sous les termes de la licence publique générale GNU telle que publiée par la Free Software Foundation, version 3.</translation>
     </message>
 </context>
 <context>
@@ -203,12 +203,12 @@
     <message>
         <location filename="../sources/interface/CloudDialog.ui" line="2229"/>
         <source>&amp;Forward</source>
-        <translation>En avant (&amp;f)</translation>
+        <translation>En avant (&amp;F)</translation>
     </message>
     <message>
         <location filename="../sources/interface/CloudDialog.ui" line="2242"/>
         <source>&amp;Backward</source>
-        <translation>En arrière (&amp;b)</translation>
+        <translation>En arrière (&amp;B)</translation>
     </message>
     <message>
         <location filename="../sources/interface/CloudDialog.ui" line="2249"/>
@@ -396,12 +396,12 @@
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="102"/>
         <source>&amp;Help</source>
-        <translation>Aide (&amp;h)</translation>
+        <translation>&amp;Aide</translation>
     </message>
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="117"/>
         <source>&amp;Load scene</source>
-        <translation>Charger une scène (&amp;l)</translation>
+        <translation>Charger une scène (&amp;L)</translation>
     </message>
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="120"/>
@@ -436,7 +436,7 @@
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="148"/>
         <source>&amp;Start controller</source>
-        <translation>Démarrer le contrôleur (&amp;s)</translation>
+        <translation>Démarrer le contrôleur (&amp;S)</translation>
     </message>
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="153"/>
@@ -531,7 +531,7 @@
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="243"/>
         <source>Pitch (&amp;Z)</source>
-        <translation>Hauteur tonale (&amp;Z)</translation>
+        <translation>Tonalité (&amp;Z)</translation>
     </message>
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="248"/>
@@ -589,7 +589,7 @@
     <message>
         <location filename="../sources/interface/OptionsDialog.ui" line="64"/>
         <source>&amp;Start controller</source>
-        <translation>Démarrer le contrôleur (&amp;s)</translation>
+        <translation>Démarrer le contrôleur (&amp;S)</translation>
     </message>
     <message>
         <location filename="../sources/interface/OptionsDialog.ui" line="98"/>
