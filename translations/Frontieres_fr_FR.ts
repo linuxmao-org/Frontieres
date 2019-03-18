@@ -376,7 +376,7 @@
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="57"/>
         <source>&amp;Edit</source>
-        <translation>Édit&amp;er</translation>
+        <translation>Édit&amp;ion</translation>
     </message>
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="65"/>
