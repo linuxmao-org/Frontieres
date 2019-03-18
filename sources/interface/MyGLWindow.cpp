@@ -89,6 +89,8 @@ void MyGLWindow::initialize()
             screen, &MyGLScreen::keyAction_SpatialMode);
     connect(P->ui.actionOverlap, &QAction::triggered,
             screen, &MyGLScreen::keyAction_Overlap);
+    connect(P->ui.actionDirection, &QAction::triggered,
+            screen, &MyGLScreen::keyAction_Direction);
     connect(P->ui.actionWindow, &QAction::triggered,
             screen, &MyGLScreen::keyAction_Window);
     connect(P->ui.actionVolume, &QAction::triggered,

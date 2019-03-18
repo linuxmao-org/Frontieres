@@ -84,6 +84,7 @@
     <addaction name="actionXYmotion"/>
     <addaction name="actionSpatialMode"/>
     <addaction name="actionOverlap"/>
+    <addaction name="actionDirection"/>
     <addaction name="actionWindow"/>
     <addaction name="actionVolume"/>
     <addaction name="actionDuration"/>
@@ -270,6 +271,11 @@
   <action name="actionSampleNames">
    <property name="text">
     <string>Sample names (&amp;N)</string>
+   </property>
+  </action>
+  <action name="actionDirection">
+   <property name="text">
+    <string>Direction (&amp;F)</string>
    </property>
   </action>
  </widget>
