@@ -807,7 +807,7 @@
     <message>
         <location filename="../sources/model/Scene.cpp" line="756"/>
         <source>Load samples</source>
-        <translation>Charger les échantillones</translation>
+        <translation>Charger les échantillons</translation>
     </message>
     <message>
         <location filename="../sources/model/Scene.cpp" line="757"/>
