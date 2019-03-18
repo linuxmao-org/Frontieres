@@ -153,7 +153,7 @@
     <message>
         <location filename="../sources/interface/CloudDialog.ui" line="1195"/>
         <source>Overlap (s)</source>
-        <translatio>Chevauchement (s)</translation>
+        <translation>Chevauchement (s)</translation>
     </message>
     <message>
         <location filename="../sources/interface/CloudDialog.ui" line="1348"/>
