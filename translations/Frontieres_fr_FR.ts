@@ -336,27 +336,27 @@
 <context>
     <name>MyGLApplication</name>
     <message>
-        <location filename="../sources/interface/MyGLApplication.cpp" line="156"/>
+        <location filename="../sources/interface/MyGLApplication.cpp" line="162"/>
         <source>Load sample</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLApplication.cpp" line="157"/>
+        <location filename="../sources/interface/MyGLApplication.cpp" line="163"/>
         <source>Sample files (*.*)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLApplication.cpp" line="192"/>
+        <location filename="../sources/interface/MyGLApplication.cpp" line="198"/>
         <source>Cloud parameters</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLApplication.cpp" line="247"/>
+        <location filename="../sources/interface/MyGLApplication.cpp" line="253"/>
         <source>Combinations</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLApplication.cpp" line="256"/>
+        <location filename="../sources/interface/MyGLApplication.cpp" line="262"/>
         <source>Midi instrument</source>
         <translation type="unfinished"></translation>
     </message>
@@ -394,163 +394,183 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.ui" line="100"/>
+        <location filename="../sources/interface/MyGLWindow.ui" line="102"/>
         <source>&amp;Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.ui" line="113"/>
+        <location filename="../sources/interface/MyGLWindow.ui" line="117"/>
         <source>&amp;Load scene</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.ui" line="116"/>
+        <location filename="../sources/interface/MyGLWindow.ui" line="120"/>
         <source>Ctrl+O</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.ui" line="121"/>
+        <location filename="../sources/interface/MyGLWindow.ui" line="125"/>
         <source>&amp;Save scene</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.ui" line="124"/>
+        <location filename="../sources/interface/MyGLWindow.ui" line="128"/>
         <source>Ctrl+S</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.ui" line="129"/>
+        <location filename="../sources/interface/MyGLWindow.ui" line="133"/>
         <source>&amp;Quit</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.ui" line="134"/>
+        <location filename="../sources/interface/MyGLWindow.ui" line="138"/>
         <source>&amp;Add samples...</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.ui" line="139"/>
+        <location filename="../sources/interface/MyGLWindow.ui" line="143"/>
         <source>Load &amp;clouds defaults</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.ui" line="144"/>
+        <location filename="../sources/interface/MyGLWindow.ui" line="148"/>
         <source>&amp;Start controller</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.ui" line="149"/>
+        <location filename="../sources/interface/MyGLWindow.ui" line="153"/>
         <source>&amp;Options</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.ui" line="154"/>
+        <location filename="../sources/interface/MyGLWindow.ui" line="158"/>
         <source>&amp;Control</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.ui" line="159"/>
+        <location filename="../sources/interface/MyGLWindow.ui" line="163"/>
         <source>&amp;Combinations</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.ui" line="164"/>
+        <location filename="../sources/interface/MyGLWindow.ui" line="168"/>
         <source>&amp;Instrument</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.ui" line="169"/>
+        <location filename="../sources/interface/MyGLWindow.ui" line="173"/>
         <source>C&amp;ombi</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.ui" line="174"/>
+        <location filename="../sources/interface/MyGLWindow.ui" line="178"/>
         <source>Full screen (&amp;O)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.ui" line="179"/>
+        <location filename="../sources/interface/MyGLWindow.ui" line="183"/>
         <source>Spatial mode (&amp;T)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.ui" line="184"/>
+        <location filename="../sources/interface/MyGLWindow.ui" line="188"/>
         <source>Overlap (&amp;S)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.ui" line="189"/>
+        <location filename="../sources/interface/MyGLWindow.ui" line="193"/>
         <source>X motion (&amp;X)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.ui" line="194"/>
+        <location filename="../sources/interface/MyGLWindow.ui" line="198"/>
         <source>Y motion (&amp;Y)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.ui" line="199"/>
+        <location filename="../sources/interface/MyGLWindow.ui" line="203"/>
         <source>XY motion (&amp;R)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.ui" line="204"/>
+        <location filename="../sources/interface/MyGLWindow.ui" line="208"/>
         <source>Window (&amp;W)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.ui" line="209"/>
+        <location filename="../sources/interface/MyGLWindow.ui" line="213"/>
         <source>Volume (&amp;B)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.ui" line="214"/>
+        <location filename="../sources/interface/MyGLWindow.ui" line="218"/>
         <source>Cloud (&amp;G)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.ui" line="219"/>
+        <location filename="../sources/interface/MyGLWindow.ui" line="223"/>
         <source>Grain (&amp;V)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.ui" line="224"/>
+        <location filename="../sources/interface/MyGLWindow.ui" line="228"/>
         <source>Duration (&amp;D)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.ui" line="229"/>
+        <location filename="../sources/interface/MyGLWindow.ui" line="233"/>
         <source>LFO frequency (&amp;L)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.ui" line="234"/>
+        <location filename="../sources/interface/MyGLWindow.ui" line="238"/>
         <source>LFO amount (&amp;K)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.ui" line="239"/>
+        <location filename="../sources/interface/MyGLWindow.ui" line="243"/>
         <source>Pitch (&amp;Z)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.ui" line="244"/>
+        <location filename="../sources/interface/MyGLWindow.ui" line="248"/>
         <source>Active (&amp;A)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.ui" line="249"/>
+        <location filename="../sources/interface/MyGLWindow.ui" line="253"/>
         <source>Edit cloud (&amp;P)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.ui" line="254"/>
+        <location filename="../sources/interface/MyGLWindow.ui" line="258"/>
         <source>Edit envelope (&amp;E)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.ui" line="259"/>
+        <location filename="../sources/interface/MyGLWindow.ui" line="263"/>
         <source>About &amp;Frontières</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/MyGLWindow.ui" line="268"/>
+        <source>User &amp;manual</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/MyGLWindow.ui" line="273"/>
+        <source>Sample names (&amp;N)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/MyGLWindow.ui" line="278"/>
+        <source>Direction (&amp;F)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="152"/>
+        <source>User manual</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -605,133 +625,153 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="446"/>
+        <location filename="../sources/Frontieres.cpp" line="424"/>
         <source>CLICK TO START</source>
         <translation type="unfinished">CLIC POUR DÉMARRER</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="454"/>
+        <location filename="../sources/Frontieres.cpp" line="432"/>
         <source>ESCAPE TO QUIT</source>
         <translation type="unfinished">ÉCHAP POUR QUITTER</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="491"/>
+        <location filename="../sources/Frontieres.cpp" line="461"/>
         <source>Grains: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="498"/>
+        <location filename="../sources/Frontieres.cpp" line="468"/>
         <source>Duration: </source>
         <translation type="unfinished">Durée : </translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="513"/>
+        <location filename="../sources/Frontieres.cpp" line="483"/>
         <source>Window: HANNING</source>
         <translation type="unfinished">Fenêtre : HANNING</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="516"/>
+        <location filename="../sources/Frontieres.cpp" line="486"/>
         <source>Window: TRIANGLE</source>
         <translation type="unfinished">Fenêtre : TRIANGLE</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="519"/>
+        <location filename="../sources/Frontieres.cpp" line="489"/>
         <source>Window: REXPDEC</source>
         <translation type="unfinished">Fenêtre : REXPDEC</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="522"/>
+        <location filename="../sources/Frontieres.cpp" line="492"/>
         <source>Window: EXPDEC</source>
         <translation type="unfinished">Fenêtre : EXPDEC</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="525"/>
+        <location filename="../sources/Frontieres.cpp" line="495"/>
         <source>Window: SINC</source>
         <translation type="unfinished">Fenêtre : SINC</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="528"/>
+        <location filename="../sources/Frontieres.cpp" line="498"/>
         <source>Window: RANDOM_WIN</source>
         <translation type="unfinished">Fenêtre : RANDOM_WIN</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="539"/>
+        <location filename="../sources/Frontieres.cpp" line="509"/>
         <source>X: </source>
         <translation type="unfinished">X : </translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="546"/>
+        <location filename="../sources/Frontieres.cpp" line="516"/>
         <source>Y: </source>
         <translation type="unfinished">Y : </translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="553"/>
+        <location filename="../sources/Frontieres.cpp" line="523"/>
         <source>X,Y: </source>
         <translation type="unfinished">X, Y : </translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="565"/>
+        <location filename="../sources/Frontieres.cpp" line="535"/>
         <source>Direction: FORWARD</source>
         <translation type="unfinished">Direction : EN AVANT</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="568"/>
+        <location filename="../sources/Frontieres.cpp" line="538"/>
         <source>Direction: BACKWARD</source>
         <translation type="unfinished">Direction : EN ARRIÈRE</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="571"/>
+        <location filename="../sources/Frontieres.cpp" line="541"/>
         <source>Direction: RANDOM</source>
         <translation type="unfinished">Direction : HASARD</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="584"/>
+        <location filename="../sources/Frontieres.cpp" line="554"/>
         <source>Spatial Mode: UNITY</source>
         <translation type="unfinished">Balance panoramique : UNITÉ</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="587"/>
+        <location filename="../sources/Frontieres.cpp" line="557"/>
         <source>Spatial Mode: STEREO</source>
         <translation type="unfinished">Balance panoramique : STÉRÉO</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="590"/>
+        <location filename="../sources/Frontieres.cpp" line="560"/>
         <source>Spatial Mode: AROUND</source>
         <translation type="unfinished">Balance panoramique : AUTOUR</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="600"/>
+        <location filename="../sources/Frontieres.cpp" line="570"/>
         <source>Volume (dB): </source>
         <translation type="unfinished">Volume (dB) : </translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="612"/>
+        <location filename="../sources/Frontieres.cpp" line="582"/>
         <source>Overlap: </source>
         <translation type="unfinished">Chevauchement : </translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="625"/>
+        <location filename="../sources/Frontieres.cpp" line="595"/>
         <source>Pitch: </source>
         <translation type="unfinished">Tonalité : </translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="639"/>
+        <location filename="../sources/Frontieres.cpp" line="609"/>
         <source>Pitch LFO Freq: </source>
         <translation type="unfinished">Fréquence LFO de la tonalité : </translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="652"/>
+        <location filename="../sources/Frontieres.cpp" line="622"/>
         <source>Pitch LFO Amount: </source>
         <translation type="unfinished">Quantité LFO de la tonalité : </translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="665"/>
+        <location filename="../sources/Frontieres.cpp" line="635"/>
         <source>Cloud ID/Num: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="683"/>
+        <location filename="../sources/Frontieres.cpp" line="653"/>
         <source>Sample: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../sources/Frontieres.cpp" line="825"/>
+        <source>Interactive granular sampler</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../sources/Frontieres.cpp" line="831"/>
+        <source>Set the number of output channels.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../sources/Frontieres.cpp" line="832"/>
+        <source>channel-count</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../sources/Frontieres.cpp" line="837"/>
+        <source>Automatically connect audio streams to the output device.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
