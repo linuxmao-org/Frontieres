@@ -813,6 +813,8 @@ int main(int argc, char **argv)
 {
     int exitCode = 0;
 
+    bool autoconnect = false;
+
     // init random number generator
     srand(time(NULL));
     // start time
@@ -825,29 +827,39 @@ int main(int argc, char **argv)
     //-------------Command Line-----------//
 
     std::unique_ptr<QCommandLineParser> cmdParser(new QCommandLineParser);
-    cmdParser->setApplicationDescription(QObject::tr("Interactive granular sampler"));
-    QCommandLineOption optHelp = cmdParser->addHelpOption();
-    QCommandLineOption optVersion = cmdParser->addVersionOption();
 
-    QCommandLineOption optNumChannels(
-        QStringList() << "c" << "channels",
-        QObject::tr("Set the number of output channels."),
-        QObject::tr("channel-count"));
-    cmdParser->addOption(optNumChannels);
+    {
+        cmdParser->setApplicationDescription(QObject::tr("Interactive granular sampler"));
+        QCommandLineOption optHelp = cmdParser->addHelpOption();
+        QCommandLineOption optVersion = cmdParser->addVersionOption();
 
-    cmdParser->process(app);
+        QCommandLineOption optNumChannels(
+            QStringList() << "c" << "channels",
+            QObject::tr("Set the number of output channels."),
+            QObject::tr("channel-count"));
+        cmdParser->addOption(optNumChannels);
 
-    if (cmdParser->isSet(optHelp)) {
-        cmdParser->showHelp();
-        return 0;
+        QCommandLineOption optAutoconnect(
+            QStringList() << "a" << "autoconnect",
+            QObject::tr("Automatically connect audio streams to the output device."));
+        cmdParser->addOption(optAutoconnect);
+
+        cmdParser->process(app);
+
+        if (cmdParser->isSet(optHelp)) {
+            cmdParser->showHelp();
+            return 0;
+        }
+        if (cmdParser->isSet(optVersion)) {
+            cmdParser->showVersion();
+            return 0;
+        }
+
+        if (cmdParser->isSet(optNumChannels))
+            theChannelCount = cmdParser->value(optNumChannels).toUInt();
+        if (cmdParser->isSet(optAutoconnect))
+            autoconnect = true;
     }
-    if (cmdParser->isSet(optVersion)) {
-        cmdParser->showVersion();
-        return 0;
-    }
-
-    if (cmdParser->isSet(optNumChannels))
-        theChannelCount = cmdParser->value(optNumChannels).toUInt();
 
     cmdParser.reset();
 
@@ -979,6 +991,8 @@ int main(int argc, char **argv)
 
     // start audio stream
     theAudio->startStream();
+    if (autoconnect)
+        theAudio->connectOutputs();
 
     // start OSC
     MyRtOsc &osc = MyRtOsc::instance();

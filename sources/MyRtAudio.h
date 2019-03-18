@@ -51,6 +51,9 @@ public:
     typedef void (*AudioCallback)(BUFFERPREC *out, unsigned int numFrames, void *userData);
     virtual bool openStream(AudioCallback callback, void *userData) = 0;
 
+    // connect outputs
+    virtual void connectOutputs() = 0;
+
     // report the current sample rate
     virtual unsigned int getSampleRate() = 0;
 
@@ -87,6 +90,7 @@ public:
 
     // set the audio callback and start the audio stream
     bool openStream(AudioCallback callback, void *userData) override;
+    void connectOutputs() override {}
 
     unsigned int getSampleRate() override;
     unsigned int getBufferSize() override;
@@ -134,6 +138,7 @@ public:
 
     // set the audio callback and start the audio stream
     bool openStream(AudioCallback callback, void *userData) override;
+    void connectOutputs() override;
 
     unsigned int getSampleRate() override;
     unsigned int getBufferSize() override;

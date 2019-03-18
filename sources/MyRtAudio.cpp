@@ -28,7 +28,7 @@
 //-----------------------------------------------------------------------------
 
 #include "MyRtAudio.h"
-using namespace std;
+#include <string.h>
 
 
 MyRtAudio::MyRtAudio(unsigned int numOuts)
@@ -225,6 +225,37 @@ bool MyRtJack::openStream(AudioCallback callback, void *userData)
 
     jack_set_process_callback(client.get(), &jackProcess, this);
     return true;
+}
+
+void MyRtJack::connectOutputs()
+{
+    std::unique_ptr<const char *[], void (*)(void *)> ports(
+        jack_get_ports(client.get(), nullptr, JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput),
+        &free);
+
+    if (!ports)
+        return;
+
+    // identify the default device (the first one)
+    std::string device;
+    if (ports[0]) {
+        if (const char *separator = strchr(ports[0], ':'))
+            device.assign(ports[0], separator);
+    }
+
+    if (device.empty())
+        return;
+
+    // connect ports
+    unsigned nports = 0;
+    unsigned maxports = outputs.size();
+    for (const char **p = ports.get(), *port; nports < maxports && (port = *p); ++p) {
+        bool is_of_device = strlen(port) > device.size() &&
+            port[device.size()] == ':' &&
+            !memcmp(port, device.data(), device.size());
+        if (is_of_device)
+            jack_connect(client.get(), jack_port_name(outputs[nports++]), port);
+    }
 }
 
 unsigned int MyRtJack::getSampleRate()
