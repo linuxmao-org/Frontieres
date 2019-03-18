@@ -561,7 +561,7 @@
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="273"/>
         <source>Sample names (&amp;N)</source>
-        <translation>Noms de l'échantillon (&amp;N)</translation>
+        <translation>Noms d'échantillons (&amp;N)</translation>
     </message>
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="278"/>
