@@ -767,7 +767,7 @@
     <message>
         <location filename="../sources/Frontieres.cpp" line="832"/>
         <source>channel-count</source>
-        <translation>compte-canal</translation>
+        <translation>nombre-canaux</translation>
     </message>
     <message>
         <location filename="../sources/Frontieres.cpp" line="837"/>
