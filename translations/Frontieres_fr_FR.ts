@@ -87,7 +87,7 @@
     <message>
         <location filename="../sources/interface/AdsrDialog.ui" line="401"/>
         <source>Decay/Attack2</source>
-        <translation>Délcin/attaque2</translation>
+        <translation>Déclin/attaque2</translation>
     </message>
 </context>
 <context>
@@ -153,7 +153,7 @@
     <message>
         <location filename="../sources/interface/CloudDialog.ui" line="1195"/>
         <source>Overlap (s)</source>
-        <translatio>Chevauchement (s)</translation>
+        <translation>Chevauchement (s)</translation>
     </message>
     <message>
         <location filename="../sources/interface/CloudDialog.ui" line="1348"/>
@@ -401,7 +401,7 @@
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="117"/>
         <source>&amp;Load scene</source>
-        <translation>Charger une scène (&amp;)</translation>
+        <translation>Charger une scène (&amp;l)</translation>
     </message>
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="120"/>
@@ -426,7 +426,7 @@
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="138"/>
         <source>&amp;Add samples...</source>
-        <translation>>&amp;Ajouter des échantillons...</translation>
+        <translation>&amp;Ajouter des échantillons...</translation>
     </message>
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="143"/>
@@ -466,7 +466,7 @@
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="178"/>
         <source>Full screen (&amp;O)</source>
-        <translation>Plein écran (&amp;O)></translation>
+        <translation>Plein écran (&amp;O)</translation>
     </message>
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="183"/>
@@ -589,7 +589,7 @@
     <message>
         <location filename="../sources/interface/OptionsDialog.ui" line="64"/>
         <source>&amp;Start controller</source>
-        <translation>Démarrer le contrôleur (&amp;)</translation>
+        <translation>Démarrer le contrôleur (&amp;s)</translation>
     </message>
     <message>
         <location filename="../sources/interface/OptionsDialog.ui" line="98"/>
