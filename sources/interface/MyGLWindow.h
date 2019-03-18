@@ -39,6 +39,9 @@ public:
     void setMenuBarVisible(bool visible);
     MyGLScreen *screen() const;
 
+public slots:
+    void on_actionAbout_triggered();
+
 private:
     struct Impl;
     std::unique_ptr<Impl> P;
@@ -46,9 +49,31 @@ private:
 
 // the openGL screen
 class MyGLScreen : public QOpenGLWidget {
+    Q_OBJECT
+
 public:
-    MyGLScreen(QWidget *parent = nullptr);
+    explicit MyGLScreen(QWidget *parent = nullptr);
     ~MyGLScreen();
+
+public slots:
+    void keyAction_FullScreen();
+    void keyAction_SpatialMode(int dir = +1);
+    void keyAction_Overlap(int dir = +1);
+    void keyAction_MotionX();
+    void keyAction_MotionY();
+    void keyAction_MotionXY();
+    void keyAction_Direction(int dir = +1);
+    void keyAction_Window(int dir = +1);
+    void keyAction_Volume(int dir = +1);
+    void keyAction_Cloud(int dir = +1);
+    void keyAction_Grain(int dir = +1);
+    void keyAction_Duration(int dir = +1);
+    void keyAction_LfoFreq(int dir = +1);
+    void keyAction_LfoAmount(int dir = +1);
+    void keyAction_Pitch(int dir = +1);
+    void keyAction_Active();
+    void keyAction_EditEnvelope();
+    void keyAction_EditCloud();
 
 protected:
     void initializeGL() override;

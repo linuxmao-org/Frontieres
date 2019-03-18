@@ -245,10 +245,10 @@ void Sample::resampleTo(unsigned int newRate)
     unsigned oldRate = sampleRate;
     BUFFERPREC *oldWave = wave;
 
-    unsigned newFrames = ceil((double)oldRate * newRate / oldRate);
+    unsigned newFrames = ceil((double)oldFrames * newRate / oldRate);
     BUFFERPREC *newWave = new BUFFERPREC[channels * newFrames];
 
-    soxr_io_spec_t io_spec = soxr_io_spec(MY_RESAMPLER_FORMAT_I, MY_RESAMPLER_FORMAT_I);
+    soxr_io_spec_t io_spec = soxr_io_spec(SOXR_FLOAT32_I, SOXR_FLOAT32_I);
     soxr_quality_spec_t quality_spec = soxr_quality_spec(SOXR_VHQ, 0);
     soxr_runtime_spec_t runtime_spec = soxr_runtime_spec(2);
 

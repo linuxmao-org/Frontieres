@@ -37,6 +37,9 @@
 #include "interface/MyGLApplication.h"
 #include "interface/MyGLWindow.h"
 
+// graphics includes
+#include <qopengl.h>
+
 // destructor
 SampleVis::~SampleVis()
 {
@@ -329,7 +332,7 @@ void SampleVis::setUps()
 //    lastY = (float)y;
 //}
 
-void SampleVis::associateSample(double *theBuff, unsigned long buffFrames, unsigned int buffChans, const string &name)
+void SampleVis::associateSample(BUFFERPREC *theBuff, unsigned long buffFrames, unsigned int buffChans, const string &name)
 {
 
     myBuff = theBuff;

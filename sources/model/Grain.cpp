@@ -55,7 +55,7 @@ Grain::~Grain()
 
 Grain::Grain(VecSceneSample *sampleSet, float durationMs, float thePitch)
 {
-
+    unsigned channelCount = theChannelCount;
 
     // store pointer to external vector of sample files
     theSamples = sampleSet;
@@ -95,10 +95,10 @@ Grain::Grain(VecSceneSample *sampleSet, float durationMs, float thePitch)
 
 
     // spatialization
-    queuedChanMults = new double[MY_CHANNELS];
-    chanMults = new double[MY_CHANNELS];
+    queuedChanMults = new double[channelCount];
+    chanMults = new double[channelCount];
     // set panning values - all channels active by default
-    for (int i = 0; i < MY_CHANNELS; i++) {
+    for (int i = 0; i < channelCount; i++) {
         chanMults[i] = 1.0;
         queuedChanMults[i] = 1.0;
     }
@@ -176,7 +176,8 @@ bool Grain::isPlaying()
 //-----------------------------------------------------------------------------
 void Grain::setChannelMultipliers(double *multipliers)
 {
-    for (int i = 0; i < MY_CHANNELS; i++) {
+    unsigned channelCount = theChannelCount;
+    for (int i = 0; i < channelCount; i++) {
         queuedChanMults[i] = multipliers[i];
     }
     newParam = true;
@@ -237,6 +238,8 @@ float Grain::getPitch()
 //-----------------------------------------------------------------------------
 void Grain::updateParams()
 {
+    unsigned channelCount = theChannelCount;
+
     // update parameter set
 
     localAtten = queuedLocalAtten;
@@ -266,7 +269,7 @@ void Grain::updateParams()
     winInc = (double)WINDOW_LEN / winDurationSamps;
 
     // spatialization - get new channel multipliers
-    for (int i = 0; i < MY_CHANNELS; i++) {
+    for (int i = 0; i < channelCount; i++) {
         chanMults[i] = queuedChanMults[i];
     }
 
@@ -328,6 +331,7 @@ void Grain::setDirection(float thedir)
 void Grain::nextBuffer(double *accumBuff, unsigned int numFrames,
                             unsigned int bufferOffset, int name)
 {
+    unsigned channelCount = theChannelCount;
 
     // fill stereo accumulation buffer.  note, buffer output must be interlaced
     // ch1,ch2,ch1,ch2, etc... and playPositions are in frames, NOT SAMPLES.
@@ -350,7 +354,7 @@ void Grain::nextBuffer(double *accumBuff, unsigned int numFrames,
         int nextSample = -1;
 
         // waveform params
-        double *wave = NULL;
+        BUFFERPREC *wave = NULL;
         int channels = 0;
         unsigned int frames = 0;
 
@@ -429,10 +433,10 @@ void Grain::nextBuffer(double *accumBuff, unsigned int numFrames,
                             monoWaveVal += nextAmp;
 
                             /*//old
-                             accumBuff[(bufferOffset + i)*MY_CHANNELS] += nextAmp;
+                             accumBuff[(bufferOffset + i)*channelCount] += nextAmp;
                             //copy to other channels for mono
-                            for (int k = 1; k < MY_CHANNELS; k++){
-                                accumBuff[(bufferOffset + i) * MY_CHANNELS + k] += nextAmp;
+                            for (int k = 1; k < channelCount; k++){
+                                accumBuff[(bufferOffset + i) * channelCount + k] += nextAmp;
                             }
                              */
 
@@ -463,11 +467,11 @@ void Grain::nextBuffer(double *accumBuff, unsigned int numFrames,
 
                             /*//old
                             //left channel
-                            accumBuff[(bufferOffset + i)*MY_CHANNELS] += (((double)
+                            accumBuff[(bufferOffset + i)*channelCount] += (((double)
                             1.0 - nu)*wave[(unsigned long)flooredIdx*2] + nu * wave[(unsigned long)(flooredIdx + 1)*2])*nextMult*atten;
 
                             //right channel
-                            accumBuff[(bufferOffset + i) * MY_CHANNELS + 1] +=
+                            accumBuff[(bufferOffset + i) * channelCount + 1] +=
                             (((double) 1.0 - nu)*wave[(unsigned long)flooredIdx*2 + 1] + nu * wave[(unsigned long)(flooredIdx + 1)*2 + 1])*nextMult*atten;
                              */
 
@@ -489,24 +493,24 @@ void Grain::nextBuffer(double *accumBuff, unsigned int numFrames,
             }  // end accumulation for current frame
 
             // spatialize output
-            for (int k = 0; k < MY_CHANNELS; k++) {
+            for (int k = 0; k < channelCount; k++) {
                 // preserve stereo waveform L/R for now and just sample alternate channels in "AROUND" case (see Cloud.cpp updateSpatialization routine)
                 if ((k % 2) == 0) {
-                    accumBuff[(bufferOffset + i) * MY_CHANNELS + k] +=
+                    accumBuff[(bufferOffset + i) * channelCount + k] +=
                         (stereoLeftVal + monoWaveVal) * chanMults[k] * localAtten;
                 }
                 else {
-                    accumBuff[(bufferOffset + i) * MY_CHANNELS + k] +=
+                    accumBuff[(bufferOffset + i) * channelCount + k] +=
                         (stereoRightVal + monoWaveVal) * chanMults[k] * localAtten;
                 }
 
                 // clip if needed
-                if (accumBuff[(bufferOffset + i) * MY_CHANNELS + k] > 1.0) {
-                    accumBuff[(bufferOffset + i) * MY_CHANNELS + k] = 1.0;
+                if (accumBuff[(bufferOffset + i) * channelCount + k] > 1.0) {
+                    accumBuff[(bufferOffset + i) * channelCount + k] = 1.0;
                 }
                 else {
-                    if (accumBuff[(bufferOffset + i) * MY_CHANNELS + k] < -1.0) {
-                        accumBuff[(bufferOffset + i) * MY_CHANNELS + k] = -1.0;
+                    if (accumBuff[(bufferOffset + i) * channelCount + k] < -1.0) {
+                        accumBuff[(bufferOffset + i) * channelCount + k] = -1.0;
                     }
                 }
             }

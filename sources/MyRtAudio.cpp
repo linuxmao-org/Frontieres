@@ -28,81 +28,65 @@
 //-----------------------------------------------------------------------------
 
 #include "MyRtAudio.h"
-using namespace std;
+#include <string.h>
 
 
-// destructor
-MyRtAudio::~MyRtAudio()
-{
-    // cleanup
-    delete audio;
-    // cerr << "rtaudio cleanup reached " << endl;
-}
-
-MyRtAudio::MyRtAudio(unsigned int numIns, unsigned int numOuts,
-                     unsigned int *bufferSize, RtAudioFormat format, bool showWarnings)
+MyRtAudio::MyRtAudio(unsigned int numOuts)
 {
     // configure RtAudio
-    // create pointer to RtAudio object
-    audio = NULL;
     // create the object
-    try {
-        audio = new RtAudio();
-    }
-    catch (RtAudioError &err) {
-        err.printMessage();
-        exit(1);
-    }
-
-    // io
-    numInputs = numIns;
-    numOutputs = numOuts;
+    audio.reset(new RtAudio);
 
     // check audio devices
-    if (audio->getDeviceCount() < 1) {
-        // no audio available
-        cout << "No Audio Devices Found!" << endl;
-        exit(1);
-    }
     const RtAudio::DeviceInfo &info =
         audio->getDeviceInfo(audio->getDefaultOutputDevice());
 
-
-    // allow RtAudio to print msgs to stderr
-    audio->showWarnings(showWarnings);
+    // io
+    if (numOuts <= info.outputChannels)
+        numOutputs = numOuts;
+    else
+        numOutputs = info.outputChannels;
 
     // store pointer to bufferSize
-    myBufferSize = bufferSize;
+    myBufferSize = 1024;
 
     // set sample rate;
     mySRate = info.preferredSampleRate;
+}
 
-    // set format
-    myFormat = format;
+
+int MyRtAudio::rtaudioCallback(
+    void *outputBuffer, void *, unsigned int numFrames,
+    double, RtAudioStreamStatus, void *userData)
+{
+    MyRtAudio *self = (MyRtAudio *)userData;
+    self->audioCallback((float *)outputBuffer, numFrames, self->audioUserData);
+    return 0;
 }
 
 
 // set the audio callback and start the audio stream
-void MyRtAudio::openStream(RtAudioCallback callback)
+bool MyRtAudio::openStream(AudioCallback callback, void *userData)
 {
+    audioCallback = callback;
+    audioUserData = userData;
 
     // create stream options
     RtAudio::StreamOptions options;
     options.streamName = "Frontieres";
-    options.flags = RTAUDIO_JACK_DONT_CONNECT;
 
-    RtAudio::StreamParameters iParams, oParams;
+    RtAudio::StreamParameters oParams;
     // i/o params
-    iParams.deviceId = audio->getDefaultInputDevice();
-    iParams.nChannels = numInputs;
-    iParams.firstChannel = 0;
     oParams.deviceId = audio->getDefaultOutputDevice();
     oParams.nChannels = numOutputs;
     oParams.firstChannel = 0;
 
     // open stream
-    audio->openStream(&oParams, &iParams, RTAUDIO_FLOAT64, mySRate,
-                      myBufferSize, callback, NULL, &options);
+    hasError = false;
+    audio->openStream(&oParams, nullptr, RTAUDIO_FLOAT32, mySRate,
+                      &myBufferSize, &rtaudioCallback, this, &options, &errorCallback);
+
+    return !hasError;
 }
 
 // report the current sample rate
@@ -115,41 +99,206 @@ unsigned int MyRtAudio::getSampleRate()
 // report the current buffer size
 unsigned int MyRtAudio::getBufferSize()
 {
+    return myBufferSize;
+}
 
-    cerr << "Buffer size defined by RtAudio: " << (*myBufferSize) << endl;
-    return (*myBufferSize);
+
+// get the obtained channel count
+unsigned int MyRtAudio::getObtainedOutputChannels()
+{
+    return numOutputs;
 }
 
 
 // start rtaudio stream
-void MyRtAudio::startStream()
+bool MyRtAudio::startStream()
 {
     // start audio stream
+    hasError = false;
     audio->startStream();
+
+    return !hasError;
 }
 
 // stop rtaudio stream
-void MyRtAudio::stopStream()
+bool MyRtAudio::stopStream()
 {
     // try to stop audio stream
-    try {
-        audio->stopStream();
-    }
-    catch (RtAudioError &err) {
-        err.printMessage();
-    }
-}
+    hasError = false;
+    audio->stopStream();
 
-// close audio stream
-void MyRtAudio::closeStream()
-{
-    audio->closeStream();
+    return !hasError;
 }
-
 
 // report the stream latency
-void MyRtAudio::reportStreamLatency()
+int MyRtAudio::getStreamLatency()
 {
-    // report latency
-    cout << "Stream Latency: " << audio->getStreamLatency() << " frames" << endl;
+    return audio->getStreamLatency();
+}
+
+void MyRtAudio::errorCallback(RtAudioError::Type type, const std::string &errorText)
+{
+    if (type == RtAudioError::DEBUG_WARNING)
+        return;
+
+    hasError = type != RtAudioError::WARNING;
+    std::cerr << errorText << "\n";
+}
+
+void MyRtAudio::midiInCallback(double timeStamp, std::vector<unsigned char> *message, void *userData)
+{
+    MyRtAudio *self = (MyRtAudio *)userData;
+    self->receiveMidiIn(message->data(), (unsigned)message->size(), self->receiveMidiInUserData);
+}
+
+int MyRtAudio::openMidiInput(ReceiveMidi receive, unsigned bufferSize, void *userData)
+{
+    if (midiIn)
+        return -1;
+
+    midiIn.reset(new RtMidiIn(RtMidi::UNSPECIFIED, "Frontieres", bufferSize));
+
+    receiveMidiIn = receive;
+    receiveMidiInUserData = userData;
+
+    midiIn->setCallback(&midiInCallback, this);
+    midiIn->openVirtualPort();
+
+    return 0;
+}
+
+bool MyRtAudio::hasError;
+
+//------------------------------------------------------------------------------
+MyRtJack::MyRtJack(unsigned int numOuts)
+{
+    numOutputs = numOuts;
+}
+
+int MyRtJack::jackProcess(jack_nframes_t nframes, void *userData)
+{
+    MyRtJack *self = (MyRtJack *)userData;
+
+    if (self->midiIn && self->receiveMidiIn) {
+        void *buffer = jack_port_get_buffer(self->midiIn, nframes);
+
+        for (uint32_t i = 0, n = jack_midi_get_event_count(buffer); i < n; ++i) {
+            jack_midi_event_t event;
+            if (jack_midi_event_get(&event, buffer, i) == 0)
+                self->receiveMidiIn(event.buffer, event.size, self->receiveMidiInUserData);
+        }
+    }
+
+    float *temp = self->outputBuffer.get();
+    self->audioCallback(temp, nframes, self->audioUserData);
+
+    for (unsigned c = 0, nc = self->numOutputs; c < nc; ++c) {
+        float *buffer = (float *)jack_port_get_buffer(self->outputs[c], nframes);
+        for (unsigned i = 0; i < nframes; ++i)
+            buffer[i] = temp[i * nc + c];
+    }
+
+    return 0;
+}
+
+bool MyRtJack::openStream(AudioCallback callback, void *userData)
+{
+    if (client)
+        return false;
+
+    client.reset(jack_client_open("Frontieres", JackNoStartServer, nullptr));
+    if (!client)
+        return false;
+
+    outputBuffer.reset(new float[numOutputs * jack_get_buffer_size(client.get())]);
+
+    audioCallback = callback;
+    audioUserData = userData;
+
+    for (unsigned i = 0; i < numOutputs; ++i) {
+        char name[64];
+        sprintf(name, "Output %u", i + 1);
+        jack_port_t *port = jack_port_register(client.get(), name, JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
+        if (!port) return false;
+        outputs.push_back(port);
+    }
+
+    jack_set_process_callback(client.get(), &jackProcess, this);
+    return true;
+}
+
+void MyRtJack::connectOutputs()
+{
+    std::unique_ptr<const char *[], void (*)(void *)> ports(
+        jack_get_ports(client.get(), nullptr, JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput),
+        &free);
+
+    if (!ports)
+        return;
+
+    // identify the default device (the first one)
+    std::string device;
+    if (ports[0]) {
+        if (const char *separator = strchr(ports[0], ':'))
+            device.assign(ports[0], separator);
+    }
+
+    if (device.empty())
+        return;
+
+    // connect ports
+    unsigned nports = 0;
+    unsigned maxports = outputs.size();
+    for (const char **p = ports.get(), *port; nports < maxports && (port = *p); ++p) {
+        bool is_of_device = strlen(port) > device.size() &&
+            port[device.size()] == ':' &&
+            !memcmp(port, device.data(), device.size());
+        if (is_of_device)
+            jack_connect(client.get(), jack_port_name(outputs[nports++]), port);
+    }
+}
+
+unsigned int MyRtJack::getSampleRate()
+{
+    return jack_get_sample_rate(client.get());
+}
+
+unsigned int MyRtJack::getBufferSize()
+{
+    return jack_get_buffer_size(client.get());
+}
+
+unsigned int MyRtJack::getObtainedOutputChannels()
+{
+    return (unsigned)outputs.size();
+}
+
+bool MyRtJack::startStream()
+{
+    return jack_activate(client.get()) == 0;
+}
+
+bool MyRtJack::stopStream()
+{
+    return jack_deactivate(client.get()) == 0;
+}
+
+int MyRtJack::getStreamLatency()
+{
+    return 0;
+}
+
+int MyRtJack::openMidiInput(ReceiveMidi receive, unsigned bufferSize, void *userData)
+{
+    if (midiIn)
+        return -1;
+
+    receiveMidiInUserData = userData;
+    receiveMidiIn = receive;
+
+    midiIn = jack_port_register(client.get(), "MIDI input", JACK_DEFAULT_MIDI_TYPE, JackPortIsInput, bufferSize);
+    if (!midiIn)
+        return -1;
+
+    return 0;
 }

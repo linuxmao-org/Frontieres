@@ -118,7 +118,11 @@ FORMS += \
   sources/interface/OptionsDialog.ui \
   sources/interface/CombiDialog.ui \
   sources/interface/BankDialog.ui \
-  sources/interface/InstrumDialog.ui
+  sources/interface/InstrumDialog.ui \
+  sources/interface/AboutDialog.ui
+
+TRANSLATIONS += \
+  translations/Frontieres_fr_FR.ts
 
 # RtOsc
 INCLUDEPATH += $$PWD/libraries/rtosc/include

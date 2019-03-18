@@ -26,7 +26,6 @@
 #include "Grain.h"
 #include "Sample.h"
 #include "ParamCloud.h"
-#include "I18n.h"
 #include "visual/SampleVis.h"
 #include "dsp/Window.h"
 #include <QStandardPaths>
@@ -62,17 +61,17 @@ Scene::Scene()
 std::string Scene::askNameScene(FileDirection direction)
 {
     // choise file name and test extension
-    QString filterExtensionScene = _Q("", "Scene files (*%1)").arg(g_extensionScene);
+    QString filterExtensionScene = QObject::tr("Scene files (*%1)").arg(g_extensionScene);
     QString pathScene = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
 
     QFileDialog dlg(nullptr, QString(), pathScene, filterExtensionScene);
     dlg.setDefaultSuffix(g_extensionScene);
     if (direction == FileDirection::Save) {
-        dlg.setWindowTitle(_Q("", "Save scene"));
+        dlg.setWindowTitle(QObject::tr("Save scene"));
         dlg.setAcceptMode(QFileDialog::AcceptSave);
     }
     else {
-        dlg.setWindowTitle(_Q("", "Load scene"));
+        dlg.setWindowTitle(QObject::tr("Load scene"));
         dlg.setAcceptMode(QFileDialog::AcceptOpen);
         dlg.setFileMode(QFileDialog::ExistingFile);
     }
@@ -104,17 +103,17 @@ std::string Scene::askNameCloud(FileDirection direction)
 {
     // choise file name and test extension
     QString g_extensionCloud = "cld";
-    QString filterExtensionCloud = _Q("", "Cloud files (*%1)").arg(g_extensionCloud);
+    QString filterExtensionCloud = QObject::tr("Cloud files (*%1)").arg(g_extensionCloud);
     QString pathScene = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
 
     QFileDialog dlg(nullptr, QString(), pathScene, filterExtensionCloud);
     dlg.setDefaultSuffix(g_extensionCloud);
     if (direction == FileDirection::Save) {
-        dlg.setWindowTitle(_Q("", "Save cloud"));
+        dlg.setWindowTitle(QObject::tr("Save cloud"));
         dlg.setAcceptMode(QFileDialog::AcceptSave);
     }
     else {
-        dlg.setWindowTitle(_Q("", "Load cloud"));
+        dlg.setWindowTitle(QObject::tr("Load cloud"));
         dlg.setAcceptMode(QFileDialog::AcceptOpen);
         dlg.setFileMode(QFileDialog::ExistingFile);
     }
@@ -754,11 +753,11 @@ bool Scene::loadSampleSet(bool interactive)
             QString qnameMissing = QString::fromStdString(m_samples[indexMissing]->name);
 
             QMessageBox mbox(
-                QMessageBox::Warning, _Q("", "Load samples"),
-                _Q("", "Could not find the sample file \"%1\".").arg(qnameMissing));
+                QMessageBox::Warning, QObject::tr("Load samples"),
+                QObject::tr("Could not find the sample file \"%1\".").arg(qnameMissing));
 
-            mbox.addButton(_Q("", "Add a different sample directory"), QMessageBox::AcceptRole);
-            mbox.addButton(_Q("", "Discard missing samples"), QMessageBox::DestructiveRole);
+            mbox.addButton(QObject::tr("Add a different sample directory"), QMessageBox::AcceptRole);
+            mbox.addButton(QObject::tr("Discard missing samples"), QMessageBox::DestructiveRole);
             mbox.addButton(QMessageBox::Cancel);
             mbox.exec();
 
@@ -772,7 +771,7 @@ bool Scene::loadSampleSet(bool interactive)
             else if (role == QMessageBox::AcceptRole) {
                 // ask for a directory to add to search paths
                 QString candidateDir = QFileDialog::getExistingDirectory(
-                    nullptr, _Q("", "Add sample directory"),
+                    nullptr, QObject::tr("Add sample directory"),
                     QString(), QFileDialog::ShowDirsOnly);
                 // add into candidates
                 if (!candidateDir.isEmpty())
@@ -821,7 +820,7 @@ void Scene::initDefaultCloudParams()
     g_defaultCloudParams.windowType = HANNING;
     g_defaultCloudParams.spatialMode = UNITY;
     g_defaultCloudParams.outputFirst = 0;
-    g_defaultCloudParams.outputLast = MY_CHANNELS - 1;
+    g_defaultCloudParams.outputLast = theChannelCount - 1;
     g_defaultCloudParams.channelLocation = -1;
     g_defaultCloudParams.numGrains = 8;
     g_defaultCloudParams.activateState = true;

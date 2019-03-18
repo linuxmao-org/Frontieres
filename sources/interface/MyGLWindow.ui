@@ -38,7 +38,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>25</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -73,10 +73,40 @@
     <addaction name="action_Instrument"/>
     <addaction name="action_Combi"/>
    </widget>
+   <widget class="QMenu" name="menu_Commands">
+    <property name="title">
+     <string>&amp;Commands</string>
+    </property>
+    <addaction name="actionCloud"/>
+    <addaction name="actionGrain"/>
+    <addaction name="actionXmotion"/>
+    <addaction name="actionYmotion"/>
+    <addaction name="actionXYmotion"/>
+    <addaction name="actionSpatialMode"/>
+    <addaction name="actionOverlap"/>
+    <addaction name="actionWindow"/>
+    <addaction name="actionVolume"/>
+    <addaction name="actionDuration"/>
+    <addaction name="actionLfoFrequency"/>
+    <addaction name="actionLfoAmount"/>
+    <addaction name="actionPitch"/>
+    <addaction name="actionActive"/>
+    <addaction name="actionEditCloud"/>
+    <addaction name="actionEditEnvelope"/>
+    <addaction name="actionFullScreen"/>
+   </widget>
+   <widget class="QMenu" name="menu_Help">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="actionAbout"/>
+   </widget>
    <addaction name="menu_File"/>
+   <addaction name="menu_Commands"/>
    <addaction name="menu_Edit"/>
    <addaction name="menu_Midi"/>
    <addaction name="menu_OSC"/>
+   <addaction name="menu_Help"/>
   </widget>
   <action name="action_Load_scene">
    <property name="text">
@@ -137,6 +167,96 @@
   <action name="actionCombi">
    <property name="text">
     <string>C&amp;ombi</string>
+   </property>
+  </action>
+  <action name="actionFullScreen">
+   <property name="text">
+    <string>Full screen (&amp;O)</string>
+   </property>
+  </action>
+  <action name="actionSpatialMode">
+   <property name="text">
+    <string>Spatial mode (&amp;T)</string>
+   </property>
+  </action>
+  <action name="actionOverlap">
+   <property name="text">
+    <string>Overlap (&amp;S)</string>
+   </property>
+  </action>
+  <action name="actionXmotion">
+   <property name="text">
+    <string>X motion (&amp;X)</string>
+   </property>
+  </action>
+  <action name="actionYmotion">
+   <property name="text">
+    <string>Y motion (&amp;Y)</string>
+   </property>
+  </action>
+  <action name="actionXYmotion">
+   <property name="text">
+    <string>XY motion (&amp;R)</string>
+   </property>
+  </action>
+  <action name="actionWindow">
+   <property name="text">
+    <string>Window (&amp;W)</string>
+   </property>
+  </action>
+  <action name="actionVolume">
+   <property name="text">
+    <string>Volume (&amp;B)</string>
+   </property>
+  </action>
+  <action name="actionCloud">
+   <property name="text">
+    <string>Cloud (&amp;G)</string>
+   </property>
+  </action>
+  <action name="actionGrain">
+   <property name="text">
+    <string>Grain (&amp;V)</string>
+   </property>
+  </action>
+  <action name="actionDuration">
+   <property name="text">
+    <string>Duration (&amp;D)</string>
+   </property>
+  </action>
+  <action name="actionLfoFrequency">
+   <property name="text">
+    <string>LFO frequency (&amp;L)</string>
+   </property>
+  </action>
+  <action name="actionLfoAmount">
+   <property name="text">
+    <string>LFO amount (&amp;K)</string>
+   </property>
+  </action>
+  <action name="actionPitch">
+   <property name="text">
+    <string>Pitch (&amp;Z)</string>
+   </property>
+  </action>
+  <action name="actionActive">
+   <property name="text">
+    <string>Active (&amp;A)</string>
+   </property>
+  </action>
+  <action name="actionEditCloud">
+   <property name="text">
+    <string>Edit cloud (&amp;P)</string>
+   </property>
+  </action>
+  <action name="actionEditEnvelope">
+   <property name="text">
+    <string>Edit envelope (&amp;E)</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About &amp;Frontières</string>
    </property>
   </action>
  </widget>

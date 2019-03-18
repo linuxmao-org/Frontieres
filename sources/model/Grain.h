@@ -37,13 +37,6 @@
 #include <ctime>
 #include <Stk.h>
 
-#ifdef __MACOSX_CORE__
-#include <OpenGL/OpenGL.h>
-#else
-#include <GL/gl.h>
-#include <GL/glu.h>
-#endif
-
 
 // forward declarations
 class Sample;
@@ -148,9 +141,6 @@ private:
     //-1 means not in current samplefile
     std::unique_ptr<double[]> playPositions;
     std::unique_ptr<double[]> playVols;
-
-    double *waveBuff;
-
 };
 
 #endif

@@ -35,6 +35,9 @@ class MyGLApplication : public QApplication {
 public:
     MyGLApplication(int &argc, char *argv[]);
     ~MyGLApplication();
+
+    void initializeInterface();
+
     MyGLWindow *GLwindow();
     void startIdleCallback(double fps);
 

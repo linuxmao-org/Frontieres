@@ -32,13 +32,6 @@
 
 #include "theglobals.h"
 //#include "pt2d.h"
-// graphics includes
-#ifdef __MACOSX_CORE__
-#include <OpenGL/OpenGL.h>
-#else
-#include <GL/gl.h>
-#include <GL/glu.h>
-#endif
 
 
 #include <iostream>
@@ -83,7 +76,7 @@ public:
     bool select(float x, float y);
 
     void toggleWaveDisplay();
-    void associateSample(double *theBuff, unsigned long buffFrames, unsigned int buffChans, const string &name);
+    void associateSample(BUFFERPREC *theBuff, unsigned long buffFrames, unsigned int buffChans, const string &name);
     // return id
     // unsigned int getId();
 
@@ -121,7 +114,7 @@ private:
     bool isSelected;
     float colR, colG, colB, colA;
     float minDim;
-    double *myBuff;
+    BUFFERPREC *myBuff;
     double startTime;
     float ups;
     unsigned long myBuffFrames;

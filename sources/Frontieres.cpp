@@ -33,12 +33,7 @@
 #include "Frontieres.h"
 
 // graphics includes
-#ifdef __MACOSX_CORE__
-#include <OpenGL/OpenGL.h>
-#else
-#include <GL/gl.h>
-#include <GL/glu.h>
-#endif
+#include <qopengl.h>
 
 // other libraries
 #include <iostream>
@@ -61,7 +56,6 @@
 #include "dsp/Window.h"
 
 // midi related
-#include <RtMidi.h>
 #include <ring_buffer.h>
 
 // OSC related
@@ -79,9 +73,6 @@
 
 // time
 #include "utility/GTime.h"
-
-// internationalization
-#include "I18n.h"
 
 // Qt application
 #include "interface/MyGLApplication.h"
@@ -101,9 +92,7 @@ using namespace std;
 // Shared Data Structures, Global parameters
 //-----------------------------------------------------------------------------
 // audio system
-MyRtAudio *theAudio = NULL;
-// midi system
-RtMidiIn *theMidiIn = NULL;
+AbstractAudio *theAudio = NULL;
 // buffer of midi input messages
 Ring_Buffer *theMidiInBuffer = NULL;
 // buffer of OSC input messages
@@ -120,6 +109,8 @@ Scene *currentScene = nullptr;
 // current scene mutex
 std::mutex currentSceneMutex;
 
+// number of output channels
+int theChannelCount = 16;
 // sample rate - Hz
 unsigned int samp_rate = 0;
 
@@ -171,11 +162,10 @@ CloudParams g_defaultCloudParams;
 void updateMouseCoords(int x, int y);
 void draw_string(GLfloat x, GLfloat y, GLfloat z, const QString &str, GLfloat scale);
 void drawAxis();
-int audioCallback(void *outputBuffer, void *inputBuffer, unsigned int numFrames,
-                  double streamTime, RtAudioStreamStatus status, void *userData);
+void audioCallback(BUFFERPREC *out, unsigned int numFrames, void *userData);
 void processMidiMessage(const unsigned char *message, unsigned length);
 void processOscMessage(const char *message, size_t length, rtosc::Ports &ports);
-void midiInCallback(double timeStamp, std::vector<unsigned char> *message, void *userData);
+void midiInCallback(const unsigned char *message, unsigned size, void *userData);
 void oscCallback(const char *msg, size_t length, void *);
 
 //--------------------------------------------------------------------------------
@@ -185,27 +175,12 @@ void oscCallback(const char *msg, size_t length, void *);
 void cleaningFunction()
 {
     if (theAudio != NULL) {
-        try {
-            theAudio->stopStream();
-            theAudio->closeStream();
-        }
-        catch (RtAudioError &err) {
-            err.printMessage();
-        }
         delete theAudio;
+        theAudio = NULL;
     }
-    if (theMidiIn != NULL) {
-        try {
-            theMidiIn->closePort();
-        }
-        catch (RtAudioError &err) {
-            err.printMessage();
-        }
-        delete theMidiIn;
-    }
-
     if (text_renderer != NULL) {
         delete text_renderer;
+        text_renderer = NULL;
     }
 }
 
@@ -215,8 +190,7 @@ void cleaningFunction()
 //================================================================================
 
 // audio callback
-int audioCallback(void *outputBuffer, void *inputBuffer, unsigned int numFrames,
-                  double streamTime, RtAudioStreamStatus status, void *userData)
+void audioCallback(BUFFERPREC *out, unsigned int numFrames, void *)
 {
     // process the midi messages
     unsigned char midiMessageSize;
@@ -245,10 +219,7 @@ int audioCallback(void *outputBuffer, void *inputBuffer, unsigned int numFrames,
     }
 
     // cast audio buffers
-    BUFFERPREC *out = (BUFFERPREC *)outputBuffer;
-    BUFFERPREC *in = (BUFFERPREC *)inputBuffer;
-
-    memset(out, 0, sizeof(BUFFERPREC) * numFrames * MY_CHANNELS);
+    memset(out, 0, sizeof(BUFFERPREC) * numFrames * theChannelCount);
     if (menuFlag == false) {
         std::unique_lock<std::mutex> lock(::currentSceneMutex, std::try_to_lock);
         if (lock.owns_lock()) {
@@ -261,7 +232,6 @@ int audioCallback(void *outputBuffer, void *inputBuffer, unsigned int numFrames,
     }
     GTime::instance().sec += numFrames * samp_time_sec;
     // cout << GTime::instance().sec<<endl;
-    return 0;
 }
 
 // midi processing routine
@@ -326,9 +296,8 @@ void processOscMessage(const char *message, size_t length, rtosc::Ports &ports)
 //   Midi Input Callback
 //================================================================================
 
-void midiInCallback(double, std::vector<unsigned char> *message, void *)
+void midiInCallback(const unsigned char *message, unsigned size, void *)
 {
-    size_t size = message->size();
     if (size >= 256)
         return;  // drop large messages
 
@@ -340,7 +309,7 @@ void midiInCallback(double, std::vector<unsigned char> *message, void *)
     // write the message header, a 8bit size field
     theMidiInBuffer->put((unsigned char)size);
     // write the message body
-    theMidiInBuffer->put(message->data(), size);
+    theMidiInBuffer->put(message, size);
 }
 
 //================================================================================
@@ -451,7 +420,7 @@ void printUsage()
     glColor4f(insColor, insColor, insColor, theA);
     // key info
     draw_string(screenWidth / 2.0f + 0.2f * (float)screenWidth + 10.0,
-                (float)screenHeight / 2.0f + 30.0, 0.5f, _Q("", "CLICK TO START"),
+                (float)screenHeight / 2.0f + 30.0, 0.5f, QObject::tr("CLICK TO START"),
                 (float)screenWidth * 0.04f);
 
     theA = 0.6f + 0.2 * sin(1.0 * PI * GTime::instance().sec);
@@ -459,7 +428,7 @@ void printUsage()
     glColor4f(insColor, insColor, insColor, theA);
     // key info
     draw_string(screenWidth / 2.0f + 0.2f * (float)screenWidth + 10.0,
-                (float)screenHeight / 2.0f + 50.0, 0.5f, _Q("", "ESCAPE TO QUIT"),
+                (float)screenHeight / 2.0f + 50.0, 0.5f, QObject::tr("ESCAPE TO QUIT"),
                 (float)screenWidth * 0.04f);
 /*
     theA = 0.6f + 0.2 * sin(1.1 * PI * GTime::instance().sec);
@@ -468,7 +437,7 @@ void printUsage()
     // key info
     draw_string(screenWidth / 2.0f + 0.2f * (float)screenWidth + 10.0,
                 (float)screenHeight / 2.0f + 70.0, 0.5f,
-                _Q("", "PUT THE SAMPLES IN ~/.Frontieres/loops"), (float)screenWidth * 0.04f);*/
+                QObject::tr("PUT THE SAMPLES IN ~/.Frontieres/loops"), (float)screenWidth * 0.04f);*/
 }
 
 
@@ -496,14 +465,14 @@ void printParam()
 
         switch (currentParam) {
         case NUMGRAINS:
-            myValue = _S("", "Grains: ");
+            myValue = QObject::tr("Grains: ").toStdString();
             sinput << theCloud.getNumGrains();
             myValue = myValue + sinput.str();
             draw_string((GLfloat)mouseX, (GLfloat)(screenHeight - mouseY), 0.0,
                         myValue.c_str(), 100.0f);
             break;
         case DURATION:
-            myValue = _S("", "Duration: ");
+            myValue = QObject::tr("Duration: ").toStdString();
             if (paramString == "") {
                 sinput << theCloud.getDurationMs();
                 myValue = myValue + sinput.str() + " ms";
@@ -518,22 +487,22 @@ void printParam()
         case WINDOW:
             switch (theCloud.getWindowType()) {
             case HANNING:
-                myValue = _S("", "Window: HANNING");
+                myValue = QObject::tr("Window: HANNING").toStdString();
                 break;
             case TRIANGLE:
-                myValue = _S("", "Window: TRIANGLE");
+                myValue = QObject::tr("Window: TRIANGLE").toStdString();
                 break;
             case REXPDEC:
-                myValue = _S("", "Window: REXPDEC");
+                myValue = QObject::tr("Window: REXPDEC").toStdString();
                 break;
             case EXPDEC:
-                myValue = _S("", "Window: EXPDEC");
+                myValue = QObject::tr("Window: EXPDEC").toStdString();
                 break;
             case SINC:
-                myValue = _S("", "Window: SINC");
+                myValue = QObject::tr("Window: SINC").toStdString();
                 break;
             case RANDOM_WIN:
-                myValue = _S("", "Window: RANDOM_WIN");
+                myValue = QObject::tr("Window: RANDOM_WIN").toStdString();
                 break;
             default:
                 myValue = "";
@@ -544,21 +513,21 @@ void printParam()
                         myValue.c_str(), 100.0f);
             break;
         case MOTIONX:
-            myValue = _S("", "X: ");
+            myValue = QObject::tr("X: ").toStdString();
             sinput << theCloudVis.getXRandExtent();
             myValue = myValue + sinput.str();
             draw_string((GLfloat)mouseX, (GLfloat)(screenHeight - mouseY), 0.0,
                         myValue.c_str(), 100.0f);
             break;
         case MOTIONY:
-            myValue = _S("", "Y: ");
+            myValue = QObject::tr("Y: ").toStdString();
             sinput << theCloudVis.getYRandExtent();
             myValue = myValue + sinput.str();
             draw_string((GLfloat)mouseX, (GLfloat)(screenHeight - mouseY), 0.0,
                         myValue.c_str(), 100.0f);
             break;
         case MOTIONXY:
-            myValue = _S("", "X,Y: ");
+            myValue = QObject::tr("X,Y: ").toStdString();
             sinput << theCloudVis.getXRandExtent();
             myValue = myValue + sinput.str() + ", ";
             sinput2 << theCloudVis.getYRandExtent();
@@ -570,13 +539,13 @@ void printParam()
         case DIRECTION:
             switch (theCloud.getDirection()) {
             case FORWARD:
-                myValue = _S("", "Direction: FORWARD");
+                myValue = QObject::tr("Direction: FORWARD").toStdString();
                 break;
             case BACKWARD:
-                myValue = _S("", "Direction: BACKWARD");
+                myValue = QObject::tr("Direction: BACKWARD").toStdString();
                 break;
             case RANDOM_DIR:
-                myValue = _S("", "Direction: RANDOM");
+                myValue = QObject::tr("Direction: RANDOM").toStdString();
                 break;
             default:
                 myValue = "";
@@ -589,13 +558,13 @@ void printParam()
         case SPATIALIZE:
             switch (theCloud.getSpatialMode()) {
             case UNITY:
-                myValue = _S("", "Spatial Mode: UNITY");
+                myValue = QObject::tr("Spatial Mode: UNITY").toStdString();
                 break;
             case STEREO:
-                myValue = _S("", "Spatial Mode: STEREO");
+                myValue = QObject::tr("Spatial Mode: STEREO").toStdString();
                 break;
             case AROUND:
-                myValue = _S("", "Spatial Mode: AROUND");
+                myValue = QObject::tr("Spatial Mode: AROUND").toStdString();
                 break;
             default:
                 myValue = "";
@@ -605,7 +574,7 @@ void printParam()
                         myValue.c_str(), 100.0f);
             break;
         case VOLUME:
-            myValue = _S("", "Volume (dB): ");
+            myValue = QObject::tr("Volume (dB): ").toStdString();
             if (paramString == "") {
                 sinput << theCloud.getVolumeDb();
                 myValue = myValue + sinput.str();
@@ -617,7 +586,7 @@ void printParam()
                         myValue.c_str(), 100.0f);
             break;
         case OVERLAP:
-            myValue = _S("", "Overlap: ");
+            myValue = QObject::tr("Overlap: ").toStdString();
             if (paramString == "") {
                 sinput << theCloud.getOverlap();
                 myValue = myValue + sinput.str();
@@ -630,7 +599,7 @@ void printParam()
             //            myValue = "Duration (ms): " + theCloud->getDurationMs();
             break;
         case PITCH:
-            myValue = _S("", "Pitch: ");
+            myValue = QObject::tr("Pitch: ").toStdString();
             if (paramString == "") {
                 sinput << theCloud.getPitch();
                 myValue = myValue + sinput.str();
@@ -644,7 +613,7 @@ void printParam()
             break;
 
         case P_LFO_FREQ:
-            myValue = _S("", "Pitch LFO Freq: ");
+            myValue = QObject::tr("Pitch LFO Freq: ").toStdString();
             if (paramString == "") {
                 sinput << theCloud.getPitchLFOFreq();
                 myValue = myValue + sinput.str();
@@ -657,7 +626,7 @@ void printParam()
             //            myValue = "Duration (ms): " + theCloud->getDurationMs();
             break;
         case P_LFO_AMT:
-            myValue = _S("", "Pitch LFO Amount: ");
+            myValue = QObject::tr("Pitch LFO Amount: ").toStdString();
             if (paramString == "") {
                 sinput << theCloud.getPitchLFOAmount();
                 myValue = myValue + sinput.str();
@@ -670,7 +639,7 @@ void printParam()
             //            myValue = "Duration (ms): " + theCloud->getDurationMs();
             break;
         case NUM:
-            myValue = _S("", "Cloud ID/Num: ")
+            myValue = QObject::tr("Cloud ID/Num: ").toStdString()
                     + std::to_string(theCloud.getId())
                     + "/" + std::to_string(currentScene->getNumCloud(selectedCloud)+1);
             draw_string((GLfloat)mouseX, (GLfloat)(screenHeight - mouseY), 0.0,
@@ -688,7 +657,7 @@ void printParam()
 
         switch (currentParam) {
         case NAME:
-            myValue = _S("", "Sample: ") + theSampleVis.getName();
+            myValue = QObject::tr("Sample: ").toStdString() + theSampleVis.getName();
             draw_string((GLfloat)mouseX, (GLfloat)(screenHeight - mouseY), 0.0,
                         myValue.c_str(), 100.0f);
             break;
@@ -844,62 +813,106 @@ int main(int argc, char **argv)
 {
     int exitCode = 0;
 
+    bool autoconnect = false;
+
     // init random number generator
     srand(time(NULL));
     // start time
 
+    MyGLApplication app(argc, argv);
+    app.setApplicationName("Frontieres");
+    app.setApplicationDisplayName(u8"Frontières");
+    app.setApplicationVersion(APP_VERSION);
+
+    //-------------Command Line-----------//
+
+    std::unique_ptr<QCommandLineParser> cmdParser(new QCommandLineParser);
+
+    {
+        cmdParser->setApplicationDescription(QObject::tr("Interactive granular sampler"));
+        QCommandLineOption optHelp = cmdParser->addHelpOption();
+        QCommandLineOption optVersion = cmdParser->addVersionOption();
+
+        QCommandLineOption optNumChannels(
+            QStringList() << "c" << "channels",
+            QObject::tr("Set the number of output channels."),
+            QObject::tr("channel-count"));
+        cmdParser->addOption(optNumChannels);
+
+        QCommandLineOption optAutoconnect(
+            QStringList() << "a" << "autoconnect",
+            QObject::tr("Automatically connect audio streams to the output device."));
+        cmdParser->addOption(optAutoconnect);
+
+        cmdParser->process(app);
+
+        if (cmdParser->isSet(optHelp)) {
+            cmdParser->showHelp();
+            return 0;
+        }
+        if (cmdParser->isSet(optVersion)) {
+            cmdParser->showVersion();
+            return 0;
+        }
+
+        if (cmdParser->isSet(optNumChannels))
+            theChannelCount = cmdParser->value(optNumChannels).toUInt();
+        if (cmdParser->isSet(optAutoconnect))
+            autoconnect = true;
+    }
+
+    cmdParser.reset();
+
     //-------------Audio Configuration-----------//
 
-    // configure RtAudio
-    // create the object
-    try {
-        theAudio = new MyRtAudio(1, MY_CHANNELS, &g_buffSize, MY_FORMAT, true);
+    // configure Jack or RtAudio
+    std::cerr << "* try JACK audio\n";
+    theAudio = new MyRtJack(theChannelCount);
+    // open audio stream/assign callback
+    if (!theAudio->openStream(&audioCallback, nullptr)) {
+        delete theAudio;
+        theAudio = nullptr;
     }
-    catch (RtAudioError &err) {
-        err.printMessage();
-        cleaningFunction();
-        exit(1);
+    if (!theAudio) {
+        std::cerr << "* try RtAudio\n";
+        theAudio = new MyRtAudio(theChannelCount);
+        if (!theAudio->openStream(&audioCallback, nullptr)) {
+            cleaningFunction();
+            return 1;
+        }
     }
-    try {
-        unsigned sampleRate = theAudio->getSampleRate();
-        ::samp_rate = sampleRate;
-        ::samp_time_sec = 1.0 / sampleRate;
-        Stk::setSampleRate(sampleRate);
-        // open audio stream/assign callback
-        theAudio->openStream(&audioCallback);
-        // get new buffer size
-        g_buffSize = theAudio->getBufferSize();
-        // report latency
-        theAudio->reportStreamLatency();
-    }
-    catch (RtAudioError &err) {
-        err.printMessage();
-        cleaningFunction();
-        exit(1);
-    }
+
+    std::cerr << "desired channels: " << theChannelCount << "\n";
+    theChannelCount = theAudio->getObtainedOutputChannels();
+    std::cerr << "obtained channels: " << theChannelCount << "\n";
+
+    unsigned sampleRate = theAudio->getSampleRate();
+    ::samp_rate = sampleRate;
+    ::samp_time_sec = 1.0 / sampleRate;
+    Stk::setSampleRate(sampleRate);
+
+    // get new buffer size
+    g_buffSize = theAudio->getBufferSize();
+    cerr << "obtained buffer size: " << g_buffSize << endl;
+    // report latency
+    cout << "stream latency: " << theAudio->getStreamLatency() << " frames" << endl;
 
     //-------------Midi Configuration-----------//
     theMidiInBuffer = new Ring_Buffer(1024);
-    try {
-        theMidiIn = new RtMidiIn(RtMidi::UNSPECIFIED, "Frontieres", theMidiInBuffer->capacity());
-        theMidiIn->setCallback(&midiInCallback);
-        theMidiIn->openVirtualPort();
-    }
-    catch (RtMidiError &err) {
-        err.printMessage();
-        cleaningFunction();
-        exit(1);
-    }
+    theAudio->openMidiInput(&midiInCallback, theMidiInBuffer->capacity(), nullptr);
 
     //-------------OSC Configuration-----------//
     theOscInBuffer = new Ring_Buffer(8192);
 
     //-------------App Initialization--------//
 
+    // init openGL format for anti-aliasing
+    QSurfaceFormat openGLFormat = QSurfaceFormat::defaultFormat();
+    openGLFormat.setSamples(4);
+    QSurfaceFormat::setDefaultFormat(openGLFormat);
+
     // init Qt application
-    MyGLApplication app(argc, argv);
-    app.setApplicationName("Frontieres");
-    app.setApplicationDisplayName(u8"Frontières");
+    app.initializeInterface();
 
     //-------------Paths Initialization--------//
 #if defined(Q_OS_WIN)
@@ -978,6 +991,8 @@ int main(int argc, char **argv)
 
     // start audio stream
     theAudio->startStream();
+    if (autoconnect)
+        theAudio->connectOutputs();
 
     // start OSC
     MyRtOsc &osc = MyRtOsc::instance();
