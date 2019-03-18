@@ -309,8 +309,6 @@ void MyGLScreen::keyAction_MotionXY()
     if (selectedCloud) {
         currentParam = MOTIONXY;
     }
-    // toggle selection modes
-    dragMode = RESIZE;
 }
 
 void MyGLScreen::keyAction_Direction(int dir)
@@ -533,6 +531,8 @@ void MyGLScreen::mousePressEvent(QMouseEvent *event)
     Qt::MouseButton button = event->button();
     Scene *scene = ::currentScene;
 
+    int modkey = event->modifiers();
+
     // cout << "button " << button << endl;
 
     // look for selections if button is down
@@ -577,6 +577,9 @@ void MyGLScreen::mousePressEvent(QMouseEvent *event)
                     // sv.setSelectState(true);
                     // selectedRect = i;
                     // break;
+
+                    if (modkey == Qt::ShiftModifier)
+                        dragMode = RESIZE;
                 }
             }
 
@@ -590,12 +593,13 @@ void MyGLScreen::mousePressEvent(QMouseEvent *event)
 
 void MyGLScreen::mouseReleaseEvent(QMouseEvent *event)
 {
-    //handle button up
-    // if ((button == GLUT_LEFT_BUTTON) && (state == GLUT_UP)){
-    //     lastDragX = -1;
-    //     lastDragY = -1;
-    //     dragMode = MOVE;
-    // }
+    Qt::MouseButton button = event->button();
+
+    if ((button == Qt::LeftButton) || (button == Qt::RightButton)) {
+        lastDragX = veryHighNumber;
+        lastDragY = veryHighNumber;
+        dragMode = MOVE;
+    }
 }
 
 void MyGLScreen::mouseMoveEvent(QMouseEvent *event)
@@ -1016,15 +1020,6 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
 
 void MyGLScreen::keyReleaseEvent(QKeyEvent *event)
 {
-    switch (event->key()) {
-    case Qt::Key_R:
-        dragMode = MOVE;
-        lastDragX = veryHighNumber;
-        lastDragY = veryHighNumber;
-        break;
-    default:
-        break;
-    }
-
-    update();
+    Q_UNUSED(event);
+    // update();
 }
