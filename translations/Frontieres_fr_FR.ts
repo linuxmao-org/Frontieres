@@ -87,7 +87,7 @@
     <message>
         <location filename="../sources/interface/AdsrDialog.ui" line="401"/>
         <source>Decay/Attack2</source>
-        <translation>Délcin/attaque2</translation>
+        <translation>Déclin/attaque2</translation>
     </message>
 </context>
 <context>
@@ -376,7 +376,7 @@
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="57"/>
         <source>&amp;Edit</source>
-        <translation>Édit&amp;er</translation>
+        <translation>Édit&amp;ion</translation>
     </message>
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="65"/>
@@ -401,7 +401,7 @@
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="117"/>
         <source>&amp;Load scene</source>
-        <translation>Charger une scène (&amp;)</translation>
+        <translation>Charger une scène (&amp;l)</translation>
     </message>
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="120"/>
@@ -426,7 +426,7 @@
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="138"/>
         <source>&amp;Add samples...</source>
-        <translation>>&amp;Ajouter des échantillons...</translation>
+        <translation>&amp;Ajouter des échantillons...</translation>
     </message>
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="143"/>
@@ -466,7 +466,7 @@
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="178"/>
         <source>Full screen (&amp;O)</source>
-        <translation>Plein écran (&amp;O)></translation>
+        <translation>Plein écran (&amp;O)</translation>
     </message>
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="183"/>
@@ -481,17 +481,17 @@
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="193"/>
         <source>X motion (&amp;X)</source>
-        <translation>Geste X (&amp;X)</translation>
+        <translation>Mouvement X (&amp;X)</translation>
     </message>
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="198"/>
         <source>Y motion (&amp;Y)</source>
-        <translation>Geste Y (&amp;Y)</translation>
+        <translation>Mouvement Y (&amp;Y)</translation>
     </message>
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="203"/>
         <source>XY motion (&amp;R)</source>
-        <translation>Geste XY (&amp;R)</translation>
+        <translation>Mouvement XY (&amp;R)</translation>
     </message>
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="208"/>
@@ -561,7 +561,7 @@
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="273"/>
         <source>Sample names (&amp;N)</source>
-        <translation>Noms de l'échantillon (&amp;N)</translation>
+        <translation>Noms d'échantillons (&amp;N)</translation>
     </message>
     <message>
         <location filename="../sources/interface/MyGLWindow.ui" line="278"/>
@@ -589,7 +589,7 @@
     <message>
         <location filename="../sources/interface/OptionsDialog.ui" line="64"/>
         <source>&amp;Start controller</source>
-        <translation>Démarrer le contrôleur (&amp;)</translation>
+        <translation>Démarrer le contrôleur (&amp;s)</translation>
     </message>
     <message>
         <location filename="../sources/interface/OptionsDialog.ui" line="98"/>
@@ -767,12 +767,12 @@
     <message>
         <location filename="../sources/Frontieres.cpp" line="832"/>
         <source>channel-count</source>
-        <translation>compte-canal</translation>
+        <translation>nombre-canaux</translation>
     </message>
     <message>
         <location filename="../sources/Frontieres.cpp" line="837"/>
         <source>Automatically connect audio streams to the output device.</source>
-        <translation>Connecte automatiquement les flux audio au périphérique de sortie</translation>
+        <translation>Connecte automatiquement les flux audio au périphérique de sortie.</translation>
     </message>
     <message>
         <location filename="../sources/model/Scene.cpp" line="64"/>
@@ -807,7 +807,7 @@
     <message>
         <location filename="../sources/model/Scene.cpp" line="756"/>
         <source>Load samples</source>
-        <translation>Charger les échantillones</translation>
+        <translation>Charger les échantillons</translation>
     </message>
     <message>
         <location filename="../sources/model/Scene.cpp" line="757"/>
@@ -845,7 +845,7 @@
     <message>
         <location filename="../sources/interface/StartDialog.ui" line="38"/>
         <source>Create a new workspace using a default sound set.</source>
-        <translation>Créer un nouvel espace de travail utilisant un ensemble de son par défaut.</translation>
+        <translation>Créer un nouvel espace de travail utilisant un ensemble de sons par défaut.</translation>
     </message>
     <message>
         <location filename="../sources/interface/StartDialog.ui" line="58"/>
