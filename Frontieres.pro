@@ -76,7 +76,6 @@ SOURCES += \
 
 HEADERS += \
   sources/theglobals.h \
-  sources/I18n.h \
   sources/Frontieres.h \
   sources/Ports.h \
   sources/MyRtAudio.h \
