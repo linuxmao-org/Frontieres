@@ -905,15 +905,6 @@ int main(int argc, char **argv)
 
         cmdParser->process(app);
 
-        if (cmdParser->isSet(optHelp)) {
-            cmdParser->showHelp();
-            return 0;
-        }
-        if (cmdParser->isSet(optVersion)) {
-            cmdParser->showVersion();
-            return 0;
-        }
-
         if (cmdParser->isSet(optNumChannels))
             theChannelCount = cmdParser->value(optNumChannels).toUInt();
         if (cmdParser->isSet(optAutoconnect))
