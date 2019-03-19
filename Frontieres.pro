@@ -10,7 +10,8 @@ INCLUDEPATH += $$PWD/libraries
 DEFINES += APP_VERSION=\\\"0.0\\\"
 
 DEFINES += __LINUX_ALSASEQ__
-DEFINES += __UNIX_JACK__
+DEFINES += __LINUX_ALSA__
+DEFINES += __LINUX_PULSE__
 
 INCLUDEPATH += $$PWD/libraries/QtFont3D
 SOURCES += libraries/QtFont3D/QtFont3D.cpp
@@ -36,7 +37,7 @@ else {
 }
 
 linux: {
-  LIBS += -ljack
+  LIBS += -ljack -lpulse-simple -lpulse -lasound
 }
 
 LIBS += -lsndfile -lsoxr -llo
