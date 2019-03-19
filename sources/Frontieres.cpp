@@ -827,7 +827,7 @@ int main(int argc, char **argv)
 
         // define the signal handler for term signals
         sigActionTerm.sa_handler = +[](int)
-            { char a = 1; write(signalFds[1], &a, 1); };
+            { char a = 1; while (write(signalFds[1], &a, 1) == -1 && errno == EINTR); };
         sigemptyset(&sigActionTerm.sa_mask);
         for (int s : sigsTerm)
             sigaddset(&sigActionTerm.sa_mask, s);
