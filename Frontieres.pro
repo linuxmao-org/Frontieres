@@ -57,6 +57,7 @@ SOURCES += \
   sources/interface/CloudDialog.cpp \
   sources/interface/OptionsDialog.cpp \
   sources/interface/Node.cpp \
+  sources/interface/MonitorWidget.cpp \
   sources/dsp/Window.cpp \
   sources/model/MidiBank.cpp \
   sources/model/MidiCombi.cpp \
@@ -92,6 +93,7 @@ HEADERS += \
   sources/interface/CloudDialog.h \
   sources/interface/OptionsDialog.h \
   sources/interface/Node.h \
+  sources/interface/MonitorWidget.h \
   sources/dsp/Window.h \
   sources/model/MidiBank.h \
   sources/model/MidiCombi.h \

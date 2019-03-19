@@ -21,6 +21,7 @@
 
 #include "interface/MyGLWindow.h"
 #include "interface/MyGLApplication.h"
+#include "interface/MonitorWidget.h"
 #include "ui_MyGLWindow.h"
 #include "ui_AboutDialog.h"
 #include "model/Cloud.h"
@@ -39,12 +40,16 @@
 extern string g_audioPath;
 
 struct MyGLWindow::Impl {
+    MyGLWindow *Q = nullptr;
     Ui::MyGLWindow ui;
+    MonitorWidget *dspMonitor_ = nullptr;
+    void setupDspMonitor();
 };
 
 MyGLWindow::MyGLWindow()
     : P(new Impl)
 {
+    P->Q = this;
 }
 
 MyGLWindow::~MyGLWindow()
@@ -54,6 +59,8 @@ MyGLWindow::~MyGLWindow()
 void MyGLWindow::initialize()
 {
     P->ui.setupUi(this);
+    P->setupDspMonitor();
+
     MyGLScreen *screen = this->screen();
 
     connect(P->ui.action_Quit, &QAction::triggered,
@@ -182,6 +189,36 @@ void MyGLWindow::on_actionUserManual_triggered()
 
     dlg.resize(600, 800);
     dlg.exec();
+}
+
+void MyGLWindow::Impl::setupDspMonitor()
+{
+    QMenuBar *mb = Q->menuBar();
+    int h = mb->height();
+
+    QWidget *w = new QWidget;
+    mb->setCornerWidget(w);
+    w->setFixedHeight(h);
+
+    QVBoxLayout *vl = new QVBoxLayout;
+    w->setLayout(vl);
+    vl->setContentsMargins(0, 0, 0, 0);
+
+    QHBoxLayout *hl  = new QHBoxLayout;
+    vl->addLayout(hl);
+    hl->setContentsMargins(0, 0, 0, 0);
+    hl->addWidget(new QLabel(tr("DSP%")));
+
+    MonitorWidget *mon = new MonitorWidget;
+    hl->addWidget(mon);
+    mon->setMinimumWidth(50);
+
+    dspMonitor_ = mon;
+
+    QTimer *tm = new QTimer(Q);
+    QObject::connect(tm, &QTimer::timeout, Q,
+                     [mon]() { mon->feedSample(dspMonitorValue); });
+    tm->start(300);
 }
 
 // the openGL screen
