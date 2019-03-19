@@ -1,5 +1,6 @@
 QT += widgets opengl
-CONFIG += c++11 c99
+CONFIG += c++11
+QMAKE_CFLAGS += -std=c99
 
 TEMPLATE = app
 TARGET = Frontieres
