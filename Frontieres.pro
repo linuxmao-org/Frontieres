@@ -6,6 +6,8 @@ TARGET = Frontieres
 INCLUDEPATH += $$PWD/sources
 INCLUDEPATH += $$PWD/libraries
 
+DEFINES += APP_VERSION=\\\"0.0\\\"
+
 DEFINES += __LINUX_ALSASEQ__
 DEFINES += __UNIX_JACK__
 
