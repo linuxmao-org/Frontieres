@@ -1,10 +1,13 @@
 QT += widgets opengl
 CONFIG += c++11
+QMAKE_CFLAGS += -std=c99
 
 TEMPLATE = app
 TARGET = Frontieres
 INCLUDEPATH += $$PWD/sources
 INCLUDEPATH += $$PWD/libraries
+
+DEFINES += APP_VERSION=\\\"0.0\\\"
 
 DEFINES += __LINUX_ALSASEQ__
 DEFINES += __UNIX_JACK__
@@ -74,7 +77,6 @@ SOURCES += \
 
 HEADERS += \
   sources/theglobals.h \
-  sources/I18n.h \
   sources/Frontieres.h \
   sources/Ports.h \
   sources/MyRtAudio.h \
