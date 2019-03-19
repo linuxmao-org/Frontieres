@@ -30,6 +30,7 @@
 #include "Frontieres.h"
 #include "MyRtOsc.h"
 #include <QtFont3D.h>
+#include <QTextBrowser>
 #include <QMouseEvent>
 #include <QKeyEvent>
 #include <QProcess>
@@ -88,6 +89,8 @@ void MyGLWindow::initialize()
             screen, &MyGLScreen::keyAction_SpatialMode);
     connect(P->ui.actionOverlap, &QAction::triggered,
             screen, &MyGLScreen::keyAction_Overlap);
+    connect(P->ui.actionDirection, &QAction::triggered,
+            screen, &MyGLScreen::keyAction_Direction);
     connect(P->ui.actionWindow, &QAction::triggered,
             screen, &MyGLScreen::keyAction_Window);
     connect(P->ui.actionVolume, &QAction::triggered,
@@ -106,6 +109,8 @@ void MyGLWindow::initialize()
             screen, &MyGLScreen::keyAction_EditEnvelope);
     connect(P->ui.actionEditCloud, &QAction::triggered,
             screen, &MyGLScreen::keyAction_EditCloud);
+    connect(P->ui.actionSampleNames, &QAction::triggered,
+            screen, &MyGLScreen::keyAction_SampleNames);
     connect(P->ui.actionFullScreen, &QAction::triggered,
             screen, &MyGLScreen::keyAction_FullScreen);
 
@@ -133,9 +138,49 @@ MyGLScreen *MyGLWindow::screen() const
 
 void MyGLWindow::on_actionAbout_triggered()
 {
-    QDialog dlg;
+    QDialog dlg(this);
     Ui::AboutDialog ui;
     ui.setupUi(&dlg);
+    dlg.exec();
+}
+
+void MyGLWindow::on_actionUserManual_triggered()
+{
+    QDialog dlg(this);
+
+    // build dialog with text browser inside
+    dlg.setWindowTitle(tr("User manual"));
+    QVBoxLayout *vl = new QVBoxLayout;
+    dlg.setLayout(vl);
+    vl->setContentsMargins(0, 0, 0, 0);
+    QTextBrowser *tb = new QTextBrowser;
+    vl->addWidget(tb);
+
+    // can visit external web pages
+    tb->setOpenExternalLinks(true);
+
+    // find manual according to language
+    QLocale loc = locale();
+    QString locName = loc.name();
+
+    // search files in order: (ex.) "fr_FR", "fr", "en"
+    QStringList paths;
+    QString pathTmpl = ":/docs/manual/%1/index.html";
+    paths << pathTmpl.arg(locName);
+    { int i = locName.indexOf('_');
+      if (i != -1) paths << pathTmpl.arg(locName.left(i)); }
+    paths << pathTmpl.arg("en");
+
+    // load the first one existing
+    for (const QString &path : paths) {
+        QFile docsFile(path);
+        if (docsFile.open(QFile::ReadOnly)) {
+            tb->setHtml(QString::fromUtf8(docsFile.readAll()));
+            break;
+        }
+    }
+
+    dlg.resize(600, 800);
     dlg.exec();
 }
 
@@ -308,8 +353,6 @@ void MyGLScreen::keyAction_MotionXY()
     paramString = "";
     if (selectedCloud) {
         currentParam = MOTIONXY;
-        // toggle selection modes
-        dragMode = RESIZE;
     }
 }
 
@@ -528,10 +571,19 @@ void MyGLScreen::keyAction_EditCloud()
     }
 }
 
+void MyGLScreen::keyAction_SampleNames()
+{
+    // see name of cloud or sample
+    paramString = "";
+    showSampleNames = !showSampleNames;
+}
+
 void MyGLScreen::mousePressEvent(QMouseEvent *event)
 {
     Qt::MouseButton button = event->button();
     Scene *scene = ::currentScene;
+
+    int modkey = event->modifiers();
 
     // cout << "button " << button << endl;
 
@@ -577,6 +629,9 @@ void MyGLScreen::mousePressEvent(QMouseEvent *event)
                     // sv.setSelectState(true);
                     // selectedRect = i;
                     // break;
+
+                    if (modkey == Qt::ShiftModifier)
+                        dragMode = RESIZE;
                 }
             }
 
@@ -590,12 +645,13 @@ void MyGLScreen::mousePressEvent(QMouseEvent *event)
 
 void MyGLScreen::mouseReleaseEvent(QMouseEvent *event)
 {
-    //handle button up
-    // if ((button == GLUT_LEFT_BUTTON) && (state == GLUT_UP)){
-    //     lastDragX = -1;
-    //     lastDragY = -1;
-    //     dragMode = MOVE;
-    // }
+    Qt::MouseButton button = event->button();
+
+    if ((button == Qt::LeftButton) || (button == Qt::RightButton)) {
+        lastDragX = veryHighNumber;
+        lastDragY = veryHighNumber;
+        dragMode = MOVE;
+    }
 }
 
 void MyGLScreen::mouseMoveEvent(QMouseEvent *event)
@@ -982,15 +1038,7 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
         break;
     }
     case Qt::Key_N: {
-        // see name of cloud or sample
-        if (selectedSample) {
-            currentParam = NAME;
-        }
-        else {
-            paramString = "";
-            if (currentParam != NUM)
-                currentParam = NUM;
-        }
+        keyAction_SampleNames();
         break;
     }
     case Qt::Key_C: {
@@ -1016,15 +1064,6 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
 
 void MyGLScreen::keyReleaseEvent(QKeyEvent *event)
 {
-    switch (event->key()) {
-    case Qt::Key_R:
-        dragMode = MOVE;
-        lastDragX = veryHighNumber;
-        lastDragY = veryHighNumber;
-        break;
-    default:
-        break;
-    }
-
-    update();
+    Q_UNUSED(event);
+    // update();
 }

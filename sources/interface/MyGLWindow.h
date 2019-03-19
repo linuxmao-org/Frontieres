@@ -41,6 +41,7 @@ public:
 
 public slots:
     void on_actionAbout_triggered();
+    void on_actionUserManual_triggered();
 
 private:
     struct Impl;
@@ -74,6 +75,7 @@ public slots:
     void keyAction_Active();
     void keyAction_EditEnvelope();
     void keyAction_EditCloud();
+    void keyAction_SampleNames();
 
 protected:
     void initializeGL() override;

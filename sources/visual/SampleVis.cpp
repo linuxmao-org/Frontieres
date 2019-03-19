@@ -50,13 +50,13 @@ SampleVis::~SampleVis()
 // constructor
 SampleVis::SampleVis()
 {
-    // get screen width and height
-    MyGLScreen *screen = theApplication->GLwindow()->screen();
-    screenWidth = screen->width();
-    screenHeight = screen->height();
-
     // initializtion
     init();
+
+    // get screen width and height
+    MyGLScreen *screen = theApplication->GLwindow()->screen();
+    unsigned screenWidth = screen->width();
+    unsigned screenHeight = screen->height();
 
     float xBorder = 100.0;
     float yBorder = 50.0;
@@ -268,7 +268,12 @@ void SampleVis::updateCorners(float width, float height)
 // set upsampling for waveform display
 void SampleVis::setUps()
 {
-    float sizeFactor = 10.0f;
+    // get screen width and height
+    MyGLScreen *screen = theApplication->GLwindow()->screen();
+    unsigned screenWidth = screen->width();
+    unsigned screenHeight = screen->height();
+
+    //float sizeFactor = 10.0f;
     if (orientation == true)
         ups = (float)screenWidth / rWidth;
     else
@@ -360,7 +365,13 @@ void SampleVis::setWaveDisplayParams()
 // draw function
 void SampleVis::draw()
 {
-    glPushMatrix();
+    // get screen width and height
+    MyGLScreen *screen = theApplication->GLwindow()->screen();
+    unsigned screenWidth = screen->width();
+    unsigned screenHeight = screen->height();
+
+    //glPushMatrix();
+
     // rect properties
     //
     //    if (colA > (aMax - 0.005)){
@@ -503,7 +514,14 @@ void SampleVis::draw()
             break;
         }
     }
-    glPopMatrix();
+
+    if (showSampleNames) {
+        glColor4f(1.0, 0.0, 0.0, 1.0);
+        QString text = QString::fromStdString(rName);
+        draw_string(rleft, screenHeight - rtop, 0.5f, text, 80.0f);
+    }
+
+    //glPopMatrix();
 }
 
 

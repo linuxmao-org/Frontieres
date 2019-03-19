@@ -169,3 +169,6 @@ HEADERS += \
   libraries/rtosc/include/rtosc/thread-link.h \
   libraries/rtosc/include/rtosc/arg-val-math.h \
   libraries/rtosc/include/rtosc/pretty-format.h
+
+RESOURCES += \
+  docs.qrc

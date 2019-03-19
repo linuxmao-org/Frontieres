@@ -21,6 +21,7 @@ set(CMAKE_C_STANDARD 99)
 # Qt
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
 find_package(Qt5Widgets CONFIG REQUIRED)
 find_package(Qt5OpenGL CONFIG REQUIRED)
 
@@ -57,7 +58,8 @@ add_executable(Frontieres WIN32
   libraries/Stk.cpp
   libraries/RtAudio.cpp
   libraries/RtMidi.cpp
-  libraries/ring_buffer.cpp)
+  libraries/ring_buffer.cpp
+  docs.qrc)
 target_compile_definitions(Frontieres
   PRIVATE "APP_VERSION=\"${PROJECT_VERSION}\"")
 target_include_directories(Frontieres

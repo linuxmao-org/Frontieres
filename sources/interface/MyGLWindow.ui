@@ -84,6 +84,7 @@
     <addaction name="actionXYmotion"/>
     <addaction name="actionSpatialMode"/>
     <addaction name="actionOverlap"/>
+    <addaction name="actionDirection"/>
     <addaction name="actionWindow"/>
     <addaction name="actionVolume"/>
     <addaction name="actionDuration"/>
@@ -93,12 +94,15 @@
     <addaction name="actionActive"/>
     <addaction name="actionEditCloud"/>
     <addaction name="actionEditEnvelope"/>
+    <addaction name="actionSampleNames"/>
     <addaction name="actionFullScreen"/>
    </widget>
    <widget class="QMenu" name="menu_Help">
     <property name="title">
      <string>&amp;Help</string>
     </property>
+    <addaction name="actionUserManual"/>
+    <addaction name="separator"/>
     <addaction name="actionAbout"/>
    </widget>
    <addaction name="menu_File"/>
@@ -257,6 +261,21 @@
   <action name="actionAbout">
    <property name="text">
     <string>About &amp;Frontières</string>
+   </property>
+  </action>
+  <action name="actionUserManual">
+   <property name="text">
+    <string>User &amp;manual</string>
+   </property>
+  </action>
+  <action name="actionSampleNames">
+   <property name="text">
+    <string>Sample names (&amp;N)</string>
+   </property>
+  </action>
+  <action name="actionDirection">
+   <property name="text">
+    <string>Direction (&amp;F)</string>
    </property>
   </action>
  </widget>

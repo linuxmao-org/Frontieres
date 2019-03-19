@@ -54,6 +54,9 @@ MyGLApplication::MyGLApplication(int &argc, char *argv[])
     : QApplication(argc, argv),
       P(new Impl)
 {
+    // init resources
+    Q_INIT_RESOURCE(docs);
+
     // init internationalization
     installTranslator(&P->qtTranslator);
     installTranslator(&P->appTranslator);
