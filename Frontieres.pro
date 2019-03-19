@@ -1,4 +1,4 @@
-QT += widgets opengl
+QT += widgets gui opengl
 CONFIG += c++11
 QMAKE_CFLAGS += -std=c99
 
