@@ -30,6 +30,7 @@
 #include "visual/SampleVis.h"
 #include "Frontieres.h"
 #include "MyRtOsc.h"
+#include <chrono>
 #include <QtFont3D.h>
 #include <QTextBrowser>
 #include <QMouseEvent>
@@ -223,6 +224,7 @@ void MyGLWindow::Impl::setupDspMonitor()
 
 // the openGL screen
 struct MyGLScreen::Impl {
+    unsigned framesToSkip = 0;
 };
 
 MyGLScreen::MyGLScreen(QWidget *parent)
@@ -234,6 +236,15 @@ MyGLScreen::MyGLScreen(QWidget *parent)
 
 MyGLScreen::~MyGLScreen()
 {
+}
+
+bool MyGLScreen::advanceFrame()
+{
+    if (P->framesToSkip > 0) {  // skip the next frame ?
+        --P->framesToSkip;
+        return false;
+    }
+    return true;
 }
 
 void MyGLScreen::initializeGL()
@@ -264,6 +275,10 @@ void MyGLScreen::initializeGL()
 
 void MyGLScreen::paintGL()
 {
+    typedef std::chrono::steady_clock clock;
+
+    clock::time_point t_begin = clock::now();
+
     // clear color and depth buffers
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClearDepth(1.0);
@@ -305,6 +320,13 @@ void MyGLScreen::paintGL()
 
     // flush and swap
     glFlush();  // renders and empties buffers
+
+    clock::time_point t_end = clock::now();
+
+    // automatic frame skipping in case of lag
+    double duration = std::chrono::duration<double>(t_end - t_begin).count();
+    double durationAllowed = 1e-3 * theApplication->idleCallbackInterval();
+    P->framesToSkip = (unsigned)(1.1 * duration / durationAllowed);
 }
 
 void MyGLScreen::resizeGL(int w, int h)

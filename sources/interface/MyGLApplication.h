@@ -28,6 +28,7 @@
 #include "model/MidiCombi.h"
 
 class MyGLWindow;
+class QTimer;
 
 class MyGLApplication : public QApplication {
     Q_OBJECT
@@ -40,6 +41,7 @@ public:
 
     MyGLWindow *GLwindow();
     void startIdleCallback(double fps);
+    int idleCallbackInterval() const;
 
     bool loadSceneFile();
     bool saveSceneFile();
@@ -66,6 +68,7 @@ private:
     CombiDialog *combiDialog;
     BankDialog *bankDialog;
     InstrumentDialog *instrumentDialog;
+    QTimer *idleTimer = nullptr;
 };
 
 #define theApplication \

@@ -56,6 +56,8 @@ public:
     explicit MyGLScreen(QWidget *parent = nullptr);
     ~MyGLScreen();
 
+    bool advanceFrame();
+
 public slots:
     void keyAction_FullScreen();
     void keyAction_SpatialMode(int dir = +1);
