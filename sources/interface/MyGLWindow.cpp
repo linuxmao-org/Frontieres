@@ -21,6 +21,7 @@
 
 #include "interface/MyGLWindow.h"
 #include "interface/MyGLApplication.h"
+#include "interface/MonitorWidget.h"
 #include "ui_MyGLWindow.h"
 #include "ui_AboutDialog.h"
 #include "model/Cloud.h"
@@ -29,6 +30,7 @@
 #include "visual/SampleVis.h"
 #include "Frontieres.h"
 #include "MyRtOsc.h"
+#include <chrono>
 #include <QtFont3D.h>
 #include <QTextBrowser>
 #include <QMouseEvent>
@@ -39,12 +41,16 @@
 extern string g_audioPath;
 
 struct MyGLWindow::Impl {
+    MyGLWindow *Q = nullptr;
     Ui::MyGLWindow ui;
+    MonitorWidget *dspMonitor_ = nullptr;
+    void setupDspMonitor();
 };
 
 MyGLWindow::MyGLWindow()
     : P(new Impl)
 {
+    P->Q = this;
 }
 
 MyGLWindow::~MyGLWindow()
@@ -54,6 +60,8 @@ MyGLWindow::~MyGLWindow()
 void MyGLWindow::initialize()
 {
     P->ui.setupUi(this);
+    P->setupDspMonitor();
+
     MyGLScreen *screen = this->screen();
 
     connect(P->ui.action_Quit, &QAction::triggered,
@@ -184,8 +192,39 @@ void MyGLWindow::on_actionUserManual_triggered()
     dlg.exec();
 }
 
+void MyGLWindow::Impl::setupDspMonitor()
+{
+    QMenuBar *mb = Q->menuBar();
+    int h = mb->height();
+
+    QWidget *w = new QWidget;
+    mb->setCornerWidget(w);
+    w->setFixedHeight(h);
+
+    QVBoxLayout *vl = new QVBoxLayout;
+    w->setLayout(vl);
+    vl->setContentsMargins(0, 0, 0, 0);
+
+    QHBoxLayout *hl  = new QHBoxLayout;
+    vl->addLayout(hl);
+    hl->setContentsMargins(0, 0, 0, 0);
+    hl->addWidget(new QLabel(tr("DSP%")));
+
+    MonitorWidget *mon = new MonitorWidget;
+    hl->addWidget(mon);
+    mon->setMinimumWidth(50);
+
+    dspMonitor_ = mon;
+
+    QTimer *tm = new QTimer(Q);
+    QObject::connect(tm, &QTimer::timeout, Q,
+                     [mon]() { mon->feedSample(dspMonitorValue); });
+    tm->start(300);
+}
+
 // the openGL screen
 struct MyGLScreen::Impl {
+    unsigned framesToSkip = 0;
 };
 
 MyGLScreen::MyGLScreen(QWidget *parent)
@@ -197,6 +236,15 @@ MyGLScreen::MyGLScreen(QWidget *parent)
 
 MyGLScreen::~MyGLScreen()
 {
+}
+
+bool MyGLScreen::advanceFrame()
+{
+    if (P->framesToSkip > 0) {  // skip the next frame ?
+        --P->framesToSkip;
+        return false;
+    }
+    return true;
 }
 
 void MyGLScreen::initializeGL()
@@ -227,6 +275,10 @@ void MyGLScreen::initializeGL()
 
 void MyGLScreen::paintGL()
 {
+    typedef std::chrono::steady_clock clock;
+
+    clock::time_point t_begin = clock::now();
+
     // clear color and depth buffers
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glClearDepth(1.0);
@@ -268,6 +320,13 @@ void MyGLScreen::paintGL()
 
     // flush and swap
     glFlush();  // renders and empties buffers
+
+    clock::time_point t_end = clock::now();
+
+    // automatic frame skipping in case of lag
+    double duration = std::chrono::duration<double>(t_end - t_begin).count();
+    double durationAllowed = 1e-3 * theApplication->idleCallbackInterval();
+    P->framesToSkip = (unsigned)(1.1 * duration / durationAllowed);
 }
 
 void MyGLScreen::resizeGL(int w, int h)

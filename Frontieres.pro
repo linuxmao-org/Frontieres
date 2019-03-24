@@ -1,4 +1,4 @@
-QT += widgets opengl
+QT += widgets gui opengl
 CONFIG += c++11
 QMAKE_CFLAGS += -std=c99
 
@@ -10,7 +10,8 @@ INCLUDEPATH += $$PWD/libraries
 DEFINES += APP_VERSION=\\\"0.0\\\"
 
 DEFINES += __LINUX_ALSASEQ__
-DEFINES += __UNIX_JACK__
+DEFINES += __LINUX_ALSA__
+DEFINES += __LINUX_PULSE__
 
 INCLUDEPATH += $$PWD/libraries/QtFont3D
 SOURCES += libraries/QtFont3D/QtFont3D.cpp
@@ -36,7 +37,7 @@ else {
 }
 
 linux: {
-  LIBS += -ljack
+  LIBS += -ljack -lpulse-simple -lpulse -lasound
 }
 
 LIBS += -lsndfile -lsoxr -llo
@@ -56,6 +57,7 @@ SOURCES += \
   sources/interface/CloudDialog.cpp \
   sources/interface/OptionsDialog.cpp \
   sources/interface/Node.cpp \
+  sources/interface/MonitorWidget.cpp \
   sources/dsp/Window.cpp \
   sources/model/MidiBank.cpp \
   sources/model/MidiCombi.cpp \
@@ -91,6 +93,7 @@ HEADERS += \
   sources/interface/CloudDialog.h \
   sources/interface/OptionsDialog.h \
   sources/interface/Node.h \
+  sources/interface/MonitorWidget.h \
   sources/dsp/Window.h \
   sources/model/MidiBank.h \
   sources/model/MidiCombi.h \

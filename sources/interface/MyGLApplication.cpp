@@ -91,9 +91,20 @@ MyGLWindow *MyGLApplication::GLwindow()
 
 void MyGLApplication::startIdleCallback(double fps)
 {
-    QTimer *timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, [this]{ P->onIdle(); });
+    QTimer *timer = idleTimer;
+    if (!timer) {
+        idleTimer = timer = new QTimer(this);
+        connect(timer, &QTimer::timeout, this, [this]{ P->onIdle(); });
+    }
     timer->start(1e3 / fps);
+}
+
+int MyGLApplication::idleCallbackInterval() const
+{
+    QTimer *timer = idleTimer;
+    if (!timer)
+        return 0;
+    return timer->interval();
 }
 
 bool MyGLApplication::loadSceneFile()
@@ -267,7 +278,9 @@ void MyGLApplication::showMidiInstrumentDialog()
 
 void MyGLApplication::Impl::onIdle()
 {
-    window->screen()->update();
+    MyGLScreen *screen = window->screen();
+    if (screen->advanceFrame())
+        screen->update();
 }
 
 QString MyGLApplication::Impl::getQtTranslationDir() const

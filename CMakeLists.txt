@@ -40,6 +40,7 @@ add_executable(Frontieres WIN32
   sources/interface/CombiDialog.cpp
   sources/interface/BankDialog.cpp
   sources/interface/InstrumDialog.cpp
+  sources/interface/MonitorWidget.cpp
   sources/dsp/Window.cpp
   sources/model/MidiBank.cpp
   sources/model/MidiCombi.cpp

@@ -166,6 +166,9 @@ QtFont3D *text_renderer = NULL;
 ValueMin g_cloudValueMin;
 ValueMax g_cloudValueMax;
 CloudParams g_defaultCloudParams;
+
+float dspMonitorValue = 0;
+
 //--------------------------------------------------------------------------------
 // FUNCTION PROTOTYPES
 //--------------------------------------------------------------------------------
@@ -234,11 +237,21 @@ void audioCallback(BUFFERPREC *out, unsigned int numFrames, void *)
     if (menuFlag == false) {
         std::unique_lock<std::mutex> lock(::currentSceneMutex, std::try_to_lock);
         if (lock.owns_lock()) {
+            auto tp1 = std::chrono::steady_clock::now(); // record time before computation
+
+            // generate audio by mixing all the clouds
             Scene *scene = ::currentScene;
             for (int i = 0, n = scene->m_clouds.size(); i < n; i++) {
                 Cloud &theCloud = *scene->m_clouds[i]->cloud;
                 theCloud.nextBuffer(out, numFrames);
             }
+
+            auto tp2 = std::chrono::steady_clock::now(); // record time after computation
+
+            // compute time difference and CPU usage
+            double deltaTime = 1e-6 * std::chrono::duration_cast<std::chrono::microseconds>(tp2 - tp1).count();
+            double bufferTime = numFrames * samp_time_sec;
+            dspMonitorValue = deltaTime / bufferTime;
         }
     }
     GTime::instance().sec += numFrames * samp_time_sec;
@@ -827,7 +840,7 @@ int main(int argc, char **argv)
 
         // define the signal handler for term signals
         sigActionTerm.sa_handler = +[](int)
-            { char a = 1; write(signalFds[1], &a, 1); };
+            { char a = 1; while (write(signalFds[1], &a, 1) == -1 && errno == EINTR); };
         sigemptyset(&sigActionTerm.sa_mask);
         for (int s : sigsTerm)
             sigaddset(&sigActionTerm.sa_mask, s);
@@ -891,15 +904,6 @@ int main(int argc, char **argv)
         cmdParser->addOption(optFps);
 
         cmdParser->process(app);
-
-        if (cmdParser->isSet(optHelp)) {
-            cmdParser->showHelp();
-            return 0;
-        }
-        if (cmdParser->isSet(optVersion)) {
-            cmdParser->showVersion();
-            return 0;
-        }
 
         if (cmdParser->isSet(optNumChannels))
             theChannelCount = cmdParser->value(optNumChannels).toUInt();

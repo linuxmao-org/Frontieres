@@ -127,6 +127,9 @@ void draw_string(float x, float y, float z, const QString &str, float scale = 1.
 
 void updateMouseCoords(int x, int y);
 
+// CPU usage value by audio processor (0,1)
+extern float dspMonitorValue;
+
 void printUsage();
 void printParam();
 
