@@ -64,8 +64,7 @@ CloudVis::CloudVis(float x, float y, unsigned int numGrainsVis,
 {
     startTime = GTime::instance().sec;
 
-    gcX=x;
-    gcY=y;
+    updateCloudPosition(x, y);
 
     xRandExtent = g_defaultCloudParams.xRandExtent;
     yRandExtent = g_defaultCloudParams.yRandExtent;
@@ -106,8 +105,7 @@ CloudVis::CloudVis(float x, float y, unsigned int numGrainsVis,VecSceneSample *r
 {
     startTime = GTime::instance().sec;
 
-    gcX=x;
-    gcY=y;
+    updateCloudPosition(x, y);
 
     xRandExtent = g_defaultCloudParams.xRandExtent;
     yRandExtent = g_defaultCloudParams.yRandExtent;
