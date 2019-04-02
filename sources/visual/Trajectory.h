@@ -10,7 +10,7 @@
 // abstract class as a base for every kind of trajectory
 class Trajectory {
 public:
-    virtual std::vector<double> computeTrajectory(double t, double initX, double initY){};
+    virtual std::vector<double> computeTrajectory(double t, double initX, double initY) = 0;
     Trajectory(double s);
     virtual ~Trajectory(){};
     void setSpeed(double s);
