@@ -64,7 +64,8 @@ CloudVis::CloudVis(float x, float y, unsigned int numGrainsVis,
 {
     startTime = GTime::instance().sec;
 
-    updateCloudPosition(x, y);
+    gcX=x;
+    gcY=y;
 
     xRandExtent = g_defaultCloudParams.xRandExtent;
     yRandExtent = g_defaultCloudParams.yRandExtent;
@@ -95,6 +96,51 @@ CloudVis::CloudVis(float x, float y, unsigned int numGrainsVis,
     lambda = 0.997;
     selRad = minSelRad;
     targetRad = maxSelRad;
+
+    myTrajectory=nullptr;
+    isMoving=false;
+}
+
+CloudVis::CloudVis(float x, float y, unsigned int numGrainsVis,VecSceneSample *rects,Trajectory *trajectory)
+
+{
+    startTime = GTime::instance().sec;
+
+    gcX=x;
+    gcY=y;
+
+    xRandExtent = g_defaultCloudParams.xRandExtent;
+    yRandExtent = g_defaultCloudParams.yRandExtent;
+
+    // init add and remove flags to false
+    addFlag = false;
+    removeFlag = false;
+
+    // select on instantiation
+    isSelected = true;
+
+    // pulse frequency
+    freq = 1.0f;
+
+    // pointer to landscape visualization objects
+    theLandscape = rects;
+
+    for (int i = 0; i < numGrainsVis; i++) {
+        myGrainsV.push_back(new GrainVis(gcX, gcY));
+    }
+
+    numGrains = numGrainsVis;
+
+
+    // visualization stuff
+    minSelRad = 15.0f;
+    maxSelRad = 19.0f;
+    lambda = 0.997;
+    selRad = minSelRad;
+    targetRad = maxSelRad;
+
+    isMoving=true;
+    myTrajectory=trajectory;
 }
 
 void CloudVis::setDuration(float dur)
@@ -124,6 +170,10 @@ void CloudVis::changesDone(bool done)
     changed_yRandExtent = done;
 }
 
+void CloudVis::moveHorizontally(){
+
+}
+
 // return cloud x
 float CloudVis::getX()
 {
@@ -139,6 +189,16 @@ void CloudVis::draw()
 {
     double t_sec = GTime::instance().sec - startTime;
     // cout << t_sec << endl;
+
+    //computing trajectory
+    std::vector<double> pos = {0.,0.};
+    if (this->isMoving && !this->isSelected){
+        pos=myTrajectory->computeTrajectory(t_sec,this->gcX,this->gcY);
+        updateCloudPosition(pos[0],pos[1] );
+    }
+
+
+
 
     // if ((g_time -last_gtime) > 50){
     glPushMatrix();

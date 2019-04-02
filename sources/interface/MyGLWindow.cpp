@@ -505,6 +505,40 @@ void MyGLScreen::keyAction_Cloud(int dir)
     }
 }
 
+void MyGLScreen::keyAction_MovingCloud(int dir)
+{
+    Scene *scene = ::currentScene;
+    SceneCloud *selectedCloud = scene->selectedCloud();
+
+    paramString = "";
+    scene->deselect(RECT);
+    std::lock_guard<std::mutex> lock(::currentSceneMutex);
+    if (dir < 0) {
+        if (!scene->m_clouds.empty()) {
+            scene->m_clouds.pop_back();
+            // cout << "cloud removed" << endl;
+        }
+        if (scene->m_clouds.empty()) {
+            scene->m_selectedCloud = -1;
+        }
+        else {
+            // still have a cloud so select
+            scene->m_selectedCloud = scene->m_clouds.size() - 1;
+            scene->m_clouds.back()->view->setSelectState(true);
+        }
+    }
+    else {
+        int numGrains = 8;  // initial number of grains
+        if (selectedCloud) {
+            if (!scene->m_clouds.empty()) {
+                selectedCloud->view->setSelectState(false);
+            }
+        }
+        scene->addNewMovingCloud(numGrains);
+        scene->m_selectedCloud = scene->m_clouds.size() - 1;
+    }
+}
+
 void MyGLScreen::keyAction_Grain(int dir)
 {
     Scene *scene = ::currentScene;
@@ -1009,6 +1043,11 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Question:
         menuFlag = !menuFlag;
         break;
+
+    case Qt::Key_I: {
+        keyAction_MovingCloud((modkey == Qt::ShiftModifier) ? -1 : +1);
+        break;
+    }
 
     case Qt::Key_G: {
         keyAction_Cloud((modkey == Qt::ShiftModifier) ? -1 : +1);

@@ -69,6 +69,7 @@ public slots:
     void keyAction_Window(int dir = +1);
     void keyAction_Volume(int dir = +1);
     void keyAction_Cloud(int dir = +1);
+    void keyAction_MovingCloud(int dir = +1);
     void keyAction_Grain(int dir = +1);
     void keyAction_Duration(int dir = +1);
     void keyAction_LfoFreq(int dir = +1);

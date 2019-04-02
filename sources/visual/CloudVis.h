@@ -35,6 +35,8 @@
 #include <memory>
 #include <iostream>
 #include "theglobals.h"
+#include "Trajectory.h"
+#include "Bouncing.h"
 class SceneSample;
 class GrainVis;
 class Cloud;
@@ -50,6 +52,7 @@ public:
     // constructor (takes center position (x,y), number of grains, sample visuals)
     CloudVis(float x, float y, unsigned int numGrainsVis, VecSceneSample *rects);
 
+    CloudVis(float x, float y, unsigned int numGrainsVis, VecSceneSample *rects,Trajectory *trajectory);
     // render
     void draw();
     // get playback position in registered sample visuals and return to grain cloud
@@ -99,8 +102,12 @@ public:
     // changes done
     void changesDone(bool done);
 
+    //move the cloud horizontally
+    void moveHorizontally();
+
 protected:
 private:
+    bool isMoving;
     bool isOn, isSelected;
     bool addFlag, removeFlag;
     double startTime;
@@ -121,6 +128,8 @@ private:
     std::vector<GrainVis *> myGrainsV;
     // registered sample visuals
     VecSceneSample *theLandscape;
+    // trajectory of the cloud
+    Trajectory *myTrajectory;
 };
 
 #endif

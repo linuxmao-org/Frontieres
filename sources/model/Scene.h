@@ -71,6 +71,7 @@ public:
 
     void addSampleVis(Sample *sampleToAdd);
     void addNewCloud(int numGrains);
+    void addNewMovingCloud(int numGrains);
 
     // init default cloud params
     void initDefaultCloudParams();
