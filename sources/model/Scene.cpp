@@ -29,7 +29,6 @@
 #include "visual/SampleVis.h"
 #include "visual/Bouncing.h"
 #include "visual/Trajectory.h"
-#include "visual/Trajectory.h"
 #include "dsp/Window.h"
 #include <QStandardPaths>
 #include <QJsonDocument>

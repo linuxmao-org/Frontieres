@@ -71,6 +71,8 @@ SOURCES += \
   sources/visual/SampleVis.cpp \
   sources/visual/GrainVis.cpp \
   sources/visual/CloudVis.cpp \
+  sources/visual/Trajectory.cpp \
+  sources/visual/Bouncing.cpp \
   sources/utility/GTime.cpp \
   libraries/Stk.cpp \
   libraries/RtAudio.cpp \
@@ -108,6 +110,8 @@ HEADERS += \
   sources/visual/SampleVis.h \
   sources/visual/GrainVis.h \
   sources/visual/CloudVis.h \
+  sources/visual/Trajectory.h \
+  sources/visual/Bouncing.h \
   sources/utility/GTime.h \
   libraries/RtMidi.h \
   libraries/RtAudio.h \
