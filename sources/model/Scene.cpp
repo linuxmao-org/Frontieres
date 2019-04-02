@@ -934,25 +934,7 @@ void Scene::addNewCloud(int numGrains)
     sceneCloud->cloud->describe(out);
 }
 
-void Scene::addNewMovingCloud(int numGrains)
-{
-    //std::cout<<"mouseX "<<mouseX<<std::endl;
-    //std::cout<<"mouseY "<<mouseY<<std::endl;
-    Bouncing *newmove= new Bouncing(10,1);
-    // create audio
-    SceneCloud *sceneCloud = new SceneCloud;
-    m_clouds.emplace_back(sceneCloud);
-    sceneCloud->cloud.reset(new Cloud(&m_samples, numGrains));
-    // create visualization
-    sceneCloud->view.reset(new CloudVis(mouseX, mouseY, numGrains, &m_samples,newmove));
-    // select new cloud
-    sceneCloud->view->setSelectState(true);
-    // register visualization with audio
-    sceneCloud->cloud->registerCloudVis(sceneCloud->view.get());
-    sceneCloud->view->registerCloud(sceneCloud->cloud.get());
-    std::ostream &out = std::cout;
-    sceneCloud->cloud->describe(out);
-}
+
 
 SceneSample *Scene::selectedSample()
 {

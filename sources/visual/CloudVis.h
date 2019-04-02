@@ -78,6 +78,7 @@ public:
     bool changedGcX();
     bool changedGcY();
 
+
     // randomness params for grain positions
     float getXRandExtent();
     float getYRandExtent();
@@ -102,8 +103,9 @@ public:
     // changes done
     void changesDone(bool done);
 
-    //move the cloud horizontally
-    void moveHorizontally();
+
+
+
 
 protected:
 private:
@@ -128,8 +130,7 @@ private:
     std::vector<GrainVis *> myGrainsV;
     // registered sample visuals
     VecSceneSample *theLandscape;
-    // trajectory of the cloud
-    Trajectory *myTrajectory;
+
 };
 
 #endif
