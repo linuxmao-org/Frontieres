@@ -75,6 +75,7 @@ SOURCES += \
   libraries/Stk.cpp \
   libraries/RtAudio.cpp \
   libraries/RtMidi.cpp \
+  libraries/minimp3_custom.c \
   libraries/ring_buffer.cpp
 
 HEADERS += \
@@ -112,6 +113,7 @@ HEADERS += \
   libraries/RtMidi.h \
   libraries/RtAudio.h \
   libraries/Stk.h \
+  libraries/minimp3_custom.h \
   libraries/ring_buffer.h \
   libraries/ring_buffer.tcc
 
