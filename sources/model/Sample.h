@@ -102,6 +102,12 @@ public:
 
 private:
     vector<Sample *> fileSet;
+
+    // try to load a single file with Sndfile
+    Sample *loadFileSndfile(const std::string &path, const std::string &filename);
+
+    // try to load a single file with minimp3
+    Sample *loadFileMp3(const std::string &path, const std::string &filename);
 };
 
 
