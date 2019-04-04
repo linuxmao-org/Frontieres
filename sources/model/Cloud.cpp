@@ -107,9 +107,6 @@ Cloud::Cloud(VecSceneSample *sampleSet, float theNumGrains)
     addFlag = false;
     removeFlag = false;
 
-    //initialise without moves
-    isMoving=false;
-    myTrajectory=nullptr;
 
     // keep pointer to the sample set
     theSamples = sampleSet;
@@ -209,15 +206,7 @@ void Cloud::registerCloudVis(CloudVis *cloudVisToRegister)
     myCloudVis->setDuration(duration);
 }
 
-Trajectory* Cloud::getTrajectory()
-{
-    return this->myTrajectory;
-}
 
-bool Cloud::getIsMoving()
-{
-    return isMoving;
-}
 
 // turn on/off
 void Cloud::toggleActive()
@@ -849,10 +838,7 @@ void Cloud::showMessageLocked()
     cout << "cloud locked, no change" << endl;
 }
 
-void Cloud::setTrajectory(Trajectory *tr){
-    isMoving=true;
-    myTrajectory=tr;
-}
+
 
 // print information
 void Cloud::describe(std::ostream &out)

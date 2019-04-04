@@ -74,11 +74,11 @@ public slots:
     void keyAction_LfoFreq(int dir = +1);
     void keyAction_LfoAmount(int dir = +1);
     void keyAction_Pitch(int dir = +1);
+    void keyAction_Trajectory(int dir=+1);
     void keyAction_Active();
     void keyAction_EditEnvelope();
     void keyAction_EditCloud();
     void keyAction_SampleNames();
-    void keyAction_Trajectory();
 
 protected:
     void initializeGL() override;

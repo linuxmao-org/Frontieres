@@ -37,6 +37,7 @@
 #include "theglobals.h"
 #include "Trajectory.h"
 #include "Bouncing.h"
+#include "Circular.h"
 class SceneSample;
 class GrainVis;
 class Cloud;
@@ -103,7 +104,10 @@ public:
     // changes done
     void changesDone(bool done);
 
-
+    Trajectory* getTrajectory();
+    bool getIsMoving();
+    void setTrajectory(Trajectory *tr);
+    void stopTrajectory();
 
 
 
@@ -113,6 +117,7 @@ private:
     bool isOn, isSelected;
     bool addFlag, removeFlag;
     double startTime;
+    double lastDrawTime;
 
     float xRandExtent, yRandExtent;
     bool changed_xRandExtent = false;
@@ -130,6 +135,9 @@ private:
     std::vector<GrainVis *> myGrainsV;
     // registered sample visuals
     VecSceneSample *theLandscape;
+
+    // trajectory of the cloud
+    Trajectory *myTrajectory;
 
 };
 

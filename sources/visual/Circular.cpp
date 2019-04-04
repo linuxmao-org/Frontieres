@@ -1,0 +1,43 @@
+#include "visual/Circular.h"
+
+
+Circular::Circular(double s,double xOr, double yOr,double xc,double yc)
+    : Trajectory(s,xOr,yOr)
+{
+    this->centerX = xc;
+    this->centerY = yc;
+    std::vector<double>  orig=getOrigin();
+    this->radius=sqrt((orig[0]-centerX)*(orig[0]-centerX)+(orig[1]-centerY)*(orig[1]-centerY));
+}
+
+Circular::Circular(double s,double xOr, double yOr,double r)
+    : Trajectory(s,xOr,yOr)
+{
+    std::vector<double>  orig=getOrigin();
+    this->centerX = orig[0];
+    this->centerY = orig[1];
+    this->radius=r;
+}
+
+
+
+
+std::vector<double> Circular::computeTrajectory(double dt)
+{
+    double sp = this->getSpeed();
+    double ph=this->getPhase();
+    const double PI  =3.141592653589793238463;
+    //define the phase modulo the period of the trajectory to avoid having phase going to infinity
+    setPhase(fmod(getPhase()+dt,1./sp));
+    std::vector<double>  orig=getOrigin();
+    std::vector<double> vecPos{0., 0.};
+
+    //we compute the euclidean distance between center of the circle and origin of trajectory
+    vecPos[0] =   radius*cos(sp*ph*2*PI)+orig[0];
+    vecPos[1] =   radius*sin(sp*ph*2*PI)+orig[1];
+    return vecPos;
+}
+
+Circular::~Circular()
+{
+}

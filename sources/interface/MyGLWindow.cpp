@@ -507,15 +507,23 @@ void MyGLScreen::keyAction_Cloud(int dir)
 
 
 
-void MyGLScreen::keyAction_Trajectory()
+void MyGLScreen::keyAction_Trajectory(int dir)
 {
     Scene *scene = ::currentScene;
     SceneCloud *selectedCloud = scene->selectedCloud();
-    Bouncing *tr=new Bouncing(5,1);
+
+
+    Trajectory *tr=nullptr;
     paramString = "";
     if (selectedCloud) {
-
-        selectedCloud->cloud->setTrajectory(tr);
+        if (dir < 0) {
+            selectedCloud->view->stopTrajectory();
+        }
+        else  {
+            //tr=new Bouncing(100,0.1,selectedCloud->view->getX(),selectedCloud->view->getY());
+            tr=new Circular(0.5,selectedCloud->view->getX(),selectedCloud->view->getY(),50);
+            selectedCloud->view->setTrajectory(tr);
+        }
 
 
     }
@@ -741,6 +749,13 @@ void MyGLScreen::mouseMoveEvent(QMouseEvent *event)
     int xDiff = 0;
     int yDiff = 0;
 
+    //origin of trajectory
+    std::vector<double> origin {0.,0.};
+    double posCloudX=0.;
+    double posCloudY=0.;
+
+    //std::cout<<"mouse moved"<<std::endl;
+
     Scene *scene = ::currentScene;
     SceneSample *selectedSample = scene->selectedSample();
     SceneCloud *selectedCloud = scene->selectedCloud();
@@ -749,7 +764,15 @@ void MyGLScreen::mouseMoveEvent(QMouseEvent *event)
         if (selectedCloud->cloud->getLockedState())
             if (selectedCloud->cloud->dialogLocked())
                 return;
+        posCloudX=selectedCloud->view->getX();
+        posCloudY=selectedCloud->view->getY();
         selectedCloud->view->updateCloudPosition(mouseX, mouseY);
+        if(selectedCloud->view->getIsMoving())
+        {
+            origin=selectedCloud->view->getTrajectory()->getOrigin();
+            selectedCloud->view->getTrajectory()->updateOrigin(origin[0]-posCloudX+mouseX,origin[1]-posCloudY+mouseY);
+        }
+
     }
     else {
 
@@ -1027,7 +1050,7 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
         break;
 
     case Qt::Key_I: {
-        keyAction_Trajectory();
+        keyAction_Trajectory((modkey == Qt::ShiftModifier) ? -1 : +1);
         break;
     }
 

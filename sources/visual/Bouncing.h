@@ -7,13 +7,13 @@
 #include "theglobals.h"
 #include "Trajectory.h"
 
-// abstract class as a base for every kind of trajectory
+
 class Bouncing : public Trajectory {
 public:
-    Bouncing(double bw, double s);
+    Bouncing(double bw, double s,double xOr,double yOr);
     void setBounceWidth(double bw);
     double getBounceWidth();
-    std::vector<double> computeTrajectory(double t, double initX, double initY);
+    std::vector<double> computeTrajectory(double dt);
     ~Bouncing();
 
 private:

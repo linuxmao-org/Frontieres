@@ -248,7 +248,6 @@ private:
     QString myName;
 
     bool isActive;  // on/off state
-    bool isMoving;
     bool awaitingPlay;  // triggered but not ready to play?
     bool addFlag, removeFlag;  // add/remove requests submitted?
     unsigned long local_time;  // internal clock
@@ -312,8 +311,6 @@ private:
     // lock switch
     bool locked = false;
 
-    // trajectory of the cloud
-    Trajectory *myTrajectory;
 
     // midi polyphony
     CloudMidi *playedCloudMidi[g_maxMidiVoices];

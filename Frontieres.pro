@@ -73,6 +73,7 @@ SOURCES += \
   sources/visual/CloudVis.cpp \
   sources/visual/Trajectory.cpp \
   sources/visual/Bouncing.cpp \
+  sources/visual/Circular.cpp \
   sources/utility/GTime.cpp \
   libraries/Stk.cpp \
   libraries/RtAudio.cpp \
@@ -112,6 +113,7 @@ HEADERS += \
   sources/visual/CloudVis.h \
   sources/visual/Trajectory.h \
   sources/visual/Bouncing.h \
+  sources/visual/Circular.h \
   sources/utility/GTime.h \
   libraries/RtMidi.h \
   libraries/RtAudio.h \
