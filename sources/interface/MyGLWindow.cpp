@@ -520,8 +520,8 @@ void MyGLScreen::keyAction_Trajectory(int dir)
             selectedCloud->view->stopTrajectory();
         }
         else  {
-            //tr=new Bouncing(100,0.1,selectedCloud->view->getX(),selectedCloud->view->getY());
-            tr=new Circular(0.5,selectedCloud->view->getX(),selectedCloud->view->getY(),50);
+            //tr=new Bouncing(100,1,selectedCloud->view->getX(),selectedCloud->view->getY());
+            tr=new Circular(2,selectedCloud->view->getX(),selectedCloud->view->getY(),50);
             selectedCloud->view->setTrajectory(tr);
         }
 

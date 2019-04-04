@@ -155,17 +155,22 @@ bool CloudVis::getIsMoving()
 
 void CloudVis::setTrajectory(Trajectory *tr)
 {
+    if(isMoving)
+    {
+        delete myTrajectory;
+    }
     isMoving=true;
     myTrajectory=tr;
 }
 
 void CloudVis::stopTrajectory()
 {
-    if(myTrajectory !=nullptr)
-    {
-        delete myTrajectory;
-        isMoving=false;
-    }
+    isMoving=false;
+}
+
+void CloudVis::startTrajectory()
+{
+    isMoving=true;
 }
 
 

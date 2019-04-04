@@ -19,22 +19,20 @@ Circular::Circular(double s,double xOr, double yOr,double r)
     this->radius=r;
 }
 
-
-
-
 std::vector<double> Circular::computeTrajectory(double dt)
 {
     double sp = this->getSpeed();
     double ph=this->getPhase();
     const double PI  =3.141592653589793238463;
+    ph+=sp*dt;
     //define the phase modulo the period of the trajectory to avoid having phase going to infinity
-    setPhase(fmod(getPhase()+dt,1./sp));
+    setPhase(ph-int(ph));
     std::vector<double>  orig=getOrigin();
     std::vector<double> vecPos{0., 0.};
 
     //we compute the euclidean distance between center of the circle and origin of trajectory
-    vecPos[0] =   radius*cos(sp*ph*2*PI)+orig[0];
-    vecPos[1] =   radius*sin(sp*ph*2*PI)+orig[1];
+    vecPos[0] =   radius*cos(ph*2*PI)+orig[0];
+    vecPos[1] =   radius*sin(ph*2*PI)+orig[1];
     return vecPos;
 }
 

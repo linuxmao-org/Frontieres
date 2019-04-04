@@ -108,6 +108,7 @@ public:
     bool getIsMoving();
     void setTrajectory(Trajectory *tr);
     void stopTrajectory();
+    void startTrajectory();
 
 
 
