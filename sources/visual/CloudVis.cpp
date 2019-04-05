@@ -57,6 +57,7 @@ CloudVis::~CloudVis()
 {
     for (GrainVis *vis : myGrainsV)
         delete vis;
+    delete myTrajectory;
 }
 
 CloudVis::CloudVis(float x, float y, unsigned int numGrainsVis,
@@ -95,7 +96,14 @@ CloudVis::CloudVis(float x, float y, unsigned int numGrainsVis,
     lambda = 0.997;
     selRad = minSelRad;
     targetRad = maxSelRad;
+    lastDrawTime=0;
+
+    //initialise without moves
+    isMoving=false;
+    myTrajectory=nullptr;
+
 }
+
 
 void CloudVis::setDuration(float dur)
 {
@@ -135,10 +143,61 @@ float CloudVis::getY()
     return gcY;
 }
 
+Trajectory* CloudVis::getTrajectory()
+{
+    return this->myTrajectory;
+}
+
+bool CloudVis::getIsMoving()
+{
+    return isMoving;
+}
+
+void CloudVis::setTrajectory(Trajectory *tr)
+{
+    if(isMoving || myTrajectory != nullptr)
+    {
+        delete myTrajectory;
+    }
+    myTrajectory=tr;
+    if(tr==nullptr){
+        isMoving=false;
+    }
+}
+
+bool CloudVis::hasTrajectory()
+{
+    return myTrajectory != nullptr;
+}
+
+void CloudVis::stopTrajectory()
+{
+    isMoving=false;
+}
+
+void CloudVis::startTrajectory()
+{
+    isMoving=true;
+}
+
+
 void CloudVis::draw()
 {
-    double t_sec = GTime::instance().sec - startTime;
+    double t_sec = 0;
+    double dt=0;
+
+    t_sec = GTime::instance().sec - startTime;
+    dt=t_sec-lastDrawTime;
+    lastDrawTime=t_sec;
+    //std::cout << "time between drawings: " <<dt<<std::endl;
     // cout << t_sec << endl;
+
+    //computing trajectory
+    std::vector<double> pos = {0.,0.};
+    if (this->getIsMoving() && !this->isSelected){
+        pos=this->myTrajectory->computeTrajectory(dt);
+        updateCloudPosition(pos[0],pos[1] );
+    }
 
     // if ((g_time -last_gtime) > 50){
     glPushMatrix();

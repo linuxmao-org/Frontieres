@@ -107,6 +107,7 @@ Cloud::Cloud(VecSceneSample *sampleSet, float theNumGrains)
     addFlag = false;
     removeFlag = false;
 
+
     // keep pointer to the sample set
     theSamples = sampleSet;
 
@@ -204,6 +205,8 @@ void Cloud::registerCloudVis(CloudVis *cloudVisToRegister)
     myCloudVis = cloudVisToRegister;
     myCloudVis->setDuration(duration);
 }
+
+
 
 // turn on/off
 void Cloud::toggleActive()
@@ -834,6 +837,8 @@ void Cloud::showMessageLocked()
 {
     cout << "cloud locked, no change" << endl;
 }
+
+
 
 // print information
 void Cloud::describe(std::ostream &out)

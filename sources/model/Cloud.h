@@ -51,6 +51,7 @@
 #include "Frontieres.h"
 #include "model/Adsr.h"
 #include "dsp/Window.h"
+#include "visual/Trajectory.h"
 
 class Grain;
 struct SceneSample;
@@ -171,6 +172,11 @@ public:
     void setVolumeDb(float theVolDB);
     float getVolumeDb();
     bool changedVolumeDb();
+
+    //trajectory
+    void setTrajectory(Trajectory *tr);
+    Trajectory* getTrajectory();
+    bool getIsMoving();
 
 
     // get unique id of cloud
@@ -304,6 +310,7 @@ private:
 
     // lock switch
     bool locked = false;
+
 
     // midi polyphony
     CloudMidi *playedCloudMidi[g_maxMidiVoices];

@@ -505,6 +505,40 @@ void MyGLScreen::keyAction_Cloud(int dir)
     }
 }
 
+
+
+void MyGLScreen::keyAction_Trajectory(int dir)
+{
+    Scene *scene = ::currentScene;
+    SceneCloud *selectedCloud = scene->selectedCloud();
+
+
+    Trajectory *tr=nullptr;
+    paramString = "";
+    if (selectedCloud) {
+        if (dir < 0) {
+            selectedCloud->view->stopTrajectory();
+        }
+        else  {
+            if( selectedCloud->view->getTrajectory()==nullptr){
+                tr=new Bouncing(100,0.2,selectedCloud->view->getX(),selectedCloud->view->getY());
+            }
+            else if(selectedCloud->view->getTrajectory()->getType()==1){
+                tr=new Circular(0.2,selectedCloud->view->getX(),selectedCloud->view->getY(),200);
+            }
+            else if(selectedCloud->view->getTrajectory()->getType()==2){
+                tr=new Bouncing(100,0.2,selectedCloud->view->getX(),selectedCloud->view->getY());
+            }
+
+
+            selectedCloud->view->setTrajectory(tr);
+            selectedCloud->view->startTrajectory();
+        }
+
+
+    }
+}
+
 void MyGLScreen::keyAction_Grain(int dir)
 {
     Scene *scene = ::currentScene;
@@ -725,6 +759,13 @@ void MyGLScreen::mouseMoveEvent(QMouseEvent *event)
     int xDiff = 0;
     int yDiff = 0;
 
+    //origin of trajectory
+    std::vector<double> origin {0.,0.};
+    double posCloudX=0.;
+    double posCloudY=0.;
+
+    //std::cout<<"mouse moved"<<std::endl;
+
     Scene *scene = ::currentScene;
     SceneSample *selectedSample = scene->selectedSample();
     SceneCloud *selectedCloud = scene->selectedCloud();
@@ -733,7 +774,15 @@ void MyGLScreen::mouseMoveEvent(QMouseEvent *event)
         if (selectedCloud->cloud->getLockedState())
             if (selectedCloud->cloud->dialogLocked())
                 return;
+        posCloudX=selectedCloud->view->getX();
+        posCloudY=selectedCloud->view->getY();
         selectedCloud->view->updateCloudPosition(mouseX, mouseY);
+        if(selectedCloud->view->getIsMoving())
+        {
+            origin=selectedCloud->view->getTrajectory()->getOrigin();
+            selectedCloud->view->getTrajectory()->updateOrigin(origin[0]-posCloudX+mouseX,origin[1]-posCloudY+mouseY);
+        }
+
     }
     else {
 
@@ -1009,6 +1058,11 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Question:
         menuFlag = !menuFlag;
         break;
+
+    case Qt::Key_I: {
+        keyAction_Trajectory((modkey == Qt::ShiftModifier) ? -1 : +1);
+        break;
+    }
 
     case Qt::Key_G: {
         keyAction_Cloud((modkey == Qt::ShiftModifier) ? -1 : +1);

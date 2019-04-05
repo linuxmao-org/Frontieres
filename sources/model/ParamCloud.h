@@ -45,6 +45,7 @@ struct CloudParams
     float xRandExtent;
     float yRandExtent;
     ParamEnv envelope;
+    bool hasTrajectory;
 };
 struct ValueMax
 {

@@ -713,8 +713,8 @@ void mouseDrag(int x, int y)
     Scene *scene = ::currentScene;
     SceneSample *selectedSample = scene->selectedSample();
     SceneCloud *selectedCloud = scene->selectedCloud();
-
-    if (selectedCloud) {
+    if (selectedCloud)
+    {
         selectedCloud->view->updateCloudPosition(mouseX, mouseY);
     }
     else {
