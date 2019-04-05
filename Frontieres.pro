@@ -78,8 +78,9 @@ SOURCES += \
   libraries/Stk.cpp \
   libraries/RtAudio.cpp \
   libraries/RtMidi.cpp \
-  libraries/ring_buffer.cpp \
-  libraries/minimp3_custom.c 
+  libraries/minimp3_custom.c \
+ 
+
 
 HEADERS += \
   sources/theglobals.h \
@@ -119,6 +120,7 @@ HEADERS += \
   libraries/RtMidi.h \
   libraries/RtAudio.h \
   libraries/Stk.h \
+  libraries/minimp3_custom.h \
   libraries/ring_buffer.h \
   libraries/ring_buffer.tcc \
   libraries/minimp3_custom.h

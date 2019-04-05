@@ -62,6 +62,7 @@ add_executable(Frontieres WIN32
   libraries/Stk.cpp
   libraries/RtAudio.cpp
   libraries/RtMidi.cpp
+  libraries/minimp3_custom.c
   libraries/ring_buffer.cpp
   libraries/minimp3_custom.c
   docs.qrc)
