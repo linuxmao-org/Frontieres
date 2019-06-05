@@ -60,18 +60,29 @@ static const double globalAtten = 0.5;
 //#define OUTPUT_BUFFER_SIZE 1024
 
 
+//-----------------------------------------------------------------------------
+// Defines a point in a 3D space (coords x, y and z)
+//-----------------------------------------------------------------------------
+struct pt3d {
+    pt3d(float _x, float _y, float _z)
+        : x(_x), y(_y), z(_z){}
+
+    float x;
+    float y;
+    float z;
+};
+
 ////-----------------------------------------------------------------------------
 //// Defines a point in a 2D space (coords x, y)
 ////-----------------------------------------------------------------------------
 
-// NOW A CLASS INSTEAD - see pt2d.h and pt2d.cpp
-// struct pt2d
-//{
-//    pt2d( float _x, float _y ) : x(_x), y(_y) {};
-//
-//    float x;
-//    float y;
-//};
+struct pt2d
+{
+   pt2d( float _x, float _y ) : x(_x), y(_y) {}
+
+   float x;
+   float y;
+};
 
 // scenes files read/write direction
 enum class FileDirection {

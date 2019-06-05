@@ -22,6 +22,7 @@
 #ifndef FRONTIERES_H
 #define FRONTIERES_H
 
+#include "theglobals.h"
 #include <string>
 #include <vector>
 #include <mutex>
@@ -38,20 +39,6 @@ class QtFont3D;
 //-----------------------------------------------------------------------------
 // parameter string
 extern std::string paramString;
-
-//-----------------------------------------------------------------------------
-// Defines a point in a 3D space (coords x, y and z)
-//-----------------------------------------------------------------------------
-struct pt3d {
-    pt3d(float _x, float _y, float _z)
-        : x(_x)
-        , y(_y)
-        , z(_z){};
-
-    float x;
-    float y;
-    float z;
-};
 
 // Initial camera movement vars
 // my position
