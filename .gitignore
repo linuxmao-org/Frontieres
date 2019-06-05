@@ -6,5 +6,6 @@ moc_*.cpp
 moc_predefs.h
 *.o
 *.exe
+*.autosave
 /Frontieres
 /build/
