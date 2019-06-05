@@ -659,6 +659,27 @@ void printParam()
             draw_string((GLfloat)mouseX, (GLfloat)(screenHeight - mouseY), 0.0,
                         myValue.c_str(), 100.0f);
             break;
+        case TRAJECTORY:
+            cout << "trajectory dans frontieres.cpp, trajectory = " << theCloud.getTrajectoryType() << endl;
+            cout << "static="<< STATIC <<",bouncing="<<BOUNCING<<",circular="<<CIRCULAR<<endl;
+            switch (theCloud.getTrajectoryType()) {
+            case STATIC:
+                myValue = QObject::tr("Trajectory: STATIC").toStdString();
+                break;
+            case BOUNCING:
+                myValue = QObject::tr("Trajectory: BOUNCING").toStdString();
+                break;
+            case CIRCULAR:
+                myValue = QObject::tr("Trajectory: CIRCULAR").toStdString();
+                break;
+            default:
+                myValue = "";
+                break;
+            }
+            cout << "myvalue="<<myValue<<endl;
+            draw_string((GLfloat)mouseX, (GLfloat)(screenHeight - mouseY), 0.0,
+                          myValue.c_str(), 100.0f);
+
         default:
             break;
         }
@@ -713,8 +734,8 @@ void mouseDrag(int x, int y)
     Scene *scene = ::currentScene;
     SceneSample *selectedSample = scene->selectedSample();
     SceneCloud *selectedCloud = scene->selectedCloud();
-
-    if (selectedCloud) {
+    if (selectedCloud)
+    {
         selectedCloud->view->updateCloudPosition(mouseX, mouseY);
     }
     else {

@@ -82,6 +82,7 @@
     <addaction name="actionXmotion"/>
     <addaction name="actionYmotion"/>
     <addaction name="actionXYmotion"/>
+    <addaction name="actionTrajectory"/>
     <addaction name="actionSpatialMode"/>
     <addaction name="actionOverlap"/>
     <addaction name="actionDirection"/>
@@ -276,6 +277,11 @@
   <action name="actionDirection">
    <property name="text">
     <string>Direction (&amp;F)</string>
+   </property>
+  </action>
+  <action name="actionTrajectory">
+   <property name="text">
+    <string>Trajectory (I)</string>
    </property>
   </action>
  </widget>

@@ -51,6 +51,7 @@
 #include "Frontieres.h"
 #include "model/Adsr.h"
 #include "dsp/Window.h"
+#include "visual/Trajectory.h"
 
 class Grain;
 struct SceneSample;
@@ -172,6 +173,15 @@ public:
     float getVolumeDb();
     bool changedVolumeDb();
 
+    // trajectory
+    void setTrajectory(Trajectory *tr);
+    Trajectory* getTrajectory();
+    bool getIsMoving();
+
+    // trajectory type
+    void setTrajectoryType(int newTrajectoryType);
+    int getTrajectoryType();
+    bool changedTrajectoryType();
 
     // get unique id of cloud
     unsigned int getId();
@@ -280,7 +290,7 @@ private:
 
     // cloud params
     float overlap, overlapNorm, pitch, duration, pitchLFOFreq, pitchLFOAmount;
-    int myDirMode, windowType, myOutputFirstNumber, myOutputLastNumber;
+    int myDirMode, windowType, myOutputFirstNumber, myOutputLastNumber, trajectoryType;
     bool changed_overlap = false;
     bool changed_pitch = false;
     bool changed_duration = false;
@@ -288,6 +298,7 @@ private:
     bool changed_pitchLFOAmount = false;
     bool changed_myDirMode = false;
     bool changed_windowType = false;
+    bool changed_trajectoryType = false;
 
     // audio files
     VecSceneSample *theSamples;
@@ -304,6 +315,7 @@ private:
 
     // lock switch
     bool locked = false;
+
 
     // midi polyphony
     CloudMidi *playedCloudMidi[g_maxMidiVoices];

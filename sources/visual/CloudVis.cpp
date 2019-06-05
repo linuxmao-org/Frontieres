@@ -57,6 +57,7 @@ CloudVis::~CloudVis()
 {
     for (GrainVis *vis : myGrainsV)
         delete vis;
+    delete myTrajectory;
 }
 
 CloudVis::CloudVis(float x, float y, unsigned int numGrainsVis,
@@ -64,7 +65,28 @@ CloudVis::CloudVis(float x, float y, unsigned int numGrainsVis,
 {
     startTime = GTime::instance().sec;
 
+    //initialise trajectory
+
+    isMoving=false;
+    myTrajectory = nullptr;
+    Trajectory *tr=nullptr;
+    switch (g_defaultCloudParams.trajectoryType) {
+    case BOUNCING:
+        tr=new Bouncing(100,0.2,x,y);
+        isMoving = true;
+        break;
+    case CIRCULAR:
+        tr=new Circular(0.2,x,y,200);
+        isMoving = true;
+        break;
+    default :
+        break;
+    }
+
+    setTrajectory(tr);
+
     updateCloudPosition(x, y);
+    updateCloudOrigin(x, y);
 
     xRandExtent = g_defaultCloudParams.xRandExtent;
     yRandExtent = g_defaultCloudParams.yRandExtent;
@@ -95,7 +117,10 @@ CloudVis::CloudVis(float x, float y, unsigned int numGrainsVis,
     lambda = 0.997;
     selRad = minSelRad;
     targetRad = maxSelRad;
+    lastDrawTime=0;
+
 }
+
 
 void CloudVis::setDuration(float dur)
 {
@@ -135,10 +160,71 @@ float CloudVis::getY()
     return gcY;
 }
 
+float CloudVis::getOriginX()
+{
+    return origin_gcX;
+}
+
+float CloudVis::getOriginY()
+{
+    return origin_gcY;
+}
+
+Trajectory* CloudVis::getTrajectory()
+{
+    return this->myTrajectory;
+}
+
+bool CloudVis::getIsMoving()
+{
+    return isMoving;
+}
+
+void CloudVis::setTrajectory(Trajectory *tr)
+{
+    if(isMoving || myTrajectory != nullptr)
+    {
+        delete myTrajectory;
+    }
+    myTrajectory=tr;
+    if(tr==nullptr){
+        isMoving=false;
+    }
+}
+
+bool CloudVis::hasTrajectory()
+{
+    return myTrajectory != nullptr;
+}
+
+void CloudVis::stopTrajectory()
+{
+    isMoving=false;
+}
+
+void CloudVis::startTrajectory()
+{
+    isMoving=true;
+}
+
+
 void CloudVis::draw()
 {
-    double t_sec = GTime::instance().sec - startTime;
+    double t_sec = 0;
+    double dt=0;
+
+    t_sec = GTime::instance().sec - startTime;
+    dt=t_sec-lastDrawTime;
+    lastDrawTime=t_sec;
+    //std::cout << "time between drawings: " <<dt<<std::endl;
     // cout << t_sec << endl;
+
+    //computing trajectory
+    pt2d pos = {0.,0.};
+    if (this->getIsMoving() && !this->isSelected){
+        pos=this->myTrajectory->computeTrajectory(dt);
+        updateCloudPosition(pos.x,pos.y);
+    }
 
     // if ((g_time -last_gtime) > 50){
     glPushMatrix();
@@ -154,6 +240,23 @@ void CloudVis::draw()
     gluDisk(gluNewQuadric(), selRad, selRad + 5.0, 128, 2);
     glPopMatrix();
     glPushMatrix();
+
+    // origin
+
+    glTranslatef((GLfloat)origin_gcX, (GLfloat)origin_gcY, 0.0);
+    // Cloud origin representation
+
+    gluDisk(gluNewQuadric(), selRad, selRad + 5.0, 128, 2);
+    glPopMatrix();
+    glPushMatrix();
+
+    glColor4f(0.1, 0.7, 0.6, 0.35);
+    glLineWidth(2.0f);
+    glBegin(GL_LINE_STRIP);
+    glVertex3f(origin_gcX, origin_gcY, 0.0f);
+    glVertex3f(gcX, gcY, 0.0f);
+    glEnd();
+
     // update grain motion;
     // Individual grains
     for (int i = 0; i < numGrains; i++) {
@@ -251,12 +354,22 @@ float CloudVis::getYRandExtent()
 }
 void CloudVis::setX(int newX)
 {
-    updateCloudPosition(newX, gcY);
+    updateCloudOrigin(newX, gcY);
 }
 
 void CloudVis::setY(int newY)
 {
-    updateCloudPosition(gcX, newY);
+    updateCloudOrigin(gcX, newY);
+}
+
+void CloudVis::setOriginX(int newX)
+{
+    updateCloudOrigin(newX, origin_gcY);
+}
+
+void CloudVis::setOriginY(int newY)
+{
+    updateCloudOrigin(origin_gcX, newY);
 }
 
 bool CloudVis::changedGcX()
@@ -269,19 +382,44 @@ bool CloudVis::changedGcY()
     return changed_gcY;
 }
 //
-void CloudVis::updateCloudPosition(float x, float y)
+void CloudVis::updateCloudPosition(float newX, float newY)
 {
-    float xDiff = x - gcX;
-    float yDiff = y - gcY;
-    gcX = x;
-    gcY = y;
+    float xDiff = newX - gcX;
+    float yDiff = newY - gcY;
+    gcX = newX;
+    gcY = newY;
     for (int i = 0; i < myGrainsV.size(); i++) {
         float newGrainX = myGrainsV[i]->getX() + xDiff;
         float newGrainY = myGrainsV[i]->getY() + yDiff;
         myGrainsV[i]->moveTo(newGrainX, newGrainY);
     }
+    //changed_gcX = true;
+    //changed_gcY = true;
+}
+
+void CloudVis::updateCloudOrigin(float newOriginX, float newOriginY)
+{
+    origin_gcX = newOriginX;
+    origin_gcY = newOriginY;
+    if (myTrajectory != nullptr){
+        myTrajectory->setOrigin(newOriginX, newOriginY);
+    }
+
     changed_gcX = true;
     changed_gcY = true;
+}
+
+void CloudVis::updateCloudTrajectoryPosition(float newX, float newY)
+{
+    float xDiff = newX - gcX;
+    float yDiff = newY - gcY;
+    origin_gcX = newX - gcX;
+    origin_gcY = newX - gcY;
+    for (int i = 0; i < myGrainsV.size(); i++) {
+        float newGrainX = myGrainsV[i]->getX() + xDiff;
+        float newGrainY = myGrainsV[i]->getY() + yDiff;
+        myGrainsV[i]->moveTo(newGrainX, newGrainY);
+    }
 }
 
 void CloudVis::updateGrainPosition(int idx, float x, float y)
@@ -294,8 +432,8 @@ void CloudVis::updateGrainPosition(int idx, float x, float y)
 // check mouse selection
 bool CloudVis::select(float x, float y)
 {
-    float xdiff = x - gcX;
-    float ydiff = y - gcY;
+    float xdiff = x - origin_gcX;
+    float ydiff = y - origin_gcY;
 
     if (sqrt(xdiff * xdiff + ydiff * ydiff) < maxSelRad)
         return true;

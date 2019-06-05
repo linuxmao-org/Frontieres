@@ -27,6 +27,8 @@
 #include "Sample.h"
 #include "ParamCloud.h"
 #include "visual/SampleVis.h"
+#include "visual/Bouncing.h"
+#include "visual/Trajectory.h"
 #include "dsp/Window.h"
 #include <QStandardPaths>
 #include <QJsonDocument>
@@ -238,6 +240,54 @@ bool Scene::load(QFile &sceneFile)
         double cloudY = objCloud["y"].toDouble();
         double cloudXRandExtent = objCloud["x-rand-extent"].toDouble();
         double cloudYRandExtent = objCloud["y-rand-extent"].toDouble();
+
+        //common trajectory parameters
+        bool hasTrajectory=objCloud["has-trajectory"].toBool();
+        int type=0;
+        double xTrajectoryOrigin=0;
+        double yTrajectoryOrigin=0;
+        double phase=0;
+        bool move=false;
+        double speed=0;
+
+        //specific trajectory parameters
+        double bounceWidth=0;
+        double centerX=0;
+        double centerY=0;
+        double radius=0;
+
+        if(hasTrajectory)
+        {
+            type=objCloud["trajectory"].toInt();
+            xTrajectoryOrigin=objCloud["xTrajectoryOrigin"].toDouble();
+            yTrajectoryOrigin=objCloud["yTrajectoryOrigin"].toDouble();
+            phase=objCloud["phase"].toDouble();
+            move=objCloud["move"].toBool();
+            speed=objCloud["speed"].toDouble();
+            switch (type)
+            {
+                case 1:
+                {
+                    bounceWidth=objCloud["bouncewidth"].toDouble();
+
+                }
+                break;
+
+                case 2:
+                {
+
+                    centerX=objCloud["centerX"].toDouble();
+                    centerY=objCloud["centerY"].toDouble();
+                    radius=objCloud["radius"].toDouble();
+                }
+                break;
+
+            }
+        }
+
+
+
+
         cout << "cloud " << m_clouds.size() << " :" << "\n";
         cout << "id " << cloudId << " :" << "\n";
         cout << "duration = " << cloudDuration << "\n";
@@ -301,6 +351,56 @@ bool Scene::load(QFile &sceneFile)
         cloudVisToLoad->setFixedYRandExtent(cloudYRandExtent);
         cloudVisToLoad->setSelectState(false);
         cloudToLoad->setEnvelopeVolumeParam(cloudEnvelopeVolume);
+
+
+        //cloudVisToLoad->setTrajectoryType(type);
+        if(hasTrajectory)
+        {
+
+            Trajectory *tr=nullptr;
+            switch (type)
+            {
+                case 1:
+                {
+                    tr=new Bouncing(bounceWidth,speed,xTrajectoryOrigin,yTrajectoryOrigin);
+                    cout << "cloud has bounceWidth = " << bounceWidth << "\n";
+                }
+                break;
+
+                case 2:
+                {
+
+                    tr=new Circular(speed,xTrajectoryOrigin,yTrajectoryOrigin,radius);
+                    cout << "cloud has center = (" << centerX << ","<<centerY<<")"<<"\n";
+                    cout << "cloud has radius = " << radius << "\n";
+                }
+                break;
+
+                default:
+                break;
+            }
+
+            tr->setPhase(phase);
+            tr->setSpeed(speed);
+            cloudVisToLoad->setTrajectory(tr);
+
+            if(move){
+                cloudVisToLoad->startTrajectory();
+            }
+            else{
+                cloudVisToLoad->stopTrajectory();
+            }
+        }
+
+       cout << "cloud has trajectory type = " << type << "\n";
+       cout << "cloud has trajectory = " << hasTrajectory << "\n";
+       cout << "cloud is moving = " << move << "\n";
+       cout << "cloud phase = " << phase << "\n";
+       cout << "cloud trajectory x origin = " << xTrajectoryOrigin << "\n";
+       cout << "cloud trajectory y origin = " << yTrajectoryOrigin << "\n";
+       cout << "cloud has speed = " <<speed <<"\n";
+
+
     }
 
     // midi combis
@@ -457,6 +557,46 @@ bool Scene::save(QFile &sceneFile)
         objCloud["x-rand-extent"] = cloudVisToSave->getXRandExtent();
         objCloud["y-rand-extent"] = cloudVisToSave->getYRandExtent();
 
+        //trajectory
+        objCloud["has-trajectory"] = cloudVisToSave->hasTrajectory();
+        if(cloudVisToSave->hasTrajectory()){
+            objCloud["trajectory"] = cloudVisToSave->getTrajectory()->getType();
+            int type=cloudVisToSave->getTrajectory()->getType();
+
+            switch ( type )
+            {
+                case 1:
+                {
+                    Bouncing *b = dynamic_cast<Bouncing*>(cloudVisToSave->getTrajectory());
+                    objCloud["bouncewidth"]=b->getBounceWidth();
+                    std::cout<<"bounce width saved "<<b->getBounceWidth()<<std::endl;
+                }
+                break;
+
+                case 2:
+                {
+                    Circular *c=dynamic_cast<Circular*>(cloudVisToSave->getTrajectory());
+                    objCloud["radius"]=c->getRadius();
+                    objCloud["centerX"]=c->getCenterX();
+                    objCloud["centerY"]=c->getCenterY();
+                    std::cout<<"centerX saved "<<c->getCenterX()<<std::endl;
+                    std::cout<<"centerY saved "<<c->getCenterY()<<std::endl;
+                    std::cout<<"radius saved "<<c->getRadius()<<std::endl;
+                }
+                break;
+
+                default:
+                break;
+
+            }
+
+            objCloud["xTrajectoryOrigin"] = cloudVisToSave->getTrajectory()->getOrigin().x;
+            objCloud["yTrajectoryOrigin"] = cloudVisToSave->getTrajectory()->getOrigin().y;
+            objCloud["phase"] = cloudVisToSave->getTrajectory()->getPhase();
+            objCloud["move"] = cloudVisToSave->getIsMoving();
+            objCloud["speed"] = cloudVisToSave->getTrajectory()->getSpeed();
+        }
+
         docClouds.append(objCloud);
     }
 
@@ -580,6 +720,10 @@ bool Scene::loadCloudDefault(QFile &cloudFile)
     g_defaultCloudParams.activateState = objCloud["active-state"].toBool();
     g_defaultCloudParams.xRandExtent = objCloud["x-rand-extent"].toDouble();
     g_defaultCloudParams.yRandExtent = objCloud["y-rand-extent"].toDouble();
+    //NOTE : Not sure that we must do that her for hasTrajectory
+    //I don't understand where this default objcloud comes from;
+    g_defaultCloudParams.hasTrajectory=false;
+
 
     cout << "duration = " << g_defaultCloudParams.duration << "\n";
     cout << "overlap = " << g_defaultCloudParams.overlap << "\n";
@@ -673,6 +817,43 @@ bool Scene::saveCloud(QFile &cloudFile, SceneCloud *selectedCloudSave)
     objCloud["active-state"] = cloudToSave->getActiveState();
     objCloud["x-rand-extent"] = cloudVisToSave->getXRandExtent();
     objCloud["y-rand-extent"] = cloudVisToSave->getYRandExtent();
+
+
+    //trajectory
+    objCloud["has-trajectory"] = cloudVisToSave->hasTrajectory();
+    if(cloudVisToSave->hasTrajectory()){
+        objCloud["trajectory"] = cloudVisToSave->getTrajectory()->getType();
+        int type=cloudVisToSave->getTrajectory()->getType();
+
+        switch ( type )
+        {
+            case 1:
+            {
+                Bouncing *b = dynamic_cast<Bouncing*>(cloudVisToSave->getTrajectory());
+                objCloud["bouncewidth"]=b->getBounceWidth();
+            }
+            break;
+
+            case 2:
+            {
+                Circular *c=dynamic_cast<Circular*>(cloudVisToSave->getTrajectory());
+                objCloud["radius"]=c->getRadius();
+                objCloud["centerX"]=c->getCenterX();
+                objCloud["centerY"]=c->getCenterY();
+            }
+            break;
+
+            default:
+            break;
+
+        }
+
+        objCloud["xTrajectoryOrigin"] = cloudVisToSave->getTrajectory()->getOrigin().x;
+        objCloud["yTrajectoryOrigin"] = cloudVisToSave->getTrajectory()->getOrigin().y;
+        objCloud["phase"] = cloudVisToSave->getTrajectory()->getPhase();
+        objCloud["move"] = cloudVisToSave->getIsMoving();
+        objCloud["speed"] = cloudVisToSave->getTrajectory()->getSpeed();
+    }
 
     docRoot["cloud"] = objCloud;
 
@@ -838,6 +1019,9 @@ void Scene::initDefaultCloudParams()
     g_defaultCloudParams.envelope.t2 = ParamEnv::Linear;
     g_defaultCloudParams.envelope.t3 = ParamEnv::Linear;
     g_defaultCloudParams.envelope.t4 = ParamEnv::Linear;
+    g_defaultCloudParams.hasTrajectory = false;
+    g_defaultCloudParams.speed = 0.2;
+    g_defaultCloudParams.radius = 100;
 }
 
 Sample *Scene::loadNewSample(const std::string &path)
@@ -921,6 +1105,8 @@ void Scene::addNewCloud(int numGrains)
     sceneCloud->cloud.reset(new Cloud(&m_samples, numGrains));
     // create visualization
     sceneCloud->view.reset(new CloudVis(mouseX, mouseY, numGrains, &m_samples));
+    //std::cout<<"mouseX "<<mouseX<<std::endl;
+    //std::cout<<"mouseY "<<mouseY<<std::endl;
     // select new cloud
     sceneCloud->view->setSelectState(true);
     // register visualization with audio
@@ -929,6 +1115,8 @@ void Scene::addNewCloud(int numGrains)
     std::ostream &out = std::cout;
     sceneCloud->cloud->describe(out);
 }
+
+
 
 SceneSample *Scene::selectedSample()
 {
