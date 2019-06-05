@@ -2072,7 +2072,7 @@ border-bottom-left-radius: 9px;
              </widget>
             </item>
             <item row="0" column="3">
-             <widget class="QFrame" name="frame_Ray">
+             <widget class="QFrame" name="frame_Radius">
               <property name="frameShape">
                <enum>QFrame::Box</enum>
               </property>
@@ -2099,7 +2099,7 @@ border-bottom-left-radius: 9px;
                 <number>0</number>
                </property>
                <item>
-                <widget class="QFrame" name="frame_Label_Ray">
+                <widget class="QFrame" name="frame_Label_Radius">
                  <property name="frameShape">
                   <enum>QFrame::Box</enum>
                  </property>
@@ -2120,7 +2120,7 @@ border-bottom-left-radius: 9px;
                    <number>0</number>
                   </property>
                   <item>
-                   <widget class="QLabel" name="label_Ray">
+                   <widget class="QLabel" name="label_Radius">
                     <property name="autoFillBackground">
                      <bool>false</bool>
                     </property>
@@ -2128,7 +2128,7 @@ border-bottom-left-radius: 9px;
                      <enum>QFrame::StyledPanel</enum>
                     </property>
                     <property name="text">
-                     <string>Ray</string>
+                     <string>Radius</string>
                     </property>
                     <property name="alignment">
                      <set>Qt::AlignCenter</set>
@@ -2139,7 +2139,7 @@ border-bottom-left-radius: 9px;
                 </widget>
                </item>
                <item>
-                <widget class="QFrame" name="frame_Dial_Ray">
+                <widget class="QFrame" name="frame_Dial_Radius">
                  <property name="frameShape">
                   <enum>QFrame::Box</enum>
                  </property>
@@ -2157,7 +2157,7 @@ border-bottom-left-radius: 9px;
                    <number>0</number>
                   </property>
                   <item>
-                   <widget class="QDial" name="dial_Ray">
+                   <widget class="QDial" name="dial_Radius">
                     <property name="cursor">
                      <cursorShape>OpenHandCursor</cursorShape>
                     </property>
@@ -2203,7 +2203,7 @@ border-bottom-left-radius: 9px;
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="doubleSpinBox_Ray">
+                <widget class="QDoubleSpinBox" name="doubleSpinBox_Radius">
                  <property name="wrapping">
                   <bool>false</bool>
                  </property>

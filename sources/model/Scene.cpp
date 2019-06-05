@@ -1021,7 +1021,7 @@ void Scene::initDefaultCloudParams()
     g_defaultCloudParams.envelope.t4 = ParamEnv::Linear;
     g_defaultCloudParams.hasTrajectory = false;
     g_defaultCloudParams.speed = 0.2;
-    g_defaultCloudParams.ray = 100;
+    g_defaultCloudParams.radius = 100;
 }
 
 Sample *Scene::loadNewSample(const std::string &path)

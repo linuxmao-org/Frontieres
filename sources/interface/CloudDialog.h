@@ -132,13 +132,13 @@ private slots:
 
     void update_Speed();
 
-    void on_dial_Ray_valueChanged(int value);
+    void on_dial_Radius_valueChanged(int value);
 
-    void on_doubleSpinBox_Ray_valueChanged(double arg1);
+    void on_doubleSpinBox_Radius_valueChanged(double arg1);
 
-    void on_doubleSpinBox_Ray_editingFinished();
+    void on_doubleSpinBox_Radius_editingFinished();
 
-    void update_Ray();
+    void update_Radius();
 
     void on_dial_X_Dep_valueChanged(int value);
 
