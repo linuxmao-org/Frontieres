@@ -770,7 +770,7 @@ void MyGLScreen::mouseMoveEvent(QMouseEvent *event)
     int yDiff = 0;
 
     //origin of trajectory
-    std::vector<double> origin {0.,0.};
+    pt2d origin {0.,0.};
     double posCloudX=0.;
     double posCloudY=0.;
 
@@ -791,7 +791,7 @@ void MyGLScreen::mouseMoveEvent(QMouseEvent *event)
         if(selectedCloud->view->getIsMoving())
         {
             origin=selectedCloud->view->getTrajectory()->getOrigin();
-            selectedCloud->view->getTrajectory()->updateOrigin(origin[0]-posCloudX+mouseX,origin[1]-posCloudY+mouseY);
+            selectedCloud->view->getTrajectory()->updateOrigin(origin.x-posCloudX+mouseX,origin.y-posCloudY+mouseY);
         }
 
     }

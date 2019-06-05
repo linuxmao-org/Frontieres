@@ -32,9 +32,9 @@ void Trajectory::updateOrigin(double x, double y)
     yOrigin=y;
 }
 
-std::vector<double> Trajectory::getOrigin()
+pt2d Trajectory::getOrigin()
 {
-    std::vector<double> origin {xOrigin,yOrigin};
+    pt2d origin(xOrigin,yOrigin);
     return origin;
 }
 

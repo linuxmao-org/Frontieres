@@ -16,7 +16,7 @@ double Bouncing::getBounceWidth()
     return this->bounceWidth;
 }
 
-std::vector<double> Bouncing::computeTrajectory(double dt)
+pt2d Bouncing::computeTrajectory(double dt)
 {
     double sp = this->getSpeed();
     double ph=this->getPhase();
@@ -24,10 +24,10 @@ std::vector<double> Bouncing::computeTrajectory(double dt)
     ph+=sp*dt;
     //define the phase modulo the period of the trajectory to avoid having phase going to infinity
     setPhase(ph-int(ph));
-    std::vector<double>  orig=getOrigin();
-    std::vector<double> vecPos{0., 0.};
-    vecPos[0] = this->bounceWidth * sin(getPhase()*2*PI) + orig[0];
-    vecPos[1] =  orig[1];
+    pt2d  orig=getOrigin();
+    pt2d vecPos{0., 0.};
+    vecPos.x = this->bounceWidth * sin(getPhase()*2*PI) + orig.x;
+    vecPos.y =  orig.y;
     return vecPos;
 }
 

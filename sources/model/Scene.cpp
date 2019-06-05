@@ -590,8 +590,8 @@ bool Scene::save(QFile &sceneFile)
 
             }
 
-            objCloud["xTrajectoryOrigin"] = cloudVisToSave->getTrajectory()->getOrigin()[0];
-            objCloud["yTrajectoryOrigin"] = cloudVisToSave->getTrajectory()->getOrigin()[1];
+            objCloud["xTrajectoryOrigin"] = cloudVisToSave->getTrajectory()->getOrigin().x;
+            objCloud["yTrajectoryOrigin"] = cloudVisToSave->getTrajectory()->getOrigin().y;
             objCloud["phase"] = cloudVisToSave->getTrajectory()->getPhase();
             objCloud["move"] = cloudVisToSave->getIsMoving();
             objCloud["speed"] = cloudVisToSave->getTrajectory()->getSpeed();
@@ -848,8 +848,8 @@ bool Scene::saveCloud(QFile &cloudFile, SceneCloud *selectedCloudSave)
 
         }
 
-        objCloud["xTrajectoryOrigin"] = cloudVisToSave->getTrajectory()->getOrigin()[0];
-        objCloud["yTrajectoryOrigin"] = cloudVisToSave->getTrajectory()->getOrigin()[1];
+        objCloud["xTrajectoryOrigin"] = cloudVisToSave->getTrajectory()->getOrigin().x;
+        objCloud["yTrajectoryOrigin"] = cloudVisToSave->getTrajectory()->getOrigin().y;
         objCloud["phase"] = cloudVisToSave->getTrajectory()->getPhase();
         objCloud["move"] = cloudVisToSave->getIsMoving();
         objCloud["speed"] = cloudVisToSave->getTrajectory()->getSpeed();

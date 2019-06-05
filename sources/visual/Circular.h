@@ -1,7 +1,6 @@
 #ifndef CIRCULAR_H
 #define CIRCULAR_H
 
-#include <vector>
 #include <memory>
 #include <iostream>
 #include "theglobals.h"
@@ -17,7 +16,7 @@ public:
     double getRadius();
     void setRadius(double newRadius);
     void setCenter(double x,double y);
-    std::vector<double> computeTrajectory(double dt);
+    pt2d computeTrajectory(double dt);
     ~Circular();
     int getType();
 

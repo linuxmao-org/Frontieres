@@ -220,10 +220,10 @@ void CloudVis::draw()
     // cout << t_sec << endl;
 
     //computing trajectory
-    std::vector<double> pos = {0.,0.};
+    pt2d pos = {0.,0.};
     if (this->getIsMoving() && !this->isSelected){
         pos=this->myTrajectory->computeTrajectory(dt);
-        updateCloudPosition(pos[0],pos[1] );
+        updateCloudPosition(pos.x,pos.y);
     }
 
     // if ((g_time -last_gtime) > 50){
