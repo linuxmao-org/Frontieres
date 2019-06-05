@@ -55,7 +55,7 @@ add_executable(Frontieres WIN32
   sources/visual/CloudVis.cpp
   sources/visual/SampleVis.cpp
   sources/utility/GTime.cpp
-  sources/visual/Trajectory.cpp 
+  sources/visual/Trajectory.cpp
   sources/visual/Bouncing.cpp
   sources/visual/Circular.cpp
   libraries/QtFont3D/QtFont3D.cpp
@@ -64,7 +64,6 @@ add_executable(Frontieres WIN32
   libraries/RtMidi.cpp
   libraries/minimp3_custom.c
   libraries/ring_buffer.cpp
-  libraries/minimp3_custom.c
   docs.qrc)
 target_compile_definitions(Frontieres
   PRIVATE "APP_VERSION=\"${PROJECT_VERSION}\"")
