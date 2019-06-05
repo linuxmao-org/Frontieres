@@ -35,6 +35,9 @@
 #include <memory>
 #include <iostream>
 #include "theglobals.h"
+#include "Trajectory.h"
+#include "Bouncing.h"
+#include "Circular.h"
 class SceneSample;
 class GrainVis;
 class Cloud;
@@ -50,12 +53,15 @@ public:
     // constructor (takes center position (x,y), number of grains, sample visuals)
     CloudVis(float x, float y, unsigned int numGrainsVis, VecSceneSample *rects);
 
+    CloudVis(float x, float y, unsigned int numGrainsVis, VecSceneSample *rects,Trajectory *trajectory);
     // render
     void draw();
     // get playback position in registered sample visuals and return to grain cloud
     void getTriggerPos(unsigned int idx, double *playPos, double *playVols, float dur);
     // move grains
-    void updateCloudPosition(float x, float y);
+    void updateCloudPosition(float newX, float newY);
+    void updateCloudOrigin (float newOriginX, float newOriginY);
+    void updateCloudTrajectoryPosition (float newX, float newY);
     void updateGrainPosition(int idx, float x, float y);
     void setState(int idx, bool on);
     // add grain
@@ -70,10 +76,17 @@ public:
     float getX();
     // get my y coordinate
     float getY();
+    // get my origin x coordinate
+    float getOriginX();
+    // get my origin y coordinate
+    float getOriginY();
     void setX(int newX);
     void setY(int newY);
+    void setOriginX(int newX);
+    void setOriginY(int newY);
     bool changedGcX();
     bool changedGcY();
+
 
     // randomness params for grain positions
     float getXRandExtent();
@@ -99,11 +112,23 @@ public:
     // changes done
     void changesDone(bool done);
 
+    Trajectory* getTrajectory();
+    bool getIsMoving();
+    void setTrajectory(Trajectory *tr);
+    void stopTrajectory();
+    void startTrajectory();
+    bool hasTrajectory();
+
+
+
 protected:
 private:
+
+    bool isMoving;
     bool isOn, isSelected;
     bool addFlag, removeFlag;
     double startTime;
+    double lastDrawTime;
 
     float xRandExtent, yRandExtent;
     bool changed_xRandExtent = false;
@@ -111,6 +136,7 @@ private:
 
     float freq;
     float gcX, gcY;
+    float origin_gcX, origin_gcY;
     bool changed_gcX = false;
     bool changed_gcY = false;
     float selRad, lambda, maxSelRad, minSelRad, targetRad;
@@ -121,6 +147,11 @@ private:
     std::vector<GrainVis *> myGrainsV;
     // registered sample visuals
     VecSceneSample *theLandscape;
+
+    // trajectory of the cloud
+    Trajectory *myTrajectory;
+
+
 };
 
 #endif

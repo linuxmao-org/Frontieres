@@ -98,7 +98,8 @@ enum {
     SPATIALIZE,
     VOLUME,
     NUM,
-    NAME
+    NAME,
+    TRAJECTORY
 };
 
 // flag indicating parameter change

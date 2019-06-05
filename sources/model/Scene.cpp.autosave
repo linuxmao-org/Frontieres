@@ -1020,7 +1020,7 @@ void Scene::initDefaultCloudParams()
     g_defaultCloudParams.envelope.t3 = ParamEnv::Linear;
     g_defaultCloudParams.envelope.t4 = ParamEnv::Linear;
     g_defaultCloudParams.hasTrajectory = false;
-    g_defaultCloudParams.speed = 0.2;
+    g_defaultCloudParams.speed = 0.2f;
     g_defaultCloudParams.ray = 100;
 }
 

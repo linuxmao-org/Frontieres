@@ -71,12 +71,17 @@ SOURCES += \
   sources/visual/SampleVis.cpp \
   sources/visual/GrainVis.cpp \
   sources/visual/CloudVis.cpp \
+  sources/visual/Trajectory.cpp \
+  sources/visual/Bouncing.cpp \
+  sources/visual/Circular.cpp \
   sources/utility/GTime.cpp \
   libraries/Stk.cpp \
   libraries/RtAudio.cpp \
   libraries/RtMidi.cpp \
   libraries/minimp3_custom.c \
   libraries/ring_buffer.cpp
+ 
+
 
 HEADERS += \
   sources/theglobals.h \
@@ -109,13 +114,17 @@ HEADERS += \
   sources/visual/SampleVis.h \
   sources/visual/GrainVis.h \
   sources/visual/CloudVis.h \
+  sources/visual/Trajectory.h \ 
+  sources/visual/Bouncing.h \
+  sources/visual/Circular.h \
   sources/utility/GTime.h \
   libraries/RtMidi.h \
   libraries/RtAudio.h \
   libraries/Stk.h \
   libraries/minimp3_custom.h \
   libraries/ring_buffer.h \
-  libraries/ring_buffer.tcc
+  libraries/ring_buffer.tcc \
+  libraries/minimp3_custom.h
 
 FORMS += \
   sources/interface/MyGLWindow.ui \
