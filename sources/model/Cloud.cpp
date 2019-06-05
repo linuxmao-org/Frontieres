@@ -107,6 +107,7 @@ Cloud::Cloud(VecSceneSample *sampleSet, float theNumGrains)
     addFlag = false;
     removeFlag = false;
 
+
     // keep pointer to the sample set
     theSamples = sampleSet;
 
@@ -127,6 +128,9 @@ Cloud::Cloud(VecSceneSample *sampleSet, float theNumGrains)
     // default window type
     //windowType = HANNING;
     windowType = g_defaultCloudParams.windowType;
+
+    // default trajectory type
+    setTrajectoryType(g_defaultCloudParams.trajectoryType);
 
     // initialize pitch LFO
     //pitchLFOFreq = 0.01f;
@@ -204,6 +208,8 @@ void Cloud::registerCloudVis(CloudVis *cloudVisToRegister)
     myCloudVis = cloudVisToRegister;
     myCloudVis->setDuration(duration);
 }
+
+
 
 // turn on/off
 void Cloud::toggleActive()
@@ -626,6 +632,27 @@ bool Cloud::changedVolumeDb()
     return changed_volumeDB;
 }
 
+void Cloud::setTrajectoryType(int newTrajectoryType)
+{
+    if (locked) {
+        showMessageLocked();
+        return;
+    }
+    // cout << "entree settrajectorytype, type = " << newTrajectoryType << endl;
+    trajectoryType = newTrajectoryType;
+    changed_trajectoryType = true;
+}
+
+int Cloud::getTrajectoryType()
+{
+    return trajectoryType;
+}
+
+bool Cloud::changedTrajectoryType()
+{
+    return changed_trajectoryType;
+}
+
 
 // direction mode
 void Cloud::setDirection(int dirMode)
@@ -834,6 +861,8 @@ void Cloud::showMessageLocked()
 {
     cout << "cloud locked, no change" << endl;
 }
+
+
 
 // print information
 void Cloud::describe(std::ostream &out)

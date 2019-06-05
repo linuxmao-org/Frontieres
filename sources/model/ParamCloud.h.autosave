@@ -50,7 +50,7 @@ struct CloudParams
     float x_Dep;
     float y_Dep;
     float speed;
-    float ray;
+    float radius;
 };
 struct ValueMax
 {
@@ -68,7 +68,7 @@ struct ValueMax
     const float x_Dep = 1000;
     const float y_Dep = 1000;
     const float speed = 100;
-    const float ray= 1000;
+    const float radius= 1000;
 };
 
 struct ValueMin
@@ -88,5 +88,5 @@ struct ValueMin
     const float x_Dep = -1000;
     const float y_Dep = -1000;
     const float speed = -100;
-    const float ray = 0;
+    const float radius = 0;
 };

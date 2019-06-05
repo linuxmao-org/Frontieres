@@ -124,6 +124,44 @@ private slots:
 
     void on_doubleSpinBox_Output_Last_valueChanged(double arg1);
 
+    void on_dial_Speed_valueChanged(int value);
+
+    void on_doubleSpinBox_Speed_valueChanged(double arg1);
+
+    void on_doubleSpinBox_Speed_editingFinished();
+
+    void update_Speed();
+
+    void on_dial_Ray_valueChanged(int value);
+
+    void on_doubleSpinBox_Ray_valueChanged(double arg1);
+
+    void on_doubleSpinBox_Ray_editingFinished();
+
+    void update_Ray();
+
+    void on_dial_X_Dep_valueChanged(int value);
+
+    void on_doubleSpinBox_X_Dep_valueChanged(double arg1);
+
+    void on_doubleSpinBox_X_Dep_editingFinished();
+
+    void update_X_Dep();
+
+    void on_dial_Y_Dep_valueChanged(int value);
+
+    void on_doubleSpinBox_Y_Dep_valueChanged(double arg1);
+
+    void on_doubleSpinBox_Y_Dep_editingFinished();
+
+    void update_Y_Dep();
+
+    void on_radioButton_Trajectory_Bouncing_toggled(bool checked);
+
+    void on_radioButton_Trajectory_Circular_toggled(bool checked);
+
+    void on_radioButton_Trajectory_Static_toggled(bool checked);
+
 private:
     Ui::CloudDialog *ui;
     bool linking = false;

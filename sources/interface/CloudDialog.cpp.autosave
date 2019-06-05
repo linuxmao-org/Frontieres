@@ -85,10 +85,10 @@ CloudDialog::CloudDialog(QWidget *parent) :
     ui->dial_Speed->setMaximum(g_cloudValueMax.speed);
     ui->dial_Speed->setMinimum(g_cloudValueMin.speed);
 
-    ui->doubleSpinBox_Ray->setMinimum(g_cloudValueMin.ray);
-    ui->doubleSpinBox_Ray->setMaximum(g_cloudValueMax.ray);
-    ui->dial_Ray->setMaximum(g_cloudValueMax.ray);
-    ui->dial_Ray->setMinimum(g_cloudValueMin.ray);
+    ui->doubleSpinBox_radius->setMinimum(g_cloudValueMin.radius);
+    ui->doubleSpinBox_radius->setMaximum(g_cloudValueMax.radius);
+    ui->dial_radius->setMaximum(g_cloudValueMax.radius);
+    ui->dial_radius->setMinimum(g_cloudValueMin.radius);
 
     ui->doubleSpinBox_Output_First->setMinimum(0);
     ui->doubleSpinBox_Output_Last->setMinimum(0);
@@ -210,7 +210,7 @@ void CloudDialog::linkCloud(Cloud *cloudLinked, CloudVis *cloudVisLinked)
         case STATIC:
             ui->radioButton_Trajectory_Static->setChecked(true);
             ui->doubleSpinBox_Speed->setDisabled(true);
-            ui->doubleSpinBox_Ray->setDisabled(true);
+            ui->doubleSpinBox_Radius->setDisabled(true);
             ui->doubleSpinBox_X_Dep->setDisabled(true);
             ui->doubleSpinBox_Y_Dep->setDisabled(true);
             ui->dial_Speed->setDisabled(true);
@@ -218,38 +218,38 @@ void CloudDialog::linkCloud(Cloud *cloudLinked, CloudVis *cloudVisLinked)
             ui->dial_X_Dep->setDisabled(true);
             ui->dial_Y_Dep->setDisabled(true);
             ui->doubleSpinBox_Speed->setValue(g_defaultCloudParams.speed);
-            ui->doubleSpinBox_Ray->setValue(g_defaultCloudParams.ray);
+            ui->doubleSpinBox_Radius->setValue(g_defaultCloudParams.radius);
             break;
         case BOUNCING:
         {
             ui->radioButton_Trajectory_Bouncing->setChecked(true);
             ui->doubleSpinBox_Speed->setDisabled(false);
-            ui->doubleSpinBox_Ray->setDisabled(false);
+            ui->doubleSpinBox_Radius->setDisabled(false);
             ui->doubleSpinBox_X_Dep->setDisabled(true);
             ui->doubleSpinBox_Y_Dep->setDisabled(true);
             ui->dial_Speed->setDisabled(false);
-            ui->dial_Ray->setDisabled(false);
+            ui->dial_Radius->setDisabled(false);
             ui->dial_X_Dep->setDisabled(true);
             ui->dial_Y_Dep->setDisabled(true);
             ui->doubleSpinBox_Speed->setValue(cloudVisLinked->getTrajectory()->getSpeed());
             Bouncing *b_Traj = dynamic_cast<Bouncing*>(cloudVisLinked->getTrajectory());
-            ui->doubleSpinBox_Ray->setValue(b_Traj->getBounceWidth());
+            ui->doubleSpinBox_Radius->setValue(b_Traj->getBounceWidth());
             break;
         }
         case CIRCULAR:
         {
             ui->radioButton_Trajectory_Circular->setChecked(true);
             ui->doubleSpinBox_Speed->setDisabled(false);
-            ui->doubleSpinBox_Ray->setDisabled(false);
+            ui->doubleSpinBox_Radius->setDisabled(false);
             ui->doubleSpinBox_X_Dep->setDisabled(true);
             ui->doubleSpinBox_Y_Dep->setDisabled(true);
             ui->dial_Speed->setDisabled(false);
-            ui->dial_Ray->setDisabled(false);
+            ui->dial_Radius->setDisabled(false);
             ui->dial_X_Dep->setDisabled(true);
             ui->dial_Y_Dep->setDisabled(true);
             ui->doubleSpinBox_Speed->setValue(cloudVisLinked->getTrajectory()->getSpeed());
             Circular *c_Traj=dynamic_cast<Circular*>(cloudVisLinked->getTrajectory());
-            ui->doubleSpinBox_Ray->setValue(c_Traj->getRadius());
+            ui->doubleSpinBox_Radius->setValue(c_Traj->getRadius());
             break;
         }
         default :
@@ -653,27 +653,27 @@ void CloudDialog::update_Speed()
     }
 }
 
-void CloudDialog::on_dial_Ray_valueChanged(int value)
+void CloudDialog::on_dial_Radius_valueChanged(int value)
 {
-    ui->doubleSpinBox_Ray->setValue((double) value);
-    update_Ray();
+    ui->doubleSpinBox_Radius->setValue((double) value);
+    update_Radius();
 }
 
-void CloudDialog::on_doubleSpinBox_Ray_valueChanged(double arg1)
+void CloudDialog::on_doubleSpinBox_Radius_valueChanged(double arg1)
 {
-    ui->dial_Ray->setValue((int) arg1);
+    ui->dial_Radius->setValue((int) arg1);
     if (!linking) {
         editing = true;
         passageValue = (double) arg1;
     }
 }
 
-void CloudDialog::on_doubleSpinBox_Ray_editingFinished()
+void CloudDialog::on_doubleSpinBox_Radius_editingFinished()
 {
-    update_Ray();
+    update_Radius();
 }
 
-void CloudDialog::update_Ray()
+void CloudDialog::update_Radius()
 {
     if (!linking) {
         switch (cloudRef->getTrajectoryType()) {
@@ -756,7 +756,7 @@ void CloudDialog::update_Y_Dep()
 void CloudDialog::on_radioButton_Trajectory_Bouncing_toggled(bool checked)
 {
     Trajectory *tr=nullptr;
-    tr=new Bouncing(ui->doubleSpinBox_Ray->value(),ui->doubleSpinBox_Speed->value(),ui->doubleSpinBox_X->value(),ui->doubleSpinBox_Y->value());
+    tr=new Bouncing(ui->doubleSpinBox_Radius->value(),ui->doubleSpinBox_Speed->value(),ui->doubleSpinBox_X->value(),ui->doubleSpinBox_Y->value());
     cloudRef->setTrajectoryType (BOUNCING);
     cloudVisRef->setTrajectory(tr);
     cloudVisRef->startTrajectory();
