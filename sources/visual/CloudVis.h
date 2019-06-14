@@ -36,8 +36,8 @@
 #include <iostream>
 #include "theglobals.h"
 #include "Trajectory.h"
-#include "Bouncing.h"
 #include "Circular.h"
+#include "Hypotrochoid.h"
 class SceneSample;
 class GrainVis;
 class Cloud;

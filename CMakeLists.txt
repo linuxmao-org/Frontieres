@@ -56,8 +56,8 @@ add_executable(Frontieres WIN32
   sources/visual/SampleVis.cpp
   sources/utility/GTime.cpp
   sources/visual/Trajectory.cpp
-  sources/visual/Bouncing.cpp
   sources/visual/Circular.cpp
+  sources/visual/Hypotrochoid.cpp
   libraries/QtFont3D/QtFont3D.cpp
   libraries/Stk.cpp
   libraries/RtAudio.cpp
