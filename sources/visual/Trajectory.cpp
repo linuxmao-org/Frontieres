@@ -8,7 +8,7 @@ void Trajectory::setSpeed(double s)
 
 double Trajectory::getSpeed()
 {
-    return this->speed;
+    return speed;
 }
 
 Trajectory::Trajectory(double s, double x, double y)
@@ -40,7 +40,6 @@ pt2d Trajectory::getOrigin()
 
 void Trajectory::setPhase(double ph)
 {
-    //std::cout << "setphase = " << ph << std::endl;
     phase=ph;
 }
 

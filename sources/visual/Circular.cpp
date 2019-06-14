@@ -1,17 +1,7 @@
 #include "visual/Circular.h"
 
 
-Circular::Circular(double s,double xOr, double yOr,double xc,double yc)
-    : Trajectory(s,xOr,yOr)
-{
-    this->centerX = xc;
-    this->centerY = yc;
-    pt2d  orig=getOrigin();
-    this->radius=sqrt((orig.x-centerX)*(orig.x-centerX)+(orig.y-centerY)*(orig.y-centerY));
-    distanceToCenter=0;
-}
-
-Circular::Circular(double s,double xOr, double yOr,double r)
+Circular::Circular(double s,double xOr, double yOr,double r, double ang, double stch)
     : Trajectory(s,xOr,yOr)
 {
     pt2d  orig=getOrigin();
@@ -19,31 +9,53 @@ Circular::Circular(double s,double xOr, double yOr,double r)
     this->centerY = orig.y;
     this->radius=r;
     distanceToCenter=0;
+    angle = ang;
+    strech = stch;
+
 }
 
 pt2d Circular::computeTrajectory(double dt)
 {
     double sp = this->getSpeed();
-    double ph=this->getPhase();
+    double ph = this->getPhase();
     const double PI  =3.141592653589793238463;
     ph+=sp*dt;
     //define the phase modulo the period of the trajectory to avoid having phase going to infinity
     setPhase(ph-int(ph));
-    pt2d  orig=getOrigin();
-    pt2d vecPos{0., 0.};
+
     //see Euler spiral for a smooth passage from a spiral to a circle
     if (distanceToCenter<=radius)
-        distanceToCenter+=radius/150.;
+    distanceToCenter+=radius/150.;
 
-    if(distanceToCenter<radius){
-        vecPos.x =   distanceToCenter*cos(ph*2*PI)+orig.x;
-        vecPos.y =   distanceToCenter*sin(ph*2*PI)+orig.y;
-    }
-    else{
-        vecPos.x =   radius*cos(ph*2*PI)+orig.x;
-        vecPos.y =   radius*sin(ph*2*PI)+orig.y;
-    }
-    return vecPos;
+    //the modulus and the angle, a polar complex number
+    double rho = (distanceToCenter < radius) ? distanceToCenter : radius;
+    double theta = ph * 2 * PI;
+
+    // Valeurs (Exemple) ////
+    const double monAngle = - angle * (PI / 180.); // rotation 45°
+    const double stretchX = strech; // étirement horizontal
+    const double stretchY = 1; // étirement vertical
+    // Fin exemple       ////
+
+    // convert to cartesian (real=X, imag=Y)
+    std::complex<double> cartesian = std::polar(rho, theta);
+
+    // stretch first
+    cartesian = std::complex<double>(cartesian.real() * stretchX, cartesian.imag() * stretchY);
+
+    // back to polar
+    rho = std::abs(cartesian);
+    theta = std::arg(cartesian);
+
+    // then rotate, using polar coordinates
+    theta += monAngle;
+
+    // back to cartesian
+    cartesian = std::polar(rho, theta);
+
+    // add origin
+    pt2d orig = getOrigin();
+    return pt2d(orig.x + (float)cartesian.real(), orig.y + (float)cartesian.imag());
 }
 
 double Circular::getCenterX()
@@ -61,14 +73,34 @@ double Circular::getRadius()
     return radius;
 }
 
+double Circular::getAngle()
+{
+    return angle;
+}
+
+double Circular::getStrech()
+{
+    return strech;
+}
+
 void Circular::setRadius(double newRadius)
 {
     radius = newRadius;
 }
 
+void Circular::setAngle(double newAngle)
+{
+    angle = newAngle;
+}
+
+void Circular::setStrech(double newStrech)
+{
+    strech = newStrech;
+}
+
 int Circular::getType()
 {
-    return 2;
+    return CIRCULAR;
 }
 
 Circular::~Circular()

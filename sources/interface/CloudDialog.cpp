@@ -70,15 +70,15 @@ CloudDialog::CloudDialog(QWidget *parent) :
     ui->dial_Y_Extent->setMaximum(g_cloudValueMax.yRandExtent);
     ui->dial_X_Extent->setMinimum(g_cloudValueMin.yRandExtent);
 
-    ui->doubleSpinBox_X_Dep->setMinimum(g_cloudValueMin.x_Dep);
-    ui->doubleSpinBox_X_Dep->setMaximum(g_cloudValueMax.x_Dep);
-    ui->dial_X_Dep->setMaximum(g_cloudValueMax.x_Dep);
-    ui->dial_X_Dep->setMinimum(g_cloudValueMin.x_Dep);
+    ui->doubleSpinBox_Angle->setMinimum(g_cloudValueMin.angle);
+    ui->doubleSpinBox_Angle->setMaximum(g_cloudValueMax.angle);
+    ui->dial_Angle->setMaximum(g_cloudValueMax.angle);
+    ui->dial_Angle->setMinimum(g_cloudValueMin.angle);
 
-    ui->doubleSpinBox_Y_Dep->setMinimum(g_cloudValueMin.y_Dep);
-    ui->doubleSpinBox_Y_Dep->setMaximum(g_cloudValueMax.y_Dep);
-    ui->dial_Y_Dep->setMaximum(g_cloudValueMax.y_Dep);
-    ui->dial_Y_Dep->setMinimum(g_cloudValueMin.y_Dep);
+    ui->doubleSpinBox_Strech->setMinimum(g_cloudValueMin.strech);
+    ui->doubleSpinBox_Strech->setMaximum(g_cloudValueMax.strech);
+    ui->dial_Strech->setMaximum(g_cloudValueMax.strech);
+    ui->dial_Strech->setMinimum(g_cloudValueMin.strech);
 
     ui->doubleSpinBox_Speed->setMinimum(g_cloudValueMin.speed);
     ui->doubleSpinBox_Speed->setMaximum(g_cloudValueMax.speed);
@@ -89,6 +89,16 @@ CloudDialog::CloudDialog(QWidget *parent) :
     ui->doubleSpinBox_Radius->setMaximum(g_cloudValueMax.radius);
     ui->dial_Radius->setMaximum(g_cloudValueMax.radius);
     ui->dial_Radius->setMinimum(g_cloudValueMin.radius);
+
+    ui->doubleSpinBox_RadiusInt->setMinimum(g_cloudValueMin.radiusInt);
+    ui->doubleSpinBox_RadiusInt->setMaximum(g_cloudValueMax.radiusInt);
+    ui->dial_RadiusInt->setMaximum(g_cloudValueMax.radiusInt);
+    ui->dial_RadiusInt->setMinimum(g_cloudValueMin.radiusInt);
+
+    ui->doubleSpinBox_Expansion->setMinimum(g_cloudValueMin.radiusInt);
+    ui->doubleSpinBox_Expansion->setMaximum(g_cloudValueMax.radiusInt);
+    ui->dial_Expansion->setMaximum(g_cloudValueMax.expansion);
+    ui->dial_Expansion->setMinimum(g_cloudValueMin.expansion);
 
     ui->doubleSpinBox_Output_First->setMinimum(0);
     ui->doubleSpinBox_Output_Last->setMinimum(0);
@@ -211,29 +221,37 @@ void CloudDialog::linkCloud(Cloud *cloudLinked, CloudVis *cloudVisLinked)
             ui->radioButton_Trajectory_Static->setChecked(true);
             ui->doubleSpinBox_Speed->setDisabled(true);
             ui->doubleSpinBox_Radius->setDisabled(true);
-            ui->doubleSpinBox_X_Dep->setDisabled(true);
-            ui->doubleSpinBox_Y_Dep->setDisabled(true);
+            ui->doubleSpinBox_RadiusInt->setDisabled(true);
+            ui->doubleSpinBox_Angle->setDisabled(true);
+            ui->doubleSpinBox_Strech->setDisabled(true);
+            ui->doubleSpinBox_Expansion->setDisabled(true);
             ui->dial_Speed->setDisabled(true);
             ui->dial_Radius->setDisabled(true);
-            ui->dial_X_Dep->setDisabled(true);
-            ui->dial_Y_Dep->setDisabled(true);
-            ui->doubleSpinBox_Speed->setValue(g_defaultCloudParams.speed);
-            ui->doubleSpinBox_Radius->setValue(g_defaultCloudParams.radius);
+            ui->dial_RadiusInt->setDisabled(true);
+            ui->dial_Angle->setDisabled(true);
+            ui->dial_Strech->setDisabled(true);
+            ui->dial_Expansion->setDisabled(true);
             break;
         case BOUNCING:
         {
             ui->radioButton_Trajectory_Bouncing->setChecked(true);
             ui->doubleSpinBox_Speed->setDisabled(false);
             ui->doubleSpinBox_Radius->setDisabled(false);
-            ui->doubleSpinBox_X_Dep->setDisabled(true);
-            ui->doubleSpinBox_Y_Dep->setDisabled(true);
+            ui->doubleSpinBox_RadiusInt->setDisabled(true);
+            ui->doubleSpinBox_Angle->setDisabled(false);
+            ui->doubleSpinBox_Strech->setDisabled(true);
+            ui->doubleSpinBox_Expansion->setDisabled(true);
             ui->dial_Speed->setDisabled(false);
             ui->dial_Radius->setDisabled(false);
-            ui->dial_X_Dep->setDisabled(true);
-            ui->dial_Y_Dep->setDisabled(true);
+            ui->dial_RadiusInt->setDisabled(true);
+            ui->dial_Angle->setDisabled(false);
+            ui->dial_Strech->setDisabled(true);
+            ui->dial_Expansion->setDisabled(true);
             ui->doubleSpinBox_Speed->setValue(cloudVisLinked->getTrajectory()->getSpeed());
-            Bouncing *b_Traj = dynamic_cast<Bouncing*>(cloudVisLinked->getTrajectory());
-            ui->doubleSpinBox_Radius->setValue(b_Traj->getBounceWidth());
+            Circular *b_Traj = dynamic_cast<Circular*>(cloudVisLinked->getTrajectory());
+            ui->doubleSpinBox_Radius->setValue(b_Traj->getRadius());
+            ui->doubleSpinBox_Angle->setValue(b_Traj->getAngle());
+            have_trajectory_bouncing = true;
             break;
         }
         case CIRCULAR:
@@ -241,15 +259,46 @@ void CloudDialog::linkCloud(Cloud *cloudLinked, CloudVis *cloudVisLinked)
             ui->radioButton_Trajectory_Circular->setChecked(true);
             ui->doubleSpinBox_Speed->setDisabled(false);
             ui->doubleSpinBox_Radius->setDisabled(false);
-            ui->doubleSpinBox_X_Dep->setDisabled(true);
-            ui->doubleSpinBox_Y_Dep->setDisabled(true);
+            ui->doubleSpinBox_RadiusInt->setDisabled(true);
+            ui->doubleSpinBox_Angle->setDisabled(false);
+            ui->doubleSpinBox_Strech->setDisabled(false);
+            ui->doubleSpinBox_Expansion->setDisabled(true);
             ui->dial_Speed->setDisabled(false);
             ui->dial_Radius->setDisabled(false);
-            ui->dial_X_Dep->setDisabled(true);
-            ui->dial_Y_Dep->setDisabled(true);
+            ui->dial_RadiusInt->setDisabled(true);
+            ui->dial_Angle->setDisabled(false);
+            ui->dial_Strech->setDisabled(false);
+            ui->dial_Expansion->setDisabled(true);
             ui->doubleSpinBox_Speed->setValue(cloudVisLinked->getTrajectory()->getSpeed());
             Circular *c_Traj=dynamic_cast<Circular*>(cloudVisLinked->getTrajectory());
             ui->doubleSpinBox_Radius->setValue(c_Traj->getRadius());
+            ui->doubleSpinBox_Angle->setValue(c_Traj->getAngle());
+            ui->doubleSpinBox_Strech->setValue(c_Traj->getStrech());
+            have_trajectory_circular = true;
+            break;
+        }
+        case HYPOTROCHOID:
+        {
+            ui->radioButton_Trajectory_Hypotrochoid->setChecked(true);
+            ui->doubleSpinBox_Speed->setDisabled(false);
+            ui->doubleSpinBox_Radius->setDisabled(false);
+            ui->doubleSpinBox_RadiusInt->setDisabled(false);
+            ui->doubleSpinBox_Angle->setDisabled(true);
+            ui->doubleSpinBox_Strech->setDisabled(true);
+            ui->doubleSpinBox_Expansion->setDisabled(false);
+            ui->dial_Speed->setDisabled(false);
+            ui->dial_Radius->setDisabled(false);
+            ui->dial_RadiusInt->setDisabled(false);
+            ui->dial_Angle->setDisabled(true);
+            ui->dial_Strech->setDisabled(true);
+            ui->dial_Expansion->setDisabled(false);
+            ui->doubleSpinBox_Speed->setValue(cloudVisLinked->getTrajectory()->getSpeed());
+            Hypotrochoid *h_Traj=dynamic_cast<Hypotrochoid*>(cloudVisLinked->getTrajectory());
+            ui->doubleSpinBox_Radius->setValue(h_Traj->getRadius());
+            ui->doubleSpinBox_RadiusInt->setValue(h_Traj->getRadiusInt());
+            //ui->doubleSpinBox_Angle->setValue(h_Traj->getAngle());
+            ui->doubleSpinBox_Expansion->setValue(h_Traj->getExpansion());
+            have_trajectory_hypotrochoid = true;
             break;
         }
         default :
@@ -678,13 +727,18 @@ void CloudDialog::update_Radius()
     if (!linking) {
         switch (cloudRef->getTrajectoryType()) {
         case BOUNCING:{
-            Bouncing *b_Traj = dynamic_cast<Bouncing*>(cloudVisRef->getTrajectory());
-            b_Traj->setBounceWidth(passageValue);
+            Circular *b_Traj = dynamic_cast<Circular*>(cloudVisRef->getTrajectory());
+            b_Traj->setRadius(passageValue);
             break;
             }
         case CIRCULAR:{
             Circular *c_Traj=dynamic_cast<Circular*>(cloudVisRef->getTrajectory());
             c_Traj->setRadius(passageValue);
+            break;
+            }
+        case HYPOTROCHOID:{
+            Hypotrochoid *h_Traj=dynamic_cast<Hypotrochoid*>(cloudVisRef->getTrajectory());
+            h_Traj->setRadius(passageValue);
             break;
             }
         default :
@@ -695,87 +749,193 @@ void CloudDialog::update_Radius()
 
 }
 
-void CloudDialog::on_dial_X_Dep_valueChanged(int value)
+void CloudDialog::on_dial_Angle_valueChanged(int value)
 {
-    ui->doubleSpinBox_X_Dep->setValue(value);
-    update_X_Dep();
+    ui->doubleSpinBox_Angle->setValue(value);
+    update_Angle();
 }
 
-void CloudDialog::on_doubleSpinBox_X_Dep_valueChanged(double arg1)
+void CloudDialog::on_doubleSpinBox_Angle_valueChanged(double arg1)
 {
-    ui->dial_X_Dep->setValue((int) arg1);
+    ui->dial_Angle->setValue((int) arg1);
     if (!linking) {
         editing = true;
         passageValue = (double) arg1;
     }
 }
 
-void CloudDialog::on_doubleSpinBox_X_Dep_editingFinished()
+void CloudDialog::on_doubleSpinBox_Angle_editingFinished()
 {
-    update_X_Dep();
+    update_Angle();
 }
 
-void CloudDialog::on_doubleSpinBox_Y_Dep_editingFinished()
-{
-    update_Y_Dep();
-}
-
-void CloudDialog::on_dial_Y_Dep_valueChanged(int value)
-{
-    ui->doubleSpinBox_Y_Dep->setValue(value);
-    update_Y_Dep();
-}
-
-void CloudDialog::update_X_Dep()
+void CloudDialog::update_Angle()
 {
     if (!linking){
-        //cloudVisRef->setFixedXRandExtent((int) passageValue);
+        switch (cloudRef->getTrajectoryType()) {
+        case BOUNCING:{
+            Circular *b_Traj = dynamic_cast<Circular*>(cloudVisRef->getTrajectory());
+            b_Traj->setAngle(passageValue);
+            break;
+            }
+        case CIRCULAR:{
+            Circular *c_Traj=dynamic_cast<Circular*>(cloudVisRef->getTrajectory());
+            c_Traj->setAngle(passageValue);
+            break;
+            }
+        case HYPOTROCHOID:{
+            Hypotrochoid *h_Traj=dynamic_cast<Hypotrochoid*>(cloudVisRef->getTrajectory());
+            h_Traj->setAngle(passageValue);
+            break;
+            }
+        default :
+            break;
+        }
         editing = false;
     }
-
 }
 
-void CloudDialog::on_doubleSpinBox_Y_Dep_valueChanged(double arg1)
+void CloudDialog::on_doubleSpinBox_Strech_editingFinished()
 {
-    ui->dial_Y_Dep->setValue((int) arg1);
+    update_Strech();
+}
+
+void CloudDialog::on_dial_Strech_valueChanged(int value)
+{
+    ui->doubleSpinBox_Strech->setValue(value);
+    update_Strech();
+}
+
+void CloudDialog::on_doubleSpinBox_Strech_valueChanged(double arg1)
+{
+    ui->dial_Strech->setValue((int) arg1);
     if (!linking) {
         editing = true;
         passageValue = (double) arg1;
     }
 }
 
-void CloudDialog::update_Y_Dep()
+void CloudDialog::update_Strech()
 {
     if (!linking){
-        //cloudVisRef->setFixedXRandExtent((int) passageValue);
+        Circular *c_Traj=dynamic_cast<Circular*>(cloudVisRef->getTrajectory());
+        c_Traj->setStrech(passageValue);
         editing = false;
     }
-
 }
 
 void CloudDialog::on_radioButton_Trajectory_Bouncing_toggled(bool checked)
 {
     Trajectory *tr=nullptr;
-    tr=new Bouncing(ui->doubleSpinBox_Radius->value(),ui->doubleSpinBox_Speed->value(),ui->doubleSpinBox_X->value(),ui->doubleSpinBox_Y->value());
-    cloudRef->setTrajectoryType (BOUNCING);
+    if ((cloudVisRef->getTrajectory() != nullptr) & (have_trajectory_bouncing)) {
+        tr=new Circular(ui->doubleSpinBox_Speed->value(),ui->doubleSpinBox_X->value(),ui->doubleSpinBox_Y->value(),ui->doubleSpinBox_Radius->value(),
+                        ui->doubleSpinBox_Angle->value(),0);
+
+    }
+    else {
+        tr=new Circular(g_defaultCloudParams.speed,ui->doubleSpinBox_X->value(),ui->doubleSpinBox_Y->value(),g_defaultCloudParams.radius,g_defaultCloudParams.angle,0);
+    }
+    cloudRef->setTrajectoryType(BOUNCING);
     cloudVisRef->setTrajectory(tr);
     cloudVisRef->startTrajectory();
+    have_trajectory_bouncing = true;
 }
 
 void CloudDialog::on_radioButton_Trajectory_Circular_toggled(bool checked)
 {
     Trajectory *tr=nullptr;
-    tr=new Circular(ui->doubleSpinBox_Speed->value(),ui->doubleSpinBox_X->value(),ui->doubleSpinBox_Y->value(),ui->doubleSpinBox_Radius->value());
-    cloudRef->setTrajectoryType (CIRCULAR);
+    if ((cloudVisRef->getTrajectory() != nullptr) & (have_trajectory_circular))
+        tr=new Circular(ui->doubleSpinBox_Speed->value(),ui->doubleSpinBox_X->value(),ui->doubleSpinBox_Y->value(),
+                        ui->doubleSpinBox_Radius->value(), ui->doubleSpinBox_Angle->value(),ui->doubleSpinBox_Strech->value());
+    else
+        tr=new Circular(g_defaultCloudParams.speed,ui->doubleSpinBox_X->value(),ui->doubleSpinBox_Y->value(),
+                        g_defaultCloudParams.radius, g_defaultCloudParams.angle,g_defaultCloudParams.strech);
+    cloudRef->setTrajectoryType(CIRCULAR);
     cloudVisRef->setTrajectory(tr);
     cloudVisRef->startTrajectory();
+    have_trajectory_circular = true;
 }
 
 void CloudDialog::on_radioButton_Trajectory_Static_toggled(bool checked)
 {
-    Trajectory *tr=nullptr;
-    tr=nullptr;
-    cloudRef->setTrajectoryType (STATIC);
+    Trajectory *tr = nullptr;
+    cloudRef->setTrajectoryType(STATIC);
     cloudVisRef->setTrajectory(tr);
     cloudVisRef->updateCloudPosition(ui->doubleSpinBox_X->value(),ui->doubleSpinBox_Y->value());
+}
+
+void CloudDialog::on_doubleSpinBox_RadiusInt_valueChanged(double arg1)
+{
+    ui->dial_RadiusInt->setValue((int) arg1);
+    if (!linking) {
+        editing = true;
+        passageValue = (double) arg1;
+    }
+}
+
+void CloudDialog::on_dial_RadiusInt_valueChanged(int value)
+{
+    ui->doubleSpinBox_RadiusInt->setValue(value);
+    update_RadiusInt();
+}
+
+void CloudDialog::on_doubleSpinBox_RadiusInt_editingFinished()
+{
+    update_RadiusInt();
+}
+
+
+void CloudDialog::update_RadiusInt()
+{
+    if (!linking){
+        Hypotrochoid *h_Traj=dynamic_cast<Hypotrochoid*>(cloudVisRef->getTrajectory());
+        h_Traj->setRadiusInt(passageValue);
+        editing = false;
+    }
+}
+
+void CloudDialog::on_dial_Expansion_valueChanged(int value)
+{
+    ui->doubleSpinBox_Expansion->setValue(value);
+    update_Expansion();
+}
+
+void CloudDialog::on_doubleSpinBox_Expansion_valueChanged(double arg1)
+{
+    //ui->dial_Expansion->setValue((int) arg1);
+    if (!linking) {
+        editing = true;
+        passageValue = (double) arg1;
+    }
+    ui->dial_Expansion->setValue((int) arg1);
+}
+
+void CloudDialog::on_doubleSpinBox_Expansion_editingFinished()
+{
+    update_Expansion();
+}
+
+void CloudDialog::update_Expansion()
+{
+    if (!linking){
+        Hypotrochoid *h_Traj=dynamic_cast<Hypotrochoid*>(cloudVisRef->getTrajectory());
+        h_Traj->setExpansion(passageValue);
+        editing = false;
+    }
+}
+
+void CloudDialog::on_radioButton_Trajectory_Hypotrochoid_toggled(bool checked)
+{
+    Trajectory *tr=nullptr;
+    if ((cloudVisRef->getTrajectory() != nullptr) and (have_trajectory_hypotrochoid))
+        tr=new Hypotrochoid(ui->doubleSpinBox_Speed->value(), ui->doubleSpinBox_X->value(),ui->doubleSpinBox_Y->value(),ui->doubleSpinBox_Radius->value(),
+                            ui->doubleSpinBox_RadiusInt->value(), ui->doubleSpinBox_Expansion->value(), ui->doubleSpinBox_Angle->value());
+    else {
+        tr=new Hypotrochoid(g_defaultCloudParams.speed, ui->doubleSpinBox_X->value(),ui->doubleSpinBox_Y->value(),g_defaultCloudParams.radius,
+                            g_defaultCloudParams.radiusInt, g_defaultCloudParams.expansion, g_defaultCloudParams.angle);
+    }
+    cloudRef->setTrajectoryType(HYPOTROCHOID);
+    cloudVisRef->setTrajectory(tr);
+    cloudVisRef->startTrajectory();
+    have_trajectory_hypotrochoid = true;
 }
