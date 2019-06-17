@@ -220,15 +220,15 @@ void CloudVis::draw()
     double dt=0;
 
     t_sec = GTime::instance().sec - startTime;
-    dt=t_sec-lastDrawTime;
-    lastDrawTime=t_sec;
+    dt = t_sec - lastDrawTime;
+    lastDrawTime = t_sec;
     //std::cout << "time between drawings: " <<dt<<std::endl;
     // cout << t_sec << endl;
 
     //computing trajectory
     pt2d pos = {0.,0.};
     if (this->getIsMoving() && !this->isSelected){
-        pos=this->myTrajectory->computeTrajectory(dt);
+        pos = this->myTrajectory->computeTrajectory(dt);
         updateCloudPosition(pos.x,pos.y);
     }
 

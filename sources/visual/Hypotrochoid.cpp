@@ -74,8 +74,11 @@ pt2d Hypotrochoid::computeTrajectory(double dt)
     double ph = this->getPhase();
     const double PI  =3.141592653589793238463;
     ph += sp * dt;
-    //define the phase modulo the period of the trajectory to avoid having phase going to infinity
-    setPhase(ph - int(ph));
+    //define the phase modulo the period of the trajectory to avoid having phase going to infinity after maxTurn
+    if ((ph > maxTurn) & ((ph - int(ph)) * 100 < 1))
+        setPhase(ph - int(ph));
+    else
+        setPhase(ph);
 
     pt2d orig = getOrigin();
     pt2d vecPos{0., 0.};

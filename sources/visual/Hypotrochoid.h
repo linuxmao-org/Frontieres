@@ -35,6 +35,7 @@ private:
 
     double angle;
     double expansion;
+    const int maxTurn = 1000;
 };
 
 #endif // HYPOTROCHOID_H
