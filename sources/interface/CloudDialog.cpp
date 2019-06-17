@@ -283,13 +283,13 @@ void CloudDialog::linkCloud(Cloud *cloudLinked, CloudVis *cloudVisLinked)
             ui->doubleSpinBox_Speed->setDisabled(false);
             ui->doubleSpinBox_Radius->setDisabled(false);
             ui->doubleSpinBox_RadiusInt->setDisabled(false);
-            ui->doubleSpinBox_Angle->setDisabled(true);
+            ui->doubleSpinBox_Angle->setDisabled(false);
             ui->doubleSpinBox_Strech->setDisabled(true);
             ui->doubleSpinBox_Expansion->setDisabled(false);
             ui->dial_Speed->setDisabled(false);
             ui->dial_Radius->setDisabled(false);
             ui->dial_RadiusInt->setDisabled(false);
-            ui->dial_Angle->setDisabled(true);
+            ui->dial_Angle->setDisabled(false);
             ui->dial_Strech->setDisabled(true);
             ui->dial_Expansion->setDisabled(false);
             ui->doubleSpinBox_Speed->setValue(cloudVisLinked->getTrajectory()->getSpeed());

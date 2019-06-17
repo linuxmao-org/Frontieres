@@ -83,7 +83,7 @@ pt2d Hypotrochoid::computeTrajectory(double dt)
     pt2d orig = getOrigin();
     pt2d vecPos{0., 0.};
 
-    double progresAngle = getPhase() * 2 * PI;
+    double progresAngle = (getPhase() - (angle/360) + 0.25) * 2 * PI ;
 
     vecPos.x = orig.x + (radius - radiusInt) * cos(progresAngle) + expansion * cos ((radius - radiusInt) / radiusInt * progresAngle);
     vecPos.y = orig.y + (radius - radiusInt) * sin(progresAngle) - expansion * sin ((radius - radiusInt) / radiusInt * progresAngle);
