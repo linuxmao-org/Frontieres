@@ -258,6 +258,7 @@ bool Scene::load(QFile &sceneFile)
         double strech=0;
         double radiusInt=0;
         double expansion=0;
+        double progress=0;
 
         if(hasTrajectory)
         {
@@ -284,6 +285,7 @@ bool Scene::load(QFile &sceneFile)
                     radius=objCloud["radius"].toDouble();
                     angle=objCloud["angle"].toDouble();
                     strech=objCloud["strech"].toDouble();
+                    progress=objCloud["progress"].toDouble();
                 }
                 break;
 
@@ -296,6 +298,7 @@ bool Scene::load(QFile &sceneFile)
                 radiusInt = objCloud["radius"].toDouble();
                 angle = objCloud["angle"].toDouble();
                 expansion = objCloud["expansion"].toDouble();
+                progress=objCloud["progress"].toDouble();
             }
             break;
 
@@ -382,7 +385,7 @@ bool Scene::load(QFile &sceneFile)
                 case BOUNCING:
                 {
                     //tr=new Bouncing(bounceWidth,speed,0,xTrajectoryOrigin,yTrajectoryOrigin);
-                    tr=new Circular(speed,xTrajectoryOrigin,yTrajectoryOrigin,radius, angle, 0);
+                    tr=new Circular(speed,xTrajectoryOrigin,yTrajectoryOrigin,radius, angle, 0, 1);
                     cout << "cloud has radius = " << radius << "\n";
                     cout << "cloud has angle = " << angle << "\n";
                 }
@@ -391,22 +394,24 @@ bool Scene::load(QFile &sceneFile)
                 case CIRCULAR:
                 {
 
-                    tr=new Circular(speed,xTrajectoryOrigin,yTrajectoryOrigin,radius, angle, strech);
+                    tr=new Circular(speed,xTrajectoryOrigin,yTrajectoryOrigin,radius, angle, strech, progress);
                     cout << "cloud has center = (" << centerX << ","<<centerY<<")"<<"\n";
                     cout << "cloud has radius = " << radius << "\n";
                     cout << "cloud has angle = " << angle << "\n";
                     cout << "cloud has strech = " << strech << "\n";
+                    cout << "cloud has progress = " << progress << "\n";
                 }
                 break;
 
                 case HYPOTROCHOID:
                 {
-                    tr=new Hypotrochoid(speed,xTrajectoryOrigin,yTrajectoryOrigin,radius,radiusInt,expansion,angle);
+                    tr=new Hypotrochoid(speed,xTrajectoryOrigin,yTrajectoryOrigin,radius,radiusInt,expansion,angle, progress);
                     cout << "cloud has center = (" << centerX << ","<<centerY<<")"<<"\n";
                     cout << "cloud has radius = " << radius << "\n";
                     cout << "cloud has radius Int = " << radiusInt << "\n";
                     cout << "cloud has angle = " << angle << "\n";
                     cout << "cloud has expansion = " << expansion << "\n";
+                    cout << "cloud has progress = " << progress << "\n";
                 }
                 break;
                 default:
@@ -435,6 +440,7 @@ bool Scene::load(QFile &sceneFile)
        cout << "cloud has radius = " <<radius <<"\n";
        cout << "cloud has angle = " <<angle <<"\n";
        cout << "cloud has strech = " <<strech <<"\n";
+       cout << "cloud has progress = " <<progress <<"\n";
 
 
 
@@ -621,11 +627,13 @@ bool Scene::save(QFile &sceneFile)
                     objCloud["centerX"]=c->getCenterX();                    objCloud["centerY"]=c->getCenterY();
                     objCloud["angle"]=c->getAngle();
                     objCloud["strech"]=c->getStrech();
+                    objCloud["progress"]=c->getProgress();
                     std::cout<<"centerX saved "<<c->getCenterX()<<std::endl;
                     std::cout<<"centerY saved "<<c->getCenterY()<<std::endl;
                     std::cout<<"radius saved "<<c->getRadius()<<std::endl;
                     std::cout<<"angle saved "<<c->getAngle()<<std::endl;
                     std::cout<<"strech saved "<<c->getStrech()<<std::endl;
+                    std::cout<<"progress saved "<<c->getProgress()<<std::endl;
                 }
                 break;
 
@@ -638,12 +646,14 @@ bool Scene::save(QFile &sceneFile)
                 objCloud["angle"]=c->getAngle();
                 objCloud["radiusInt"]=c->getRadiusInt();
                 objCloud["expansion"]=c->getExpansion();
+                objCloud["progress"]=c->getProgress();
                 std::cout<<"centerX saved "<<c->getCenterX()<<std::endl;
                 std::cout<<"centerY saved "<<c->getCenterY()<<std::endl;
                 std::cout<<"radius saved "<<c->getRadius()<<std::endl;
                 std::cout<<"radius Int saved "<<c->getRadiusInt()<<std::endl;
                 std::cout<<"angle saved "<<c->getAngle()<<std::endl;
                 std::cout<<"expansion saved "<<c->getExpansion()<<std::endl;
+                std::cout<<"progress saved "<<c->getProgress()<<std::endl;
             }
             break;
 
@@ -790,7 +800,7 @@ bool Scene::loadCloudDefault(QFile &cloudFile)
     g_defaultCloudParams.strech = objCloud["strech"].toDouble();
     g_defaultCloudParams.radiusInt = objCloud["radius-int"].toDouble();
     g_defaultCloudParams.expansion = objCloud["expansion"].toDouble();
-
+    g_defaultCloudParams.progress = objCloud["progress"].toDouble();
 
 
     cout << "duration = " << g_defaultCloudParams.duration << "\n";
@@ -830,6 +840,7 @@ bool Scene::loadCloudDefault(QFile &cloudFile)
     cout << "strech = " << g_defaultCloudParams.strech << "\n";
     cout << "radiusInt = " << g_defaultCloudParams.radiusInt << "\n";
     cout << "expansion = " << g_defaultCloudParams.expansion << "\n";
+    cout << "progress = " << g_defaultCloudParams.progress << "\n";
 
     return true;
 
@@ -918,6 +929,7 @@ bool Scene::saveCloud(QFile &cloudFile, SceneCloud *selectedCloudSave)
                 objCloud["radius"] = c->getRadius();
                 objCloud["angle"] = c->getAngle();
                 objCloud["strech"] = c->getStrech();
+                objCloud["progress"] = c->getProgress();
                 objCloud["centerX"] = c->getCenterX();
                 objCloud["centerY"] = c->getCenterY();
             }
@@ -930,6 +942,7 @@ bool Scene::saveCloud(QFile &cloudFile, SceneCloud *selectedCloudSave)
             objCloud["radiusInt"] = c->getRadiusInt();
             objCloud["angle"] = c->getAngle();
             objCloud["expansion"] = c->getExpansion();
+            objCloud["progress"] = c->getProgress();
             objCloud["centerX"] = c->getCenterX();
             objCloud["centerY"] = c->getCenterY();
         }
@@ -1118,6 +1131,7 @@ void Scene::initDefaultCloudParams()
     g_defaultCloudParams.angle = 45;
     g_defaultCloudParams.radiusInt = 20;
     g_defaultCloudParams.expansion = 50;
+    g_defaultCloudParams.progress = 150;
 }
 
 Sample *Scene::loadNewSample(const std::string &path)

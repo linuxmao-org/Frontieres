@@ -1,7 +1,7 @@
 #include "visual/Circular.h"
 
 
-Circular::Circular(double s,double xOr, double yOr,double r, double ang, double stch)
+Circular::Circular(double s,double xOr, double yOr,double r, double ang, double stch, double prgs)
     : Trajectory(s,xOr,yOr)
 {
     pt2d  orig=getOrigin();
@@ -11,6 +11,7 @@ Circular::Circular(double s,double xOr, double yOr,double r, double ang, double 
     distanceToCenter=0;
     angle = ang;
     strech = stch;
+    progress = prgs;
 
 }
 
@@ -25,7 +26,7 @@ pt2d Circular::computeTrajectory(double dt)
 
     //see Euler spiral for a smooth passage from a spiral to a circle
     if (distanceToCenter<=radius)
-    distanceToCenter+=radius/150.;
+    distanceToCenter+=radius/progress;
 
     //the modulus and the angle, a polar complex number
     double rho = (distanceToCenter < radius) ? distanceToCenter : radius;
@@ -83,6 +84,11 @@ double Circular::getStrech()
     return strech;
 }
 
+double Circular::getProgress()
+{
+    return progress;
+}
+
 void Circular::setRadius(double newRadius)
 {
     radius = newRadius;
@@ -96,6 +102,11 @@ void Circular::setAngle(double newAngle)
 void Circular::setStrech(double newStrech)
 {
     strech = newStrech;
+}
+
+void Circular::setProgress(double newProgress)
+{
+    progress = newProgress;
 }
 
 int Circular::getType()

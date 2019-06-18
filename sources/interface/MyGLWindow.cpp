@@ -533,18 +533,18 @@ void MyGLScreen::keyAction_Trajectory(int dir)
 
                 if( selectedCloud->view->getTrajectory()==nullptr){
                     tr=new Circular(g_defaultCloudParams.speed,selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY(),g_defaultCloudParams.radius,
-                                    g_defaultCloudParams.angle, 0);
+                                    g_defaultCloudParams.angle, 0, 1);
                     //tr=new Bouncing(100,0.2,0,selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY());
                     selectedCloud->cloud->setTrajectoryType (BOUNCING);
                 }
                 else if(selectedCloud->view->getTrajectory()->getType()==BOUNCING){
                     tr=new Circular(g_defaultCloudParams.speed,selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY(),g_defaultCloudParams.radius,
-                                    g_defaultCloudParams.angle, g_defaultCloudParams.strech);
+                                    g_defaultCloudParams.angle, g_defaultCloudParams.strech, g_defaultCloudParams.progress);
                     selectedCloud->cloud->setTrajectoryType (CIRCULAR);
                 }
                 else if(selectedCloud->view->getTrajectory()->getType()==CIRCULAR){
                     tr=new Hypotrochoid(g_defaultCloudParams.speed,selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY(),g_defaultCloudParams.radius,
-                                        g_defaultCloudParams.radiusInt,g_defaultCloudParams.expansion,g_defaultCloudParams.angle);
+                                        g_defaultCloudParams.radiusInt,g_defaultCloudParams.expansion,g_defaultCloudParams.angle, g_defaultCloudParams.progress);
                     selectedCloud->cloud->setTrajectoryType (HYPOTROCHOID);
                     selectedCloud->view->updateCloudPosition(selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY());
                 }

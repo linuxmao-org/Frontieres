@@ -53,6 +53,7 @@ struct CloudParams
     float angle;
     float strech;
     float expansion;
+    float progress;
 };
 struct ValueMax
 {
@@ -73,6 +74,7 @@ struct ValueMax
     const float angle = 360;
     const float strech = 1;
     const float expansion = 1000;
+    const float progress = 10000;
 };
 
 struct ValueMin
@@ -95,4 +97,5 @@ struct ValueMin
     const float angle = 0;
     const float strech = 0;
     const float expansion = -1000;
+    const float progress = 1;
 };

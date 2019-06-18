@@ -73,16 +73,17 @@ CloudVis::CloudVis(float x, float y, unsigned int numGrainsVis,
     switch (g_defaultCloudParams.trajectoryType) {
     case BOUNCING:
         //tr=new Bouncing(g_defaultCloudParams.radius,g_defaultCloudParams.speed,g_defaultCloudParams.angle,x,y);
-        tr=new Circular(g_defaultCloudParams.speed,x,y,g_defaultCloudParams.radius,g_defaultCloudParams.angle,0);
+        tr=new Circular(g_defaultCloudParams.speed,x,y,g_defaultCloudParams.radius,g_defaultCloudParams.angle,0,1);
         isMoving = true;
         break;
     case CIRCULAR:
-        tr=new Circular(g_defaultCloudParams.speed,x,y,g_defaultCloudParams.radius,g_defaultCloudParams.angle,g_defaultCloudParams.strech);
+        tr=new Circular(g_defaultCloudParams.speed,x,y,g_defaultCloudParams.radius,g_defaultCloudParams.angle,
+                        g_defaultCloudParams.strech,g_defaultCloudParams.progress );
         isMoving = true;
         break;
     case HYPOTROCHOID:
         tr=new Hypotrochoid(g_defaultCloudParams.speed,x,y,g_defaultCloudParams.radius,g_defaultCloudParams.radiusInt,
-                            g_defaultCloudParams.expansion, g_defaultCloudParams.angle);
+                            g_defaultCloudParams.expansion, g_defaultCloudParams.angle,g_defaultCloudParams.progress);
         isMoving = true;
         break;
     default :

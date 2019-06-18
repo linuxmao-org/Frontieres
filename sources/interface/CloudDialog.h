@@ -178,6 +178,14 @@ private slots:
 
     void update_Expansion();
 
+    void on_dial_Progress_valueChanged(int value);
+
+    void on_doubleSpinBox_Progress_valueChanged(double arg1);
+
+    void on_doubleSpinBox_Progress_editingFinished();
+
+    void update_Progress();
+
     void on_radioButton_Trajectory_Hypotrochoid_toggled(bool checked);
 
 private:
