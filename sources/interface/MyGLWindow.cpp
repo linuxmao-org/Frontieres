@@ -28,6 +28,7 @@
 #include "model/Scene.h"
 #include "visual/CloudVis.h"
 #include "visual/SampleVis.h"
+#include "model/ParamCloud.h"
 #include "Frontieres.h"
 #include "MyRtOsc.h"
 #include <chrono>
@@ -39,6 +40,7 @@
 #include <QDebug>
 
 extern string g_audioPath;
+extern CloudParams g_defaultCloudParams;
 
 struct MyGLWindow::Impl {
     MyGLWindow *Q = nullptr;
@@ -528,20 +530,29 @@ void MyGLScreen::keyAction_Trajectory(int dir)
                 selectedCloud->view->stopTrajectory();
             }
             else  {
+
                 if( selectedCloud->view->getTrajectory()==nullptr){
-                    tr=new Bouncing(100,0.2,selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY());
+                    tr=new Circular(g_defaultCloudParams.speed,selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY(),g_defaultCloudParams.radius,
+                                    g_defaultCloudParams.angle, 0, 1);
+                    //tr=new Bouncing(100,0.2,0,selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY());
                     selectedCloud->cloud->setTrajectoryType (BOUNCING);
                 }
-                else if(selectedCloud->view->getTrajectory()->getType()==1){
-                    tr=new Circular(0.2,selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY(),200);
+                else if(selectedCloud->view->getTrajectory()->getType()==BOUNCING){
+                    tr=new Circular(g_defaultCloudParams.speed,selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY(),g_defaultCloudParams.radius,
+                                    g_defaultCloudParams.angle, g_defaultCloudParams.strech, g_defaultCloudParams.progress);
                     selectedCloud->cloud->setTrajectoryType (CIRCULAR);
                 }
-                else if(selectedCloud->view->getTrajectory()->getType()==2){
+                else if(selectedCloud->view->getTrajectory()->getType()==CIRCULAR){
+                    tr=new Hypotrochoid(g_defaultCloudParams.speed,selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY(),g_defaultCloudParams.radius,
+                                        g_defaultCloudParams.radiusInt,g_defaultCloudParams.expansion,g_defaultCloudParams.angle, g_defaultCloudParams.progress);
+                    selectedCloud->cloud->setTrajectoryType (HYPOTROCHOID);
+                    selectedCloud->view->updateCloudPosition(selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY());
+                }
+                else if(selectedCloud->view->getTrajectory()->getType()==HYPOTROCHOID){
                     tr=nullptr;
                     selectedCloud->cloud->setTrajectoryType (STATIC);
                     selectedCloud->view->updateCloudPosition(selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY());
                 }
-
 
                 selectedCloud->view->setTrajectory(tr);
                 if (tr != nullptr)

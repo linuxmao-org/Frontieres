@@ -140,27 +140,53 @@ private slots:
 
     void update_Radius();
 
-    void on_dial_X_Dep_valueChanged(int value);
+    void on_dial_Angle_valueChanged(int value);
 
-    void on_doubleSpinBox_X_Dep_valueChanged(double arg1);
+    void on_doubleSpinBox_Angle_valueChanged(double arg1);
 
-    void on_doubleSpinBox_X_Dep_editingFinished();
+    void on_doubleSpinBox_Angle_editingFinished();
 
-    void update_X_Dep();
+    void update_Angle();
 
-    void on_dial_Y_Dep_valueChanged(int value);
+    void on_dial_Strech_valueChanged(int value);
 
-    void on_doubleSpinBox_Y_Dep_valueChanged(double arg1);
+    void on_doubleSpinBox_Strech_valueChanged(double arg1);
 
-    void on_doubleSpinBox_Y_Dep_editingFinished();
+    void on_doubleSpinBox_Strech_editingFinished();
 
-    void update_Y_Dep();
+    void update_Strech();
 
     void on_radioButton_Trajectory_Bouncing_toggled(bool checked);
 
     void on_radioButton_Trajectory_Circular_toggled(bool checked);
 
     void on_radioButton_Trajectory_Static_toggled(bool checked);
+
+    void on_doubleSpinBox_RadiusInt_valueChanged(double arg1);
+
+    void on_dial_RadiusInt_valueChanged(int value);
+
+    void on_doubleSpinBox_RadiusInt_editingFinished();
+
+    void update_RadiusInt();
+
+    void on_dial_Expansion_valueChanged(int value);
+
+    void on_doubleSpinBox_Expansion_valueChanged(double arg1);
+
+    void on_doubleSpinBox_Expansion_editingFinished();
+
+    void update_Expansion();
+
+    void on_dial_Progress_valueChanged(int value);
+
+    void on_doubleSpinBox_Progress_valueChanged(double arg1);
+
+    void on_doubleSpinBox_Progress_editingFinished();
+
+    void update_Progress();
+
+    void on_radioButton_Trajectory_Hypotrochoid_toggled(bool checked);
 
 private:
     Ui::CloudDialog *ui;
@@ -170,6 +196,9 @@ private:
     Cloud *cloudRef;
     CloudVis *cloudVisRef;
     bool autoUpdating = false;
+    bool have_trajectory_bouncing = false;
+    bool have_trajectory_circular = false;
+    bool have_trajectory_hypotrochoid = false;
 };
 
 #endif // CLOUDDIALOG_H

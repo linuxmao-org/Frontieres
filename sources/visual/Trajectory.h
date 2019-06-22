@@ -7,7 +7,7 @@
 #include "theglobals.h"
 #include <cmath>
 
-enum { STATIC, BOUNCING, CIRCULAR};
+enum { STATIC, BOUNCING, CIRCULAR, HYPOTROCHOID};
 
 
 // abstract class as a base for every kind of trajectory

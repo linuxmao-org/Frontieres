@@ -1,29 +1,30 @@
-#ifndef CIRCULAR_H
-#define CIRCULAR_H
+#ifndef HYPOTROCHOID_H
+#define HYPOTROCHOID_H
 
 #include <memory>
 #include <iostream>
 #include "theglobals.h"
 #include "Trajectory.h"
-#include <complex>
 
 
-class Circular : public Trajectory {
+class Hypotrochoid : public Trajectory {
 public:
-    Circular(double s, double xOr, double yOr, double r, double ang, double stch, double prgs);
+    Hypotrochoid(double c_speed, double c_xOr, double c_yOr, double c_radius, double c_radiusInt, double c_expansion, double c_angle, double c_progress);
     double getCenterX();
     double getCenterY();
     double getRadius();
+    double getRadiusInt();
     double getAngle();
-    double getStrech();
+    double getExpansion();
     double getProgress();
     void setRadius(double newRadius);
+    void setRadiusInt(double newRadiusInt);
     void setCenter(double x,double y);
     void setAngle(double newAngle);
-    void setStrech(double newStrech);
+    void setExpansion(double newExpansion);
     void setProgress(double newProgress);
     pt2d computeTrajectory(double dt);
-    ~Circular();
+    ~Hypotrochoid();
     int getType();
 
 private:
@@ -32,9 +33,12 @@ private:
     //to allow for a smooth way travel into orbit
     double distanceToCenter;
     double radius;
+    double radiusInt;
+
     double angle;
-    double strech;
+    double expansion;
     double progress;
+    const int maxTurn = 1000;
 };
 
-#endif
+#endif // HYPOTROCHOID_H

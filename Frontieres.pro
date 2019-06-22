@@ -72,8 +72,8 @@ SOURCES += \
   sources/visual/GrainVis.cpp \
   sources/visual/CloudVis.cpp \
   sources/visual/Trajectory.cpp \
-  sources/visual/Bouncing.cpp \
   sources/visual/Circular.cpp \
+  sources/visual/Hypotrochoid.cpp \
   sources/utility/GTime.cpp \
   libraries/Stk.cpp \
   libraries/RtAudio.cpp \
@@ -115,8 +115,8 @@ HEADERS += \
   sources/visual/GrainVis.h \
   sources/visual/CloudVis.h \
   sources/visual/Trajectory.h \ 
-  sources/visual/Bouncing.h \
   sources/visual/Circular.h \
+  sources/visual/Hypotrochoid.h \
   sources/utility/GTime.h \
   libraries/RtMidi.h \
   libraries/RtAudio.h \
