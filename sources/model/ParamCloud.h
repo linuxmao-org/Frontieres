@@ -47,10 +47,13 @@ struct CloudParams
     ParamEnv envelope;
     int trajectoryType;
     bool hasTrajectory;
-    float x_Dep;
-    float y_Dep;
     float speed;
     float radius;
+    float radiusInt;
+    float angle;
+    float strech;
+    float expansion;
+    float progress;
 };
 struct ValueMax
 {
@@ -65,10 +68,13 @@ struct ValueMax
     const float yRandExtent = 2000;
     const float x = 2000;
     const float y = 2000;
-    const float x_Dep = 1000;
-    const float y_Dep = 1000;
-    const float speed = 100;
-    const float radius= 1000;
+    const float speed = 15;
+    const float radius = 1000;
+    const float radiusInt = 1000;
+    const float angle = 360;
+    const float strech = 1;
+    const float expansion = 1000;
+    const float progress = 10000;
 };
 
 struct ValueMin
@@ -85,8 +91,11 @@ struct ValueMin
     const float yRandExtent = 0;
     const float x = -2000;
     const float y = -2000;
-    const float x_Dep = -1000;
-    const float y_Dep = -1000;
-    const float speed = -100;
+    const float speed = -15;
     const float radius = 0;
+    const float radiusInt = 0;
+    const float angle = 0;
+    const float strech = 0;
+    const float expansion = -1000;
+    const float progress = 1;
 };

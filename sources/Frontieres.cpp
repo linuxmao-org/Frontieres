@@ -660,8 +660,6 @@ void printParam()
                         myValue.c_str(), 100.0f);
             break;
         case TRAJECTORY:
-            cout << "trajectory dans frontieres.cpp, trajectory = " << theCloud.getTrajectoryType() << endl;
-            cout << "static="<< STATIC <<",bouncing="<<BOUNCING<<",circular="<<CIRCULAR<<endl;
             switch (theCloud.getTrajectoryType()) {
             case STATIC:
                 myValue = QObject::tr("Trajectory: STATIC").toStdString();
@@ -671,6 +669,9 @@ void printParam()
                 break;
             case CIRCULAR:
                 myValue = QObject::tr("Trajectory: CIRCULAR").toStdString();
+                break;
+            case HYPOTROCHOID:
+                myValue = QObject::tr("Trajectory: HYPOTROCHOID").toStdString();
                 break;
             default:
                 myValue = "";

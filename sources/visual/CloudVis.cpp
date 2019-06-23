@@ -72,11 +72,18 @@ CloudVis::CloudVis(float x, float y, unsigned int numGrainsVis,
     Trajectory *tr=nullptr;
     switch (g_defaultCloudParams.trajectoryType) {
     case BOUNCING:
-        tr=new Bouncing(100,0.2,x,y);
+        //tr=new Bouncing(g_defaultCloudParams.radius,g_defaultCloudParams.speed,g_defaultCloudParams.angle,x,y);
+        tr=new Circular(g_defaultCloudParams.speed,x,y,g_defaultCloudParams.radius,g_defaultCloudParams.angle,0,1);
         isMoving = true;
         break;
     case CIRCULAR:
-        tr=new Circular(0.2,x,y,200);
+        tr=new Circular(g_defaultCloudParams.speed,x,y,g_defaultCloudParams.radius,g_defaultCloudParams.angle,
+                        g_defaultCloudParams.strech,g_defaultCloudParams.progress );
+        isMoving = true;
+        break;
+    case HYPOTROCHOID:
+        tr=new Hypotrochoid(g_defaultCloudParams.speed,x,y,g_defaultCloudParams.radius,g_defaultCloudParams.radiusInt,
+                            g_defaultCloudParams.expansion, g_defaultCloudParams.angle,g_defaultCloudParams.progress);
         isMoving = true;
         break;
     default :
@@ -214,15 +221,15 @@ void CloudVis::draw()
     double dt=0;
 
     t_sec = GTime::instance().sec - startTime;
-    dt=t_sec-lastDrawTime;
-    lastDrawTime=t_sec;
+    dt = t_sec - lastDrawTime;
+    lastDrawTime = t_sec;
     //std::cout << "time between drawings: " <<dt<<std::endl;
     // cout << t_sec << endl;
 
     //computing trajectory
     pt2d pos = {0.,0.};
     if (this->getIsMoving() && !this->isSelected){
-        pos=this->myTrajectory->computeTrajectory(dt);
+        pos = this->myTrajectory->computeTrajectory(dt);
         updateCloudPosition(pos.x,pos.y);
     }
 
