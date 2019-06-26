@@ -117,6 +117,7 @@ public:
     void setTrajectory(Trajectory *tr);
     void stopTrajectory();
     void startTrajectory();
+    void restartTrajectory();
     bool hasTrajectory();
 
 
@@ -150,6 +151,7 @@ private:
 
     // trajectory of the cloud
     Trajectory *myTrajectory;
+    bool restartingTrajectory = false;
 
 
 };

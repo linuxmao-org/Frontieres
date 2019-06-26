@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/resources">
+        <file>boutonstransports-1-2.png</file>
+        <file>boutonstransports-1-6.png</file>
+        <file>boutonstransports-1-5.png</file>
+        <file>boutonstransports-1-4.png</file>
+        <file>boutonstransports-1-7.png</file>
+    </qresource>
+</RCC>

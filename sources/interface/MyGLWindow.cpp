@@ -537,18 +537,21 @@ void MyGLScreen::keyAction_Trajectory(int dir)
                     //tr=new Bouncing(100,0.2,0,selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY());
                     selectedCloud->cloud->setTrajectoryType (BOUNCING);
                 }
-                else if(selectedCloud->view->getTrajectory()->getType()==BOUNCING){
+                //else if(selectedCloud->view->getTrajectory()->getType()==BOUNCING){
+                else if(selectedCloud->cloud->getTrajectoryType()==BOUNCING){
                     tr=new Circular(g_defaultCloudParams.speed,selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY(),g_defaultCloudParams.radius,
                                     g_defaultCloudParams.angle, g_defaultCloudParams.strech, g_defaultCloudParams.progress);
                     selectedCloud->cloud->setTrajectoryType (CIRCULAR);
                 }
-                else if(selectedCloud->view->getTrajectory()->getType()==CIRCULAR){
+                //else if(selectedCloud->view->getTrajectory()->getType()==CIRCULAR){
+                else if(selectedCloud->cloud->getTrajectoryType()==CIRCULAR){
                     tr=new Hypotrochoid(g_defaultCloudParams.speed,selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY(),g_defaultCloudParams.radius,
                                         g_defaultCloudParams.radiusInt,g_defaultCloudParams.expansion,g_defaultCloudParams.angle, g_defaultCloudParams.progress);
                     selectedCloud->cloud->setTrajectoryType (HYPOTROCHOID);
                     selectedCloud->view->updateCloudPosition(selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY());
                 }
-                else if(selectedCloud->view->getTrajectory()->getType()==HYPOTROCHOID){
+                //else if(selectedCloud->view->getTrajectory()->getType()==HYPOTROCHOID){
+                else if(selectedCloud->cloud->getTrajectoryType()==HYPOTROCHOID){
                     tr=nullptr;
                     selectedCloud->cloud->setTrajectoryType (STATIC);
                     selectedCloud->view->updateCloudPosition(selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY());
@@ -1085,7 +1088,7 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
 
     case Qt::Key_I: {
         keyAction_Trajectory((modkey == Qt::ShiftModifier) ? -1 : +1);
-        cout << "trajectoire " << modkey << endl;
+        //cout << "trajectoire " << modkey << endl;
         break;
     }
 

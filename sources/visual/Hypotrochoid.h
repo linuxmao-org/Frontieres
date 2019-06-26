@@ -16,13 +16,11 @@ public:
     double getRadiusInt();
     double getAngle();
     double getExpansion();
-    double getProgress();
     void setRadius(double newRadius);
     void setRadiusInt(double newRadiusInt);
     void setCenter(double x,double y);
     void setAngle(double newAngle);
     void setExpansion(double newExpansion);
-    void setProgress(double newProgress);
     pt2d computeTrajectory(double dt);
     ~Hypotrochoid();
     int getType();
@@ -37,7 +35,6 @@ private:
 
     double angle;
     double expansion;
-    double progress;
     const int maxTurn = 1000;
 };
 

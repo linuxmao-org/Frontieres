@@ -67,7 +67,7 @@ CloudVis::CloudVis(float x, float y, unsigned int numGrainsVis,
 
     //initialise trajectory
 
-    isMoving=false;
+    stopTrajectory();
     myTrajectory = nullptr;
     Trajectory *tr=nullptr;
     switch (g_defaultCloudParams.trajectoryType) {
@@ -195,7 +195,7 @@ void CloudVis::setTrajectory(Trajectory *tr)
     }
     myTrajectory=tr;
     if(tr==nullptr){
-        isMoving=false;
+        stopTrajectory();
     }
 }
 
@@ -214,6 +214,16 @@ void CloudVis::startTrajectory()
     isMoving=true;
 }
 
+void CloudVis::restartTrajectory()
+{
+    if (myTrajectory != nullptr) {
+        myTrajectory->restart();
+        restartingTrajectory = true;
+        draw();
+        restartingTrajectory = false;
+    }
+}
+
 
 void CloudVis::draw()
 {
@@ -228,7 +238,8 @@ void CloudVis::draw()
 
     //computing trajectory
     pt2d pos = {0.,0.};
-    if (this->getIsMoving() && !this->isSelected){
+    //if (this->getIsMoving() && !this->isSelected){
+    if (this->getIsMoving() || restartingTrajectory) {
         pos = this->myTrajectory->computeTrajectory(dt);
         updateCloudPosition(pos.x,pos.y);
     }
