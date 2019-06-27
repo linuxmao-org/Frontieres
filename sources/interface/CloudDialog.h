@@ -188,6 +188,10 @@ private slots:
 
     void on_radioButton_Trajectory_Hypotrochoid_toggled(bool checked);
 
+    void on_commandLinkButton_go_toggled(bool checked);
+
+    void on_commandLinkButton_stop_clicked();
+
 private:
     Ui::CloudDialog *ui;
     bool linking = false;

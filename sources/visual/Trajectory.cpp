@@ -2,7 +2,7 @@
 
 void Trajectory::setSpeed(double s)
 {
-    std::cout << "setspeed = " << s << std::endl;
+//    std::cout << "setspeed = " << s << std::endl;
     this->speed = s;
 }
 
@@ -30,6 +30,32 @@ void Trajectory::updateOrigin(double x, double y)
 {
     xOrigin=x;
     yOrigin=y;
+}
+
+void Trajectory::restart()
+{
+    setDistanceToCenter(0);
+    setPhase(0);
+}
+
+double Trajectory::getProgress()
+{
+    return progress;
+}
+
+void Trajectory::setProgress(double newProgress)
+{
+    progress = newProgress;
+}
+
+void Trajectory::setDistanceToCenter(double newDistance)
+{
+    distanceToCenter = newDistance;
+}
+
+double Trajectory::getDistanceToCenter()
+{
+    return distanceToCenter;
 }
 
 pt2d Trajectory::getOrigin()

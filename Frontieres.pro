@@ -187,4 +187,5 @@ HEADERS += \
   libraries/rtosc/include/rtosc/pretty-format.h
 
 RESOURCES += \
-  docs.qrc
+  docs.qrc \
+    resources/buttons.qrc

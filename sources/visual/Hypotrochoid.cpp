@@ -8,10 +8,10 @@ Hypotrochoid::Hypotrochoid(double c_speed, double c_xOr, double c_yOr, double c_
     centerY = orig.y;
     radius = c_radius;
     radiusInt = c_radiusInt;
-    distanceToCenter=0;
+    setDistanceToCenter(0);
     angle = c_angle;
     expansion = c_expansion;
-    progress = c_progress;
+    setProgress(c_progress);
 }
 
 double Hypotrochoid::getCenterX()
@@ -44,11 +44,6 @@ double Hypotrochoid::getExpansion()
     return expansion;
 }
 
-double Hypotrochoid::getProgress()
-{
-    return progress;
-}
-
 void Hypotrochoid::setRadius(double newRadius)
 {
     radius = newRadius;
@@ -74,11 +69,6 @@ void Hypotrochoid::setExpansion(double newExpansion)
     expansion = newExpansion;
 }
 
-void Hypotrochoid::setProgress(double newProgress)
-{
-    progress = newProgress;
-}
-
 pt2d Hypotrochoid::computeTrajectory(double dt)
 {
     double sp = this->getSpeed();
@@ -95,17 +85,17 @@ pt2d Hypotrochoid::computeTrajectory(double dt)
     pt2d vecPos{0., 0.};
 
     //see Euler spiral for a smooth passage from a spiral to an hypotrochoid
-    if (distanceToCenter < 1)
-        distanceToCenter += 1/progress;
+    if (getDistanceToCenter() < 1)
+        setDistanceToCenter(getDistanceToCenter() + 1/getProgress());
     else
-        distanceToCenter = 1;
+        setDistanceToCenter(1);
 
     //the modulus and the angle, a polar complex number
 
     double progresAngle = (getPhase() - (angle/360) + 0.25) * 2 * PI ;
 
-    vecPos.x = orig.x + (radius - radiusInt) * distanceToCenter * cos(progresAngle) + expansion * distanceToCenter * cos ((radius - radiusInt) * distanceToCenter / radiusInt / distanceToCenter * progresAngle);
-    vecPos.y = orig.y + (radius - radiusInt) * distanceToCenter * sin(progresAngle) - expansion * distanceToCenter * sin ((radius - radiusInt) * distanceToCenter / radiusInt / distanceToCenter * progresAngle);
+    vecPos.x = orig.x + (radius - radiusInt) * getDistanceToCenter() * cos(progresAngle) + expansion * getDistanceToCenter() * cos ((radius - radiusInt) * getDistanceToCenter() / radiusInt / getDistanceToCenter() * progresAngle);
+    vecPos.y = orig.y + (radius - radiusInt) * getDistanceToCenter() * sin(progresAngle) - expansion * getDistanceToCenter() * sin ((radius - radiusInt) * getDistanceToCenter() / radiusInt / getDistanceToCenter() * progresAngle);
 
     return vecPos;
 }
@@ -117,5 +107,5 @@ Hypotrochoid::~Hypotrochoid()
 
 int Hypotrochoid::getType()
 {
-        return HYPOTROCHOID;
+    return HYPOTROCHOID;
 }

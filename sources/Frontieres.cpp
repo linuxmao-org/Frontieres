@@ -677,7 +677,7 @@ void printParam()
                 myValue = "";
                 break;
             }
-            cout << "myvalue="<<myValue<<endl;
+           // cout << "myvalue="<<myValue<<endl;
             draw_string((GLfloat)mouseX, (GLfloat)(screenHeight - mouseY), 0.0,
                           myValue.c_str(), 100.0f);
 

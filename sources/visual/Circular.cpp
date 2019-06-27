@@ -8,10 +8,10 @@ Circular::Circular(double s,double xOr, double yOr,double r, double ang, double 
     this->centerX = orig.x;
     this->centerY = orig.y;
     this->radius=r;
-    distanceToCenter=0;
+    setDistanceToCenter(0);
     angle = ang;
     strech = stch;
-    progress = prgs;
+    setProgress(prgs);
 
 }
 
@@ -25,11 +25,11 @@ pt2d Circular::computeTrajectory(double dt)
     setPhase(ph-int(ph));
 
     //see Euler spiral for a smooth passage from a spiral to a circle
-    if (distanceToCenter<=radius)
-    distanceToCenter+=radius/progress;
+    if (getDistanceToCenter() <= radius)
+    setDistanceToCenter(getDistanceToCenter() + radius / getProgress());
 
     //the modulus and the angle, a polar complex number
-    double rho = (distanceToCenter < radius) ? distanceToCenter : radius;
+    double rho = (getDistanceToCenter() < radius) ? getDistanceToCenter() : radius;
     double theta = ph * 2 * PI;
 
     // Valeurs (Exemple) ////
@@ -84,11 +84,6 @@ double Circular::getStrech()
     return strech;
 }
 
-double Circular::getProgress()
-{
-    return progress;
-}
-
 void Circular::setRadius(double newRadius)
 {
     radius = newRadius;
@@ -102,11 +97,6 @@ void Circular::setAngle(double newAngle)
 void Circular::setStrech(double newStrech)
 {
     strech = newStrech;
-}
-
-void Circular::setProgress(double newProgress)
-{
-    progress = newProgress;
 }
 
 int Circular::getType()
