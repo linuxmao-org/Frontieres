@@ -24,8 +24,11 @@ public:
     void setOrigin(double x, double y);
     void updateOrigin(double x, double y);
     virtual int getType() = 0;
-
-
+    void restart();
+    double getProgress();
+    void setProgress(double newProgress);
+    void setDistanceToCenter(double newDistance);
+    double getDistanceToCenter();
 
 private:
     //speed express in hertz
@@ -34,6 +37,8 @@ private:
     double phase;
     //origin of the trajectory
     double xOrigin,yOrigin;
+    double distanceToCenter;
+    double progress;
 };
 
 

@@ -64,6 +64,7 @@ add_executable(Frontieres WIN32
   libraries/RtMidi.cpp
   libraries/minimp3_custom.c
   libraries/ring_buffer.cpp
+  resources/buttons.qrc
   docs.qrc)
 target_compile_definitions(Frontieres
   PRIVATE "APP_VERSION=\"${PROJECT_VERSION}\"")

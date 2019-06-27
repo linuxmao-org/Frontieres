@@ -1004,3 +1004,20 @@ void CloudDialog::on_radioButton_Trajectory_Hypotrochoid_toggled(bool checked)
     cloudVisRef->startTrajectory();
     have_trajectory_hypotrochoid = true;
 }
+
+void CloudDialog::on_commandLinkButton_go_toggled(bool checked)
+{
+    if (!linking){
+        if (checked)
+            cloudVisRef->stopTrajectory();
+        else
+            cloudVisRef->startTrajectory();
+     }
+}
+
+void CloudDialog::on_commandLinkButton_stop_clicked()
+{
+    if (!linking){
+        cloudVisRef->restartTrajectory();
+    }
+}

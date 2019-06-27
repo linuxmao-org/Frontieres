@@ -638,7 +638,7 @@ void Cloud::setTrajectoryType(int newTrajectoryType)
         showMessageLocked();
         return;
     }
-    // cout << "entree settrajectorytype, type = " << newTrajectoryType << endl;
+    //cout << "entree settrajectorytype, type = " << newTrajectoryType << endl;
     trajectoryType = newTrajectoryType;
     changed_trajectoryType = true;
 }
