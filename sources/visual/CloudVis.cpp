@@ -216,6 +216,7 @@ void CloudVis::startTrajectory()
 
 void CloudVis::restartTrajectory()
 {
+    cout << "restart trajectory" << endl;
     if (myTrajectory != nullptr) {
         myTrajectory->restart();
         restartingTrajectory = true;
