@@ -28,6 +28,8 @@
 #include "ParamCloud.h"
 #include "visual/SampleVis.h"
 #include "visual/Trajectory.h"
+#include "visual/Circular.h"
+#include "visual/Hypotrochoid.h"
 #include "dsp/Window.h"
 #include <QStandardPaths>
 #include <QJsonDocument>
@@ -347,7 +349,7 @@ bool Scene::load(QFile &sceneFile)
         Cloud *cloudToLoad = new Cloud(&m_samples, cloudNumGrains);
         sceneCloud->cloud.reset(cloudToLoad);
         // create visualization
-        CloudVis *cloudVisToLoad = new CloudVis(cloudX, cloudY, cloudNumGrains, &m_samples);
+        CloudVis *cloudVisToLoad = new CloudVis(cloudX, cloudY, cloudNumGrains, &m_samples,false);
         sceneCloud->view.reset(cloudVisToLoad);
         // register visualization with audio
         cloudVisToLoad->setSelectState(true);
@@ -369,6 +371,7 @@ bool Scene::load(QFile &sceneFile)
         cloudToLoad->setMidiNote(cloudMidiNote);
         cloudToLoad->setVolumeDb(cloudVolumeDb);
         cloudToLoad->setActiveState(cloudActiveState);
+        cloudVisToLoad->setIsPlayed(cloudActiveState);
         cloudVisToLoad->setFixedXRandExtent(cloudXRandExtent);
         cloudVisToLoad->setFixedYRandExtent(cloudYRandExtent);
         cloudVisToLoad->setSelectState(false);
@@ -1214,7 +1217,7 @@ void Scene::addNewCloud(int numGrains)
     m_clouds.emplace_back(sceneCloud);
     sceneCloud->cloud.reset(new Cloud(&m_samples, numGrains));
     // create visualization
-    sceneCloud->view.reset(new CloudVis(mouseX, mouseY, numGrains, &m_samples));
+    sceneCloud->view.reset(new CloudVis(mouseX, mouseY, numGrains, &m_samples,false));
     //std::cout<<"mouseX "<<mouseX<<std::endl;
     //std::cout<<"mouseY "<<mouseY<<std::endl;
     // select new cloud

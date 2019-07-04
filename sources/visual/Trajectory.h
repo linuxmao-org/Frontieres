@@ -19,18 +19,32 @@ public:
     double getSpeed();
     double getPhase();
     pt2d getOrigin();
-    void setPhase(double ph);
+    void setPhase(double l_phase);
     void setSpeed(double s);
     void setOrigin(double x, double y);
     void updateOrigin(double x, double y);
     virtual int getType() = 0;
     void restart();
     double getProgress();
-    void setProgress(double newProgress);
-    void setDistanceToCenter(double newDistance);
+    void setProgress(double l_progress);
+    void setDistanceToCenter(double l_istance);
     double getDistanceToCenter();
+    int getTrajectoryType();
+    void setTrajectoryType (int l_trajectoryType);
+    void setAngle(double l_angle);
+    double getAngle();
+    void setRadius(double l_radius);
+    double getRadius();
+    void setStrech(double l_strech);
+    double getStrech();
+    void setRadiusInt(double l_RadiusInt);
+    double getRadiusInt();
+    void setExpansion(double l_Expansion);
+    double getExpansion();
+
 
 private:
+    int trajectoryType;
     //speed express in hertz
     double speed;
     // parameter between 0 and 1
@@ -39,6 +53,11 @@ private:
     double xOrigin,yOrigin;
     double distanceToCenter;
     double progress;
+    double radius;
+    double angle;
+    double strech;
+    double radiusInt;
+    double expansion;
 };
 
 

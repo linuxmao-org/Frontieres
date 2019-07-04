@@ -6,6 +6,9 @@
 #include <QtGui>
 #include "model/Cloud.h"
 #include "visual/CloudVis.h"
+#include "visual/Circular.h"
+#include "visual/Hypotrochoid.h"
+#include "visual/Trajectory.h"
 
 namespace Ui {
 class CloudDialog;

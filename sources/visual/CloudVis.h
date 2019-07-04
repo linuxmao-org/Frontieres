@@ -38,9 +38,11 @@
 #include "Trajectory.h"
 #include "Circular.h"
 #include "Hypotrochoid.h"
+
 class SceneSample;
 class GrainVis;
 class Cloud;
+class CloudMidi;
 
 typedef std::vector<std::unique_ptr<SceneSample>> VecSceneSample;
 
@@ -51,7 +53,7 @@ public:
     ~CloudVis();
 
     // constructor (takes center position (x,y), number of grains, sample visuals)
-    CloudVis(float x, float y, unsigned int numGrainsVis, VecSceneSample *rects);
+    CloudVis(float x, float y, unsigned int numGrainsVis, VecSceneSample *rects, bool c_isMidiVis);
 
     CloudVis(float x, float y, unsigned int numGrainsVis, VecSceneSample *rects,Trajectory *trajectory);
     // render
@@ -63,7 +65,7 @@ public:
     void updateCloudOrigin (float newOriginX, float newOriginY);
     void updateCloudTrajectoryPosition (float newX, float newY);
     void updateGrainPosition(int idx, float x, float y);
-    void setState(int idx, bool on);
+    void setState(bool l_state);
     // add grain
     void addGrain();
     // remove grain element from visualization
@@ -108,6 +110,7 @@ public:
 
     // register model
     void registerCloud(Cloud *cloudToRegister);
+    void registerCloudMidi(CloudMidi *cloudMidiToRegister);
 
     // changes done
     void changesDone(bool done);
@@ -119,14 +122,23 @@ public:
     void startTrajectory();
     void restartTrajectory();
     bool hasTrajectory();
-
-
+    bool getIsMidiVis();
+    void setIsMidiVis(bool md);
+    void activateMidiVis(int l_numNote, bool l_activate);
+    bool getStateMidiVis(int l_numNote);
+    CloudVis *getMidiCloudVis(int l_numNote);
+    bool getIsPlayed();
+    void setIsPlayed(bool l_isPlayed);
+    void setTrajectoryType(int l_trajectoryType);
+    int getTrajectoryType();
 
 protected:
 private:
 
     bool isMoving;
     bool isOn, isSelected;
+    bool isMidiVis = false;
+    bool isPlayed = false;
     bool addFlag, removeFlag;
     double startTime;
     double lastDrawTime;
@@ -144,16 +156,20 @@ private:
     unsigned int numGrains;
     // registered visualization
     Cloud *myCloud;
+    CloudMidi *myCloudMidi;
     // grain visualizations
     std::vector<GrainVis *> myGrainsV;
     // registered sample visuals
     VecSceneSample *theLandscape;
 
     // trajectory of the cloud
+    int trajectoryType;
     Trajectory *myTrajectory;
     bool restartingTrajectory = false;
 
-
+    // midi polyphony
+    CloudVis *playedCloudVisMidi[g_maxMidiVoices];
+    bool isPlayedCloudVisMidi[g_maxMidiVoices];
 };
 
 #endif

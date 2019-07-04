@@ -28,6 +28,8 @@
 #include "model/Scene.h"
 #include "visual/CloudVis.h"
 #include "visual/SampleVis.h"
+#include "visual/Circular.h"
+#include "visual/Hypotrochoid.h"
 #include "model/ParamCloud.h"
 #include "Frontieres.h"
 #include "MyRtOsc.h"

@@ -30,6 +30,8 @@
 #ifndef GRAIN_VIS_H
 #define GRAIN_VIS_H
 
+#include <iostream>
+
 // GRAPHICS CLASS
 // handle display, picking.
 // register selection listener
@@ -38,8 +40,8 @@ public:
     // destructor
     ~GrainVis();
     // constructor
-    GrainVis(float x, float y);
-    void draw();
+    GrainVis(float x, float y, bool c_isMidiVis);
+    void draw(bool isMidiVis);
     // position update function
     void moveTo(float x, float y);
     float getX();
@@ -48,6 +50,7 @@ public:
 
 private:
     bool isOn, firstTrigger;
+    bool isMidiVis = false;
     double startTime;
     double triggerTime;
     float gX, gY;

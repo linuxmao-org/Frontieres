@@ -263,9 +263,8 @@ void CloudDialog::linkCloud(Cloud *cloudLinked, CloudVis *cloudVisLinked)
             ui->dial_Expansion->setDisabled(true);
             ui->dial_Progress->setDisabled(true);
             ui->doubleSpinBox_Speed->setValue(cloudVisLinked->getTrajectory()->getSpeed());
-            Circular *b_Traj = dynamic_cast<Circular*>(cloudVisLinked->getTrajectory());
-            ui->doubleSpinBox_Radius->setValue(b_Traj->getRadius());
-            ui->doubleSpinBox_Angle->setValue(b_Traj->getAngle());
+            ui->doubleSpinBox_Radius->setValue(cloudVisLinked->getTrajectory()->getRadius());
+            ui->doubleSpinBox_Angle->setValue(cloudVisLinked->getTrajectory()->getAngle());
             have_trajectory_bouncing = true;
             break;
         }
@@ -287,11 +286,10 @@ void CloudDialog::linkCloud(Cloud *cloudLinked, CloudVis *cloudVisLinked)
             ui->dial_Expansion->setDisabled(true);
             ui->dial_Progress->setDisabled(false);
             ui->doubleSpinBox_Speed->setValue(cloudVisLinked->getTrajectory()->getSpeed());
-            Circular *c_Traj=dynamic_cast<Circular*>(cloudVisLinked->getTrajectory());
-            ui->doubleSpinBox_Radius->setValue(c_Traj->getRadius());
-            ui->doubleSpinBox_Angle->setValue(c_Traj->getAngle());
-            ui->doubleSpinBox_Strech->setValue(c_Traj->getStrech());
-            ui->doubleSpinBox_Progress->setValue(c_Traj->getProgress());
+            ui->doubleSpinBox_Radius->setValue(cloudVisLinked->getTrajectory()->getRadius());
+            ui->doubleSpinBox_Angle->setValue(cloudVisLinked->getTrajectory()->getAngle());
+            ui->doubleSpinBox_Strech->setValue(cloudVisLinked->getTrajectory()->getStrech());
+            ui->doubleSpinBox_Progress->setValue(cloudVisLinked->getTrajectory()->getProgress());
             have_trajectory_circular = true;
             break;
         }
@@ -313,12 +311,11 @@ void CloudDialog::linkCloud(Cloud *cloudLinked, CloudVis *cloudVisLinked)
             ui->dial_Expansion->setDisabled(false);
             ui->dial_Progress->setDisabled(false);
             ui->doubleSpinBox_Speed->setValue(cloudVisLinked->getTrajectory()->getSpeed());
-            Hypotrochoid *h_Traj=dynamic_cast<Hypotrochoid*>(cloudVisLinked->getTrajectory());
-            ui->doubleSpinBox_Radius->setValue(h_Traj->getRadius());
-            ui->doubleSpinBox_RadiusInt->setValue(h_Traj->getRadiusInt());
-            ui->doubleSpinBox_Angle->setValue(h_Traj->getAngle());
-            ui->doubleSpinBox_Expansion->setValue(h_Traj->getExpansion());
-            ui->doubleSpinBox_Progress->setValue(h_Traj->getProgress());
+            ui->doubleSpinBox_Radius->setValue(cloudVisLinked->getTrajectory()->getRadius());
+            ui->doubleSpinBox_RadiusInt->setValue(cloudVisLinked->getTrajectory()->getRadiusInt());
+            ui->doubleSpinBox_Angle->setValue(cloudVisLinked->getTrajectory()->getAngle());
+            ui->doubleSpinBox_Expansion->setValue(cloudVisLinked->getTrajectory()->getExpansion());
+            ui->doubleSpinBox_Progress->setValue(cloudVisLinked->getTrajectory()->getProgress());
             have_trajectory_hypotrochoid = true;
             break;
         }
@@ -578,6 +575,7 @@ void CloudDialog::on_checkBox_Active_toggled(bool checked)
 {
     if (!linking)
         cloudRef->setActiveState(checked);
+        cloudVisRef->setIsPlayed(checked);
 }
 
 void CloudDialog::on_checkBox_Locked_toggled(bool checked)
@@ -746,25 +744,8 @@ void CloudDialog::on_doubleSpinBox_Radius_editingFinished()
 void CloudDialog::update_Radius()
 {
     if (!linking) {
-        switch (cloudRef->getTrajectoryType()) {
-        case BOUNCING:{
-            Circular *b_Traj = dynamic_cast<Circular*>(cloudVisRef->getTrajectory());
-            b_Traj->setRadius(passageValue);
-            break;
-            }
-        case CIRCULAR:{
-            Circular *c_Traj=dynamic_cast<Circular*>(cloudVisRef->getTrajectory());
-            c_Traj->setRadius(passageValue);
-            break;
-            }
-        case HYPOTROCHOID:{
-            Hypotrochoid *h_Traj=dynamic_cast<Hypotrochoid*>(cloudVisRef->getTrajectory());
-            h_Traj->setRadius(passageValue);
-            break;
-            }
-        default :
-            break;
-        }
+        if (cloudVisRef->getTrajectory() != nullptr)
+            cloudVisRef->getTrajectory()->setRadius(passageValue);
         editing = false;
     }
 
@@ -793,25 +774,8 @@ void CloudDialog::on_doubleSpinBox_Angle_editingFinished()
 void CloudDialog::update_Angle()
 {
     if (!linking){
-        switch (cloudRef->getTrajectoryType()) {
-        case BOUNCING:{
-            Circular *b_Traj = dynamic_cast<Circular*>(cloudVisRef->getTrajectory());
-            b_Traj->setAngle(passageValue);
-            break;
-            }
-        case CIRCULAR:{
-            Circular *c_Traj=dynamic_cast<Circular*>(cloudVisRef->getTrajectory());
-            c_Traj->setAngle(passageValue);
-            break;
-            }
-        case HYPOTROCHOID:{
-            Hypotrochoid *h_Traj=dynamic_cast<Hypotrochoid*>(cloudVisRef->getTrajectory());
-            h_Traj->setAngle(passageValue);
-            break;
-            }
-        default :
-            break;
-        }
+        if (cloudVisRef->getTrajectory() != nullptr)
+            cloudVisRef->getTrajectory()->setAngle(passageValue);
         editing = false;
     }
 }
@@ -839,8 +803,8 @@ void CloudDialog::on_doubleSpinBox_Strech_valueChanged(double arg1)
 void CloudDialog::update_Strech()
 {
     if (!linking){
-        Circular *c_Traj=dynamic_cast<Circular*>(cloudVisRef->getTrajectory());
-        c_Traj->setStrech(passageValue);
+        if (cloudVisRef->getTrajectory() != nullptr)
+            cloudVisRef->getTrajectory()->setStrech(passageValue);
         editing = false;
     }
 }
@@ -912,8 +876,8 @@ void CloudDialog::on_doubleSpinBox_RadiusInt_editingFinished()
 void CloudDialog::update_RadiusInt()
 {
     if (!linking){
-        Hypotrochoid *h_Traj=dynamic_cast<Hypotrochoid*>(cloudVisRef->getTrajectory());
-        h_Traj->setRadiusInt(passageValue);
+        if (cloudVisRef->getTrajectory() != nullptr)
+            cloudVisRef->getTrajectory()->setRadiusInt(passageValue);
         editing = false;
     }
 }
@@ -941,8 +905,8 @@ void CloudDialog::on_doubleSpinBox_Expansion_editingFinished()
 void CloudDialog::update_Expansion()
 {
     if (!linking){
-        Hypotrochoid *h_Traj=dynamic_cast<Hypotrochoid*>(cloudVisRef->getTrajectory());
-        h_Traj->setExpansion(passageValue);
+        if (cloudVisRef->getTrajectory() != nullptr)
+            cloudVisRef->getTrajectory()->setExpansion(passageValue);
         editing = false;
     }
 }
@@ -970,20 +934,8 @@ void CloudDialog::on_doubleSpinBox_Progress_editingFinished()
 void CloudDialog::update_Progress()
 {
     if (!linking){
-        switch (cloudRef->getTrajectoryType()) {
-        case CIRCULAR:{
-            Circular *c_Traj=dynamic_cast<Circular*>(cloudVisRef->getTrajectory());
-            c_Traj->setProgress(passageValue);
-            break;
-            }
-        case HYPOTROCHOID:{
-            Hypotrochoid *h_Traj=dynamic_cast<Hypotrochoid*>(cloudVisRef->getTrajectory());
-            h_Traj->setProgress(passageValue);
-            break;
-            }
-        default :
-            break;
-        }
+        if (cloudVisRef->getTrajectory() != nullptr)
+            cloudVisRef->getTrajectory()->setProgress(passageValue);
         editing = false;
     }
 }

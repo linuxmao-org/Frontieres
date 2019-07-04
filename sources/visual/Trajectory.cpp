@@ -1,4 +1,6 @@
 #include "visual/Trajectory.h"
+#include "Circular.h"
+#include "Hypotrochoid.h"
 
 void Trajectory::setSpeed(double s)
 {
@@ -43,19 +45,79 @@ double Trajectory::getProgress()
     return progress;
 }
 
-void Trajectory::setProgress(double newProgress)
+void Trajectory::setProgress(double l_progress)
 {
-    progress = newProgress;
+    progress = l_progress;
 }
 
-void Trajectory::setDistanceToCenter(double newDistance)
+void Trajectory::setDistanceToCenter(double l_istance)
 {
-    distanceToCenter = newDistance;
+    distanceToCenter = l_istance;
 }
 
 double Trajectory::getDistanceToCenter()
 {
     return distanceToCenter;
+}
+
+int Trajectory::getTrajectoryType()
+{
+    return trajectoryType;
+}
+
+void Trajectory::setTrajectoryType(int l_trajectoryType)
+{
+    trajectoryType = l_trajectoryType;
+}
+
+void Trajectory::setAngle(double l_angle)
+{
+    angle = l_angle;
+}
+
+double Trajectory::getAngle()
+{
+    return angle;
+}
+
+void Trajectory::setRadius(double l_radius)
+{
+    radius = l_radius;
+}
+
+double Trajectory::getRadius()
+{
+    return radius;
+}
+
+void Trajectory::setStrech(double l_strech)
+{
+    strech = l_strech;
+}
+
+double Trajectory::getStrech()
+{
+    return strech;
+}
+
+void Trajectory::setRadiusInt(double l_RadiusInt)
+{
+    radiusInt = l_RadiusInt;
+}
+
+double Trajectory::getRadiusInt()
+{
+    return radiusInt;
+}
+
+void Trajectory::setExpansion(double l_Expansion)
+{
+    expansion = l_Expansion;
+}
+
+double Trajectory::getExpansion()
+{
+    return expansion;
 }
 
 pt2d Trajectory::getOrigin()
@@ -64,9 +126,9 @@ pt2d Trajectory::getOrigin()
     return origin;
 }
 
-void Trajectory::setPhase(double ph)
+void Trajectory::setPhase(double l_phase)
 {
-    phase=ph;
+    phase = l_phase;
 }
 
 void Trajectory::setOrigin(double x, double y)

@@ -55,21 +55,42 @@ extern CloudParams g_defaultCloudParams;
 
 CloudVis::~CloudVis()
 {
+    if (!isMidiVis) {
+        for (int i = 0; i < g_maxMidiVoices; i++){
+            delete playedCloudVisMidi[i];
+        }
+    }
     for (GrainVis *vis : myGrainsV)
         delete vis;
     delete myTrajectory;
 }
 
 CloudVis::CloudVis(float x, float y, unsigned int numGrainsVis,
-                                 VecSceneSample *rects)
+                                 VecSceneSample *rects, bool c_isMidiVis)
 {
+    cout << "creation cloudvis" << endl;
     startTime = GTime::instance().sec;
+
+    isMidiVis = c_isMidiVis;
+
+    if (!isMidiVis)
+        isPlayed = g_defaultCloudParams.activateState;
+
+    // create MidiVis
+
+    for (int i = 0; i < g_maxMidiVoices; i++){
+        if (!isMidiVis) {
+            CloudVis *l_CloudVisMidi = new CloudVis(x, y, numGrainsVis, rects, true);
+            playedCloudVisMidi[i] = l_CloudVisMidi;
+        }
+        isPlayedCloudVisMidi[i] = false;
+    }
 
     //initialise trajectory
 
     stopTrajectory();
     myTrajectory = nullptr;
-    Trajectory *tr=nullptr;
+    Trajectory *tr = nullptr;
     switch (g_defaultCloudParams.trajectoryType) {
     case BOUNCING:
         //tr=new Bouncing(g_defaultCloudParams.radius,g_defaultCloudParams.speed,g_defaultCloudParams.angle,x,y);
@@ -112,7 +133,7 @@ CloudVis::CloudVis(float x, float y, unsigned int numGrainsVis,
     theLandscape = rects;
 
     for (int i = 0; i < numGrainsVis; i++) {
-        myGrainsV.push_back(new GrainVis(gcX, gcY));
+        myGrainsV.push_back(new GrainVis(gcX, gcY, isMidiVis));
     }
 
     numGrains = numGrainsVis;
@@ -132,6 +153,11 @@ CloudVis::CloudVis(float x, float y, unsigned int numGrainsVis,
 void CloudVis::setDuration(float dur)
 {
     freq = 1000.0 / dur;
+    if (!isMidiVis) {
+        for (int i = 0; i < g_maxMidiVoices; i++){
+            playedCloudVisMidi[i]->setDuration(dur); ;
+        }
+    }
 }
 
 // print information
@@ -146,6 +172,17 @@ void CloudVis::describe(std::ostream &out)
 void CloudVis::registerCloud(Cloud *cloudToRegister)
 {
     myCloud = cloudToRegister;
+    if (!isMidiVis) {
+        for (int i = 0; i < g_maxMidiVoices; i++){
+            playedCloudVisMidi[i]->registerCloud(myCloud);
+            playedCloudVisMidi[i]->registerCloudMidi(cloudToRegister->getMidiCloud(i));
+        }
+    }
+}
+
+void CloudVis::registerCloudMidi(CloudMidi *cloudMidiToRegister)
+{
+    myCloudMidi = cloudMidiToRegister;
 }
 
 void CloudVis::changesDone(bool done)
@@ -189,12 +226,59 @@ bool CloudVis::getIsMoving()
 
 void CloudVis::setTrajectory(Trajectory *tr)
 {
-    if(isMoving || myTrajectory != nullptr)
+    if ((isMoving || myTrajectory != nullptr))
     {
         delete myTrajectory;
     }
-    myTrajectory=tr;
-    if(tr==nullptr){
+    myTrajectory = tr;
+    if (!isMidiVis) {
+        for (int i = 0; i < g_maxMidiVoices; i++){
+            cout << "set traj, i = " << i << endl;
+            if (tr == nullptr) {
+                Trajectory *trMidi = nullptr;
+                playedCloudVisMidi[i]->setTrajectory(trMidi);
+            }
+            else {
+                switch (tr->getType()) {
+                case BOUNCING:
+                {
+                    //cout << "BOUNCING"<< endl;
+                    Circular *trv = dynamic_cast<Circular*>(tr);
+                    Circular *trMidi = nullptr;
+                    trMidi = new Circular(trv->getSpeed(), trv->getOrigin().x, trv->getOrigin().y, trv->getRadius(),trv->getAngle(),0,1);
+                    playedCloudVisMidi[i]->setTrajectory(trMidi);
+                    break;
+                }
+                case CIRCULAR:
+                {
+                    //cout << "CIRCULAR"<< endl;
+                    Circular *trv = dynamic_cast<Circular*>(tr);
+                    Circular *trMidi = nullptr;
+                    trMidi = new Circular(trv->getSpeed(), trv->getOrigin().x, trv->getOrigin().y, trv->getRadius(),trv->getAngle(),
+                                            trv->getStrech(),trv->getProgress());
+                    playedCloudVisMidi[i]->setTrajectory(trMidi);
+                    break;
+                }
+                case HYPOTROCHOID:
+                {
+                    //cout << "HYPOTROCHOID"<< endl;
+                    Hypotrochoid *trv = dynamic_cast<Hypotrochoid*>(tr);
+                    Hypotrochoid *trMidi = nullptr;
+                    trMidi = new Hypotrochoid(trv->getSpeed(),trv->getOrigin().x, trv->getOrigin().y, trv->getRadius(),trv->getRadiusInt(),
+                                                trv->getExpansion(), trv->getAngle(), trv->getProgress());
+                    playedCloudVisMidi[i]->setTrajectory(trMidi);
+                    break;
+                }
+                default :
+                {
+                    cout << "defaut"<< endl;
+                    break;
+                }
+                }
+            }
+        }
+    }
+    if(tr == nullptr){
         stopTrajectory();
     }
 }
@@ -204,19 +288,76 @@ bool CloudVis::hasTrajectory()
     return myTrajectory != nullptr;
 }
 
+bool CloudVis::getIsMidiVis()
+{
+    return isMidiVis;
+}
+
+void CloudVis::setIsMidiVis(bool md)
+{
+    isMidiVis = md;
+}
+
+void CloudVis::activateMidiVis(int l_numNote, bool l_activate)
+{
+    if (!isMidiVis) {
+        cout << "activateMidiVis, note ="<<l_numNote<<endl;
+        isPlayedCloudVisMidi[l_numNote] = l_activate;
+        playedCloudVisMidi[l_numNote]->setIsPlayed(l_activate);
+        if (l_activate) {
+            if (myTrajectory != nullptr) {
+                playedCloudVisMidi[l_numNote]->startTrajectory();
+            }
+        }
+        else
+            if (myTrajectory != nullptr) {
+                playedCloudVisMidi[l_numNote]->stopTrajectory();
+            }
+    }
+}
+
+bool CloudVis::getStateMidiVis(int l_numNote)
+{
+    return isPlayedCloudVisMidi[l_numNote];
+}
+
+CloudVis *CloudVis::getMidiCloudVis(int l_numNote)
+{
+    return playedCloudVisMidi[l_numNote];
+}
+
+bool CloudVis::getIsPlayed()
+{
+    return isPlayed;
+}
+
+void CloudVis::setIsPlayed(bool l_isPlayed)
+{
+    isPlayed = l_isPlayed;
+}
+
+void CloudVis::setTrajectoryType(int l_trajectoryType)
+{
+    trajectoryType = l_trajectoryType;
+}
+
+int CloudVis::getTrajectoryType()
+{
+    return trajectoryType;
+}
+
 void CloudVis::stopTrajectory()
 {
-    isMoving=false;
+    isMoving = false;
 }
 
 void CloudVis::startTrajectory()
 {
-    isMoving=true;
+    isMoving = true;
 }
 
 void CloudVis::restartTrajectory()
 {
-    cout << "restart trajectory" << endl;
     if (myTrajectory != nullptr) {
         myTrajectory->restart();
         restartingTrajectory = true;
@@ -228,8 +369,12 @@ void CloudVis::restartTrajectory()
 
 void CloudVis::draw()
 {
+    if (isMidiVis & !isPlayed) {
+        return;
+    }
+
     double t_sec = 0;
-    double dt=0;
+    double dt = 0;
 
     t_sec = GTime::instance().sec - startTime;
     dt = t_sec - lastDrawTime;
@@ -249,39 +394,75 @@ void CloudVis::draw()
     glPushMatrix();
     glTranslatef((GLfloat)gcX, (GLfloat)gcY, 0.0);
     // Cloud representation
-    if (isSelected)
-        glColor4f(0.1, 0.7, 0.6, 0.35);
+
+    if (isMidiVis)
+        glColor4f(0.8, 0.9, 0.1, 0.4);
     else
-        glColor4f(0.0, 0.4, 0.7, 0.3);
+        if (isSelected)
+            glColor4f(0.1, 0.7, 0.6, 0.35);
+        else
+            glColor4f(0.0, 0.4, 0.7, 0.8);
 
     selRad = minSelRad + 0.5 * (maxSelRad - minSelRad) *
                              sin(2 * PI * (freq * t_sec + 0.125));
-    gluDisk(gluNewQuadric(), selRad, selRad + 5.0, 128, 2);
+    if (xRandExtent >= yRandExtent)
+        gluDisk(gluNewQuadric(), selRad + xRandExtent, selRad + xRandExtent + 1.0, 128, 2);
+    else
+        gluDisk(gluNewQuadric(), selRad + yRandExtent, selRad + yRandExtent + 1.0, 128, 2);
     glPopMatrix();
     glPushMatrix();
 
     // origin
-
     glTranslatef((GLfloat)origin_gcX, (GLfloat)origin_gcY, 0.0);
-    // Cloud origin representation
 
-    gluDisk(gluNewQuadric(), selRad, selRad + 5.0, 128, 2);
-    glPopMatrix();
-    glPushMatrix();
+    if (!isMidiVis) {
 
-    glColor4f(0.1, 0.7, 0.6, 0.35);
-    glLineWidth(2.0f);
+        // Cloud origin representation
+
+        if (isSelected)
+            glColor4f(0.1, 0.7, 0.6, 0.35);
+        else
+            glColor4f(0.0, 0.4, 0.7, 0.8);
+
+        gluDisk(gluNewQuadric(), selRad, selRad + 5.0, 128, 2);
+        glPopMatrix();
+        glPushMatrix();
+
+        //glColor4f(0.1, 0.7, 0.6, 0.35);
+        glLineWidth(2.0f);
+    }
+    else {
+        glPopMatrix();
+        glPushMatrix();
+
+        //glColor4f(0.8, 0.9, 0.1, 0.4);
+        glLineWidth(1.0f);
+    }
     glBegin(GL_LINE_STRIP);
-    glVertex3f(origin_gcX, origin_gcY, 0.0f);
-    glVertex3f(gcX, gcY, 0.0f);
+    glVertex2f(origin_gcX, origin_gcY);
+    glVertex2f(gcX, gcY);
     glEnd();
 
     // update grain motion;
     // Individual grains
-    for (int i = 0; i < numGrains; i++) {
-        myGrainsV[i]->draw();
+    if (isPlayed){
+        for (int i = 0; i < numGrains; i++) {
+            //if (isMidiVis)
+                //cout << "i = " << i << endl;
+            myGrainsV[i]->draw(isMidiVis);
+        }
     }
     glPopMatrix();
+
+    // draw cloudMidi
+    if (!isMidiVis) {
+        for (int i = 0; i < g_maxMidiVoices; i++) {
+            if (isPlayedCloudVisMidi[i]) {
+                cout << "drawn i =" << i << endl;
+                playedCloudVisMidi[i]->draw();
+            }
+        }
+    }
 
     // end point version
 }
@@ -320,12 +501,22 @@ void CloudVis::getTriggerPos(unsigned int idx, double *playPos,
 void CloudVis::setFixedXRandExtent(float X)
 {
     xRandExtent = X;
+    if (!isMidiVis) {
+        for (int i = 0; i < g_maxMidiVoices; i++){
+            playedCloudVisMidi[i]->setFixedXRandExtent(X); ;
+        }
+    }
     changed_xRandExtent = true;
 }
 
 void CloudVis::setFixedYRandExtent(float Y)
 {
     yRandExtent = Y;
+    if (!isMidiVis) {
+        for (int i = 0; i < g_maxMidiVoices; i++){
+            playedCloudVisMidi[i]->setFixedYRandExtent(Y); ;
+        }
+    }
     changed_yRandExtent = true;
 }
 void CloudVis::setFixedRandExtent(float X, float Y)
@@ -349,6 +540,11 @@ void CloudVis::setXRandExtent(float mouseX)
     xRandExtent = fabs(mouseX - gcX);
     if (xRandExtent < 2.0f)
         xRandExtent = 0.0f;
+    if (!isMidiVis) {
+        for (int i = 0; i < g_maxMidiVoices; i++){
+            playedCloudVisMidi[i]->setXRandExtent(mouseX); ;
+        }
+    }
     changed_xRandExtent = true;
 }
 void CloudVis::setYRandExtent(float mouseY)
@@ -356,6 +552,11 @@ void CloudVis::setYRandExtent(float mouseY)
     yRandExtent = fabs(mouseY - gcY);
     if (yRandExtent < 2.0f)
         yRandExtent = 0.0f;
+    if (!isMidiVis) {
+        for (int i = 0; i < g_maxMidiVoices; i++){
+            playedCloudVisMidi[i]->setYRandExtent(mouseY); ;
+        }
+    }
     changed_yRandExtent = true;
 }
 void CloudVis::setRandExtent(float mouseX, float mouseY)
@@ -418,12 +619,19 @@ void CloudVis::updateCloudPosition(float newX, float newY)
 
 void CloudVis::updateCloudOrigin(float newOriginX, float newOriginY)
 {
+    //cout << "updatecloudorigin" << endl;
+    //cout << "origin x = " << newOriginX << endl;
+    //cout << "origin y = " << newOriginY << endl;
     origin_gcX = newOriginX;
     origin_gcY = newOriginY;
     if (myTrajectory != nullptr){
         myTrajectory->setOrigin(newOriginX, newOriginY);
     }
-
+    if (!isMidiVis) {
+        for (int i = 0; i < g_maxMidiVoices; i++){
+            playedCloudVisMidi[i]->updateCloudOrigin(newOriginX, newOriginY);
+        }
+    }
     changed_gcX = true;
     changed_gcY = true;
 }
@@ -447,6 +655,11 @@ void CloudVis::updateGrainPosition(int idx, float x, float y)
         myGrainsV[idx]->moveTo(x, y);
 }
 
+void CloudVis::setState(bool l_state)
+{
+    isOn = l_state;
+}
+
 
 // check mouse selection
 bool CloudVis::select(float x, float y)
@@ -463,12 +676,17 @@ bool CloudVis::select(float x, float y)
 void CloudVis::setSelectState(bool selectState)
 {
     isSelected = selectState;
+    if (!isMidiVis) {
+        for (int i = 0; i < g_maxMidiVoices; i++){
+            playedCloudVisMidi[i]->setSelectState(selectState); ;
+        }
+    }
 }
 
 void CloudVis::addGrain()
 {
     //    addFlag = true;
-    myGrainsV.push_back(new GrainVis(gcX, gcY));
+    myGrainsV.push_back(new GrainVis(gcX, gcY, isMidiVis));
     numGrains = myGrainsV.size();
 }
 

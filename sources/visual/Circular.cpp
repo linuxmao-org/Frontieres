@@ -7,10 +7,10 @@ Circular::Circular(double s,double xOr, double yOr,double r, double ang, double 
     pt2d  orig=getOrigin();
     this->centerX = orig.x;
     this->centerY = orig.y;
-    this->radius=r;
+    setRadius(r);
     setDistanceToCenter(0);
-    angle = ang;
-    strech = stch;
+    setAngle(ang);
+    setStrech(stch);
     setProgress(prgs);
 
 }
@@ -25,16 +25,16 @@ pt2d Circular::computeTrajectory(double dt)
     setPhase(ph-int(ph));
 
     //see Euler spiral for a smooth passage from a spiral to a circle
-    if (getDistanceToCenter() <= radius)
-    setDistanceToCenter(getDistanceToCenter() + radius / getProgress());
+    if (getDistanceToCenter() <= getRadius())
+    setDistanceToCenter(getDistanceToCenter() + getRadius() / getProgress());
 
     //the modulus and the angle, a polar complex number
-    double rho = (getDistanceToCenter() < radius) ? getDistanceToCenter() : radius;
+    double rho = (getDistanceToCenter() < getRadius()) ? getDistanceToCenter() : getRadius();
     double theta = ph * 2 * PI;
 
     // Valeurs (Exemple) ////
-    const double monAngle = - angle * (PI / 180.); // rotation 45°
-    const double stretchX = strech; // étirement horizontal
+    const double monAngle = - getAngle() * (PI / 180.); // rotation 45°
+    const double stretchX = getStrech(); // étirement horizontal
     const double stretchY = 1; // étirement vertical
     // Fin exemple       ////
 
@@ -69,35 +69,6 @@ double Circular::getCenterY()
     return centerY;
 }
 
-double Circular::getRadius()
-{
-    return radius;
-}
-
-double Circular::getAngle()
-{
-    return angle;
-}
-
-double Circular::getStrech()
-{
-    return strech;
-}
-
-void Circular::setRadius(double newRadius)
-{
-    radius = newRadius;
-}
-
-void Circular::setAngle(double newAngle)
-{
-    angle = newAngle;
-}
-
-void Circular::setStrech(double newStrech)
-{
-    strech = newStrech;
-}
 
 int Circular::getType()
 {
