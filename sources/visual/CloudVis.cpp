@@ -232,8 +232,9 @@ void CloudVis::setTrajectory(Trajectory *tr)
     }
     myTrajectory = tr;
     if (!isMidiVis) {
+        if (tr != nullptr)
+            myCloud->setTrajectoryType(tr->getType());
         for (int i = 0; i < g_maxMidiVoices; i++){
-            cout << "set traj, i = " << i << endl;
             if (tr == nullptr) {
                 Trajectory *trMidi = nullptr;
                 playedCloudVisMidi[i]->setTrajectory(trMidi);
@@ -242,7 +243,6 @@ void CloudVis::setTrajectory(Trajectory *tr)
                 switch (tr->getType()) {
                 case BOUNCING:
                 {
-                    //cout << "BOUNCING"<< endl;
                     Circular *trv = dynamic_cast<Circular*>(tr);
                     Circular *trMidi = nullptr;
                     trMidi = new Circular(trv->getSpeed(), trv->getOrigin().x, trv->getOrigin().y, trv->getRadius(),trv->getAngle(),0,1);
@@ -251,7 +251,6 @@ void CloudVis::setTrajectory(Trajectory *tr)
                 }
                 case CIRCULAR:
                 {
-                    //cout << "CIRCULAR"<< endl;
                     Circular *trv = dynamic_cast<Circular*>(tr);
                     Circular *trMidi = nullptr;
                     trMidi = new Circular(trv->getSpeed(), trv->getOrigin().x, trv->getOrigin().y, trv->getRadius(),trv->getAngle(),
@@ -261,7 +260,6 @@ void CloudVis::setTrajectory(Trajectory *tr)
                 }
                 case HYPOTROCHOID:
                 {
-                    //cout << "HYPOTROCHOID"<< endl;
                     Hypotrochoid *trv = dynamic_cast<Hypotrochoid*>(tr);
                     Hypotrochoid *trMidi = nullptr;
                     trMidi = new Hypotrochoid(trv->getSpeed(),trv->getOrigin().x, trv->getOrigin().y, trv->getRadius(),trv->getRadiusInt(),
@@ -271,7 +269,6 @@ void CloudVis::setTrajectory(Trajectory *tr)
                 }
                 default :
                 {
-                    cout << "defaut"<< endl;
                     break;
                 }
                 }

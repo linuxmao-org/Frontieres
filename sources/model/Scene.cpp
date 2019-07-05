@@ -376,9 +376,7 @@ bool Scene::load(QFile &sceneFile)
 
 
         //cloudVisToLoad->setTrajectoryType(type);
-        if(hasTrajectory)
-        {
-
+        if(hasTrajectory) {
             Trajectory *tr=nullptr;
             switch (type)
             {

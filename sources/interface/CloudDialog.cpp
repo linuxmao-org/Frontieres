@@ -100,16 +100,10 @@ CloudDialog::CloudDialog(QWidget *parent) :
     ui->dial_Expansion->setMaximum(g_cloudValueMax.expansion);
     ui->dial_Expansion->setMinimum(g_cloudValueMin.expansion);
 
-    cout << "av minimax" << endl;
-    cout << "min =" <<   g_cloudValueMin.progress << endl;
-    cout << "max =" <<   g_cloudValueMax.progress << endl;
-
     ui->doubleSpinBox_Progress->setMinimum(g_cloudValueMin.progress);
     ui->doubleSpinBox_Progress->setMaximum(g_cloudValueMax.progress);
     ui->dial_Progress->setMaximum(g_cloudValueMax.progress);
     ui->dial_Progress->setMinimum(g_cloudValueMin.progress);
-
-    cout << "ap minimax" << endl;
 
     ui->doubleSpinBox_Output_First->setMinimum(0);
     ui->doubleSpinBox_Output_Last->setMinimum(0);
