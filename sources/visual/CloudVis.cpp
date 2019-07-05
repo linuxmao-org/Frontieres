@@ -435,7 +435,7 @@ void CloudVis::draw()
         glPopMatrix();
         glPushMatrix();
 
-        //glColor4f(0.8, 0.9, 0.1, 0.4);
+        //cd Fr glColor4f(0.8, 0.9, 0.1, 0.4);
         glLineWidth(1.0f);
     }
     glBegin(GL_LINE_STRIP);
@@ -458,7 +458,7 @@ void CloudVis::draw()
     if (!isMidiVis) {
         for (int i = 0; i < g_maxMidiVoices; i++) {
             if (isPlayedCloudVisMidi[i]) {
-                cout << "drawn i =" << i << endl;
+                //cout << "drawn i =" << i << endl;
                 playedCloudVisMidi[i]->draw();
             }
         }

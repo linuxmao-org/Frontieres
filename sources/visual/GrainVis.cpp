@@ -57,10 +57,10 @@ GrainVis::GrainVis(float x, float y, bool c_isMidiVis)
     if (!isMidiVis){
         colR = 1.0;
         colB = 1.0;
-        colG = 0.5;
+        colG = 1.0;
         colA = 0.6;
-        defSize = 10.0f;
-        onSize = 30.0f;
+        defSize = 8.0f;
+        onSize = 24.0f;
     }
     else {
         colR = 1.0;
