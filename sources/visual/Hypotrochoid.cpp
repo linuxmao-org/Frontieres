@@ -49,8 +49,10 @@ pt2d Hypotrochoid::computeTrajectory(double dt)
 
     double progresAngle = (getPhase() - (getAngle()/360) + 0.25) * 2 * PI ;
 
-    vecPos.x = orig.x + (getRadius() - getRadiusInt()) * getDistanceToCenter() * cos(progresAngle) + getExpansion() * getDistanceToCenter() * cos ((getRadius() - getRadiusInt()) * getDistanceToCenter() / getRadiusInt() / getDistanceToCenter() * progresAngle);
-    vecPos.y = orig.y + (getRadius() - getRadiusInt()) * getDistanceToCenter() * sin(progresAngle) - getExpansion() * getDistanceToCenter() * sin ((getRadius() - getRadiusInt()) * getDistanceToCenter() / getRadiusInt() / getDistanceToCenter() * progresAngle);
+    vecPos.x = orig.x + (getRadius() - getRadiusInt()) * getDistanceToCenter() * cos(progresAngle) + getExpansion() * getDistanceToCenter() * cos ((getRadius()
+                      - getRadiusInt()) * getDistanceToCenter() / getRadiusInt() / getDistanceToCenter() * progresAngle);
+    vecPos.y = orig.y + (getRadius() - getRadiusInt()) * getDistanceToCenter() * sin(progresAngle) - getExpansion() * getDistanceToCenter() * sin ((getRadius()
+                      - getRadiusInt()) * getDistanceToCenter() / getRadiusInt() / getDistanceToCenter() * progresAngle);
 
     return vecPos;
 }

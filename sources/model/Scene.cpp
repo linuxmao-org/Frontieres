@@ -297,7 +297,7 @@ bool Scene::load(QFile &sceneFile)
                 centerX = objCloud["centerX"].toDouble();
                 centerY = objCloud["centerY"].toDouble();
                 radius = objCloud["radius"].toDouble();
-                radiusInt = objCloud["radius"].toDouble();
+                radiusInt = objCloud["radiusInt"].toDouble();
                 angle = objCloud["angle"].toDouble();
                 expansion = objCloud["expansion"].toDouble();
                 progress=objCloud["progress"].toDouble();
@@ -308,9 +308,6 @@ bool Scene::load(QFile &sceneFile)
             break;
             }
         }
-
-
-
 
         cout << "cloud " << m_clouds.size() << " :" << "\n";
         cout << "id " << cloudId << " :" << "\n";
@@ -421,7 +418,7 @@ bool Scene::load(QFile &sceneFile)
                 break;
             }
 
-            tr->setPhase(phase);
+            //tr->setPhase(phase);
             tr->setSpeed(speed);
             cloudVisToLoad->setTrajectory(tr);
 
@@ -627,7 +624,8 @@ bool Scene::save(QFile &sceneFile)
                 {
                     Circular *c=dynamic_cast<Circular*>(cloudVisToSave->getTrajectory());
                     objCloud["radius"]=c->getRadius();
-                    objCloud["centerX"]=c->getCenterX();                    objCloud["centerY"]=c->getCenterY();
+                    objCloud["centerX"]=c->getCenterX();
+                    objCloud["centerY"]=c->getCenterY();
                     objCloud["angle"]=c->getAngle();
                     objCloud["strech"]=c->getStrech();
                     objCloud["progress"]=c->getProgress();
