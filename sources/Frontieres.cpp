@@ -660,6 +660,7 @@ void printParam()
                         myValue.c_str(), 100.0f);
             break;
         case TRAJECTORY:
+            //cout << "trajectoire : "<<theCloud.getTrajectoryType()<<endl;
             switch (theCloud.getTrajectoryType()) {
             case STATIC:
                 myValue = QObject::tr("Trajectory: STATIC").toStdString();
@@ -672,6 +673,9 @@ void printParam()
                 break;
             case HYPOTROCHOID:
                 myValue = QObject::tr("Trajectory: HYPOTROCHOID").toStdString();
+                break;
+            case RECORDED:
+                myValue = QObject::tr("Trajectory: RECORDED").toStdString();
                 break;
             default:
                 myValue = "";

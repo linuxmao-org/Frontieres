@@ -1131,6 +1131,7 @@ void Scene::initDefaultCloudParams()
     g_defaultCloudParams.radiusInt = 20;
     g_defaultCloudParams.expansion = 50;
     g_defaultCloudParams.progress = 150;
+    g_defaultCloudParams.trajectoryType = STATIC;
 }
 
 Sample *Scene::loadNewSample(const std::string &path)

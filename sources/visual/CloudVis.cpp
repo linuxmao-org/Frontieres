@@ -68,7 +68,6 @@ CloudVis::~CloudVis()
 CloudVis::CloudVis(float x, float y, unsigned int numGrainsVis,
                                  VecSceneSample *rects, bool c_isMidiVis)
 {
-    cout << "creation cloudvis" << endl;
     startTime = GTime::instance().sec;
 
     isMidiVis = c_isMidiVis;
@@ -91,27 +90,41 @@ CloudVis::CloudVis(float x, float y, unsigned int numGrainsVis,
     stopTrajectory();
     myTrajectory = nullptr;
     Trajectory *tr = nullptr;
+    trajectoryType = g_defaultCloudParams.trajectoryType;
+    /*
+    cout << "type defaut : " << g_defaultCloudParams.trajectoryType << endl;
     switch (g_defaultCloudParams.trajectoryType) {
+    case STATIC:
+        isMoving = false;
+        setTrajectoryType(STATIC);
+        setTrajectory(tr);
     case BOUNCING:
         //tr=new Bouncing(g_defaultCloudParams.radius,g_defaultCloudParams.speed,g_defaultCloudParams.angle,x,y);
         tr=new Circular(g_defaultCloudParams.speed,x,y,g_defaultCloudParams.radius,g_defaultCloudParams.angle,0,1);
         isMoving = true;
+        setTrajectoryType(BOUNCING);
+        setTrajectory(tr);
         break;
     case CIRCULAR:
         tr=new Circular(g_defaultCloudParams.speed,x,y,g_defaultCloudParams.radius,g_defaultCloudParams.angle,
                         g_defaultCloudParams.strech,g_defaultCloudParams.progress );
         isMoving = true;
+        setTrajectoryType(CIRCULAR);
+        setTrajectory(tr);
         break;
     case HYPOTROCHOID:
         tr=new Hypotrochoid(g_defaultCloudParams.speed,x,y,g_defaultCloudParams.radius,g_defaultCloudParams.radiusInt,
                             g_defaultCloudParams.expansion, g_defaultCloudParams.angle,g_defaultCloudParams.progress);
         isMoving = true;
+        setTrajectoryType(HYPOTROCHOID);
+        setTrajectory(tr);
+        break;
+    case RECORDED:
+        setTrajectoryType(RECORDED);
         break;
     default :
         break;
-    }
-
-    setTrajectory(tr);
+    }*/
 
     updateCloudPosition(x, y);
     updateCloudOrigin(x, y);
@@ -232,21 +245,21 @@ void CloudVis::setTrajectory(Trajectory *tr)
     }
     myTrajectory = tr;
     if (!isMidiVis) {
-        if (tr != nullptr)
-            myCloud->setTrajectoryType(tr->getType());
         for (int i = 0; i < g_maxMidiVoices; i++){
             if (tr == nullptr) {
                 Trajectory *trMidi = nullptr;
                 playedCloudVisMidi[i]->setTrajectory(trMidi);
+                setTrajectoryType(STATIC);
             }
             else {
-                switch (tr->getType()) {
+                switch (trajectoryType) {
                 case BOUNCING:
                 {
                     Circular *trv = dynamic_cast<Circular*>(tr);
                     Circular *trMidi = nullptr;
                     trMidi = new Circular(trv->getSpeed(), trv->getOrigin().x, trv->getOrigin().y, trv->getRadius(),trv->getAngle(),0,1);
                     playedCloudVisMidi[i]->setTrajectory(trMidi);
+                    setTrajectoryType(BOUNCING);
                     break;
                 }
                 case CIRCULAR:
@@ -256,6 +269,7 @@ void CloudVis::setTrajectory(Trajectory *tr)
                     trMidi = new Circular(trv->getSpeed(), trv->getOrigin().x, trv->getOrigin().y, trv->getRadius(),trv->getAngle(),
                                             trv->getStrech(),trv->getProgress());
                     playedCloudVisMidi[i]->setTrajectory(trMidi);
+                    setTrajectoryType(CIRCULAR);
                     break;
                 }
                 case HYPOTROCHOID:
@@ -265,7 +279,12 @@ void CloudVis::setTrajectory(Trajectory *tr)
                     trMidi = new Hypotrochoid(trv->getSpeed(),trv->getOrigin().x, trv->getOrigin().y, trv->getRadius(),trv->getRadiusInt(),
                                                 trv->getExpansion(), trv->getAngle(), trv->getProgress());
                     playedCloudVisMidi[i]->setTrajectory(trMidi);
+                    setTrajectoryType(HYPOTROCHOID);
                     break;
+                }
+                case RECORDED:
+                {
+                    setTrajectoryType(RECORDED);
                 }
                 default :
                 {
@@ -298,7 +317,6 @@ void CloudVis::setIsMidiVis(bool md)
 void CloudVis::activateMidiVis(int l_numNote, bool l_activate)
 {
     if (!isMidiVis) {
-        cout << "activateMidiVis, note ="<<l_numNote<<endl;
         isPlayedCloudVisMidi[l_numNote] = l_activate;
         playedCloudVisMidi[l_numNote]->setIsPlayed(l_activate);
         if (l_activate) {
@@ -343,6 +361,12 @@ int CloudVis::getTrajectoryType()
     return trajectoryType;
 }
 
+void CloudVis::trajectoryAddPosition(int l_x, int l_y)
+{
+    Recorded *recTraj=dynamic_cast<Recorded*>(getTrajectory());
+    recTraj->addPosition(l_x, l_y);
+}
+
 void CloudVis::stopTrajectory()
 {
     isMoving = false;
@@ -357,10 +381,33 @@ void CloudVis::restartTrajectory()
 {
     if (myTrajectory != nullptr) {
         myTrajectory->restart();
+        startTime = GTime::instance().sec;
         restartingTrajectory = true;
         draw();
         restartingTrajectory = false;
     }
+}
+
+void CloudVis::setRecordingTrajectory(bool l_state)
+{
+    Recorded *recTraj=dynamic_cast<Recorded*>(getTrajectory());
+    recTraj->setRecording(l_state);
+    recordingTrajectory = l_state;
+}
+
+bool CloudVis::getRecordingTrajectory()
+{
+    return recordingTrajectory;
+}
+
+void CloudVis::setRecordTrajectoryAsked(bool l_state)
+{
+    recordTrajectoryAsked = l_state;
+}
+
+bool CloudVis::getRecordTrajectoryAsked()
+{
+    return recordTrajectoryAsked;
 }
 
 
@@ -376,22 +423,19 @@ void CloudVis::draw()
     t_sec = GTime::instance().sec - startTime;
     dt = t_sec - lastDrawTime;
     lastDrawTime = t_sec;
-    //std::cout << "time between drawings: " <<dt<<std::endl;
-    // cout << t_sec << endl;
 
     //computing trajectory
     pt2d pos = {0.,0.};
-    //if (this->getIsMoving() && !this->isSelected){
+
     if (this->getIsMoving() || restartingTrajectory) {
         pos = this->myTrajectory->computeTrajectory(dt);
         updateCloudPosition(pos.x,pos.y);
     }
 
-    // if ((g_time -last_gtime) > 50){
     glPushMatrix();
     glTranslatef((GLfloat)gcX, (GLfloat)gcY, 0.0);
-    // Cloud representation
 
+    // Cloud representation
     if (isMidiVis)
         glColor4f(0.8, 0.9, 0.1, 0.4);
     else
@@ -444,8 +488,6 @@ void CloudVis::draw()
     // Individual grains
     if (isPlayed){
         for (int i = 0; i < numGrains; i++) {
-            //if (isMidiVis)
-                //cout << "i = " << i << endl;
             myGrainsV[i]->draw(isMidiVis);
         }
     }
@@ -455,7 +497,6 @@ void CloudVis::draw()
     if (!isMidiVis) {
         for (int i = 0; i < g_maxMidiVoices; i++) {
             if (isPlayedCloudVisMidi[i]) {
-                //cout << "drawn i =" << i << endl;
                 playedCloudVisMidi[i]->draw();
             }
         }
@@ -474,7 +515,6 @@ void CloudVis::getTriggerPos(unsigned int idx, double *playPos,
     if (idx < myGrainsV.size()) {
         GrainVis *theGrain = myGrainsV[idx];
         // TODO: motion models
-        // updateGrainPosition(idx,gcX + randf()*50.0 + randf()*(-50.0),gcY + randf()*50.0 + randf()*(-50.0));
         updateGrainPosition(idx, gcX + (randf() * xRandExtent - randf() * xRandExtent),
                             gcY + (randf() * yRandExtent - randf() * yRandExtent));
         VecSceneSample &landscape = *theLandscape;
@@ -485,7 +525,6 @@ void CloudVis::getTriggerPos(unsigned int idx, double *playPos,
                                                   theGrain->getY(), i);
             if (tempTrig == true)
                 trigger = true;
-            // cout << "playvol: " << *playPos << ", playpos: " << *playVol << endl;
         }
         if (trigger == true) {
             theGrain->trigger(theDur);
@@ -616,9 +655,6 @@ void CloudVis::updateCloudPosition(float newX, float newY)
 
 void CloudVis::updateCloudOrigin(float newOriginX, float newOriginY)
 {
-    //cout << "updatecloudorigin" << endl;
-    //cout << "origin x = " << newOriginX << endl;
-    //cout << "origin y = " << newOriginY << endl;
     origin_gcX = newOriginX;
     origin_gcY = newOriginY;
     if (myTrajectory != nullptr){

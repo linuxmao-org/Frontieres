@@ -97,7 +97,7 @@ Cloud::~Cloud()
 // Constructor
 Cloud::Cloud(VecSceneSample *sampleSet, float theNumGrains)
 {
-    cout << "creation cloud" << endl;
+    //cout << "creation cloud" << endl;
     unsigned channelCount = theChannelCount;
 
     // cloud id
@@ -139,7 +139,7 @@ Cloud::Cloud(VecSceneSample *sampleSet, float theNumGrains)
 
     // default trajectory type
     trajectoryType = g_defaultCloudParams.trajectoryType;
-    //    setTrajectoryType(g_defaultCloudParams.trajectoryType);
+    changed_trajectoryType = true;
 
     // initialize pitch LFO
     //pitchLFOFreq = 0.01f;
@@ -205,13 +205,15 @@ Cloud::Cloud(VecSceneSample *sampleSet, float theNumGrains)
     midiChannel = g_defaultCloudParams.midiChannel;
     midiNote = g_defaultCloudParams.midiNote;
 
-    cout << "creation cloud, avant midiclouds" << endl;
+    //cout << "creation cloud, avant midiclouds" << endl;
 
     for (int i = 0; i < g_maxMidiVoices; i++){
         CloudMidi *l_CloudMidi = new CloudMidi(sampleSet, numGrains, duration, pitch, windowType);
         playedCloudMidi[i] = l_CloudMidi;
     }
-    cout << "fin creation cloud" << endl;
+
+    trajectoryType = STATIC;
+    //cout << "fin creation cloud" << endl;
 
 }
 // register controller for communication with view
@@ -225,8 +227,6 @@ void Cloud::registerCloudVis(CloudVis *cloudVisToRegister)
         playedCloudMidi[i]->registerCloudVis(cloudVisToRegister);
     }
 }
-
-
 
 // turn on/off
 void Cloud::toggleActive()
@@ -570,6 +570,7 @@ void Cloud::setTrajectoryType(int l_TrajectoryType)
         return;
     }
     trajectoryType = l_TrajectoryType;
+    cout << "cloud trajtype="<<l_TrajectoryType<<endl;
     myCloudVis->setTrajectoryType(l_TrajectoryType);
     changed_trajectoryType = true;
 }

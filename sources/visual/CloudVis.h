@@ -38,6 +38,7 @@
 #include "Trajectory.h"
 #include "Circular.h"
 #include "Hypotrochoid.h"
+#include "Recorded.h"
 
 class SceneSample;
 class GrainVis;
@@ -121,6 +122,10 @@ public:
     void stopTrajectory();
     void startTrajectory();
     void restartTrajectory();
+    void setRecordingTrajectory(bool l_state);
+    bool getRecordingTrajectory();
+    void setRecordTrajectoryAsked(bool l_state);
+    bool getRecordTrajectoryAsked();
     bool hasTrajectory();
     bool getIsMidiVis();
     void setIsMidiVis(bool md);
@@ -131,6 +136,7 @@ public:
     void setIsPlayed(bool l_isPlayed);
     void setTrajectoryType(int l_trajectoryType);
     int getTrajectoryType();
+    void trajectoryAddPosition(int l_x, int l_y);
 
 protected:
 private:
@@ -166,6 +172,8 @@ private:
     int trajectoryType;
     Trajectory *myTrajectory;
     bool restartingTrajectory = false;
+    bool recordingTrajectory = false;
+    bool recordTrajectoryAsked = false;
 
     // midi polyphony
     CloudVis *playedCloudVisMidi[g_maxMidiVoices];

@@ -195,6 +195,8 @@ private slots:
 
     void on_commandLinkButton_stop_clicked();
 
+    void on_radioButton_Trajectory_Recorded_toggled(bool checked);
+
 private:
     Ui::CloudDialog *ui;
     bool linking = false;
@@ -206,6 +208,7 @@ private:
     bool have_trajectory_bouncing = false;
     bool have_trajectory_circular = false;
     bool have_trajectory_hypotrochoid = false;
+    bool have_trajectory_recorded =false;
 };
 
 #endif // CLOUDDIALOG_H

@@ -30,7 +30,9 @@
 #include "visual/SampleVis.h"
 #include "visual/Circular.h"
 #include "visual/Hypotrochoid.h"
+#include "visual/Recorded.h"
 #include "model/ParamCloud.h"
+#include "utility/GTime.h"
 #include "Frontieres.h"
 #include "MyRtOsc.h"
 #include <chrono>
@@ -488,7 +490,6 @@ void MyGLScreen::keyAction_Cloud(int dir)
     if (dir < 0) {
         if (!scene->m_clouds.empty()) {
             scene->m_clouds.pop_back();
-            // cout << "cloud removed" << endl;
         }
         if (scene->m_clouds.empty()) {
             scene->m_selectedCloud = -1;
@@ -515,7 +516,6 @@ void MyGLScreen::keyAction_Cloud(int dir)
 
 void MyGLScreen::keyAction_Trajectory(int dir)
 {
-    //cout << "entree keyaction trajectoire : trajectoire = " << dir << endl;
     Scene *scene = ::currentScene;
     SceneCloud *selectedCloud = scene->selectedCloud();
 
@@ -532,36 +532,50 @@ void MyGLScreen::keyAction_Trajectory(int dir)
                 selectedCloud->view->stopTrajectory();
             }
             else  {
-
-                if( selectedCloud->view->getTrajectory()==nullptr){
+                if (selectedCloud->view->getTrajectory() == nullptr) {
                     tr=new Circular(g_defaultCloudParams.speed,selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY(),g_defaultCloudParams.radius,
                                     g_defaultCloudParams.angle, 0, 1);
-                    //tr=new Bouncing(100,0.2,0,selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY());
                     selectedCloud->cloud->setTrajectoryType (BOUNCING);
-                }
-                //else if(selectedCloud->view->getTrajectory()->getType()==BOUNCING){
-                else if(selectedCloud->cloud->getTrajectoryType()==BOUNCING){
-                    tr=new Circular(g_defaultCloudParams.speed,selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY(),g_defaultCloudParams.radius,
-                                    g_defaultCloudParams.angle, g_defaultCloudParams.strech, g_defaultCloudParams.progress);
-                    selectedCloud->cloud->setTrajectoryType (CIRCULAR);
-                }
-                //else if(selectedCloud->view->getTrajectory()->getType()==CIRCULAR){
-                else if(selectedCloud->cloud->getTrajectoryType()==CIRCULAR){
-                    tr=new Hypotrochoid(g_defaultCloudParams.speed,selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY(),g_defaultCloudParams.radius,
-                                        g_defaultCloudParams.radiusInt,g_defaultCloudParams.expansion,g_defaultCloudParams.angle, g_defaultCloudParams.progress);
-                    selectedCloud->cloud->setTrajectoryType (HYPOTROCHOID);
                     selectedCloud->view->updateCloudPosition(selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY());
-                }
-                //else if(selectedCloud->view->getTrajectory()->getType()==HYPOTROCHOID){
-                else if(selectedCloud->cloud->getTrajectoryType()==HYPOTROCHOID){
-                    tr=nullptr;
-                    selectedCloud->cloud->setTrajectoryType (STATIC);
-                    selectedCloud->view->updateCloudPosition(selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY());
-                }
-
-                selectedCloud->view->setTrajectory(tr);
-                if (tr != nullptr)
+                    selectedCloud->view->setTrajectory(tr);
                     selectedCloud->view->startTrajectory();
+                }
+                else {
+                    switch (selectedCloud->cloud->getTrajectoryType())  {
+                    case BOUNCING: {
+                        tr=new Circular(g_defaultCloudParams.speed,selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY(),g_defaultCloudParams.radius,
+                                        g_defaultCloudParams.angle, g_defaultCloudParams.strech, g_defaultCloudParams.progress);
+                        selectedCloud->cloud->setTrajectoryType (CIRCULAR);
+                        selectedCloud->view->updateCloudPosition(selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY());
+                        selectedCloud->view->setTrajectory(tr);
+                        selectedCloud->view->startTrajectory();
+                        break;
+                    }
+                    case CIRCULAR: {
+                        tr=new Hypotrochoid(g_defaultCloudParams.speed,selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY(),g_defaultCloudParams.radius,
+                                            g_defaultCloudParams.radiusInt,g_defaultCloudParams.expansion,g_defaultCloudParams.angle, g_defaultCloudParams.progress);
+                        selectedCloud->cloud->setTrajectoryType (HYPOTROCHOID);
+                        selectedCloud->view->updateCloudPosition(selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY());
+                        selectedCloud->view->setTrajectory(tr);
+                        selectedCloud->view->startTrajectory();
+                        break;
+                    }
+                    case HYPOTROCHOID: {
+                        recordTrajectory();
+                        break;
+                    }
+                    case RECORDED: {
+                        tr=nullptr;
+                        selectedCloud->cloud->setTrajectoryType (STATIC);
+                        selectedCloud->view->updateCloudPosition(selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY());
+                        selectedCloud->view->setTrajectory(tr);
+                        break;
+                    }
+                    default :
+                        break;
+                    }
+
+                }
             }
         }
     }
@@ -583,7 +597,6 @@ void MyGLScreen::keyAction_Grain(int dir)
             }
             else {
                 selectedCloud->cloud->addGrain();
-                // cout << "grain added" << endl;
             }
         }
     }
@@ -699,6 +712,25 @@ void MyGLScreen::keyAction_SampleNames()
     showSampleNames = !showSampleNames;
 }
 
+void MyGLScreen::recordTrajectory()
+{
+    Scene *scene = ::currentScene;
+    SceneCloud *selectedCloud = scene->selectedCloud();
+
+    Trajectory *tr=nullptr;
+
+    tr=new Recorded(0, selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY());
+    selectedCloud->cloud->setTrajectoryType(RECORDED);
+    selectedCloud->view->updateCloudPosition(selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY());
+    selectedCloud->view->setTrajectory(tr);
+    selectedCloud->view->setRecordTrajectoryAsked(true);
+}
+
+void MyGLScreen::loadTrajectory()
+{
+
+}
+
 void MyGLScreen::mousePressEvent(QMouseEvent *event)
 {
     Qt::MouseButton button = event->button();
@@ -706,13 +738,10 @@ void MyGLScreen::mousePressEvent(QMouseEvent *event)
 
     int modkey = event->modifiers();
 
-    // cout << "button " << button << endl;
-
     // look for selections if button is down
-    if ((button == Qt::LeftButton) || (button == Qt::RightButton)) {
-
+    switch (button) {
+    case Qt::LeftButton: {
         paramString = "";
-
         // hide menu
         if (menuFlag == true)
             menuFlag = false;
@@ -735,10 +764,18 @@ void MyGLScreen::mousePressEvent(QMouseEvent *event)
             }
         }
 
-
         // clear selection buffer
         scene->m_selectionIndices.clear();
         scene->m_selectionIndex = 0;
+
+        // start recording trajectory
+        if (scene->selectedCloud())
+            if (scene->selectedCloud()->view->getRecordTrajectoryAsked()) {
+                scene->selectedCloud()->view->setRecordTrajectoryAsked(false);
+                scene->selectedCloud()->view->startTrajectory();
+                scene->selectedCloud()->view->setRecordingTrajectory(true);
+            }
+
         // if cloud is not selected - search for rectangle selection
         if (!scene->selectedCloud()) {
             // search for selections
@@ -761,11 +798,36 @@ void MyGLScreen::mousePressEvent(QMouseEvent *event)
                 scene->selectedSample()->view->setSelectState(true);
             }
         }
+        break;
+    }
+    case Qt::RightButton: {
+        if (scene->selectedCloud()) {
+           QMenu contextMenu(this);
+           QIcon icon;
+           QAction * pAction_recordTraj = contextMenu.addAction(icon, "Record trajectory");
+           QAction * pAction_loadTraj = contextMenu.addAction(icon, "Load trajectory");
+
+           connect(pAction_recordTraj, SIGNAL(triggered()), this, SLOT(recordTrajectory()));
+           connect(pAction_loadTraj, SIGNAL(triggered()), this, SLOT(loadTrajectory()));
+           contextMenu.exec(QCursor::pos());
+        }
+        break;
+    }
+    default:
+        break;
     }
 }
 
 void MyGLScreen::mouseReleaseEvent(QMouseEvent *event)
 {
+    Scene *scene = ::currentScene;
+    if (scene->selectedCloud())
+        if (scene->selectedCloud()->view->getRecordingTrajectory()) {
+            scene->selectedCloud()->view->trajectoryAddPosition(mouseX, mouseY);
+            scene->selectedCloud()->view->trajectoryAddPosition(mouseX, mouseY);
+            scene->selectedCloud()->view->setRecordingTrajectory(false);
+        }
+
     Qt::MouseButton button = event->button();
 
     if ((button == Qt::LeftButton) || (button == Qt::RightButton)) {
@@ -792,8 +854,6 @@ void MyGLScreen::mouseMoveEvent(QMouseEvent *event)
     double posCloudX=0.;
     double posCloudY=0.;
 
-    //std::cout<<"mouse moved"<<std::endl;
-
     Scene *scene = ::currentScene;
     SceneSample *selectedSample = scene->selectedSample();
     SceneCloud *selectedCloud = scene->selectedCloud();
@@ -804,12 +864,18 @@ void MyGLScreen::mouseMoveEvent(QMouseEvent *event)
                 return;
         posCloudX=selectedCloud->view->getOriginX(); //traj
         posCloudY=selectedCloud->view->getOriginY();
-        selectedCloud->view->updateCloudOrigin(mouseX, mouseY);
-        selectedCloud->view->updateCloudPosition(selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY());
-        if(selectedCloud->view->getIsMoving())
-        {
-            origin=selectedCloud->view->getTrajectory()->getOrigin();
-            selectedCloud->view->getTrajectory()->updateOrigin(origin.x-posCloudX+mouseX,origin.y-posCloudY+mouseY);
+        if (selectedCloud->view->getRecordingTrajectory() == true){
+            // add position in recorded trajectory
+            selectedCloud->view->trajectoryAddPosition(mouseX, mouseY);
+        }
+        else {
+            selectedCloud->view->updateCloudOrigin(mouseX, mouseY);
+            selectedCloud->view->updateCloudPosition(selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY());
+            if(selectedCloud->view->getIsMoving())
+            {
+                origin=selectedCloud->view->getTrajectory()->getOrigin();
+                selectedCloud->view->getTrajectory()->updateOrigin(origin.x-posCloudX+mouseX,origin.y-posCloudY+mouseY);
+            }
         }
 
     }
@@ -829,7 +895,6 @@ void MyGLScreen::mouseMoveEvent(QMouseEvent *event)
 
         case RESIZE:
             if ((lastDragX != veryHighNumber) && (lastDragY != veryHighNumber)) {
-                // cout << "drag ok" << endl;
                 // for width height - use screen coords
 
                 if (selectedSample) {
@@ -1001,8 +1066,6 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Return:  // enter key - for saving param string
         if (paramString != "") {
             float value = atof(paramString.c_str());
-
-            // cout << "value received " << value << endl;
             switch (currentParam) {
             case DURATION:
                 if (selectedCloud) {
@@ -1090,7 +1153,6 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
 
     case Qt::Key_I: {
         keyAction_Trajectory((modkey == Qt::ShiftModifier) ? -1 : +1);
-        //cout << "trajectoire " << modkey << endl;
         break;
     }
 

@@ -4,7 +4,6 @@
 
 void Trajectory::setSpeed(double s)
 {
-//    std::cout << "setspeed = " << s << std::endl;
     this->speed = s;
 }
 

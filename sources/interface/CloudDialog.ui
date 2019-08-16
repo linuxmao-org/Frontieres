@@ -3985,7 +3985,7 @@ border-bottom-left-radius: 9px;
                      <number>10</number>
                     </property>
                     <property name="value">
-                     <number>0</number>
+                     <number>1000</number>
                     </property>
                     <property name="tracking">
                      <bool>true</bool>
@@ -4789,17 +4789,14 @@ border-bottom-left-radius: 9px;
               <property name="alignment">
                <set>Qt::AlignCenter</set>
               </property>
-              <layout class="QVBoxLayout" name="verticalLayout_61">
-               <property name="spacing">
-                <number>14</number>
-               </property>
+              <layout class="QVBoxLayout" name="verticalLayout_23">
                <item>
                 <widget class="QRadioButton" name="radioButton_Trajectory_Static">
                  <property name="text">
                   <string>&amp;Static</string>
                  </property>
                  <property name="checked">
-                  <bool>true</bool>
+                  <bool>false</bool>
                  </property>
                  <property name="autoExclusive">
                   <bool>true</bool>
@@ -4827,6 +4824,19 @@ border-bottom-left-radius: 9px;
                 <widget class="QRadioButton" name="radioButton_Trajectory_Hypotrochoid">
                  <property name="text">
                   <string>H&amp;ypotrochoid</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QRadioButton" name="radioButton_Trajectory_Recorded">
+                 <property name="text">
+                  <string>&amp;Recorded</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                 <property name="autoExclusive">
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
