@@ -15,9 +15,7 @@ DEFINES += __LINUX_PULSE__
 
 INCLUDEPATH += $$PWD/libraries/QtFont3D
 SOURCES += libraries/QtFont3D/QtFont3D.cpp \
-    sources/visual/Recorded.cpp
 HEADERS += libraries/QtFont3D/QtFont3D.h \
-    sources/visual/Recorded.h
 
 unix: {
   isEmpty(INSTALL_PREFIX) {
