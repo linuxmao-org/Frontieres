@@ -14,8 +14,8 @@ DEFINES += __LINUX_ALSA__
 DEFINES += __LINUX_PULSE__
 
 INCLUDEPATH += $$PWD/libraries/QtFont3D
-SOURCES += libraries/QtFont3D/QtFont3D.cpp \
-HEADERS += libraries/QtFont3D/QtFont3D.h \
+SOURCES += libraries/QtFont3D/QtFont3D.cpp
+HEADERS += libraries/QtFont3D/QtFont3D.h
 
 unix: {
   isEmpty(INSTALL_PREFIX) {
