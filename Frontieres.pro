@@ -76,6 +76,7 @@ SOURCES += \
   sources/visual/Trajectory.cpp \
   sources/visual/Circular.cpp \
   sources/visual/Hypotrochoid.cpp \
+  sources/visual/Recorded.cpp \
   sources/utility/GTime.cpp \
   libraries/Stk.cpp \
   libraries/RtAudio.cpp \
@@ -119,6 +120,7 @@ HEADERS += \
   sources/visual/Trajectory.h \ 
   sources/visual/Circular.h \
   sources/visual/Hypotrochoid.h \
+  sources/visual/Recorded.h \
   sources/utility/GTime.h \
   libraries/RtMidi.h \
   libraries/RtAudio.h \
