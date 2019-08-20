@@ -62,11 +62,18 @@ CloudMidi::CloudMidi(VecSceneSample *sampleSet, float theNumGrains, float theDur
     isActive = false;
     addFlag = false;
     removeFlag = false;
+    duration = theDuration;
     // populate grain cloud
     for (int i = 0; i < theNumGrains; i++) {
         myGrains.push_back(new Grain(sampleSet, theDuration, thePitch));
         myGrains[i]->setWindow(theWindowType);
     }
+}
+
+void CloudMidi::registerCloudVis(CloudVis *cloudVisToRegister)
+{
+    myCloudVis = cloudVisToRegister;
+    //myCloudVis->setDuration(duration);
 }
 
 // Destructor
@@ -90,6 +97,7 @@ Cloud::~Cloud()
 // Constructor
 Cloud::Cloud(VecSceneSample *sampleSet, float theNumGrains)
 {
+    //cout << "creation cloud" << endl;
     unsigned channelCount = theChannelCount;
 
     // cloud id
@@ -130,7 +138,8 @@ Cloud::Cloud(VecSceneSample *sampleSet, float theNumGrains)
     windowType = g_defaultCloudParams.windowType;
 
     // default trajectory type
-    setTrajectoryType(g_defaultCloudParams.trajectoryType);
+    trajectoryType = g_defaultCloudParams.trajectoryType;
+    changed_trajectoryType = true;
 
     // initialize pitch LFO
     //pitchLFOFreq = 0.01f;
@@ -196,10 +205,15 @@ Cloud::Cloud(VecSceneSample *sampleSet, float theNumGrains)
     midiChannel = g_defaultCloudParams.midiChannel;
     midiNote = g_defaultCloudParams.midiNote;
 
+    //cout << "creation cloud, avant midiclouds" << endl;
+
     for (int i = 0; i < g_maxMidiVoices; i++){
-          CloudMidi *l_CloudMidi = new CloudMidi(sampleSet, numGrains, duration, pitch, windowType);
-          playedCloudMidi[i] = l_CloudMidi;
+        CloudMidi *l_CloudMidi = new CloudMidi(sampleSet, numGrains, duration, pitch, windowType);
+        playedCloudMidi[i] = l_CloudMidi;
     }
+
+    trajectoryType = STATIC;
+    //cout << "fin creation cloud" << endl;
 
 }
 // register controller for communication with view
@@ -207,14 +221,18 @@ void Cloud::registerCloudVis(CloudVis *cloudVisToRegister)
 {
     myCloudVis = cloudVisToRegister;
     myCloudVis->setDuration(duration);
+    for (int i = 0; i < g_maxMidiVoices; i++){
+        //cout  << "association cloud midi " << i << endl;
+        CloudVis *cloudVisToRegister = myCloudVis->getMidiCloudVis(i);
+        playedCloudMidi[i]->registerCloudVis(cloudVisToRegister);
+    }
 }
-
-
 
 // turn on/off
 void Cloud::toggleActive()
 {
     setActiveState(!isActive);
+    myCloudVis->setIsPlayed(isActive);
 }
 
 void Cloud::setActiveState(bool activateState)
@@ -228,20 +246,9 @@ void Cloud::setActiveState(bool activateState)
 
 void Cloud::setActiveMidiState(bool activateMidiState, int l_midiNote, int l_midiVelo)
 {
-    //debug: std::cout << "entree setactivatemidistate, activateMidiState =" << activateMidiState<< ",l_midiNote="<<l_midiNote<<",l_midiVelo="<<l_midiVelo <<std::endl;
-
     cleanMidiClouds();
     if (activateMidiState){
         // midi note on
-        /*if (playedCloudMidi[l_midiNote]->isActive){
-            std::cout << "isActive"<<std::endl;
-            for (int j = 0; j < playedCloudMidi[l_midiNote]->myGrains.size(); j++)
-                std::cout << "boucle suppression, j="<<j<<"/"<<playedCloudMidi[l_midiNote]->myGrains.size()<<std::endl;
-                playedCloudMidi[l_midiNote]->myGrains.pop_back();
-        }
-        for (int j = 0; j < myGrains.size(); j++)
-            std::cout << "boucle creation, j="<<j<<"/"<<playedCloudMidi[l_midiNote]->myGrains.size()<<std::endl;
-            playedCloudMidi[l_midiNote]->myGrains.push_back(new Grain(theSamples, duration, pitch));*/
         // calculate pitch
         int ecartNotes = l_midiNote - midiNote;
         float musicalPitch = (12*log2f(pitch));
@@ -253,89 +260,13 @@ void Cloud::setActiveMidiState(bool activateMidiState, int l_midiNote, int l_mid
         playedCloudMidi[l_midiNote]->envelopeVolume->setParam(envelopeVolume->getParam());
         playedCloudMidi[l_midiNote]->envelopeAction.store(TriggerEnvelope);
         playedCloudMidi[l_midiNote]->isActive = true;
+        // visual
+        myCloudVis->activateMidiVis(l_midiNote, true);
     }
     else {
         // midi note off
-        //debug: std::cout << "note off"<<std::endl;
         playedCloudMidi[l_midiNote]->envelopeAction.store(ReleaseEnvelope);
     }
-    //debug: std::cout << "sortie setactivatemidistate" << std::endl;
-
-    //debug : std::cout << "entree setactivatemidistate, activateMidiState =" << activateMidiState<< ",l_midiNote="<<l_midiNote<<",l_midiVelo="<<l_midiVelo <<std::endl;
-    /*if (activateMidiState){
-        // midi note on
-        int notePlayedPlace = - 1;
-        int newNoteToPlay = - 1;;
-        int i = 0;
-        while (i < actualyPlayedMidi){
-            //debug : std::cout<<"boucle1, i="<<i<<",actualyPlayedMidi="<<actualyPlayedMidi<<std::endl;
-            if (playedCloudMidi[i]->envelopeVolume->state() == Env::State::Off ){
-                // delete MidiNote if envelope state is off
-                //debug : std::cout << "deletePlayedCloudMidi pour state off="<<i<<std::endl;
-                deletePlayedCloudMidi(i);
-            }
-            else
-                i++;
-        }
-        for (int i = 0; i < actualyPlayedMidi; i++)
-            if (playedCloudMidi[i]->midiNote == l_midiNote){
-                //debug : std::cout<<"midinote found at "<<i<<std::endl;
-                // midinote already played found
-                notePlayedPlace = i;
-                //i = actualyPlayedMidi;
-            }
-        //debug : std::cout << "notePlayedPlace="<<notePlayedPlace<<std::endl;
-        //debug : std::cout << "actualyPlayedMidi="<<actualyPlayedMidi<<std::endl;
-        if (notePlayedPlace > - 1) {
-            // note already played, delete note, move all newer notes
-            newNoteToPlay = actualyPlayedMidi - 1;
-            deletePlayedCloudMidi(notePlayedPlace);
-            actualyPlayedMidi++;
-        }
-        else {
-            // new note to play
-            if (actualyPlayedMidi == g_maxMidiVoices){
-                // max polyphony found, delete oldest note, move all newer notes
-                newNoteToPlay = actualyPlayedMidi - 1;
-                deletePlayedCloudMidi(0);
-                actualyPlayedMidi++;
-            }
-            else {
-                newNoteToPlay = actualyPlayedMidi;
-                actualyPlayedMidi++;
-            }
-        }
-        //debug : std::cout << "newNoteToPlay="<<newNoteToPlay<<std::endl;
-        //debug : std::cout << "actualyPlayedMidi="<<actualyPlayedMidi<<std::endl;
-        // calculate pitch
-        int ecartNotes = l_midiNote - midiNote;
-        float musicalPitch = (12*log2(pitch));
-        float newMusicalPitch = musicalPitch + ecartNotes;
-        float newPitch = (pow(2, (float) (newMusicalPitch / 12)));
-        // create note on top
-        playedCloudMidi[newNoteToPlay]->midiNote = l_midiNote;
-        playedCloudMidi[newNoteToPlay]->pitch = newPitch;
-        playedCloudMidi[newNoteToPlay]->velocity = l_midiVelo;
-        playedCloudMidi[newNoteToPlay]->envelopeVolume->setParam(envelopeVolume->getParam());
-        playedCloudMidi[newNoteToPlay]->envelopeAction.store(TriggerEnvelope);
-        playedCloudMidi[newNoteToPlay]->isActive = true;
-    }
-    else {
-        // midi note off
-        //debug : std::cout << "cloud note off" << std::endl;
-        int notePlayedPlace = - 1;
-        for (int i = 0; i < actualyPlayedMidi; i++){
-            if (playedCloudMidi[i]->midiNote == l_midiNote){
-                notePlayedPlace = i;
-                i = actualyPlayedMidi;
-            }
-        }
-        //debug : std::cout << "notePlayedPlace=" << notePlayedPlace << std::endl;
-        if (notePlayedPlace > -1) {
-            playedCloudMidi[notePlayedPlace]->envelopeAction.store(ReleaseEnvelope);
-        }
-    }
-    //debug : std::cout << "sortie setactivatemidistate" << std::endl;*/
 }
 
 bool Cloud::getActiveState()
@@ -632,14 +563,15 @@ bool Cloud::changedVolumeDb()
     return changed_volumeDB;
 }
 
-void Cloud::setTrajectoryType(int newTrajectoryType)
+void Cloud::setTrajectoryType(int l_TrajectoryType)
 {
     if (locked) {
         showMessageLocked();
         return;
     }
-    //cout << "entree settrajectorytype, type = " << newTrajectoryType << endl;
-    trajectoryType = newTrajectoryType;
+    trajectoryType = l_TrajectoryType;
+    cout << "cloud trajtype="<<l_TrajectoryType<<endl;
+    myCloudVis->setTrajectoryType(l_TrajectoryType);
     changed_trajectoryType = true;
 }
 
@@ -811,8 +743,6 @@ void Cloud::cleanMidiClouds()
     for (int i = 0; i < g_maxMidiVoices; i++){
         if (playedCloudMidi[i]->envelopeVolume->state() == Env::State::Off){
             playedCloudMidi[i]->isActive = false;
- //           for (int j = 0; j < playedCloudMidi[i]->myGrains.size(); j++)
-   //             playedCloudMidi[i]->myGrains.pop_back();
         }
     }
 }
@@ -1065,7 +995,7 @@ void Cloud::nextBuffer(BUFFERPREC *accumBuff, unsigned int numFrames)
                             // TODO:  get position vector for grain with idx nextGrain from controller
                             // udate positions vector (currently randomized)q
                             if (myCloudVis)
-                                myCloudVis->getTriggerPos(nextGrain, playPositions, playVols, duration);
+                                myCloudVis->getMidiCloudVis(ii)->getTriggerPos(nextGrain, playPositions, playVols, duration);
                         }
 
                         // get next pitch (using LFO) -  eventually generalize to an applyLFOs method (if LFO control will be exerted over multiple params)
@@ -1124,9 +1054,12 @@ void Cloud::nextBuffer(BUFFERPREC *accumBuff, unsigned int numFrames)
                             accumBuff[i * channelCount + j] += playedCloudMidi[ii]->intermediateBuff[i * channelCount + j]
                                                               * playedCloudMidi[ii]->envelopeVolumeBuff[i]
                                                               * (((float) playedCloudMidi[ii]->velocity + 127) * g_cloudValueMin.midiVelocityBoost / 100) / 127;
-                                                              //* ((float) playedCloudMidi[ii]->velocity / 127);
                     }
                 }
+            }
+            else {
+                if (myCloudVis->getStateMidiVis(ii))
+                    myCloudVis->activateMidiVis(ii, false);
             }
         }
 
@@ -1295,5 +1228,10 @@ void Cloud::updateSpatialization()
     default:
         break;
     }
+}
+
+CloudMidi *Cloud::getMidiCloud(int l_numNote)
+{
+    return playedCloudMidi[l_numNote];
 }
 

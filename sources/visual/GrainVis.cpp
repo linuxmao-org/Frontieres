@@ -32,6 +32,9 @@
 
 // graphics includes
 #include <qopengl.h>
+#ifndef __APPLE__
+#include <GL/glu.h>
+#endif
 
 #include <math.h>
 
@@ -44,19 +47,34 @@ GrainVis::~GrainVis()
 
 
 // constructor
-GrainVis::GrainVis(float x, float y)
+GrainVis::GrainVis(float x, float y, bool c_isMidiVis)
 {
+    isMidiVis = c_isMidiVis;
+
     gX = x;
     gY = y;
-    colR = 1.0;
-    colB = 1.0;
-    colG = 1.0;
-    colA = 0.6;
+
+    if (!isMidiVis){
+        colR = 1.0;
+        colB = 1.0;
+        colG = 1.0;
+        colA = 0.6;
+        defSize = 8.0f;
+        onSize = 24.0f;
+    }
+    else {
+        colR = 1.0;
+        colB = 0.0;
+        colG = 1.0;
+        colA = 0.6;
+        defSize = 8.0f;
+        onSize = 24.0f;
+    }
+
     defG = colG;
     defB = colB;
-    defSize = 10.0f;
     mySize = defSize;
-    onSize = 30.0f;
+
     isOn = false;
     firstTrigger = false;
     startTime = GTime::instance().sec;
@@ -66,7 +84,7 @@ GrainVis::GrainVis(float x, float y)
 
 
 // draw method
-void GrainVis::draw()
+void GrainVis::draw(bool isMidiVis)
 {
     double t_sec = GTime::instance().sec - triggerTime;
     if (firstTrigger == true) {
@@ -76,7 +94,10 @@ void GrainVis::draw()
             mult = exp(-t_sec / (0.8 * durSec));
             colG = mult * colG;
             colB = mult * colB;
-            mySize = defSize + (1.0 - mult) * (onSize - defSize);
+            if (isMidiVis)
+                mySize = (defSize + (1.0 - mult) * (onSize - defSize)) / 2;
+            else
+                mySize = defSize + (1.0 - mult) * (onSize - defSize);
             if (colB < 0.001)
                 isOn = false;
         }
@@ -92,21 +113,24 @@ void GrainVis::draw()
     glColor4f(colR, colG, colB, colA);
 
     // disk version - for graphics cards that don't support GL_POINT_SMOOTH
-    //       glTranslatef((GLfloat)gX,(GLfloat)gY,0.0);
-    //       gluDisk(gluNewQuadric(),0,mySize*0.5f, 64,1);
 
-    // end disk version
+    glTranslatef((GLfloat)gX,(GLfloat)gY,0.0);
+    gluDisk(gluNewQuadric(),0,mySize*0.5f, 64,1);
 
+    glPopMatrix();
+    glPushMatrix();
 
     // point version (preferred - better quality)
-    float prevSize = 1.0f;
+
+ /*   float prevSize = 1.0f;
     glGetFloatv(GL_POINT_SIZE, &prevSize);
     glPointSize(mySize);
     glBegin(GL_POINTS);
-    glVertex3f(gX, gY, 0.0);
+    glVertex2f( gX, gY);
+    //glVertex3f(gX, gY, 0.0);
     glEnd();
     glPointSize(prevSize);
-    //    //end point version
+    *///    //end point version
 }
 
 void GrainVis::trigger(float theDur)
