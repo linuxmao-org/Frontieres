@@ -381,7 +381,6 @@ void CloudVis::restartTrajectory()
 {
     if (myTrajectory != nullptr) {
         myTrajectory->restart();
-        startTime = GTime::instance().sec;
         restartingTrajectory = true;
         draw();
         restartingTrajectory = false;
@@ -421,6 +420,8 @@ void CloudVis::draw()
     double dt = 0;
 
     t_sec = GTime::instance().sec - startTime;
+
+
     dt = t_sec - lastDrawTime;
     lastDrawTime = t_sec;
 

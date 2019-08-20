@@ -37,6 +37,9 @@ void Trajectory::restart()
 {
     setDistanceToCenter(0);
     setPhase(0);
+    setTrajectoryStartTime();
+    setLastComputedPosition(0);
+    setDelayCumul(0);
 }
 
 double Trajectory::getProgress()
@@ -117,6 +120,36 @@ void Trajectory::setExpansion(double l_Expansion)
 double Trajectory::getExpansion()
 {
     return expansion;
+}
+
+double Trajectory::getTrajectoryStartTime()
+{
+    return trajectoryStartTime;
+}
+
+void Trajectory::setTrajectoryStartTime()
+{
+    trajectoryStartTime = GTime::instance().sec;
+}
+
+void Trajectory::setLastComputedPosition(int l_lcp)
+{
+    lastComputedPosition = l_lcp;
+}
+
+int Trajectory::getLastComputedPosition()
+{
+    return lastComputedPosition;
+}
+
+void Trajectory::setDelayCumul(double l_dc)
+{
+    delayCumul = l_dc;
+}
+
+double Trajectory::getDelayCumul()
+{
+    return delayCumul;
 }
 
 pt2d Trajectory::getOrigin()

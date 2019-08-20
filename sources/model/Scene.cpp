@@ -261,6 +261,7 @@ bool Scene::load(QFile &sceneFile)
         double radiusInt=0;
         double expansion=0;
         double progress=0;
+        int nbPositions=0;
 
         if(hasTrajectory)
         {
@@ -293,7 +294,6 @@ bool Scene::load(QFile &sceneFile)
 
             case HYPOTROCHOID:
             {
-
                 centerX = objCloud["centerX"].toDouble();
                 centerY = objCloud["centerY"].toDouble();
                 radius = objCloud["radius"].toDouble();
@@ -303,7 +303,13 @@ bool Scene::load(QFile &sceneFile)
                 progress=objCloud["progress"].toDouble();
             }
             break;
-
+            case RECORDED:
+            {
+                centerX = objCloud["centerX"].toDouble();
+                centerY = objCloud["centerY"].toDouble();
+                nbPositions = objCloud["positions-number"].toInt();
+            }
+            break;
             default:
             break;
             }
@@ -384,6 +390,7 @@ bool Scene::load(QFile &sceneFile)
                 {
                     //tr=new Bouncing(bounceWidth,speed,0,xTrajectoryOrigin,yTrajectoryOrigin);
                     tr=new Circular(speed,xTrajectoryOrigin,yTrajectoryOrigin,radius, angle, 0, 1);
+                    cloudVisToLoad->setTrajectory(tr);
                     cout << "cloud has radius = " << radius << "\n";
                     cout << "cloud has angle = " << angle << "\n";
                 }
@@ -393,6 +400,7 @@ bool Scene::load(QFile &sceneFile)
                 {
 
                     tr=new Circular(speed,xTrajectoryOrigin,yTrajectoryOrigin,radius, angle, strech, progress);
+                    cloudVisToLoad->setTrajectory(tr);
                     cout << "cloud has center = (" << centerX << ","<<centerY<<")"<<"\n";
                     cout << "cloud has radius = " << radius << "\n";
                     cout << "cloud has angle = " << angle << "\n";
@@ -404,6 +412,7 @@ bool Scene::load(QFile &sceneFile)
                 case HYPOTROCHOID:
                 {
                     tr=new Hypotrochoid(speed,xTrajectoryOrigin,yTrajectoryOrigin,radius,radiusInt,expansion,angle, progress);
+                    cloudVisToLoad->setTrajectory(tr);
                     cout << "cloud has center = (" << centerX << ","<<centerY<<")"<<"\n";
                     cout << "cloud has radius = " << radius << "\n";
                     cout << "cloud has radius Int = " << radiusInt << "\n";
@@ -412,13 +421,31 @@ bool Scene::load(QFile &sceneFile)
                     cout << "cloud has progress = " << progress << "\n";
                 }
                 break;
+                case RECORDED:
+                {
+                    tr=new Recorded(0, xTrajectoryOrigin, yTrajectoryOrigin);
+                    Recorded *tr_rec=dynamic_cast<Recorded*>(tr);
+                    cloudVisToLoad->setTrajectory(tr);
+
+                    QJsonArray docPositions = objCloud["positions"].toArray();
+
+                    for (const QJsonValue &jsonElementPosition : docPositions) { // positions
+                        QJsonObject objPosition = jsonElementPosition.toObject();
+                        int l_x;
+                        int l_y;
+                        double l_delay;
+                        l_x = objPosition["x"].toInt();
+                        l_y = objPosition["y"].toInt();
+                        l_delay = objPosition["delay"].toDouble();
+
+                        tr_rec->addPositionDelayed(l_x, l_y, l_delay);
+                    }
+                    tr_rec->setRecording(false);
+                }
+                break;
                 default:
                 break;
             }
-
-            //tr->setPhase(phase);
-            tr->setSpeed(speed);
-            cloudVisToLoad->setTrajectory(tr);
 
             if(move){
                 cloudVisToLoad->startTrajectory();
@@ -439,10 +466,6 @@ bool Scene::load(QFile &sceneFile)
        cout << "cloud has angle = " <<angle <<"\n";
        cout << "cloud has strech = " <<strech <<"\n";
        cout << "cloud has progress = " <<progress <<"\n";
-
-
-
-
 
     }
 
@@ -655,7 +678,27 @@ bool Scene::save(QFile &sceneFile)
                 std::cout<<"progress saved "<<c->getProgress()<<std::endl;
             }
             break;
-
+            case RECORDED:
+            {
+                Recorded *c=dynamic_cast<Recorded*>(cloudVisToSave->getTrajectory());
+                objCloud["positions-number"] = c->lastPosition();
+                std::cout<<"number positions saved "<<c->getCenterX()<<std::endl;
+                QJsonArray docPositions;
+                for (int j = 1; j < c->lastPosition(); j++){
+                    QJsonObject objPosition;
+                    objPosition["num"] = j;
+                    objPosition["x"] = c->getPosition(j).x;
+                    objPosition["y"] = c->getPosition(j).y;
+                    objPosition["delay"] = c->getPosition(j).delay;
+                    std::cout<<"num "<<j<<std::endl;
+                    std::cout<<"x "<<c->getPosition(j).x<<std::endl;
+                    std::cout<<"y "<<c->getPosition(j).y<<std::endl;
+                    std::cout<<"delay "<<c->getPosition(j).delay<<std::endl;
+                    docPositions.append(objPosition);
+                }
+                objCloud["positions"] = docPositions;
+            }
+            break;
             default:
             break;
 
@@ -946,7 +989,22 @@ bool Scene::saveCloud(QFile &cloudFile, SceneCloud *selectedCloudSave)
             objCloud["centerY"] = c->getCenterY();
         }
         break;
-
+        case RECORDED:
+        {
+            Recorded *c=dynamic_cast<Recorded*>(cloudVisToSave->getTrajectory());
+            objCloud["positions-number"] = c->lastPosition();
+            QJsonArray docPositions;
+            for (int j = 0; j <= c->lastPosition(); j++){
+                QJsonObject objPosition;
+                objPosition["num"] = j;
+                objPosition["x"] = c->getPosition(j).x;
+                objPosition["y"] = c->getPosition(j).y;
+                objPosition["delay"] = c->getPosition(j).delay;
+                docPositions.append(objPosition);
+            }
+            objCloud["positions"] = docPositions;
+        }
+        break;
         default:
         break;
 

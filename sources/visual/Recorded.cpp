@@ -1,5 +1,4 @@
 #include "Recorded.h"
-#include "utility/GTime.h"
 
 Recorded::Recorded(double c_speed, double c_xOr, double c_yOr)
     : Trajectory(c_speed,c_xOr,c_yOr)
@@ -29,27 +28,34 @@ double Recorded::getCenterY()
 
 pt2d Recorded::computeTrajectory(double dt)
 {
+
+    //std::cout << "compute"<<std::endl;
     pt2d orig = getOrigin();
     pt2d vecPos{0., 0.};
 
     if (!recording) {
-        int i = lastComputedPosition;
-        delayCumul = delayCumul + dt;
+        int i = getLastComputedPosition();
 
-        if (!(lastComputedPosition == myPosition.size()-1)) {
-           if (int(delayCumul*1000000) >= int(myPosition[i+1]->delay*1000000)) {
+        //std::cout << "delaycumul="<< getDelayCumul()<<", dt="<<dt<<std::endl;
+
+        setDelayCumul(getDelayCumul() + dt);
+
+        if (!(getLastComputedPosition() == myPosition.size()-1)) {
+           if (int(getDelayCumul() * 1000000) >= int(myPosition[i+1]->delay * 1000000)) {
                 i = i + 1;
             }
         }
 
-        lastComputedPosition = i;
+        setLastComputedPosition(i);
 
         vecPos.x = orig.x + myPosition[i]->x;
         vecPos.y = orig.y + myPosition[i]->y;
 
-        if ((lastComputedPosition == myPosition.size()-1) & (myPosition.size() > 1)) {
-            lastComputedPosition = 0;
-            delayCumul = 0;
+        //std::cout << "x=" << vecPos.x << ", y="<< vecPos.y<< std::endl;
+
+        if ((getLastComputedPosition() == myPosition.size()-1) & (myPosition.size() > 1)) {
+            setLastComputedPosition(0);
+            setDelayCumul(0);
         }
     }
     else {
@@ -68,13 +74,9 @@ Position Recorded::getPosition(int cpt)
     return l_Position;
 }
 
-Position Recorded::lastPosition()
+int Recorded::lastPosition()
 {
-    Position l_Position;
-    l_Position.x = myPosition[myPosition.size()-1]->x;
-    l_Position.y = myPosition[myPosition.size()-1]->y;
-    l_Position.delay = myPosition[myPosition.size()-1]->delay;
-    return l_Position;
+    return myPosition.size();
 }
 
 void Recorded::addPosition(int l_x, int l_y)
@@ -84,9 +86,27 @@ void Recorded::addPosition(int l_x, int l_y)
 
     tr_Position->x = l_x - orig.x;
     tr_Position->y = l_y - orig.y;
-    tr_Position->delay = GTime::instance().sec - recordedTrajectoryStartTime;
+    tr_Position->delay = GTime::instance().sec - getTrajectoryStartTime();
+
+    //std::cout << "addposition, " << tr_Position->x << ", " << tr_Position->y <<", " << tr_Position->delay << std::endl;
 
     myPosition.push_back(tr_Position);
+    //std::cout << "max="<< myPosition.size()<<std::endl;
+}
+
+void Recorded::addPositionDelayed(int l_x, int l_y, double l_delay)
+{
+    Position *tr_Position = new Position;
+    pt2d orig = getOrigin();
+
+    tr_Position->x = l_x;
+    tr_Position->y = l_y;
+    tr_Position->delay = l_delay;
+
+    //std::cout << "addpositiondelay, " << tr_Position->x << ", " << tr_Position->y <<", " << tr_Position->delay << std::endl;
+
+    myPosition.push_back(tr_Position);
+    //std::cout << "max="<< myPosition.size()<<std::endl;
 }
 
 Recorded::~Recorded()
@@ -104,7 +124,7 @@ int Recorded::getType()
 void Recorded::setRecording(bool l_recording)
 {
     if (l_recording) {
-        recordedTrajectoryStartTime = GTime::instance().sec;
+        setTrajectoryStartTime();
     }
     recording = l_recording;
 }

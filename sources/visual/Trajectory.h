@@ -5,6 +5,7 @@
 #include <iostream>
 #include <stdio.h>
 #include "theglobals.h"
+#include "utility/GTime.h"
 #include <cmath>
 
 enum { STATIC, BOUNCING, CIRCULAR, HYPOTROCHOID, RECORDED};
@@ -47,6 +48,12 @@ public:
     double getRadiusInt();
     void setExpansion(double l_Expansion);
     double getExpansion();
+    double getTrajectoryStartTime();
+    void setTrajectoryStartTime();
+    void setLastComputedPosition(int l_lcp);
+    int getLastComputedPosition();
+    void setDelayCumul(double l_dc);
+    double getDelayCumul();
 
 
 private:
@@ -64,6 +71,9 @@ private:
     double strech;
     double radiusInt;
     double expansion;
+    double trajectoryStartTime;
+    int lastComputedPosition = 0;
+    double delayCumul = 0;
 };
 
 

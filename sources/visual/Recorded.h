@@ -19,8 +19,9 @@ public:
     void setCenter(double x,double y);
     pt2d computeTrajectory(double dt);
     Position getPosition(int cpt);
-    Position lastPosition();
+    int lastPosition();
     void addPosition(int l_x, int l_y);
+    void addPositionDelayed(int l_x, int l_y, double l_delay);
     ~Recorded();
     int getType();
     void setRecording(bool l_recording);
@@ -34,7 +35,6 @@ private:
     bool recording = false;
     int lastComputedPosition = 0;
     double delayCumul = 0;
-    double recordedTrajectoryStartTime;
 };
 
 #endif // RECORDED_H
