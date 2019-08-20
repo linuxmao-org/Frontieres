@@ -54,6 +54,7 @@ extern int theChannelCount;
 // global attenuation to prevent clipping
 static const double globalAtten = 0.5;
 
+int constexpr g_maxMidiVoices(128);
 
 // osc local port
 //#define LOCAL_PORT 10001

@@ -80,6 +80,11 @@ public slots:
     void keyAction_EditCloud();
     void keyAction_SampleNames();
 
+private slots:
+
+    void recordTrajectory();
+    void loadTrajectory();
+
 protected:
     void initializeGL() override;
     void paintGL() override;
@@ -94,6 +99,9 @@ protected:
 private:
     struct Impl;
     std::unique_ptr<Impl> P;
+    bool RecordTrajectoryAsked = false;
+    bool RecordingTrajectory = false;
+    double RecordedTrajectoryStartTime;
 };
 
 #endif

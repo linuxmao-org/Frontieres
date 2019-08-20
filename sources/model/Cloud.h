@@ -58,8 +58,6 @@ struct SceneSample;
 
 typedef std::vector<std::unique_ptr<SceneSample>> VecSceneSample;
 
-int constexpr g_maxMidiVoices(128);
-
 // direction modes
 enum { FORWARD, BACKWARD, RANDOM_DIR };
 
@@ -90,7 +88,11 @@ public:
     CloudMidi(VecSceneSample *sampleSet, float theNumGrains, float theDuration, float thePitch, int theWindowType);
     // cloud parameters duplicated for each midi note
     // int midiNote = - 1;
-    float pitch;
+    // registered visualization
+    CloudVis *myCloudVis;
+    // register visualization
+    void registerCloudVis(CloudVis *cloudVisToRegister);
+    float pitch,duration;
     bool isActive = false;
     int velocity;
     float *envelopeVolumeBuff;
@@ -179,7 +181,7 @@ public:
     bool getIsMoving();
 
     // trajectory type
-    void setTrajectoryType(int newTrajectoryType);
+    void setTrajectoryType(int l_TrajectoryType);
     int getTrajectoryType();
     bool changedTrajectoryType();
 
@@ -227,6 +229,8 @@ public:
     bool changedMidiNote();
 
     void cleanMidiClouds();
+
+    CloudMidi *getMidiCloud(int l_numNote);
 
     // lock flag
     void setLockedState(bool newLockedState);

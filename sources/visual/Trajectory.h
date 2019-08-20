@@ -5,10 +5,16 @@
 #include <iostream>
 #include <stdio.h>
 #include "theglobals.h"
+#include "utility/GTime.h"
 #include <cmath>
 
-enum { STATIC, BOUNCING, CIRCULAR, HYPOTROCHOID};
+enum { STATIC, BOUNCING, CIRCULAR, HYPOTROCHOID, RECORDED};
 
+struct Position {
+    int x;
+    int y;
+    double delay;
+};
 
 // abstract class as a base for every kind of trajectory
 class Trajectory {
@@ -19,26 +25,55 @@ public:
     double getSpeed();
     double getPhase();
     pt2d getOrigin();
-    void setPhase(double ph);
+    void setPhase(double l_phase);
     void setSpeed(double s);
     void setOrigin(double x, double y);
     void updateOrigin(double x, double y);
     virtual int getType() = 0;
+    //virtual void addPosition(Position l_Position);
     void restart();
     double getProgress();
-    void setProgress(double newProgress);
-    void setDistanceToCenter(double newDistance);
+    void setProgress(double l_progress);
+    void setDistanceToCenter(double l_istance);
     double getDistanceToCenter();
+    int getTrajectoryType();
+    void setTrajectoryType (int l_trajectoryType);
+    void setAngle(double l_angle);
+    double getAngle();
+    void setRadius(double l_radius);
+    double getRadius();
+    void setStrech(double l_strech);
+    double getStrech();
+    void setRadiusInt(double l_RadiusInt);
+    double getRadiusInt();
+    void setExpansion(double l_Expansion);
+    double getExpansion();
+    double getTrajectoryStartTime();
+    void setTrajectoryStartTime();
+    void setLastComputedPosition(int l_lcp);
+    int getLastComputedPosition();
+    void setDelayCumul(double l_dc);
+    double getDelayCumul();
+
 
 private:
+    int trajectoryType;
     //speed express in hertz
     double speed;
     // parameter between 0 and 1
     double phase;
     //origin of the trajectory
-    double xOrigin,yOrigin;
+    int xOrigin,yOrigin = 0;
     double distanceToCenter;
     double progress;
+    double radius;
+    double angle;
+    double strech;
+    double radiusInt;
+    double expansion;
+    double trajectoryStartTime;
+    int lastComputedPosition = 0;
+    double delayCumul = 0;
 };
 
 
