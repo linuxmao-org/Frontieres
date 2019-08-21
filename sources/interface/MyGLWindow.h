@@ -84,6 +84,7 @@ private slots:
 
     void recordTrajectory();
     void loadTrajectory();
+    void saveTrajectory();
 
 protected:
     void initializeGL() override;

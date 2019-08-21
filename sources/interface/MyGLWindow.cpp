@@ -731,6 +731,14 @@ void MyGLScreen::loadTrajectory()
 
 }
 
+void MyGLScreen::saveTrajectory()
+{
+    Scene *scene = ::currentScene;
+    SceneCloud *selectedCloud = scene->selectedCloud();
+
+    theApplication->saveTrajectoryFile(selectedCloud);
+}
+
 void MyGLScreen::mousePressEvent(QMouseEvent *event)
 {
     Qt::MouseButton button = event->button();
@@ -805,10 +813,13 @@ void MyGLScreen::mousePressEvent(QMouseEvent *event)
            QMenu contextMenu(this);
            QIcon icon;
            QAction * pAction_recordTraj = contextMenu.addAction(icon, "Record trajectory");
-           QAction * pAction_loadTraj = contextMenu.addAction(icon, "Load trajectory");
-
            connect(pAction_recordTraj, SIGNAL(triggered()), this, SLOT(recordTrajectory()));
+           QAction * pAction_loadTraj = contextMenu.addAction(icon, "Load trajectory");
            connect(pAction_loadTraj, SIGNAL(triggered()), this, SLOT(loadTrajectory()));
+           if (scene->selectedCloud()->view->getTrajectoryType() == RECORDED) {
+                QAction * pAction_saveTraj = contextMenu.addAction(icon, "Save trajectory");
+                connect(pAction_saveTraj, SIGNAL(triggered()), this, SLOT(saveTrajectory()));
+           }
            contextMenu.exec(QCursor::pos());
         }
         break;
