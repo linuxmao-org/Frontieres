@@ -47,6 +47,7 @@ public:
     bool saveSceneFile();
     bool saveCloudFile(SceneCloud *selectedCloudSave);
     bool loadCloudDefaultFile();
+    bool saveTrajectoryFile(SceneCloud *selectedCloudSave);
     void addSample();
     void showDialogVolumeEnvelope(SceneCloud *selectedCloudToVolumeEnvelope);
     void showCloudDialog(SceneCloud *selectedCloud);

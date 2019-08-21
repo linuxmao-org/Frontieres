@@ -131,6 +131,35 @@ std::string Scene::askNameCloud(FileDirection direction)
     return selection.front().toStdString();
 }
 
+string Scene::askNameTrajectory(FileDirection direction)
+{
+    // choise file name and test extension
+    QString g_extensionCloud = "trj";
+    QString filterExtensionCloud = QObject::tr("Trajectory files (*%1)").arg(g_extensionCloud);
+    QString pathScene = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+
+    QFileDialog dlg(nullptr, QString(), pathScene, filterExtensionCloud);
+    dlg.setDefaultSuffix(g_extensionCloud);
+    if (direction == FileDirection::Save) {
+        dlg.setWindowTitle(QObject::tr("Save trajectory"));
+        dlg.setAcceptMode(QFileDialog::AcceptSave);
+    }
+    else {
+        dlg.setWindowTitle(QObject::tr("Load trajectory"));
+        dlg.setAcceptMode(QFileDialog::AcceptOpen);
+        dlg.setFileMode(QFileDialog::ExistingFile);
+    }
+
+    if (dlg.exec() != QDialog::Accepted)
+        return std::string();
+
+    QStringList selection = dlg.selectedFiles();
+    if (selection.size() != 1)
+        return std::string();
+
+    return selection.front().toStdString();
+}
+
 bool Scene::load(QFile &sceneFile)
 {
     QString sceneFileName = sceneFile.fileName();
@@ -1023,6 +1052,55 @@ bool Scene::saveCloud(QFile &cloudFile, SceneCloud *selectedCloudSave)
     document.setObject(docRoot);
     cloudFile.write(document.toJson());
     if (!cloudFile.flush())
+        return false;
+
+    return true;
+}
+
+bool Scene::saveRecordedTrajectory(QFile &trajectoryFile, SceneCloud *selectedCloudSave)
+{
+    cout<<"entre savetraj"<<endl;
+    QString trajectoryFileName = trajectoryFile.fileName();
+    QDir trajectoryFileDir = QFileInfo(trajectoryFileName).dir();
+
+    if (!trajectoryFile.open(QIODevice::WriteOnly | QIODevice::Text))
+        return false;
+
+    cout<<"dans savetraj 1"<<endl;
+    CloudVis *cloudVisToSave = selectedCloudSave->view.get();
+
+    //if (!(cloudVisToSave->getTrajectory()->getType() == RECORDED));
+    //    return false;
+
+    cout<<"dans savetraj 2"<<endl;
+
+    QJsonObject docRoot;
+//    QJsonObject objRoot;
+
+    Recorded *c=dynamic_cast<Recorded*>(cloudVisToSave->getTrajectory());
+//    objRoot["positions-number"] = c->lastPosition();
+//    docRoot["trajectory"] = objRoot;
+
+    QJsonArray docPositions;
+    for (int j = 1; j < c->lastPosition(); j++){
+        QJsonObject objPosition;
+        objPosition["num"] = j;
+        objPosition["x"] = c->getPosition(j).x;
+        objPosition["y"] = c->getPosition(j).y;
+        objPosition["delay"] = c->getPosition(j).delay;
+        std::cout<<"num "<<j<<std::endl;
+        std::cout<<"x "<<c->getPosition(j).x<<std::endl;
+        std::cout<<"y "<<c->getPosition(j).y<<std::endl;
+        std::cout<<"delay "<<c->getPosition(j).delay<<std::endl;
+        docPositions.append(objPosition);
+    }
+    docRoot["positions"] = docPositions;
+
+
+    QJsonDocument document;
+    document.setObject(docRoot);
+    trajectoryFile.write(document.toJson());
+    if (!trajectoryFile.flush())
         return false;
 
     return true;
