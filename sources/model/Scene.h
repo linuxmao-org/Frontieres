@@ -64,6 +64,7 @@ public:
     bool save(QFile &sceneFile);
     bool saveCloud(QFile &cloudFile, SceneCloud *selectedCloudSave);
     bool saveRecordedTrajectory(QFile &trajectoryFile, SceneCloud *selectedCloudSave);
+    bool loadRecordedTrajectory(QFile &trajectoryFile, SceneCloud *selectedCloudLoad);
 
     bool loadSampleSet(bool interactive);
     Sample *loadNewSample(const std::string &path);

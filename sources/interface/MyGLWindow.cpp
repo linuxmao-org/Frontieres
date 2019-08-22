@@ -728,7 +728,15 @@ void MyGLScreen::recordTrajectory()
 
 void MyGLScreen::loadTrajectory()
 {
+    Scene *scene = ::currentScene;
+    SceneCloud *selectedCloud = scene->selectedCloud();
 
+    Trajectory *tr=nullptr;
+
+    tr=new Recorded(0, selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY());
+    selectedCloud->cloud->setTrajectoryType(RECORDED);
+    selectedCloud->view->setTrajectory(tr);
+    theApplication->loadTrajectoryFile(selectedCloud);
 }
 
 void MyGLScreen::saveTrajectory()

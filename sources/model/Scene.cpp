@@ -1059,28 +1059,21 @@ bool Scene::saveCloud(QFile &cloudFile, SceneCloud *selectedCloudSave)
 
 bool Scene::saveRecordedTrajectory(QFile &trajectoryFile, SceneCloud *selectedCloudSave)
 {
-    cout<<"entre savetraj"<<endl;
     QString trajectoryFileName = trajectoryFile.fileName();
     QDir trajectoryFileDir = QFileInfo(trajectoryFileName).dir();
 
     if (!trajectoryFile.open(QIODevice::WriteOnly | QIODevice::Text))
         return false;
 
-    cout<<"dans savetraj 1"<<endl;
     CloudVis *cloudVisToSave = selectedCloudSave->view.get();
 
-    //if (!(cloudVisToSave->getTrajectory()->getType() == RECORDED));
-    //    return false;
-
-    cout<<"dans savetraj 2"<<endl;
-
     QJsonObject docRoot;
-//    QJsonObject objRoot;
+
+    QJsonObject objTrajectory;
 
     Recorded *c=dynamic_cast<Recorded*>(cloudVisToSave->getTrajectory());
-//    objRoot["positions-number"] = c->lastPosition();
-//    docRoot["trajectory"] = objRoot;
-
+    objTrajectory["number-positions"] = c->lastPosition();
+    std::cout<<"number positions saved "<<c->getCenterX()<<std::endl;
     QJsonArray docPositions;
     for (int j = 1; j < c->lastPosition(); j++){
         QJsonObject objPosition;
@@ -1094,8 +1087,8 @@ bool Scene::saveRecordedTrajectory(QFile &trajectoryFile, SceneCloud *selectedCl
         std::cout<<"delay "<<c->getPosition(j).delay<<std::endl;
         docPositions.append(objPosition);
     }
-    docRoot["positions"] = docPositions;
-
+    objTrajectory["positions"] = docPositions;
+    docRoot["trajectory"] = objTrajectory;
 
     QJsonDocument document;
     document.setObject(docRoot);
@@ -1104,6 +1097,45 @@ bool Scene::saveRecordedTrajectory(QFile &trajectoryFile, SceneCloud *selectedCl
         return false;
 
     return true;
+}
+
+bool Scene::loadRecordedTrajectory(QFile &trajectoryFile, SceneCloud *selectedCloudLoad)
+{
+    QString trajectoryFileName = trajectoryFile.fileName();
+    QDir trajectoryFileDir = QFileInfo(trajectoryFileName).dir();
+
+    if (!trajectoryFile.open(QIODevice::ReadOnly | QIODevice::Text))
+        return false;
+
+    QJsonParseError jsonParseError;
+    QJsonDocument doc = QJsonDocument::fromJson(trajectoryFile.readAll(), &jsonParseError);
+    if (jsonParseError.error != QJsonParseError::NoError)
+        return false;
+
+    QJsonObject docRoot = doc.object();
+
+    QJsonObject objTrajectory = docRoot["trajectory"].toObject();
+    int nbPos = objTrajectory["number-positions"].toInt();
+
+    CloudVis *cloudVisToLoad = selectedCloudLoad->view.get();
+
+    Recorded *tr_load=dynamic_cast<Recorded*>(cloudVisToLoad->getTrajectory());
+
+    QJsonArray docPositions = objTrajectory["positions"].toArray();
+    for (const QJsonValue &jsonElementPosition : docPositions) { // positions
+        QJsonObject objPosition = jsonElementPosition.toObject();
+        int l_x;
+        int l_y;
+        double l_delay;
+        l_x = objPosition["x"].toInt();
+        l_y = objPosition["y"].toInt();
+        l_delay = objPosition["delay"].toDouble();
+        tr_load->addPositionDelayed(l_x, l_y, l_delay);
+    }
+    tr_load->setRecording(false);
+    selectedCloudLoad->view.get()->startTrajectory();
+
+
 }
 
 bool Scene::loadSampleSet(bool interactive)
