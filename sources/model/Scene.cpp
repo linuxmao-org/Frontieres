@@ -1020,10 +1020,12 @@ bool Scene::saveCloud(QFile &cloudFile, SceneCloud *selectedCloudSave)
         break;
         case RECORDED:
         {
+            cout << "recorded" <<endl;
             Recorded *c=dynamic_cast<Recorded*>(cloudVisToSave->getTrajectory());
             objCloud["positions-number"] = c->lastPosition();
             QJsonArray docPositions;
-            for (int j = 0; j <= c->lastPosition(); j++){
+            for (int j = 1; j < c->lastPosition(); j++){
+                cout << "recorded j=" <<j<<endl;
                 QJsonObject objPosition;
                 objPosition["num"] = j;
                 objPosition["x"] = c->getPosition(j).x;
@@ -1032,6 +1034,7 @@ bool Scene::saveCloud(QFile &cloudFile, SceneCloud *selectedCloudSave)
                 docPositions.append(objPosition);
             }
             objCloud["positions"] = docPositions;
+            cout << "recorded end" <<endl;
         }
         break;
         default:
