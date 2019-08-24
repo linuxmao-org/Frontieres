@@ -21,6 +21,7 @@
 
 #pragma once
 #include "ParamAdsr.h"
+#include "theglobals.h"
 
 // clouds
 struct CloudParams
@@ -54,6 +55,7 @@ struct CloudParams
     float strech;
     float expansion;
     float progress;
+    vector<Position *> myPosition;
 };
 struct ValueMax
 {

@@ -10,12 +10,6 @@
 
 enum { STATIC, BOUNCING, CIRCULAR, HYPOTROCHOID, RECORDED};
 
-struct Position {
-    int x;
-    int y;
-    double delay;
-};
-
 // abstract class as a base for every kind of trajectory
 class Trajectory {
 public:

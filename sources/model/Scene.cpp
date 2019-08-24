@@ -134,12 +134,12 @@ std::string Scene::askNameCloud(FileDirection direction)
 string Scene::askNameTrajectory(FileDirection direction)
 {
     // choise file name and test extension
-    QString g_extensionCloud = "trj";
-    QString filterExtensionCloud = QObject::tr("Trajectory files (*%1)").arg(g_extensionCloud);
+    QString g_extensionTrajectory = "trj";
+    QString filterExtensionTrajectory = QObject::tr("Trajectory files (*%1)").arg(g_extensionTrajectory);
     QString pathScene = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
 
-    QFileDialog dlg(nullptr, QString(), pathScene, filterExtensionCloud);
-    dlg.setDefaultSuffix(g_extensionCloud);
+    QFileDialog dlg(nullptr, QString(), pathScene, filterExtensionTrajectory);
+    dlg.setDefaultSuffix(g_extensionTrajectory);
     if (direction == FileDirection::Save) {
         dlg.setWindowTitle(QObject::tr("Save trajectory"));
         dlg.setAcceptMode(QFileDialog::AcceptSave);
@@ -873,6 +873,35 @@ bool Scene::loadCloudDefault(QFile &cloudFile)
     g_defaultCloudParams.expansion = objCloud["expansion"].toDouble();
     g_defaultCloudParams.progress = objCloud["progress"].toDouble();
 
+    for (int i = 0; i < g_defaultCloudParams.myPosition.size(); i++) {
+        delete g_defaultCloudParams.myPosition[i];
+    }
+
+    if (g_defaultCloudParams.trajectoryType == RECORDED) {
+        Position *first_Position = new Position;
+        first_Position->x = 0;
+        first_Position->y = 0;
+        first_Position->delay = 0;
+        g_defaultCloudParams.myPosition.push_back(first_Position);
+        QJsonArray docPositions = objCloud["positions"].toArray();
+        for (const QJsonValue &jsonElementPosition : docPositions) { // positions
+            QJsonObject objPosition = jsonElementPosition.toObject();
+            Position *tr_Position = new Position;
+            tr_Position->x = objPosition["x"].toInt();
+            tr_Position->y = objPosition["y"].toInt();
+            tr_Position->delay = objPosition["delay"].toDouble();
+
+            g_defaultCloudParams.myPosition.push_back(tr_Position);
+        }
+        for (int i = 0; i < g_defaultCloudParams.myPosition.size(); i = i + 1) { // positions
+            int l_x;
+            int l_y;
+            double l_delay;
+            l_x = g_defaultCloudParams.myPosition[i]->x;
+            l_y = g_defaultCloudParams.myPosition[i]->y;
+            l_delay = g_defaultCloudParams.myPosition[i]->delay;
+        }
+    }
 
     cout << "duration = " << g_defaultCloudParams.duration << "\n";
     cout << "overlap = " << g_defaultCloudParams.overlap << "\n";
@@ -1020,12 +1049,10 @@ bool Scene::saveCloud(QFile &cloudFile, SceneCloud *selectedCloudSave)
         break;
         case RECORDED:
         {
-            cout << "recorded" <<endl;
             Recorded *c=dynamic_cast<Recorded*>(cloudVisToSave->getTrajectory());
             objCloud["positions-number"] = c->lastPosition();
             QJsonArray docPositions;
             for (int j = 1; j < c->lastPosition(); j++){
-                cout << "recorded j=" <<j<<endl;
                 QJsonObject objPosition;
                 objPosition["num"] = j;
                 objPosition["x"] = c->getPosition(j).x;
@@ -1034,7 +1061,6 @@ bool Scene::saveCloud(QFile &cloudFile, SceneCloud *selectedCloudSave)
                 docPositions.append(objPosition);
             }
             objCloud["positions"] = docPositions;
-            cout << "recorded end" <<endl;
         }
         break;
         default:
