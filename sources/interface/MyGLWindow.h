@@ -79,6 +79,7 @@ public slots:
     void keyAction_EditEnvelope();
     void keyAction_EditCloud();
     void keyAction_SampleNames();
+    void keyAction_ShowParameters();
 
 private slots:
 

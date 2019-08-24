@@ -712,6 +712,14 @@ void MyGLScreen::keyAction_SampleNames()
     showSampleNames = !showSampleNames;
 }
 
+void MyGLScreen::keyAction_ShowParameters()
+{
+    Scene *scene = ::currentScene;
+    SceneCloud *selectedCloud = scene->selectedCloud();
+    if (scene->selectedCloud())
+        scene->selectedCloud()->cloud->showParameters();
+}
+
 void MyGLScreen::recordTrajectory()
 {
     Scene *scene = ::currentScene;
@@ -1278,6 +1286,10 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
     }
     case Qt::Key_P: {
         keyAction_EditCloud();
+        break;
+    }
+    case Qt::Key_U : {
+        keyAction_ShowParameters();
         break;
     }
     default:
