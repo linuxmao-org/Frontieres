@@ -501,13 +501,12 @@ void MyGLScreen::keyAction_Cloud(int dir)
         }
     }
     else {
-        int numGrains = 8;  // initial number of grains
         if (selectedCloud) {
             if (!scene->m_clouds.empty()) {
                 selectedCloud->view->setSelectState(false);
             }
         }
-        scene->addNewCloud(numGrains);
+        scene->addNewCloud(g_defaultCloudParams.numGrains);
         scene->m_selectedCloud = scene->m_clouds.size() - 1;
     }
 }
@@ -561,7 +560,7 @@ void MyGLScreen::keyAction_Trajectory(int dir)
                         break;
                     }
                     case HYPOTROCHOID: {
-                        recordTrajectory();
+                        contextMenu_recordTrajectory();
                         break;
                     }
                     case RECORDED: {
@@ -720,7 +719,12 @@ void MyGLScreen::keyAction_ShowParameters()
         scene->selectedCloud()->cloud->showParameters();
 }
 
-void MyGLScreen::recordTrajectory()
+void MyGLScreen::contextMenu_parameters()
+{
+    keyAction_EditCloud();
+}
+
+void MyGLScreen::contextMenu_recordTrajectory()
 {
     Scene *scene = ::currentScene;
     SceneCloud *selectedCloud = scene->selectedCloud();
@@ -734,7 +738,7 @@ void MyGLScreen::recordTrajectory()
     selectedCloud->view->setRecordTrajectoryAsked(true);
 }
 
-void MyGLScreen::loadTrajectory()
+void MyGLScreen::contextMenu_loadTrajectory()
 {
     Scene *scene = ::currentScene;
     SceneCloud *selectedCloud = scene->selectedCloud();
@@ -747,12 +751,17 @@ void MyGLScreen::loadTrajectory()
     theApplication->loadTrajectoryFile(selectedCloud);
 }
 
-void MyGLScreen::saveTrajectory()
+void MyGLScreen::contextMenu_saveTrajectory()
 {
     Scene *scene = ::currentScene;
     SceneCloud *selectedCloud = scene->selectedCloud();
 
     theApplication->saveTrajectoryFile(selectedCloud);
+}
+
+void MyGLScreen::contextMenu_newCloud()
+{
+    keyAction_Cloud(1);
 }
 
 void MyGLScreen::mousePressEvent(QMouseEvent *event)
@@ -826,18 +835,42 @@ void MyGLScreen::mousePressEvent(QMouseEvent *event)
     }
     case Qt::RightButton: {
         if (scene->selectedCloud()) {
-           QMenu contextMenu(this);
-           QIcon icon;
-           QAction * pAction_recordTraj = contextMenu.addAction(icon, "Record trajectory");
-           connect(pAction_recordTraj, SIGNAL(triggered()), this, SLOT(recordTrajectory()));
-           QAction * pAction_loadTraj = contextMenu.addAction(icon, "Load trajectory");
-           connect(pAction_loadTraj, SIGNAL(triggered()), this, SLOT(loadTrajectory()));
-           if (scene->selectedCloud()->view->getTrajectoryType() == RECORDED) {
-                QAction * pAction_saveTraj = contextMenu.addAction(icon, "Save trajectory");
-                connect(pAction_saveTraj, SIGNAL(triggered()), this, SLOT(saveTrajectory()));
-           }
-           contextMenu.exec(QCursor::pos());
+            QMenu contextMenu(this);
+            QIcon icon;
+
+            QAction * pAction_parameters = contextMenu.addAction(icon, QObject::tr("Cloud parameters"));
+            connect(pAction_parameters, SIGNAL(triggered()), this, SLOT(contextMenu_parameters()));
+
+            QAction *separator_1 = contextMenu.addSeparator();
+            addAction(separator_1);
+
+            QAction * pAction_newCloud = contextMenu.addAction(icon, QObject::tr("Create new cloud"));
+            connect(pAction_newCloud, SIGNAL(triggered()), this, SLOT(contextMenu_newCloud()));
+
+            QAction *separator_2 = contextMenu.addSeparator();addAction(separator_2);
+            addAction(separator_2);
+
+            QAction * pAction_recordTraj = contextMenu.addAction(icon, QObject::tr("Record trajectory"));
+            connect(pAction_recordTraj, SIGNAL(triggered()), this, SLOT(contextMenu_recordTrajectory()));
+
+            QAction * pAction_loadTraj = contextMenu.addAction(icon, QObject::tr("Load trajectory"));
+            connect(pAction_loadTraj, SIGNAL(triggered()), this, SLOT(contextMenu_loadTrajectory()));
+
+            if (scene->selectedCloud()->view->getTrajectoryType() == RECORDED) {
+                QAction * pAction_saveTraj = contextMenu.addAction(icon, QObject::tr("Save trajectory"));
+                connect(pAction_saveTraj, SIGNAL(triggered()), this, SLOT(contextMenu_saveTrajectory()));
+            }
+            contextMenu.exec(QCursor::pos());
+
         }
+        else {
+            QMenu contextMenu(this);
+            QIcon icon;
+            QAction * pAction_newCloud = contextMenu.addAction(icon, QObject::tr("Create new cloud"));
+            connect(pAction_newCloud, SIGNAL(triggered()), this, SLOT(contextMenu_newCloud()));
+            contextMenu.exec(QCursor::pos());
+        }
+
         break;
     }
     default:

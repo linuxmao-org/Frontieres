@@ -83,9 +83,11 @@ public slots:
 
 private slots:
 
-    void recordTrajectory();
-    void loadTrajectory();
-    void saveTrajectory();
+    void contextMenu_recordTrajectory();
+    void contextMenu_loadTrajectory();
+    void contextMenu_saveTrajectory();
+    void contextMenu_newCloud();
+    void contextMenu_parameters();
 
 protected:
     void initializeGL() override;
