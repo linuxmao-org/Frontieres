@@ -3851,7 +3851,7 @@ border-bottom-left-radius: 9px;
              </widget>
             </item>
             <item>
-             <widget class="QFrame" name="frame_Strech">
+             <widget class="QFrame" name="frame_Stretch">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
                 <horstretch>0</horstretch>
@@ -3890,7 +3890,7 @@ border-bottom-left-radius: 9px;
                 <number>0</number>
                </property>
                <item>
-                <widget class="QFrame" name="frame_Label_Strech">
+                <widget class="QFrame" name="frame_Label_Stretch">
                  <property name="frameShape">
                   <enum>QFrame::NoFrame</enum>
                  </property>
@@ -3911,7 +3911,7 @@ border-bottom-left-radius: 9px;
                    <number>0</number>
                   </property>
                   <item>
-                   <widget class="QLabel" name="label_Strech">
+                   <widget class="QLabel" name="label_Stretch">
                     <property name="font">
                      <font>
                       <pointsize>9</pointsize>
@@ -3927,7 +3927,7 @@ border-bottom-left-radius: 9px;
                      <enum>QFrame::Raised</enum>
                     </property>
                     <property name="text">
-                     <string>Strech</string>
+                     <string>Stretch</string>
                     </property>
                     <property name="alignment">
                      <set>Qt::AlignCenter</set>
@@ -3938,7 +3938,7 @@ border-bottom-left-radius: 9px;
                 </widget>
                </item>
                <item>
-                <widget class="QFrame" name="frame_Dial_Strech">
+                <widget class="QFrame" name="frame_Dial_Stretch">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -3962,7 +3962,7 @@ border-bottom-left-radius: 9px;
                    <number>0</number>
                   </property>
                   <item>
-                   <widget class="QDial" name="dial_Strech">
+                   <widget class="QDial" name="dial_Stretch">
                     <property name="sizePolicy">
                      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                       <horstretch>0</horstretch>
@@ -4806,7 +4806,7 @@ border-bottom-left-radius: 9px;
                <item>
                 <widget class="QRadioButton" name="radioButton_Trajectory_Bouncing">
                  <property name="text">
-                  <string>&amp;Boucing</string>
+                  <string>&amp;Bouncing</string>
                  </property>
                 </widget>
                </item>
