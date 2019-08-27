@@ -51,7 +51,7 @@ struct CloudParams
     float radius;
     float radiusInt;
     float angle;
-    float strech;
+    float stretch;
     float expansion;
     float progress;
 };
@@ -72,7 +72,7 @@ struct ValueMax
     const float radius = 1000;
     const float radiusInt = 1000;
     const float angle = 360;
-    const float strech = 1;
+    const float stretch = 1;
     const float expansion = 1000;
     const float progress = 10000;
 };
@@ -95,7 +95,7 @@ struct ValueMin
     const float radius = 0;
     const float radiusInt = 0;
     const float angle = 0;
-    const float strech = 0;
+    const float stretch = 0;
     const float expansion = -1000;
     const float progress = 1;
 };

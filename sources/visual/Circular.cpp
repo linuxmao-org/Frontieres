@@ -10,7 +10,7 @@ Circular::Circular(double s,double xOr, double yOr,double r, double ang, double 
     setRadius(r);
     setDistanceToCenter(0);
     setAngle(ang);
-    setStrech(stch);
+    setStretch(stch);
     setProgress(prgs);
 
 }
@@ -34,7 +34,7 @@ pt2d Circular::computeTrajectory(double dt)
 
     // Valeurs (Exemple) ////
     const double monAngle = - getAngle() * (PI / 180.); // rotation 45°
-    const double stretchX = getStrech(); // étirement horizontal
+    const double stretchX = getStretch(); // étirement horizontal
     const double stretchY = 1; // étirement vertical
     // Fin exemple       ////
 

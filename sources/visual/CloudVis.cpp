@@ -107,7 +107,7 @@ CloudVis::CloudVis(float x, float y, unsigned int numGrainsVis,
         break;
     case CIRCULAR:
         tr=new Circular(g_defaultCloudParams.speed,x,y,g_defaultCloudParams.radius,g_defaultCloudParams.angle,
-                        g_defaultCloudParams.strech,g_defaultCloudParams.progress );
+                        g_defaultCloudParams.stretch,g_defaultCloudParams.progress );
         isMoving = true;
         setTrajectoryType(CIRCULAR);
         setTrajectory(tr);
@@ -267,7 +267,7 @@ void CloudVis::setTrajectory(Trajectory *tr)
                     Circular *trv = dynamic_cast<Circular*>(tr);
                     Circular *trMidi = nullptr;
                     trMidi = new Circular(trv->getSpeed(), trv->getOrigin().x, trv->getOrigin().y, trv->getRadius(),trv->getAngle(),
-                                            trv->getStrech(),trv->getProgress());
+                                            trv->getStretch(),trv->getProgress());
                     playedCloudVisMidi[i]->setTrajectory(trMidi);
                     setTrajectoryType(CIRCULAR);
                     break;
