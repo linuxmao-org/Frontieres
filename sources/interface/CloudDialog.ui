@@ -3703,6 +3703,9 @@ border-bottom-left-radius: 9px;
                       <pointsize>9</pointsize>
                      </font>
                     </property>
+                    <property name="whatsThis">
+                     <string/>
+                    </property>
                     <property name="autoFillBackground">
                      <bool>false</bool>
                     </property>

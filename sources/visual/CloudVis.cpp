@@ -91,13 +91,14 @@ CloudVis::CloudVis(float x, float y, unsigned int numGrainsVis,
     myTrajectory = nullptr;
     Trajectory *tr = nullptr;
     trajectoryType = g_defaultCloudParams.trajectoryType;
-    /*
-    cout << "type defaut : " << g_defaultCloudParams.trajectoryType << endl;
+
+    //cout << "type defaut : " << g_defaultCloudParams.trajectoryType << endl;
     switch (g_defaultCloudParams.trajectoryType) {
     case STATIC:
         isMoving = false;
         setTrajectoryType(STATIC);
         setTrajectory(tr);
+        break;
     case BOUNCING:
         //tr=new Bouncing(g_defaultCloudParams.radius,g_defaultCloudParams.speed,g_defaultCloudParams.angle,x,y);
         tr=new Circular(g_defaultCloudParams.speed,x,y,g_defaultCloudParams.radius,g_defaultCloudParams.angle,0,1);
@@ -119,16 +120,31 @@ CloudVis::CloudVis(float x, float y, unsigned int numGrainsVis,
         setTrajectoryType(HYPOTROCHOID);
         setTrajectory(tr);
         break;
-    case RECORDED:
+    case RECORDED:{
+        tr=new Recorded(0, x, y);
+        Recorded *recTraj=dynamic_cast<Recorded*>(tr);
         setTrajectoryType(RECORDED);
+
+        for (int i = 0; i < g_defaultCloudParams.myPosition.size(); i = i + 1) { // positions
+            int l_x;
+            int l_y;
+            double l_delay;
+            l_x = g_defaultCloudParams.myPosition[i]->x;
+            l_y = g_defaultCloudParams.myPosition[i]->y;
+            l_delay = g_defaultCloudParams.myPosition[i]->delay;
+            recTraj->addPositionDelayed(l_x, l_y, l_delay);
+        }
+        setTrajectory(tr);
+        recTraj->setRecording(false);
+        startTrajectory();
+        }
         break;
     default :
         break;
-    }*/
+    }
 
     updateCloudPosition(x, y);
     updateCloudOrigin(x, y);
-
     xRandExtent = g_defaultCloudParams.xRandExtent;
     yRandExtent = g_defaultCloudParams.yRandExtent;
 

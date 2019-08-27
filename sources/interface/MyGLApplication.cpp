@@ -147,6 +147,27 @@ bool MyGLApplication::loadCloudDefaultFile()
     return currentScene->loadCloudDefault(cloudFile);
 }
 
+bool MyGLApplication::saveTrajectoryFile(SceneCloud *selectedCloudSave)
+{
+    std::string nameTrajectoryFile = Scene::askNameTrajectory(FileDirection::Save);
+    if (nameTrajectoryFile.empty())
+        return false;
+
+    QFile trajectoryFile(QString::fromStdString(nameTrajectoryFile));
+    return ::currentScene->saveRecordedTrajectory(trajectoryFile, selectedCloudSave);
+
+}
+
+bool MyGLApplication::loadTrajectoryFile(SceneCloud *selectedCloudLoad)
+{
+    std::string nameTrajectoryFile = Scene::askNameTrajectory(FileDirection::Load);
+    if (nameTrajectoryFile.empty())
+        return false;
+
+    QFile trajectoryFile(QString::fromStdString(nameTrajectoryFile));
+    return ::currentScene->loadRecordedTrajectory(trajectoryFile, selectedCloudLoad);
+}
+
 bool MyGLApplication::saveSceneFile()
 {
     std::string nameSceneFile = Scene::askNameScene(FileDirection::Save);
