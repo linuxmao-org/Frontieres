@@ -543,7 +543,7 @@ void MyGLScreen::keyAction_Trajectory(int dir)
                     switch (selectedCloud->cloud->getTrajectoryType())  {
                     case BOUNCING: {
                         tr=new Circular(g_defaultCloudParams.speed,selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY(),g_defaultCloudParams.radius,
-                                        g_defaultCloudParams.angle, g_defaultCloudParams.strech, g_defaultCloudParams.progress);
+                                        g_defaultCloudParams.angle, g_defaultCloudParams.stretch, g_defaultCloudParams.progress);
                         selectedCloud->cloud->setTrajectoryType (CIRCULAR);
                         selectedCloud->view->updateCloudPosition(selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY());
                         selectedCloud->view->setTrajectory(tr);

@@ -92,14 +92,14 @@ double Trajectory::getRadius()
     return radius;
 }
 
-void Trajectory::setStrech(double l_strech)
+void Trajectory::setStretch(double l_Stretch)
 {
-    strech = l_strech;
+    stretch = l_Stretch;
 }
 
-double Trajectory::getStrech()
+double Trajectory::getStretch()
 {
-    return strech;
+    return stretch;
 }
 
 void Trajectory::setRadiusInt(double l_RadiusInt)
