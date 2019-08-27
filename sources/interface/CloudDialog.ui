@@ -4014,7 +4014,7 @@ border-bottom-left-radius: 9px;
                 </widget>
                </item>
                <item>
-                <widget class="QDoubleSpinBox" name="doubleSpinBox_Strech">
+                <widget class="QDoubleSpinBox" name="doubleSpinBox_Stretch">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                    <horstretch>0</horstretch>
