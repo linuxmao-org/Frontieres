@@ -151,13 +151,13 @@ private slots:
 
     void update_Angle();
 
-    void on_dial_Strech_valueChanged(int value);
+    void on_dial_Stretch_valueChanged(int value);
 
-    void on_doubleSpinBox_Strech_valueChanged(double arg1);
+    void on_doubleSpinBox_Stretch_valueChanged(double arg1);
 
-    void on_doubleSpinBox_Strech_editingFinished();
+    void on_doubleSpinBox_Stretch_editingFinished();
 
-    void update_Strech();
+    void update_Stretch();
 
     void on_radioButton_Trajectory_Bouncing_toggled(bool checked);
 
