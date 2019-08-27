@@ -1024,7 +1024,7 @@
     <message>
         <location filename="../sources/interface/MyGLWindow.cpp" line="853"/>
         <source>Record trajectory</source>
-        <translation>Sauvegarder la trajectoire</translation>
+        <translation>Enregistrer la trajectoire</translation>
     </message>
     <message>
         <location filename="../sources/interface/MyGLWindow.cpp" line="856"/>
@@ -1036,7 +1036,7 @@
         <location filename="../sources/interface/MyGLWindow.cpp" line="860"/>
         <location filename="../sources/model/Scene.cpp" line="144"/>
         <source>Save trajectory</source>
-        <translation>Sauver la trajectoire</translation>
+        <translation>Sauvegarder la trajectoire</translation>
     </message>
 </context>
 <context>
