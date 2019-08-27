@@ -38,7 +38,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>20</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -191,17 +191,17 @@
   </action>
   <action name="actionXmotion">
    <property name="text">
-    <string>X motion (&amp;X)</string>
+    <string>X Exp (&amp;X)</string>
    </property>
   </action>
   <action name="actionYmotion">
    <property name="text">
-    <string>Y motion (&amp;Y)</string>
+    <string>Y Exp (&amp;Y)</string>
    </property>
   </action>
   <action name="actionXYmotion">
    <property name="text">
-    <string>XY motion (&amp;R)</string>
+    <string>XY Exp (&amp;R)</string>
    </property>
   </action>
   <action name="actionWindow">
@@ -221,7 +221,13 @@
   </action>
   <action name="actionGrain">
    <property name="text">
-    <string>Grain (&amp;V)</string>
+    <string>Grains (&amp;V)</string>
+   </property>
+   <property name="iconText">
+    <string>Grains (V)</string>
+   </property>
+   <property name="toolTip">
+    <string>Grains (V)</string>
    </property>
   </action>
   <action name="actionDuration">
@@ -281,7 +287,7 @@
   </action>
   <action name="actionTrajectory">
    <property name="text">
-    <string>Trajectory (I)</string>
+    <string>Trajectory (&amp;I)</string>
    </property>
   </action>
  </widget>

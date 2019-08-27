@@ -903,6 +903,17 @@ int main(int argc, char **argv)
                      &app, +[]() { std::cerr << "Interrupt\n"; theApplication->exit(1); });
 #endif
 
+    //-------------Translation------------//
+
+    QString locale = QLocale::system().name().section('_', 0, 0);
+
+    QTranslator translator;
+
+    cout << (QString("Frontieres_") + locale).toStdString() << endl;
+
+    translator.load(QString("Frontieres_") + locale);
+    app.installTranslator(&translator);
+
     //-------------Command Line-----------//
 
     std::unique_ptr<QCommandLineParser> cmdParser(new QCommandLineParser);
