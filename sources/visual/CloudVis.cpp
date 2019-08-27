@@ -457,7 +457,10 @@ void CloudVis::draw()
         glColor4f(0.8, 0.9, 0.1, 0.4);
     else
         if (isSelected)
-            glColor4f(0.1, 0.7, 0.6, 0.35);
+            if (recordingTrajectory)
+                glColor4f(1.0, 0.1, 0.0, 0.35);
+        else
+                glColor4f(0.1, 0.7, 0.6, 0.35);
         else
             glColor4f(0.0, 0.4, 0.7, 0.8);
 
@@ -478,7 +481,10 @@ void CloudVis::draw()
         // Cloud origin representation
 
         if (isSelected)
-            glColor4f(0.1, 0.7, 0.6, 0.35);
+            if (recordingTrajectory || recordTrajectoryAsked)
+                glColor4f(1.0, 0.1, 0.0, 0.35);
+        else
+                glColor4f(0.1, 0.7, 0.6, 0.35);
         else
             glColor4f(0.0, 0.4, 0.7, 0.8);
 
