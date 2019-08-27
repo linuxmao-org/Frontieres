@@ -257,7 +257,7 @@ bool Scene::load(QFile &sceneFile)
         double centerY=0;
         double radius=0;
         double angle=0;
-        double strech=0;
+        double stretch=0;
         double radiusInt=0;
         double expansion=0;
         double progress=0;
