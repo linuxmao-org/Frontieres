@@ -36,8 +36,8 @@ public:
     double getAngle();
     void setRadius(double l_radius);
     double getRadius();
-    void setStrech(double l_strech);
-    double getStrech();
+    void setStretch(double l_stretch);
+    double getStretch();
     void setRadiusInt(double l_RadiusInt);
     double getRadiusInt();
     void setExpansion(double l_Expansion);
@@ -62,7 +62,7 @@ private:
     double progress;
     double radius;
     double angle;
-    double strech;
+    double stretch;
     double radiusInt;
     double expansion;
     double trajectoryStartTime;

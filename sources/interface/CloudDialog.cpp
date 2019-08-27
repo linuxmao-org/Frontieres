@@ -75,10 +75,10 @@ CloudDialog::CloudDialog(QWidget *parent) :
     ui->dial_Angle->setMaximum(g_cloudValueMax.angle);
     ui->dial_Angle->setMinimum(g_cloudValueMin.angle);
 
-    ui->doubleSpinBox_Strech->setMinimum(g_cloudValueMin.strech);
-    ui->doubleSpinBox_Strech->setMaximum(g_cloudValueMax.strech);
-    ui->dial_Strech->setMaximum(g_cloudValueMax.strech * 1000);
-    ui->dial_Strech->setMinimum(g_cloudValueMin.strech * 1000);
+    ui->doubleSpinBox_Stretch->setMinimum(g_cloudValueMin.stretch);
+    ui->doubleSpinBox_Stretch->setMaximum(g_cloudValueMax.stretch);
+    ui->dial_Stretch->setMaximum(g_cloudValueMax.stretch * 1000);
+    ui->dial_Stretch->setMinimum(g_cloudValueMin.stretch * 1000);
 
     ui->doubleSpinBox_Speed->setMinimum(g_cloudValueMin.speed);
     ui->doubleSpinBox_Speed->setMaximum(g_cloudValueMax.speed);
@@ -228,14 +228,14 @@ void CloudDialog::linkCloud(Cloud *cloudLinked, CloudVis *cloudVisLinked)
             ui->doubleSpinBox_Radius->setDisabled(true);
             ui->doubleSpinBox_RadiusInt->setDisabled(true);
             ui->doubleSpinBox_Angle->setDisabled(true);
-            ui->doubleSpinBox_Strech->setDisabled(true);
+            ui->doubleSpinBox_Stretch->setDisabled(true);
             ui->doubleSpinBox_Expansion->setDisabled(true);
             ui->doubleSpinBox_Progress->setDisabled(true);
             ui->dial_Speed->setDisabled(true);
             ui->dial_Radius->setDisabled(true);
             ui->dial_RadiusInt->setDisabled(true);
             ui->dial_Angle->setDisabled(true);
-            ui->dial_Strech->setDisabled(true);
+            ui->dial_Stretch->setDisabled(true);
             ui->dial_Expansion->setDisabled(true);
             ui->dial_Progress->setDisabled(true);
             break;
@@ -246,14 +246,14 @@ void CloudDialog::linkCloud(Cloud *cloudLinked, CloudVis *cloudVisLinked)
             ui->doubleSpinBox_Radius->setDisabled(false);
             ui->doubleSpinBox_RadiusInt->setDisabled(true);
             ui->doubleSpinBox_Angle->setDisabled(false);
-            ui->doubleSpinBox_Strech->setDisabled(true);
+            ui->doubleSpinBox_Stretch->setDisabled(true);
             ui->doubleSpinBox_Expansion->setDisabled(true);
             ui->doubleSpinBox_Progress->setDisabled(true);
             ui->dial_Speed->setDisabled(false);
             ui->dial_Radius->setDisabled(false);
             ui->dial_RadiusInt->setDisabled(true);
             ui->dial_Angle->setDisabled(false);
-            ui->dial_Strech->setDisabled(true);
+            ui->dial_Stretch->setDisabled(true);
             ui->dial_Expansion->setDisabled(true);
             ui->dial_Progress->setDisabled(true);
             ui->doubleSpinBox_Speed->setValue(cloudVisLinked->getTrajectory()->getSpeed());
@@ -269,20 +269,20 @@ void CloudDialog::linkCloud(Cloud *cloudLinked, CloudVis *cloudVisLinked)
             ui->doubleSpinBox_Radius->setDisabled(false);
             ui->doubleSpinBox_RadiusInt->setDisabled(true);
             ui->doubleSpinBox_Angle->setDisabled(false);
-            ui->doubleSpinBox_Strech->setDisabled(false);
+            ui->doubleSpinBox_Stretch->setDisabled(false);
             ui->doubleSpinBox_Expansion->setDisabled(true);
             ui->doubleSpinBox_Progress->setDisabled(false);
             ui->dial_Speed->setDisabled(false);
             ui->dial_Radius->setDisabled(false);
             ui->dial_RadiusInt->setDisabled(true);
             ui->dial_Angle->setDisabled(false);
-            ui->dial_Strech->setDisabled(false);
+            ui->dial_Stretch->setDisabled(false);
             ui->dial_Expansion->setDisabled(true);
             ui->dial_Progress->setDisabled(false);
             ui->doubleSpinBox_Speed->setValue(cloudVisLinked->getTrajectory()->getSpeed());
             ui->doubleSpinBox_Radius->setValue(cloudVisLinked->getTrajectory()->getRadius());
             ui->doubleSpinBox_Angle->setValue(cloudVisLinked->getTrajectory()->getAngle());
-            ui->doubleSpinBox_Strech->setValue(cloudVisLinked->getTrajectory()->getStrech());
+            ui->doubleSpinBox_Stretch->setValue(cloudVisLinked->getTrajectory()->getStretch());
             ui->doubleSpinBox_Progress->setValue(cloudVisLinked->getTrajectory()->getProgress());
             have_trajectory_circular = true;
             break;
@@ -294,14 +294,14 @@ void CloudDialog::linkCloud(Cloud *cloudLinked, CloudVis *cloudVisLinked)
             ui->doubleSpinBox_Radius->setDisabled(false);
             ui->doubleSpinBox_RadiusInt->setDisabled(false);
             ui->doubleSpinBox_Angle->setDisabled(false);
-            ui->doubleSpinBox_Strech->setDisabled(true);
+            ui->doubleSpinBox_Stretch->setDisabled(true);
             ui->doubleSpinBox_Expansion->setDisabled(false);
             ui->doubleSpinBox_Progress->setDisabled(false);
             ui->dial_Speed->setDisabled(false);
             ui->dial_Radius->setDisabled(false);
             ui->dial_RadiusInt->setDisabled(false);
             ui->dial_Angle->setDisabled(false);
-            ui->dial_Strech->setDisabled(true);
+            ui->dial_Stretch->setDisabled(true);
             ui->dial_Expansion->setDisabled(false);
             ui->dial_Progress->setDisabled(false);
             ui->doubleSpinBox_Speed->setValue(cloudVisLinked->getTrajectory()->getSpeed());
@@ -320,14 +320,14 @@ void CloudDialog::linkCloud(Cloud *cloudLinked, CloudVis *cloudVisLinked)
             ui->doubleSpinBox_Radius->setDisabled(true);
             ui->doubleSpinBox_RadiusInt->setDisabled(true);
             ui->doubleSpinBox_Angle->setDisabled(true);
-            ui->doubleSpinBox_Strech->setDisabled(true);
+            ui->doubleSpinBox_Stretch->setDisabled(true);
             ui->doubleSpinBox_Expansion->setDisabled(true);
             ui->doubleSpinBox_Progress->setDisabled(true);
             ui->dial_Speed->setDisabled(true);
             ui->dial_Radius->setDisabled(true);
             ui->dial_RadiusInt->setDisabled(true);
             ui->dial_Angle->setDisabled(true);
-            ui->dial_Strech->setDisabled(true);
+            ui->dial_Stretch->setDisabled(true);
             ui->dial_Expansion->setDisabled(true);
             ui->dial_Progress->setDisabled(true);
             have_trajectory_recorded = true;
@@ -378,14 +378,14 @@ void CloudDialog::setDisableAllWidgets(bool disabled)
     ui->doubleSpinBox_Radius->setDisabled(disabled);
     ui->doubleSpinBox_RadiusInt->setDisabled(disabled);
     ui->doubleSpinBox_Angle->setDisabled(disabled);
-    ui->doubleSpinBox_Strech->setDisabled(disabled);
+    ui->doubleSpinBox_Stretch->setDisabled(disabled);
     ui->doubleSpinBox_Expansion->setDisabled(disabled);
     ui->doubleSpinBox_Progress->setDisabled(disabled);
     ui->dial_Speed->setDisabled(disabled);
     ui->dial_Radius->setDisabled(disabled);
     ui->dial_RadiusInt->setDisabled(disabled);
     ui->dial_Angle->setDisabled(disabled);
-    ui->dial_Strech->setDisabled(disabled);
+    ui->dial_Stretch->setDisabled(disabled);
     ui->dial_Expansion->setDisabled(disabled);
     ui->dial_Progress->setDisabled(disabled);
 }
@@ -808,33 +808,31 @@ void CloudDialog::update_Angle()
     }
 }
 
-void CloudDialog::on_doubleSpinBox_Strech_editingFinished()
+void CloudDialog::on_doubleSpinBox_Stretch_editingFinished()
 {
-    update_Strech();
+    update_Stretch();
 }
 
-void CloudDialog::on_dial_Strech_valueChanged(int value)
+void CloudDialog::on_dial_Stretch_valueChanged(int value)
 {
-    cout << "val =" << value << endl;
-    ui->doubleSpinBox_Strech->setValue(double(value / 1000));
-    update_Strech();
+    ui->doubleSpinBox_Stretch->setValue(double(value / 1000));
+    update_Stretch();
 }
 
-void CloudDialog::on_doubleSpinBox_Strech_valueChanged(double arg1)
+void CloudDialog::on_doubleSpinBox_Stretch_valueChanged(double arg1)
 {
-        cout << "spinval =" << arg1 << endl;
-    ui->dial_Strech->setValue(int(arg1 * 1000));
+    ui->dial_Stretch->setValue(int(arg1 * 1000));
     if (!linking) {
         editing = true;
         passageValue = (double) arg1;
     }
 }
 
-void CloudDialog::update_Strech()
+void CloudDialog::update_Stretch()
 {
     if (!linking){
         if (cloudVisRef->getTrajectory() != nullptr)
-            cloudVisRef->getTrajectory()->setStrech(passageValue);
+            cloudVisRef->getTrajectory()->setStretch(passageValue);
         editing = false;
     }
 }
@@ -862,11 +860,11 @@ void CloudDialog::on_radioButton_Trajectory_Circular_toggled(bool checked)
     Trajectory *tr=nullptr;
     if ((cloudVisRef->getTrajectory() != nullptr) & (have_trajectory_circular))
         tr=new Circular(ui->doubleSpinBox_Speed->value(),ui->doubleSpinBox_X->value(),ui->doubleSpinBox_Y->value(),
-                        ui->doubleSpinBox_Radius->value(), ui->doubleSpinBox_Angle->value(),ui->doubleSpinBox_Strech->value(),
+                        ui->doubleSpinBox_Radius->value(), ui->doubleSpinBox_Angle->value(),ui->doubleSpinBox_Stretch->value(),
                         ui->doubleSpinBox_Progress->value());
     else
         tr=new Circular(g_defaultCloudParams.speed,ui->doubleSpinBox_X->value(),ui->doubleSpinBox_Y->value(),
-                        g_defaultCloudParams.radius, g_defaultCloudParams.angle,g_defaultCloudParams.strech,
+                        g_defaultCloudParams.radius, g_defaultCloudParams.angle,g_defaultCloudParams.stretch,
                         g_defaultCloudParams.progress );
     cloudRef->setTrajectoryType(CIRCULAR);
     cloudVisRef->setTrajectory(tr);

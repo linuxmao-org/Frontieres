@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>726</width>
-    <height>445</height>
+    <width>814</width>
+    <height>441</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -3893,7 +3893,7 @@ border-bottom-left-radius: 9px;
                 <number>0</number>
                </property>
                <item>
-                <widget class="QFrame" name="frame_Label_Strech">
+                <widget class="QFrame" name="frame_Label_Stretch">
                  <property name="frameShape">
                   <enum>QFrame::NoFrame</enum>
                  </property>
@@ -3914,7 +3914,7 @@ border-bottom-left-radius: 9px;
                    <number>0</number>
                   </property>
                   <item>
-                   <widget class="QLabel" name="label_Strech">
+                   <widget class="QLabel" name="label_Stretch">
                     <property name="font">
                      <font>
                       <pointsize>9</pointsize>
@@ -3930,7 +3930,7 @@ border-bottom-left-radius: 9px;
                      <enum>QFrame::Raised</enum>
                     </property>
                     <property name="text">
-                     <string>Strech</string>
+                     <string>Stretch</string>
                     </property>
                     <property name="alignment">
                      <set>Qt::AlignCenter</set>
@@ -4727,7 +4727,7 @@ border-bottom-left-radius: 9px;
                   <item>
                    <widget class="QRadioButton" name="radioButton_Direction_Random">
                     <property name="text">
-                     <string>&amp;Random</string>
+                     <string>Rando&amp;m</string>
                     </property>
                     <property name="autoExclusive">
                      <bool>true</bool>
@@ -4809,7 +4809,7 @@ border-bottom-left-radius: 9px;
                <item>
                 <widget class="QRadioButton" name="radioButton_Trajectory_Bouncing">
                  <property name="text">
-                  <string>&amp;Boucing</string>
+                  <string>&amp;Bouncing</string>
                  </property>
                 </widget>
                </item>
@@ -5051,7 +5051,7 @@ border-bottom-left-radius: 9px;
                <item>
                 <widget class="QRadioButton" name="radioButton_Window_Expdec">
                  <property name="text">
-                  <string>E&amp;xpdec</string>
+                  <string>&amp;Expdec</string>
                  </property>
                 </widget>
                </item>
