@@ -822,7 +822,7 @@ void CloudDialog::on_dial_Stretch_valueChanged(int value)
 
 void CloudDialog::on_doubleSpinBox_Stretch_valueChanged(double arg1)
 {
-    cout << "spinval =" << arg1 << endl;
+        cout << "spinval =" << arg1 << endl;
     ui->dial_Stretch->setValue(int(arg1 * 1000));
     if (!linking) {
         editing = true;
