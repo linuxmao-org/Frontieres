@@ -428,6 +428,7 @@ bool Scene::load(QFile &sceneFile)
 
                 case CIRCULAR:
                 {
+
                     tr=new Circular(speed,xTrajectoryOrigin,yTrajectoryOrigin,radius, angle, stretch, progress);
                     cloudVisToLoad->setTrajectory(tr);
                     cloudToLoad->setTrajectoryType(CIRCULAR);
