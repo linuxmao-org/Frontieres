@@ -570,7 +570,7 @@ void Cloud::setTrajectoryType(int l_TrajectoryType)
         return;
     }
     trajectoryType = l_TrajectoryType;
-    cout << "cloud trajtype="<<l_TrajectoryType<<endl;
+    //cout << "cloud trajtype="<<l_TrajectoryType<<endl;
     myCloudVis->setTrajectoryType(l_TrajectoryType);
     changed_trajectoryType = true;
 }
