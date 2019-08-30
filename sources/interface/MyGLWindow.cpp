@@ -532,6 +532,7 @@ void MyGLScreen::keyAction_Trajectory(int dir)
             }
             else  {
                 if (selectedCloud->view->getTrajectory() == nullptr) {
+                    cout << "BOUNCING" << endl;
                     tr=new Circular(g_defaultCloudParams.speed,selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY(),g_defaultCloudParams.radius,
                                     g_defaultCloudParams.angle, 0, 1);
                     selectedCloud->cloud->setTrajectoryType (BOUNCING);
@@ -542,6 +543,7 @@ void MyGLScreen::keyAction_Trajectory(int dir)
                 else {
                     switch (selectedCloud->cloud->getTrajectoryType())  {
                     case BOUNCING: {
+                        cout << "CIRCULAR" << endl;
                         tr=new Circular(g_defaultCloudParams.speed,selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY(),g_defaultCloudParams.radius,
                                         g_defaultCloudParams.angle, g_defaultCloudParams.stretch, g_defaultCloudParams.progress);
                         selectedCloud->cloud->setTrajectoryType (CIRCULAR);
@@ -551,6 +553,7 @@ void MyGLScreen::keyAction_Trajectory(int dir)
                         break;
                     }
                     case CIRCULAR: {
+                        cout << "HYPO" << endl;
                         tr=new Hypotrochoid(g_defaultCloudParams.speed,selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY(),g_defaultCloudParams.radius,
                                             g_defaultCloudParams.radiusInt,g_defaultCloudParams.expansion,g_defaultCloudParams.angle, g_defaultCloudParams.progress);
                         selectedCloud->cloud->setTrajectoryType (HYPOTROCHOID);
@@ -560,10 +563,15 @@ void MyGLScreen::keyAction_Trajectory(int dir)
                         break;
                     }
                     case HYPOTROCHOID: {
+                        cout << "RECORD" << endl;
                         contextMenu_recordTrajectory();
                         break;
                     }
                     case RECORDED: {
+                        cout << "STATIC" << endl;
+                        RecordTrajectoryAsked = false;
+                        RecordingTrajectory = false;
+                        selectedCloud->view->setRecordTrajectoryAsked(false);
                         tr=nullptr;
                         selectedCloud->cloud->setTrajectoryType (STATIC);
                         selectedCloud->view->updateCloudPosition(selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY());
