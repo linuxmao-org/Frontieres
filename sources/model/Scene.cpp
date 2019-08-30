@@ -420,6 +420,7 @@ bool Scene::load(QFile &sceneFile)
                     //tr=new Bouncing(bounceWidth,speed,0,xTrajectoryOrigin,yTrajectoryOrigin);
                     tr=new Circular(speed,xTrajectoryOrigin,yTrajectoryOrigin,radius, angle, 0, 1);
                     cloudVisToLoad->setTrajectory(tr);
+                    cloudToLoad->setTrajectoryType(BOUNCING);
                     cout << "cloud has radius = " << radius << "\n";
                     cout << "cloud has angle = " << angle << "\n";
                 }
@@ -427,9 +428,9 @@ bool Scene::load(QFile &sceneFile)
 
                 case CIRCULAR:
                 {
-
                     tr=new Circular(speed,xTrajectoryOrigin,yTrajectoryOrigin,radius, angle, stretch, progress);
                     cloudVisToLoad->setTrajectory(tr);
+                    cloudToLoad->setTrajectoryType(CIRCULAR);
                     cout << "cloud has center = (" << centerX << ","<<centerY<<")"<<"\n";
                     cout << "cloud has radius = " << radius << "\n";
                     cout << "cloud has angle = " << angle << "\n";
@@ -442,6 +443,7 @@ bool Scene::load(QFile &sceneFile)
                 {
                     tr=new Hypotrochoid(speed,xTrajectoryOrigin,yTrajectoryOrigin,radius,radiusInt,expansion,angle, progress);
                     cloudVisToLoad->setTrajectory(tr);
+                    cloudToLoad->setTrajectoryType(HYPOTROCHOID);
                     cout << "cloud has center = (" << centerX << ","<<centerY<<")"<<"\n";
                     cout << "cloud has radius = " << radius << "\n";
                     cout << "cloud has radius Int = " << radiusInt << "\n";
@@ -455,7 +457,7 @@ bool Scene::load(QFile &sceneFile)
                     tr=new Recorded(0, xTrajectoryOrigin, yTrajectoryOrigin);
                     Recorded *tr_rec=dynamic_cast<Recorded*>(tr);
                     cloudVisToLoad->setTrajectory(tr);
-
+                    cloudToLoad->setTrajectoryType(RECORDED);
                     QJsonArray docPositions = objCloud["positions"].toArray();
 
                     for (const QJsonValue &jsonElementPosition : docPositions) { // positions
@@ -655,8 +657,8 @@ bool Scene::save(QFile &sceneFile)
         //trajectory
         objCloud["has-trajectory"] = cloudVisToSave->hasTrajectory();
         if(cloudVisToSave->hasTrajectory()){
-            objCloud["trajectory-type"] = cloudVisToSave->getTrajectory()->getType();
-            int type=cloudVisToSave->getTrajectory()->getType();
+            objCloud["trajectory-type"] = cloudToSave->getTrajectoryType();
+            int type = cloudToSave->getTrajectoryType();
 
             switch ( type )
             {
