@@ -132,7 +132,7 @@ CloudVis::CloudVis(float x, float y, unsigned int numGrainsVis,
             l_x = g_defaultCloudParams.myPosition[i]->x;
             l_y = g_defaultCloudParams.myPosition[i]->y;
             l_delay = g_defaultCloudParams.myPosition[i]->delay;
-            recTraj->addPositionDelayed(l_x, l_y, l_delay);
+            trajectoryAddPositionDelayed(l_x, l_y, l_delay);
         }
         setTrajectory(tr);
         recTraj->setRecording(false);
@@ -295,11 +295,15 @@ void CloudVis::setTrajectory(Trajectory *tr)
                     trMidi = new Hypotrochoid(trv->getSpeed(),trv->getOrigin().x, trv->getOrigin().y, trv->getRadius(),trv->getRadiusInt(),
                                                 trv->getExpansion(), trv->getAngle(), trv->getProgress());
                     playedCloudVisMidi[i]->setTrajectory(trMidi);
-                    setTrajectoryType(HYPOTROCHOID);
+                    setTrajectoryType(RECORDED);
                     break;
                 }
                 case RECORDED:
                 {
+                    Recorded *trv = dynamic_cast<Recorded*>(tr);
+                    Recorded *trMidi = nullptr;
+                    trMidi = new Recorded(trv->getSpeed(),trv->getOrigin().x, trv->getOrigin().y);
+                    playedCloudVisMidi[i]->setTrajectory(trMidi);
                     setTrajectoryType(RECORDED);
                 }
                 default :
@@ -381,6 +385,31 @@ void CloudVis::trajectoryAddPosition(int l_x, int l_y)
 {
     Recorded *recTraj=dynamic_cast<Recorded*>(getTrajectory());
     recTraj->addPosition(l_x, l_y);
+   /* if (!isMidiVis) {
+        for (int i = 0; i < g_maxMidiVoices; i++) {
+            playedCloudVisMidi[i]->trajectoryAddPosition(l_x, l_y);
+        }
+    }*/
+}
+
+void CloudVis::trajectoryAddPositionDelayed(int l_x, int l_y, double l_delay)
+{
+    Recorded *recTraj=dynamic_cast<Recorded*>(getTrajectory());
+    recTraj->addPositionDelayed(l_x, l_y, l_delay);
+}
+
+void CloudVis::copyTrajectoryPositionsToMidi()
+{
+    Recorded *rec_traj=dynamic_cast<Recorded*>(getTrajectory());
+    if (!isMidiVis) {
+        for (int i = 0; i < g_maxMidiVoices; i++) {
+            for (int j = 1; j < rec_traj->lastPosition(); j++){
+                playedCloudVisMidi[i]->trajectoryAddPositionDelayed(rec_traj->getPosition(j).x, rec_traj->getPosition(j).y, rec_traj->getPosition(j).delay);
+            }
+            Recorded *midirec_traj=dynamic_cast<Recorded*>(playedCloudVisMidi[i]->getTrajectory());
+            midirec_traj->setRecording(false);
+        }
+    }
 }
 
 void CloudVis::stopTrajectory()

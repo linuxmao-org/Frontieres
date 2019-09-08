@@ -894,6 +894,7 @@ void MyGLScreen::mouseReleaseEvent(QMouseEvent *event)
             scene->selectedCloud()->view->trajectoryAddPosition(mouseX, mouseY);
             scene->selectedCloud()->view->trajectoryAddPosition(mouseX, mouseY);
             scene->selectedCloud()->view->setRecordingTrajectory(false);
+            scene->selectedCloud()->view->copyTrajectoryPositionsToMidi();
         }
 
     Qt::MouseButton button = event->button();
