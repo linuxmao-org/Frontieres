@@ -987,6 +987,7 @@ void Cloud::nextBuffer(BUFFERPREC *accumBuff, unsigned int numFrames)
     for (int ii = 0; ii < g_maxMidiVoices; ii++){
         //debug: std::cout <<"ii="<<ii<<"playedCloudMidi[ii]->isActive="<<playedCloudMidi[ii]->isActive<<std::endl;
         if (playedCloudMidi[ii]->isActive){
+            //debug: std::cout << "midi " << ii << endl;
             int midiEnvelopeAction = playedCloudMidi[ii]->envelopeAction.exchange(0);
             //debug: std::cout << "midiEnvelopeAction=" <<midiEnvelopeAction<< std::endl;
             //debug: std::cout << "envelope state=" << (int) playedCloudMidi[ii]->envelopeVolume->state() << std::endl;

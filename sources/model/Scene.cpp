@@ -470,7 +470,7 @@ bool Scene::load(QFile &sceneFile)
                         l_y = objPosition["y"].toInt();
                         l_delay = objPosition["delay"].toDouble();
 
-                        tr_rec->addPositionDelayed(l_x, l_y, l_delay);
+                        cloudVisToLoad->trajectoryAddPositionDelayed(l_x, l_y, l_delay);
                     }
                     tr_rec->setRecording(false);
                 }
@@ -1162,7 +1162,7 @@ bool Scene::loadRecordedTrajectory(QFile &trajectoryFile, SceneCloud *selectedCl
         l_x = objPosition["x"].toInt();
         l_y = objPosition["y"].toInt();
         l_delay = objPosition["delay"].toDouble();
-        tr_load->addPositionDelayed(l_x, l_y, l_delay);
+        cloudVisToLoad->trajectoryAddPositionDelayed(l_x, l_y, l_delay);
     }
     tr_load->setRecording(false);
     selectedCloudLoad->view.get()->startTrajectory();

@@ -137,6 +137,8 @@ public:
     void setTrajectoryType(int l_trajectoryType);
     int getTrajectoryType();
     void trajectoryAddPosition(int l_x, int l_y);
+    void trajectoryAddPositionDelayed(int l_x, int l_y, double l_delay);
+    void copyTrajectoryPositionsToMidi();
 
 protected:
 private:

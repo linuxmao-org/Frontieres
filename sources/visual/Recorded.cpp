@@ -92,6 +92,9 @@ void Recorded::addPosition(int l_x, int l_y)
 
     myPosition.push_back(tr_Position);
     //std::cout << "max="<< myPosition.size()<<std::endl;
+    //for (int j = 0; j < myPosition.size() ; j = j + 1)
+    //    std::cout << "addposition, " << myPosition[j]->x << ", " << myPosition[j]->y <<", " << myPosition[j]->delay << std::endl;
+
 }
 
 void Recorded::addPositionDelayed(int l_x, int l_y, double l_delay)
@@ -107,6 +110,9 @@ void Recorded::addPositionDelayed(int l_x, int l_y, double l_delay)
 
     myPosition.push_back(tr_Position);
     //std::cout << "max="<< myPosition.size()<<std::endl;
+    //for (int j = 0; j < myPosition.size() ; j = j + 1)
+    //    std::cout << "addpositiondelay, " << myPosition[j]->x << ", " << myPosition[j]->y <<", " << myPosition[j]->delay << std::endl;
+
 }
 
 Recorded::~Recorded()
