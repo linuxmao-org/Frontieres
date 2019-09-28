@@ -570,7 +570,7 @@ void Cloud::setTrajectoryType(int l_TrajectoryType)
         return;
     }
     trajectoryType = l_TrajectoryType;
-    cout << "cloud trajtype="<<l_TrajectoryType<<endl;
+    //cout << "cloud trajtype="<<l_TrajectoryType<<endl;
     myCloudVis->setTrajectoryType(l_TrajectoryType);
     changed_trajectoryType = true;
 }
@@ -785,12 +785,54 @@ void Cloud::changesDone(bool done)
     changed_windowType = done;
     changed_myDirMode = done;
     changed_spatialMode = done;
+    changed_trajectoryType = done;
 }
 
 void Cloud::showMessageLocked()
 {
     cout << "cloud locked, no change" << endl;
 }
+
+void Cloud::showParameters()
+{
+    cout << "cloud parameters :" << endl;
+    cout << "id:" << myId << endl;
+    cout << "overlap = " << overlap << endl;
+    cout << "pitch = " << pitch << endl;
+    cout << "duration = " << duration <<endl;
+    cout << "pitchLFOFreq = " << pitchLFOFreq << endl;
+    cout << "pitchLFOAmount = " << pitchLFOAmount << endl;
+    cout << "direction = " << myDirMode << endl;
+    cout << "windowType = " << windowType << endl;
+    cout << "first output = " << myOutputFirstNumber << endl;
+    cout << "last output = " << myOutputLastNumber << endl;
+    cout << "spatial mode = " << spatialMode << endl;
+    cout << "volume DB = " << volumeDb << endl;
+    cout << "midinote = " << midiNote << endl;
+    cout << "locked = " << locked << endl;
+    cout << "x = " << myCloudVis->getX() << endl;
+    cout << "y = " << myCloudVis->getY() << endl;
+    cout << "x extent = " << myCloudVis->getXRandExtent() << endl;
+    cout << "y extent = " << myCloudVis->getYRandExtent() << endl;
+
+    cout << "trajectoryType = " << myCloudVis->getTrajectoryType() << endl;
+    switch (myCloudVis->getTrajectoryType())  {
+    case RECORDED: {
+        Recorded *tr_show = dynamic_cast<Recorded*>(myCloudVis->getTrajectory());
+        cout << "positions : " << tr_show->lastPosition() << endl;
+        for (int i = 1; i < tr_show->lastPosition(); i = i + 1) {
+            cout << "position " << i << ", x = " << tr_show->getPosition(i).x
+                 << ", y = " << tr_show->getPosition(i).y << ", delay = " << ", x = " << tr_show->getPosition(i).delay << endl;
+        }
+    }
+        break;
+    default:
+        break;
+    }
+
+
+}
+
 
 
 
@@ -946,6 +988,7 @@ void Cloud::nextBuffer(BUFFERPREC *accumBuff, unsigned int numFrames)
     for (int ii = 0; ii < g_maxMidiVoices; ii++){
         //debug: std::cout <<"ii="<<ii<<"playedCloudMidi[ii]->isActive="<<playedCloudMidi[ii]->isActive<<std::endl;
         if (playedCloudMidi[ii]->isActive){
+            //debug: std::cout << "midi " << ii << endl;
             int midiEnvelopeAction = playedCloudMidi[ii]->envelopeAction.exchange(0);
             //debug: std::cout << "midiEnvelopeAction=" <<midiEnvelopeAction<< std::endl;
             //debug: std::cout << "envelope state=" << (int) playedCloudMidi[ii]->envelopeVolume->state() << std::endl;

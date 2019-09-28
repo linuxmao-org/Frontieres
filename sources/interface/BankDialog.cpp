@@ -91,9 +91,9 @@ void BankDialog::on_treeWidget_customContextMenuRequested(const QPoint &pos)
     if (selectMode == EDIT){
         QMenu contextMenu(this);
         QIcon icon;
-        QAction * pAction_copy = contextMenu.addAction(icon, "Copy");
-        QAction * pAction_paste = contextMenu.addAction(icon, "Paste");
-        QAction * pAction_delete = contextMenu.addAction(icon, "Delete");
+        QAction * pAction_copy = contextMenu.addAction(icon, QObject::tr("Copy"));
+        QAction * pAction_paste = contextMenu.addAction(icon, QObject::tr("Paste"));
+        QAction * pAction_delete = contextMenu.addAction(icon, QObject::tr("Delete"));
         connect(pAction_copy, SIGNAL(triggered()), this, SLOT(copyCombi()));
         connect(pAction_paste, SIGNAL(triggered()), this, SLOT(pasteCombi()));
         connect(pAction_delete, SIGNAL(triggered()), this, SLOT(deleteCombi()));

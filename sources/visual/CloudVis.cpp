@@ -91,13 +91,14 @@ CloudVis::CloudVis(float x, float y, unsigned int numGrainsVis,
     myTrajectory = nullptr;
     Trajectory *tr = nullptr;
     trajectoryType = g_defaultCloudParams.trajectoryType;
-    /*
-    cout << "type defaut : " << g_defaultCloudParams.trajectoryType << endl;
+
+    //cout << "type defaut : " << g_defaultCloudParams.trajectoryType << endl;
     switch (g_defaultCloudParams.trajectoryType) {
     case STATIC:
         isMoving = false;
         setTrajectoryType(STATIC);
         setTrajectory(tr);
+        break;
     case BOUNCING:
         //tr=new Bouncing(g_defaultCloudParams.radius,g_defaultCloudParams.speed,g_defaultCloudParams.angle,x,y);
         tr=new Circular(g_defaultCloudParams.speed,x,y,g_defaultCloudParams.radius,g_defaultCloudParams.angle,0,1);
@@ -119,16 +120,31 @@ CloudVis::CloudVis(float x, float y, unsigned int numGrainsVis,
         setTrajectoryType(HYPOTROCHOID);
         setTrajectory(tr);
         break;
-    case RECORDED:
+    case RECORDED:{
+        tr=new Recorded(0, x, y);
+        Recorded *recTraj=dynamic_cast<Recorded*>(tr);
         setTrajectoryType(RECORDED);
+
+        for (int i = 0; i < g_defaultCloudParams.myPosition.size(); i = i + 1) { // positions
+            int l_x;
+            int l_y;
+            double l_delay;
+            l_x = g_defaultCloudParams.myPosition[i]->x;
+            l_y = g_defaultCloudParams.myPosition[i]->y;
+            l_delay = g_defaultCloudParams.myPosition[i]->delay;
+            trajectoryAddPositionDelayed(l_x, l_y, l_delay);
+        }
+        setTrajectory(tr);
+        recTraj->setRecording(false);
+        startTrajectory();
+        }
         break;
     default :
         break;
-    }*/
+    }
 
     updateCloudPosition(x, y);
     updateCloudOrigin(x, y);
-
     xRandExtent = g_defaultCloudParams.xRandExtent;
     yRandExtent = g_defaultCloudParams.yRandExtent;
 
@@ -274,16 +290,26 @@ void CloudVis::setTrajectory(Trajectory *tr)
                 }
                 case HYPOTROCHOID:
                 {
+                    //cout << "settrajectory HYPOTROCHOID, i =" << i << endl;
                     Hypotrochoid *trv = dynamic_cast<Hypotrochoid*>(tr);
+                    //cout << "settrajectory HYPOTROCHOID (2)" << endl;
                     Hypotrochoid *trMidi = nullptr;
+                    //cout << "settrajectory HYPOTROCHOID (3)" << endl;
                     trMidi = new Hypotrochoid(trv->getSpeed(),trv->getOrigin().x, trv->getOrigin().y, trv->getRadius(),trv->getRadiusInt(),
                                                 trv->getExpansion(), trv->getAngle(), trv->getProgress());
+                    //cout << "settrajectory HYPOTROCHOID (4)" << endl;
                     playedCloudVisMidi[i]->setTrajectory(trMidi);
+                    //cout << "settrajectory HYPOTROCHOID (5)" << endl;
                     setTrajectoryType(HYPOTROCHOID);
+                    //cout << "settrajectory HYPOTROCHOID (6)" << endl;
                     break;
                 }
                 case RECORDED:
                 {
+                    Recorded *trv = dynamic_cast<Recorded*>(tr);
+                    Recorded *trMidi = nullptr;
+                    trMidi = new Recorded(trv->getSpeed(),trv->getOrigin().x, trv->getOrigin().y);
+                    playedCloudVisMidi[i]->setTrajectory(trMidi);
                     setTrajectoryType(RECORDED);
                 }
                 default :
@@ -365,6 +391,96 @@ void CloudVis::trajectoryAddPosition(int l_x, int l_y)
 {
     Recorded *recTraj=dynamic_cast<Recorded*>(getTrajectory());
     recTraj->addPosition(l_x, l_y);
+   /* if (!isMidiVis) {
+        for (int i = 0; i < g_maxMidiVoices; i++) {
+            playedCloudVisMidi[i]->trajectoryAddPosition(l_x, l_y);
+        }
+    }*/
+}
+
+void CloudVis::trajectoryAddPositionDelayed(int l_x, int l_y, double l_delay)
+{
+    Recorded *recTraj=dynamic_cast<Recorded*>(getTrajectory());
+    recTraj->addPositionDelayed(l_x, l_y, l_delay);
+}
+
+void CloudVis::copyTrajectoryPositionsToMidi()
+{
+    Recorded *rec_traj=dynamic_cast<Recorded*>(getTrajectory());
+    if (!isMidiVis) {
+        for (int i = 0; i < g_maxMidiVoices; i++) {
+            for (int j = 1; j < rec_traj->lastPosition(); j++){
+                playedCloudVisMidi[i]->trajectoryAddPositionDelayed(rec_traj->getPosition(j).x, rec_traj->getPosition(j).y, rec_traj->getPosition(j).delay);
+            }
+            Recorded *midirec_traj=dynamic_cast<Recorded*>(playedCloudVisMidi[i]->getTrajectory());
+            midirec_traj->setRecording(false);
+        }
+    }
+}
+
+void CloudVis::trajectoryChangeSpeed(double newValue)
+{
+    getTrajectory()->setSpeed(newValue);
+    if (!isMidiVis) {
+        for (int i = 0; i < g_maxMidiVoices; i++) {
+            playedCloudVisMidi[i]->trajectoryChangeSpeed(newValue);
+        }
+    }
+}
+
+void CloudVis::trajectoryChangeProgress(double newValue)
+{
+
+}
+
+void CloudVis::trajectoryChangeRadius(double newValue)
+{
+    getTrajectory()->setRadius(newValue);
+    if (!isMidiVis) {
+        for (int i = 0; i < g_maxMidiVoices; i++) {
+            playedCloudVisMidi[i]->trajectoryChangeRadius(newValue);
+        }
+    }
+}
+
+void CloudVis::trajectoryChangeAngle(double newValue)
+{
+    getTrajectory()->setAngle(newValue);
+    if (!isMidiVis) {
+        for (int i = 0; i < g_maxMidiVoices; i++) {
+            playedCloudVisMidi[i]->trajectoryChangeAngle(newValue);
+        }
+    }
+}
+
+void CloudVis::trajectoryChangeStretch(double newValue)
+{
+    getTrajectory()->setStretch(newValue);
+    if (!isMidiVis) {
+        for (int i = 0; i < g_maxMidiVoices; i++) {
+            playedCloudVisMidi[i]->trajectoryChangeStretch(newValue);
+        }
+    }
+}
+
+void CloudVis::trajectoryChangeRadiusInt(double newValue)
+{
+    getTrajectory()->setRadiusInt(newValue);
+    if (!isMidiVis) {
+        for (int i = 0; i < g_maxMidiVoices; i++) {
+            playedCloudVisMidi[i]->trajectoryChangeRadiusInt(newValue);
+        }
+    }
+}
+
+void CloudVis::trajectoryChangeExpansion(double newValue)
+{
+    getTrajectory()->setExpansion(newValue);
+    if (!isMidiVis) {
+        for (int i = 0; i < g_maxMidiVoices; i++) {
+            playedCloudVisMidi[i]->trajectoryChangeExpansion(newValue);
+        }
+    }
 }
 
 void CloudVis::stopTrajectory()
@@ -441,7 +557,10 @@ void CloudVis::draw()
         glColor4f(0.8, 0.9, 0.1, 0.4);
     else
         if (isSelected)
-            glColor4f(0.1, 0.7, 0.6, 0.35);
+            if (recordingTrajectory)
+                glColor4f(1.0, 0.1, 0.0, 0.35);
+        else
+                glColor4f(0.1, 0.7, 0.6, 0.35);
         else
             glColor4f(0.0, 0.4, 0.7, 0.8);
 
@@ -462,7 +581,10 @@ void CloudVis::draw()
         // Cloud origin representation
 
         if (isSelected)
-            glColor4f(0.1, 0.7, 0.6, 0.35);
+            if (recordingTrajectory || recordTrajectoryAsked)
+                glColor4f(1.0, 0.1, 0.0, 0.35);
+        else
+                glColor4f(0.1, 0.7, 0.6, 0.35);
         else
             glColor4f(0.0, 0.4, 0.7, 0.8);
 

@@ -137,6 +137,16 @@ public:
     void setTrajectoryType(int l_trajectoryType);
     int getTrajectoryType();
     void trajectoryAddPosition(int l_x, int l_y);
+    void trajectoryAddPositionDelayed(int l_x, int l_y, double l_delay);
+    void copyTrajectoryPositionsToMidi();
+
+    void trajectoryChangeSpeed(double newValue);
+    void trajectoryChangeProgress(double newValue);
+    void trajectoryChangeRadius(double newValue);
+    void trajectoryChangeAngle(double newValue);
+    void trajectoryChangeStretch(double newValue);
+    void trajectoryChangeRadiusInt(double newValue);
+    void trajectoryChangeExpansion(double newValue);
 
 protected:
 private:

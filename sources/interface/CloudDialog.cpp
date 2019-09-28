@@ -722,7 +722,8 @@ void CloudDialog::on_doubleSpinBox_Output_Last_valueChanged(double arg1)
 
 void CloudDialog::on_dial_Speed_valueChanged(int value)
 {
-    ui->doubleSpinBox_Speed->setValue((double) value);
+    if (!editing)
+        ui->doubleSpinBox_Speed->setValue((double) value);
     update_Speed();
 }
 
@@ -744,14 +745,15 @@ void CloudDialog::update_Speed()
 {
     if (!linking){
         if (cloudVisRef->getTrajectory() != nullptr)
-            cloudVisRef->getTrajectory()->setSpeed(passageValue);
+            cloudVisRef->trajectoryChangeSpeed(passageValue);
         editing = false;
     }
 }
 
 void CloudDialog::on_dial_Radius_valueChanged(int value)
 {
-    ui->doubleSpinBox_Radius->setValue((double) value);
+    if (!editing)
+        ui->doubleSpinBox_Radius->setValue((double) value);
     update_Radius();
 }
 
@@ -773,7 +775,7 @@ void CloudDialog::update_Radius()
 {
     if (!linking) {
         if (cloudVisRef->getTrajectory() != nullptr)
-            cloudVisRef->getTrajectory()->setRadius(passageValue);
+            cloudVisRef->trajectoryChangeRadius(passageValue);
         editing = false;
     }
 
@@ -781,7 +783,8 @@ void CloudDialog::update_Radius()
 
 void CloudDialog::on_dial_Angle_valueChanged(int value)
 {
-    ui->doubleSpinBox_Angle->setValue(value);
+    if (!editing)
+        ui->doubleSpinBox_Angle->setValue(value);
     update_Angle();
 }
 
@@ -803,7 +806,7 @@ void CloudDialog::update_Angle()
 {
     if (!linking){
         if (cloudVisRef->getTrajectory() != nullptr)
-            cloudVisRef->getTrajectory()->setAngle(passageValue);
+            cloudVisRef->trajectoryChangeAngle(passageValue);
         editing = false;
     }
 }
@@ -815,17 +818,16 @@ void CloudDialog::on_doubleSpinBox_Stretch_editingFinished()
 
 void CloudDialog::on_dial_Stretch_valueChanged(int value)
 {
-    cout << "val =" << value << endl;
-    ui->doubleSpinBox_Stretch->setValue(double(value / 1000));
+    if (!editing)
+        ui->doubleSpinBox_Stretch->setValue(double(value) / 1000);
     update_Stretch();
 }
 
 void CloudDialog::on_doubleSpinBox_Stretch_valueChanged(double arg1)
 {
-        cout << "spinval =" << arg1 << endl;
-    ui->dial_Stretch->setValue(int(arg1 * 1000));
     if (!linking) {
         editing = true;
+        ui->dial_Stretch->setValue(int(arg1 * 1000));
         passageValue = (double) arg1;
     }
 }
@@ -834,7 +836,7 @@ void CloudDialog::update_Stretch()
 {
     if (!linking){
         if (cloudVisRef->getTrajectory() != nullptr)
-            cloudVisRef->getTrajectory()->setStretch(passageValue);
+            cloudVisRef->trajectoryChangeStretch(passageValue);
         editing = false;
     }
 }
@@ -893,7 +895,8 @@ void CloudDialog::on_doubleSpinBox_RadiusInt_valueChanged(double arg1)
 
 void CloudDialog::on_dial_RadiusInt_valueChanged(int value)
 {
-    ui->doubleSpinBox_RadiusInt->setValue(value);
+    if (!editing)
+        ui->doubleSpinBox_RadiusInt->setValue(value);
     update_RadiusInt();
 }
 
@@ -907,14 +910,15 @@ void CloudDialog::update_RadiusInt()
 {
     if (!linking){
         if (cloudVisRef->getTrajectory() != nullptr)
-            cloudVisRef->getTrajectory()->setRadiusInt(passageValue);
+            cloudVisRef->trajectoryChangeRadiusInt(passageValue);
         editing = false;
     }
 }
 
 void CloudDialog::on_dial_Expansion_valueChanged(int value)
 {
-    ui->doubleSpinBox_Expansion->setValue(value);
+    if (!editing)
+        ui->doubleSpinBox_Expansion->setValue(value);
     update_Expansion();
 }
 
@@ -936,14 +940,15 @@ void CloudDialog::update_Expansion()
 {
     if (!linking){
         if (cloudVisRef->getTrajectory() != nullptr)
-            cloudVisRef->getTrajectory()->setExpansion(passageValue);
+            cloudVisRef->trajectoryChangeExpansion(passageValue);
         editing = false;
     }
 }
 
 void CloudDialog::on_dial_Progress_valueChanged(int value)
 {
-    ui->doubleSpinBox_Progress->setValue(value);
+    if (!editing)
+        ui->doubleSpinBox_Progress->setValue(value);
     update_Progress();
 }
 
@@ -965,7 +970,8 @@ void CloudDialog::update_Progress()
 {
     if (!linking){
         if (cloudVisRef->getTrajectory() != nullptr)
-            cloudVisRef->getTrajectory()->setProgress(passageValue);
+            cloudVisRef->trajectoryChangeProgress(passageValue);
+            //cloudVisRef->getTrajectory()->setProgress(passageValue);
         editing = false;
     }
 }
@@ -1006,12 +1012,14 @@ void CloudDialog::on_commandLinkButton_stop_clicked()
 
 void CloudDialog::on_radioButton_Trajectory_Recorded_toggled(bool checked)
 {
-    Trajectory *tr=nullptr;
-    tr=new Recorded(0, cloudVisRef->getOriginX(),cloudVisRef->getOriginY());
-    cloudRef->setTrajectoryType(RECORDED);
-    cloudVisRef->updateCloudPosition(cloudVisRef->getOriginX(),cloudVisRef->getOriginY());
-    cloudVisRef->setTrajectory(tr);
-    cloudVisRef->setRecordTrajectoryAsked(true);
-    cloudVisRef->startTrajectory();
-    have_trajectory_circular = true;
+    if (!cloudVisRef->getTrajectoryType() == RECORDED) {
+        Trajectory *tr=nullptr;
+        tr=new Recorded(0, cloudVisRef->getOriginX(),cloudVisRef->getOriginY());
+        cloudRef->setTrajectoryType(RECORDED);
+        cloudVisRef->updateCloudPosition(cloudVisRef->getOriginX(),cloudVisRef->getOriginY());
+        cloudVisRef->setTrajectory(tr);
+        cloudVisRef->setRecordTrajectoryAsked(true);
+        cloudVisRef->startTrajectory();
+        have_trajectory_recorded = true;
+    }
 }

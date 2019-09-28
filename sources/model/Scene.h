@@ -56,12 +56,15 @@ public:
     // window to choose a scene file
     static std::string askNameScene(FileDirection direction);
     static std::string askNameCloud(FileDirection direction);
+    static std::string askNameTrajectory(FileDirection direction);
     void clear();
 
     bool load(QFile &sceneFile);
     bool loadCloudDefault(QFile &cloudFile);
     bool save(QFile &sceneFile);
     bool saveCloud(QFile &cloudFile, SceneCloud *selectedCloudSave);
+    bool saveRecordedTrajectory(QFile &trajectoryFile, SceneCloud *selectedCloudSave);
+    bool loadRecordedTrajectory(QFile &trajectoryFile, SceneCloud *selectedCloudLoad);
 
     bool loadSampleSet(bool interactive);
     Sample *loadNewSample(const std::string &path);

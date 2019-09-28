@@ -85,6 +85,13 @@ struct pt2d
    float y;
 };
 
+// position for trajectory
+struct Position {
+    int x;
+    int y;
+    double delay;
+};
+
 // scenes files read/write direction
 enum class FileDirection {
     Load,
@@ -94,5 +101,6 @@ enum class FileDirection {
 // scenes
 static const char *g_extensionScene = ".scn";
 static const char *g_extensionCloud = ".cld";
+static const char *g_extensionTrajectory = ".trj";
 
 #endif

@@ -243,6 +243,9 @@ public:
     // message when osc or midi want to change locked cloud
     void showMessageLocked();
 
+    // console message with all cloud parameters
+    void showParameters();
+
 protected:
     // update internal trigger point
     void updateBangTime();
