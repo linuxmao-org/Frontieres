@@ -3988,7 +3988,7 @@ border-bottom-left-radius: 9px;
                      <number>10</number>
                     </property>
                     <property name="value">
-                     <number>1000</number>
+                     <number>0</number>
                     </property>
                     <property name="tracking">
                      <bool>true</bool>

@@ -785,6 +785,7 @@ void Cloud::changesDone(bool done)
     changed_windowType = done;
     changed_myDirMode = done;
     changed_spatialMode = done;
+    changed_trajectoryType = done;
 }
 
 void Cloud::showMessageLocked()

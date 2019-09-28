@@ -553,13 +553,17 @@ void MyGLScreen::keyAction_Trajectory(int dir)
                         break;
                     }
                     case CIRCULAR: {
-                        cout << "HYPO" << endl;
+                        cout << "HYPOTROCHOID" << endl;
                         tr=new Hypotrochoid(g_defaultCloudParams.speed,selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY(),g_defaultCloudParams.radius,
                                             g_defaultCloudParams.radiusInt,g_defaultCloudParams.expansion,g_defaultCloudParams.angle, g_defaultCloudParams.progress);
                         selectedCloud->cloud->setTrajectoryType (HYPOTROCHOID);
+                        //cout << "HYPOTROCHOID (2)" << endl;
                         selectedCloud->view->updateCloudPosition(selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY());
+                        //cout << "HYPOTROCHOID (3)" << endl;
                         selectedCloud->view->setTrajectory(tr);
+                        //cout << "HYPOTROCHOID (4)" << endl;
                         selectedCloud->view->startTrajectory();
+                        //cout << "HYPOTROCHOID (end)" << endl;
                         break;
                     }
                     case HYPOTROCHOID: {
