@@ -3,6 +3,7 @@
 Hypotrochoid::Hypotrochoid(double c_speed, double c_xOr, double c_yOr, double c_radius, double c_radiusInt, double c_expansion, double c_angle, double c_progress)
                             : Trajectory(c_speed,c_xOr,c_yOr)
 {
+    //std::cout << "create hypo " << std::endl;
     pt2d  orig = getOrigin();
     centerX = orig.x;
     centerY = orig.y;

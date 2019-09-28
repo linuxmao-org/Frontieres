@@ -290,12 +290,18 @@ void CloudVis::setTrajectory(Trajectory *tr)
                 }
                 case HYPOTROCHOID:
                 {
+                    //cout << "settrajectory HYPOTROCHOID, i =" << i << endl;
                     Hypotrochoid *trv = dynamic_cast<Hypotrochoid*>(tr);
+                    //cout << "settrajectory HYPOTROCHOID (2)" << endl;
                     Hypotrochoid *trMidi = nullptr;
+                    //cout << "settrajectory HYPOTROCHOID (3)" << endl;
                     trMidi = new Hypotrochoid(trv->getSpeed(),trv->getOrigin().x, trv->getOrigin().y, trv->getRadius(),trv->getRadiusInt(),
                                                 trv->getExpansion(), trv->getAngle(), trv->getProgress());
+                    //cout << "settrajectory HYPOTROCHOID (4)" << endl;
                     playedCloudVisMidi[i]->setTrajectory(trMidi);
-                    setTrajectoryType(RECORDED);
+                    //cout << "settrajectory HYPOTROCHOID (5)" << endl;
+                    setTrajectoryType(HYPOTROCHOID);
+                    //cout << "settrajectory HYPOTROCHOID (6)" << endl;
                     break;
                 }
                 case RECORDED:
@@ -408,6 +414,71 @@ void CloudVis::copyTrajectoryPositionsToMidi()
             }
             Recorded *midirec_traj=dynamic_cast<Recorded*>(playedCloudVisMidi[i]->getTrajectory());
             midirec_traj->setRecording(false);
+        }
+    }
+}
+
+void CloudVis::trajectoryChangeSpeed(double newValue)
+{
+    getTrajectory()->setSpeed(newValue);
+    if (!isMidiVis) {
+        for (int i = 0; i < g_maxMidiVoices; i++) {
+            playedCloudVisMidi[i]->trajectoryChangeSpeed(newValue);
+        }
+    }
+}
+
+void CloudVis::trajectoryChangeProgress(double newValue)
+{
+
+}
+
+void CloudVis::trajectoryChangeRadius(double newValue)
+{
+    getTrajectory()->setRadius(newValue);
+    if (!isMidiVis) {
+        for (int i = 0; i < g_maxMidiVoices; i++) {
+            playedCloudVisMidi[i]->trajectoryChangeRadius(newValue);
+        }
+    }
+}
+
+void CloudVis::trajectoryChangeAngle(double newValue)
+{
+    getTrajectory()->setAngle(newValue);
+    if (!isMidiVis) {
+        for (int i = 0; i < g_maxMidiVoices; i++) {
+            playedCloudVisMidi[i]->trajectoryChangeAngle(newValue);
+        }
+    }
+}
+
+void CloudVis::trajectoryChangeStretch(double newValue)
+{
+    getTrajectory()->setStretch(newValue);
+    if (!isMidiVis) {
+        for (int i = 0; i < g_maxMidiVoices; i++) {
+            playedCloudVisMidi[i]->trajectoryChangeStretch(newValue);
+        }
+    }
+}
+
+void CloudVis::trajectoryChangeRadiusInt(double newValue)
+{
+    getTrajectory()->setRadiusInt(newValue);
+    if (!isMidiVis) {
+        for (int i = 0; i < g_maxMidiVoices; i++) {
+            playedCloudVisMidi[i]->trajectoryChangeRadiusInt(newValue);
+        }
+    }
+}
+
+void CloudVis::trajectoryChangeExpansion(double newValue)
+{
+    getTrajectory()->setExpansion(newValue);
+    if (!isMidiVis) {
+        for (int i = 0; i < g_maxMidiVoices; i++) {
+            playedCloudVisMidi[i]->trajectoryChangeExpansion(newValue);
         }
     }
 }
