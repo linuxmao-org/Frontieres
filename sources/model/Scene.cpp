@@ -1167,7 +1167,7 @@ bool Scene::loadRecordedTrajectory(QFile &trajectoryFile, SceneCloud *selectedCl
     tr_load->setRecording(false);
     selectedCloudLoad->view.get()->startTrajectory();
 
-
+    return true;
 }
 
 bool Scene::loadSampleSet(bool interactive)
