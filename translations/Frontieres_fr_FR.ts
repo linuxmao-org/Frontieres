@@ -254,7 +254,7 @@
     <message>
         <location filename="../sources/interface/CloudDialog.ui" line="258"/>
         <source>Envelope (E)</source>
-        <translation>Envelope (E)</translation>
+        <translation>Enveloppe (E)</translation>
     </message>
     <message>
         <location filename="../sources/interface/CloudDialog.ui" line="457"/>
