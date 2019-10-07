@@ -850,13 +850,13 @@ void MyGLScreen::mousePressEvent(QMouseEvent *event)
             QMenu contextMenu(this);
             QIcon icon;
 
-            QAction * pAction_parameters = contextMenu.addAction(icon, QObject::tr("Cloud parameters"));
+            QAction * pAction_parameters = contextMenu.addAction(icon, QObject::tr("Cloud parameters (P)"));
             connect(pAction_parameters, SIGNAL(triggered()), this, SLOT(contextMenu_parameters()));
 
             QAction *separator_1 = contextMenu.addSeparator();
             addAction(separator_1);
 
-            QAction * pAction_newCloud = contextMenu.addAction(icon, QObject::tr("Create new cloud"));
+            QAction * pAction_newCloud = contextMenu.addAction(icon, QObject::tr("Create new cloud (G)"));
             connect(pAction_newCloud, SIGNAL(triggered()), this, SLOT(contextMenu_newCloud()));
 
             QAction *separator_2 = contextMenu.addSeparator();addAction(separator_2);
@@ -878,7 +878,7 @@ void MyGLScreen::mousePressEvent(QMouseEvent *event)
         else {
             QMenu contextMenu(this);
             QIcon icon;
-            QAction * pAction_newCloud = contextMenu.addAction(icon, QObject::tr("Create new cloud"));
+            QAction * pAction_newCloud = contextMenu.addAction(icon, QObject::tr("Create new cloud (G)"));
             connect(pAction_newCloud, SIGNAL(triggered()), this, SLOT(contextMenu_newCloud()));
             contextMenu.exec(QCursor::pos());
         }

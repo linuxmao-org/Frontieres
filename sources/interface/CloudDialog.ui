@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>814</width>
-    <height>441</height>
+    <width>845</width>
+    <height>439</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -129,7 +129,7 @@
                <enum>QFrame::Raised</enum>
               </property>
               <property name="text">
-               <string>Volume (b)</string>
+               <string>Volume (B)</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignBottom|Qt::AlignHCenter</set>
@@ -255,7 +255,7 @@ border-bottom-left-radius: 9px;
             </font>
            </property>
            <property name="text">
-            <string>Envelope (e)</string>
+            <string>Envelope (E)</string>
            </property>
            <property name="autoDefault">
             <bool>false</bool>
@@ -454,7 +454,7 @@ border-bottom-left-radius: 9px;
                      <enum>QFrame::Raised</enum>
                     </property>
                     <property name="text">
-                     <string>Grains (v)</string>
+                     <string>Grains (V)</string>
                     </property>
                     <property name="alignment">
                      <set>Qt::AlignCenter</set>
@@ -659,7 +659,7 @@ border-bottom-left-radius: 9px;
                      <enum>QFrame::Raised</enum>
                     </property>
                     <property name="text">
-                     <string>LFO Freq (l)</string>
+                     <string>LFO Freq (L)</string>
                     </property>
                     <property name="alignment">
                      <set>Qt::AlignCenter</set>
@@ -873,7 +873,7 @@ border-bottom-left-radius: 9px;
                      <enum>QFrame::Raised</enum>
                     </property>
                     <property name="text">
-                     <string>Pitch (z)</string>
+                     <string>Pitch (Z)</string>
                     </property>
                     <property name="alignment">
                      <set>Qt::AlignCenter</set>
@@ -1090,7 +1090,7 @@ border-bottom-left-radius: 9px;
                      <enum>QFrame::Raised</enum>
                     </property>
                     <property name="text">
-                     <string>X Extent (x)</string>
+                     <string>X Extent (X)</string>
                     </property>
                     <property name="alignment">
                      <set>Qt::AlignCenter</set>
@@ -1554,7 +1554,7 @@ border-bottom-left-radius: 9px;
                      <enum>QFrame::Raised</enum>
                     </property>
                     <property name="text">
-                     <string>Overlap (s)</string>
+                     <string>Overlap (S)</string>
                     </property>
                     <property name="alignment">
                      <set>Qt::AlignCenter</set>
@@ -1756,7 +1756,7 @@ border-bottom-left-radius: 9px;
                      <enum>QFrame::Raised</enum>
                     </property>
                     <property name="text">
-                     <string>LFO Amp (k)</string>
+                     <string>LFO Amp (K)</string>
                     </property>
                     <property name="alignment">
                      <set>Qt::AlignCenter</set>
@@ -1967,7 +1967,7 @@ border-bottom-left-radius: 9px;
                      <enum>QFrame::Raised</enum>
                     </property>
                     <property name="text">
-                     <string>Duration (d)</string>
+                     <string>Duration (D)</string>
                     </property>
                     <property name="alignment">
                      <set>Qt::AlignCenter</set>
@@ -2181,7 +2181,7 @@ border-bottom-left-radius: 9px;
                      <enum>QFrame::Raised</enum>
                     </property>
                     <property name="text">
-                     <string>Y Extent (y)</string>
+                     <string>Y Extent (Y)</string>
                     </property>
                     <property name="alignment">
                      <set>Qt::AlignCenter</set>
@@ -4144,7 +4144,7 @@ border-bottom-left-radius: 9px;
                </font>
               </property>
               <property name="title">
-               <string>Balance (t)</string>
+               <string>Balance (T)</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
@@ -4160,7 +4160,7 @@ border-bottom-left-radius: 9px;
                <item>
                 <widget class="QRadioButton" name="radioButton_Balance_Stereo">
                  <property name="text">
-                  <string>S&amp;tereo</string>
+                  <string>&amp;Stereo</string>
                  </property>
                  <property name="autoExclusive">
                   <bool>true</bool>
@@ -4695,7 +4695,7 @@ border-bottom-left-radius: 9px;
                   </font>
                  </property>
                  <property name="title">
-                  <string>Direction (f)</string>
+                  <string>Direction (F)</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -4720,14 +4720,14 @@ border-bottom-left-radius: 9px;
                   <item>
                    <widget class="QRadioButton" name="radioButton_Direction_Backward">
                     <property name="text">
-                     <string>Bac&amp;kward</string>
+                     <string>&amp;Backward</string>
                     </property>
                    </widget>
                   </item>
                   <item>
                    <widget class="QRadioButton" name="radioButton_Direction_Random">
                     <property name="text">
-                     <string>Rando&amp;m</string>
+                     <string>&amp;Random</string>
                     </property>
                     <property name="autoExclusive">
                      <bool>true</bool>
@@ -4787,7 +4787,7 @@ border-bottom-left-radius: 9px;
                </font>
               </property>
               <property name="title">
-               <string>Trajectory (i)</string>
+               <string>Trajectory (I)</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
@@ -4816,7 +4816,7 @@ border-bottom-left-radius: 9px;
                <item>
                 <widget class="QRadioButton" name="radioButton_Trajectory_Circular">
                  <property name="text">
-                  <string>Ci&amp;rcular</string>
+                  <string>&amp;Circular</string>
                  </property>
                  <property name="autoExclusive">
                   <bool>true</bool>
@@ -4826,7 +4826,7 @@ border-bottom-left-radius: 9px;
                <item>
                 <widget class="QRadioButton" name="radioButton_Trajectory_Hypotrochoid">
                  <property name="text">
-                  <string>H&amp;ypotrochoid</string>
+                  <string>&amp;Hypotrochoid</string>
                  </property>
                 </widget>
                </item>
@@ -5022,7 +5022,7 @@ border-bottom-left-radius: 9px;
                </font>
               </property>
               <property name="title">
-               <string>Window (w)</string>
+               <string>Window (W)</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>

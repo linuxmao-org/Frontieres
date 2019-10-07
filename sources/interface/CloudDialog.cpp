@@ -593,12 +593,6 @@ void CloudDialog::on_doubleSpinBox_Midi_Note_valueChanged(double arg1)
         cloudRef->setMidiNote((int) arg1);
 }
 
-void CloudDialog::on_doubleSpinBox_Midi_Channel_valueChanged(double arg1)
-{
-    if (!linking)
-        cloudRef->setMidiChannel((int) arg1);
-}
-
 void CloudDialog::on_checkBox_Active_toggled(bool checked)
 {
     if (!linking)

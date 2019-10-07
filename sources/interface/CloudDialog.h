@@ -89,8 +89,6 @@ private slots:
 
     void on_doubleSpinBox_Midi_Note_valueChanged(double arg1);
 
-    void on_doubleSpinBox_Midi_Channel_valueChanged(double arg1);
-
     void on_checkBox_Active_toggled(bool checked);
 
     void on_radioButton_Window_Hanning_toggled(bool checked);
