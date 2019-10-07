@@ -1096,7 +1096,7 @@
     <message>
         <location filename="../sources/interface/MyGLWindow.cpp" line="853"/>
         <source>Cloud parameters (P)</source>
-        <translation>Parametres du nuage (P)</translation>
+        <translation>Paramètres du nuage (P)</translation>
     </message>
     <message>
         <location filename="../sources/interface/MyGLWindow.cpp" line="859"/>
