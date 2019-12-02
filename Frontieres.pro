@@ -14,9 +14,15 @@ DEFINES += __LINUX_ALSA__
 DEFINES += __LINUX_PULSE__
 
 INCLUDEPATH += $$PWD/libraries/QtFont3D
-SOURCES += libraries/QtFont3D/QtFont3D.cpp
-HEADERS += libraries/QtFont3D/QtFont3D.h
-
+SOURCES += libraries/QtFont3D/QtFont3D.cpp \
+    sources/visual/TriggerVis.cpp \
+    sources/model/Trigger.cpp \
+    sources/interface/TriggerDialog.cpp
+HEADERS += libraries/QtFont3D/QtFont3D.h \
+    sources/visual/TriggerVis.h \
+    sources/model/Trigger.h \
+    sources/interface/TriggerDialog.h \
+    sources/Version.h
 unix: {
   isEmpty(INSTALL_PREFIX) {
     INSTALL_PREFIX = /usr/local
@@ -137,7 +143,8 @@ FORMS += \
   sources/interface/CombiDialog.ui \
   sources/interface/BankDialog.ui \
   sources/interface/InstrumDialog.ui \
-  sources/interface/AboutDialog.ui
+  sources/interface/AboutDialog.ui \
+    sources/interface/TriggerDialog.ui
 
 TRANSLATIONS += \
   translations/Frontieres_fr_FR.ts

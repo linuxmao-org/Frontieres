@@ -43,6 +43,7 @@ struct CloudParams
     float volumeDB;
     int numGrains;
     bool activateState;
+    bool activateRestartTrajectory;
     float xRandExtent;
     float yRandExtent;
     ParamEnv envelope;
@@ -55,6 +56,9 @@ struct CloudParams
     float stretch;
     float expansion;
     float progress;
+    float triggerZoneExtent;
+    int triggerIn;
+    int triggerOut;
     vector<Position *> myPosition;
 };
 struct ValueMax
