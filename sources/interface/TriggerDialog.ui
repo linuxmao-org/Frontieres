@@ -787,7 +787,7 @@
                <item>
                 <widget class="QRadioButton" name="radioButton_In_Nothing">
                  <property name="text">
-                  <string>No&amp;thing</string>
+                  <string>&amp;Nothing</string>
                  </property>
                 </widget>
                </item>
@@ -2749,7 +2749,7 @@
             <item>
              <widget class="QRadioButton" name="radioButton_Trajectory_Static">
               <property name="text">
-               <string>S&amp;tatic</string>
+               <string>&amp;Static </string>
               </property>
               <property name="checked">
                <bool>false</bool>

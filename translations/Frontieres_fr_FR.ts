@@ -186,32 +186,37 @@
         <translation>Extension</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="4698"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="4528"/>
+        <source>Restart</source>
+        <translation>Redémarre</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/CloudDialog.ui" line="4705"/>
         <source>Direction (F)</source>
         <translation>Direction (F)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="4790"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="4797"/>
         <source>Trajectory (I)</source>
         <translation>Trajectoire (I)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="4819"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="4826"/>
         <source>&amp;Circular</source>
         <translation>&amp;Circulaire</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="4829"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="4836"/>
         <source>&amp;Hypotrochoid</source>
         <translation>&amp;Hypotrochoïde</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="5025"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="4999"/>
         <source>Window (W)</source>
         <translation>Fenêtre (W)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="5054"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="5028"/>
         <source>&amp;Expdec</source>
         <translation>&amp;Expdec</translation>
     </message>
@@ -224,7 +229,7 @@
         <translation>Trajectoire (I)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="4799"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="4806"/>
         <source>&amp;Static</source>
         <translation>&amp;Statique</translation>
     </message>
@@ -326,7 +331,7 @@
         <translation>Verrouillé</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="4599"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="4606"/>
         <source>Midi Note</source>
         <translation>Note MIDI</translation>
     </message>
@@ -335,7 +340,7 @@
         <translation>Direction (f)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="4710"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="4717"/>
         <source>&amp;Forward</source>
         <translation>&amp;En avant</translation>
     </message>
@@ -344,13 +349,13 @@
         <translation>En arrière (&amp;k)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="4723"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="4730"/>
         <source>&amp;Backward</source>
         <translation>&amp;En arrière</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="4730"/>
-        <location filename="../sources/interface/CloudDialog.ui" line="5075"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="4737"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="5049"/>
         <source>&amp;Random</source>
         <translation>&amp;Aléatoire</translation>
     </message>
@@ -392,7 +397,7 @@
         <translation>&amp;Aléatoire</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="4812"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="4819"/>
         <source>&amp;Bouncing</source>
         <translation>&amp;Rebond</translation>
     </message>
@@ -401,7 +406,7 @@
         <translation>H&amp;ypotrochoïde</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="4836"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="4843"/>
         <source>&amp;Recorded</source>
         <translation>En&amp;registrée</translation>
     </message>
@@ -410,12 +415,12 @@
         <translation>Fenêtre (w)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="5034"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="5008"/>
         <source>&amp;Hanning</source>
         <translation>&amp;Hanning</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="5041"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="5015"/>
         <source>&amp;Triangle</source>
         <translation>&amp;Triangle</translation>
     </message>
@@ -424,12 +429,12 @@
         <translation>E&amp;xpdec</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="5061"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="5035"/>
         <source>&amp;Rexpdec</source>
         <translation>&amp;Rexpdec</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="5068"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="5042"/>
         <source>&amp;Sinc</source>
         <translation>&amp;Syncronisé</translation>
     </message>
@@ -493,27 +498,32 @@
 <context>
     <name>MyGLApplication</name>
     <message>
-        <location filename="../sources/interface/MyGLApplication.cpp" line="194"/>
+        <location filename="../sources/interface/MyGLApplication.cpp" line="218"/>
         <source>Load sample</source>
         <translation>Charger l&apos;échantillon</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLApplication.cpp" line="195"/>
+        <location filename="../sources/interface/MyGLApplication.cpp" line="219"/>
         <source>Sample files (*.*)</source>
         <translation>Fichiers d&apos;échantillon (*.*)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLApplication.cpp" line="230"/>
+        <location filename="../sources/interface/MyGLApplication.cpp" line="254"/>
         <source>Cloud parameters</source>
         <translation>Paramètres du nuage</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLApplication.cpp" line="285"/>
+        <location filename="../sources/interface/MyGLApplication.cpp" line="279"/>
+        <source>Trigger parameters</source>
+        <translation>Paramètres du déclencheur</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/MyGLApplication.cpp" line="357"/>
         <source>Combinations</source>
         <translation>Combinaisons</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLApplication.cpp" line="294"/>
+        <location filename="../sources/interface/MyGLApplication.cpp" line="366"/>
         <source>Midi instrument</source>
         <translation>Instrument MIDI</translation>
     </message>
@@ -757,12 +767,12 @@
         <translation>Trajectoire (i)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="168"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="171"/>
         <source>User manual</source>
         <translation>Manuel utilisateur</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="219"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="222"/>
         <source>DSP%</source>
         <translation></translation>
     </message>
@@ -1011,62 +1021,62 @@
         <translation>Valeur de trames par seconde invalide.</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scene.cpp" line="67"/>
+        <location filename="../sources/model/Scene.cpp" line="71"/>
         <source>Scene files (*%1)</source>
         <translation>Fichiers de scène (*%1)</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scene.cpp" line="73"/>
+        <location filename="../sources/model/Scene.cpp" line="77"/>
         <source>Save scene</source>
         <translation>Sauvegarder la scène</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scene.cpp" line="77"/>
+        <location filename="../sources/model/Scene.cpp" line="81"/>
         <source>Load scene</source>
         <translation>Charger une scène</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scene.cpp" line="109"/>
+        <location filename="../sources/model/Scene.cpp" line="113"/>
         <source>Cloud files (*%1)</source>
         <translation>Fichiers de nuage (*%1)</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scene.cpp" line="115"/>
+        <location filename="../sources/model/Scene.cpp" line="119"/>
         <source>Save cloud</source>
         <translation>Sauvegarder le nuage</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scene.cpp" line="119"/>
+        <location filename="../sources/model/Scene.cpp" line="123"/>
         <source>Load cloud</source>
         <translation>Charger le nuage</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scene.cpp" line="138"/>
+        <location filename="../sources/model/Scene.cpp" line="142"/>
         <source>Trajectory files (*%1)</source>
         <translation>Fichiers de trajectoires (*%1)</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scene.cpp" line="1241"/>
+        <location filename="../sources/model/Scene.cpp" line="1682"/>
         <source>Load samples</source>
         <translation>Charger les échantillons</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scene.cpp" line="1242"/>
+        <location filename="../sources/model/Scene.cpp" line="1683"/>
         <source>Could not find the sample file &quot;%1&quot;.</source>
         <translation>Impossible de trouver le fichier d&apos;échantillon &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scene.cpp" line="1244"/>
+        <location filename="../sources/model/Scene.cpp" line="1685"/>
         <source>Add a different sample directory</source>
         <translation>Ajouter un répertoire d&apos;échantillon différent</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scene.cpp" line="1245"/>
+        <location filename="../sources/model/Scene.cpp" line="1686"/>
         <source>Discard missing samples</source>
         <translation>Abandonner les échantillons manquants</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scene.cpp" line="1259"/>
+        <location filename="../sources/model/Scene.cpp" line="1700"/>
         <source>Add sample directory</source>
         <translation>Ajouter un répertoire d&apos;échantillon</translation>
     </message>
@@ -1094,30 +1104,46 @@
         <translation>Nouveau nuage</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="853"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1073"/>
         <source>Cloud parameters (P)</source>
         <translation>Paramètres du nuage (P)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="859"/>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="881"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1044"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1079"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1108"/>
         <source>Create new cloud (G)</source>
         <translation>Nouveau nuage (G)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="865"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1038"/>
+        <source>Trigger parameters (P)</source>
+        <translation>Paramètres du déclencheur (P)</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1050"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1085"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1114"/>
+        <source>Create new trigger (H)</source>
+        <translation>Nouveau déclencheur (H)</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1056"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1091"/>
         <source>Record trajectory</source>
         <translation>Enregistrer la trajectoire</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="868"/>
-        <location filename="../sources/model/Scene.cpp" line="148"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1059"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1094"/>
+        <location filename="../sources/model/Scene.cpp" line="152"/>
         <source>Load trajectory</source>
         <translation>Charger une trajectoire</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="872"/>
-        <location filename="../sources/model/Scene.cpp" line="144"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1063"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1098"/>
+        <location filename="../sources/model/Scene.cpp" line="148"/>
         <source>Save trajectory</source>
         <translation>Sauvegarder la trajectoire</translation>
     </message>
@@ -1148,6 +1174,153 @@
         <location filename="../sources/interface/StartDialog.ui" line="61"/>
         <source>Resume work with an existing scene file.</source>
         <translation>Reprendre le travail avec un fichier de scène existant.</translation>
+    </message>
+</context>
+<context>
+    <name>TriggerDialog</name>
+    <message>
+        <location filename="../sources/interface/TriggerDialog.ui" line="14"/>
+        <source>Dialog</source>
+        <translation>Dialogue</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/TriggerDialog.ui" line="163"/>
+        <source>X</source>
+        <translation>X</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/TriggerDialog.ui" line="383"/>
+        <source>Y</source>
+        <translation>Y</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/TriggerDialog.ui" line="597"/>
+        <source>Extent (XY)</source>
+        <translation>Extension (xy)</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/TriggerDialog.ui" line="781"/>
+        <source>Action In</source>
+        <translation>Extension à l&apos;entrée</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/TriggerDialog.ui" line="797"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="899"/>
+        <source>&amp;On</source>
+        <translation>&amp;On</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/TriggerDialog.ui" line="807"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="909"/>
+        <source>&amp;Off</source>
+        <translation>&amp;Off</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/TriggerDialog.ui" line="820"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="922"/>
+        <source>&amp;Commute</source>
+        <translation>&amp;Commute</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/TriggerDialog.ui" line="883"/>
+        <source>Action Out</source>
+        <translation>Action à la sortie</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/TriggerDialog.ui" line="790"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="892"/>
+        <source>&amp;Nothing</source>
+        <translation>&amp;Rien</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/TriggerDialog.ui" line="1072"/>
+        <source>Speed</source>
+        <translation>Vitesse</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/TriggerDialog.ui" line="1286"/>
+        <source>Progress</source>
+        <translation>Progression</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/TriggerDialog.ui" line="1500"/>
+        <source>Angle</source>
+        <translation>Angle</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/TriggerDialog.ui" line="1714"/>
+        <source>Radius</source>
+        <translation>Rayon</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/TriggerDialog.ui" line="1928"/>
+        <source>Radius Int</source>
+        <translation>Rayon interne</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/TriggerDialog.ui" line="2142"/>
+        <source>Stretch</source>
+        <translation>Etirement</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/TriggerDialog.ui" line="2359"/>
+        <source>Expansion</source>
+        <translation>Extension</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/TriggerDialog.ui" line="2549"/>
+        <source>Name : </source>
+        <translation>Nom : </translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/TriggerDialog.ui" line="2667"/>
+        <source>Id : </source>
+        <translation>Id : </translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/TriggerDialog.ui" line="2681"/>
+        <source>Active</source>
+        <translation>Actif</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/TriggerDialog.ui" line="2688"/>
+        <source>Locked</source>
+        <translation>Verrouillé</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/TriggerDialog.ui" line="2695"/>
+        <source>Restart</source>
+        <translation>Redémarre</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/TriggerDialog.ui" line="2743"/>
+        <source>Trajectory (I)</source>
+        <translation>Trajectoire (I)</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/TriggerDialog.ui" line="2752"/>
+        <source>&amp;Static </source>
+        <translation>&amp;Statique</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/TriggerDialog.ui" line="2771"/>
+        <source>&amp;Bouncing</source>
+        <translation>&amp;Rebond</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/TriggerDialog.ui" line="2778"/>
+        <source>&amp;Circular</source>
+        <translation>&amp;Circulaire</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/TriggerDialog.ui" line="2788"/>
+        <source>&amp;Hypotrochoid</source>
+        <translation>&amp;Hypotrochoïde</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/TriggerDialog.ui" line="2795"/>
+        <source>&amp;Recorded</source>
+        <translation>&amp;Enregistrée</translation>
     </message>
 </context>
 </TS>
