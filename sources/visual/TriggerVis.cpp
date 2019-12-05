@@ -386,7 +386,7 @@ void TriggerVis::setZoneExtent(float mouseX, float mouseY)
 
 bool TriggerVis::changedZoneExtent()
 {
-    changed_zoneExtent = true;
+    return changed_zoneExtent;
 }
 
 void TriggerVis::setFixedZoneExtent(float X, float Y)
@@ -395,6 +395,7 @@ void TriggerVis::setFixedZoneExtent(float X, float Y)
         zoneExtent = X;
     else
         zoneExtent = Y;
+    changed_zoneExtent = true;
 }
 
 void TriggerVis::describe(ostream &out)
