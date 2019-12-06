@@ -1029,9 +1029,9 @@ void MyGLScreen::mousePressEvent(QMouseEvent *event)
         break;
     }
     case Qt::RightButton: {
-        cout << "right button" << endl;
+        //cout << "right button" << endl;
         if (scene->selectedTrigger()) {
-            cout << "selectedtrigger" << endl;
+            //cout << "selectedtrigger" << endl;
             QMenu contextMenu(this);
             QIcon icon;
 

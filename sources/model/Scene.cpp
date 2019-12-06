@@ -1871,7 +1871,7 @@ void Scene::addNewCloud(int numGrains)
 
 void Scene::addNewTrigger()
 {
-    cout << "scene addnewtrigger" << endl;
+    //cout << "scene addnewtrigger" << endl;
     SceneTrigger *sceneTrigger = new SceneTrigger;
     m_triggers.emplace_back(sceneTrigger);
     sceneTrigger->trigger.reset(new Trigger());

@@ -128,7 +128,7 @@ void TriggerDialog::linkTrigger(Trigger *triggerLinked, TriggerVis *triggerVisLi
         default :
             break;
         }
-    cout << "forme trigger, link" << endl;
+    //cout << "forme trigger, link" << endl;
     if (triggerLinked->changedTrajectoryType())
         cout << "forme trigger, traj changee" << endl;
         switch (triggerLinked->getTrajectoryType()) {
