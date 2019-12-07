@@ -298,7 +298,6 @@ void TriggerDialog::on_dial_Y_valueChanged(int value)
 {
     ui->doubleSpinBox_Y->setValue(value);
     if (!linking) {
-        triggerVisRef->setOriginY((int) value);
         triggerVisRef->updateTriggerOrigin(triggerVisRef->getOriginX(),(int) value);
         triggerVisRef->updateTriggerPosition(triggerVisRef->getOriginX(),triggerVisRef->getOriginY());
     }
@@ -313,7 +312,6 @@ void TriggerDialog::on_dial_X_valueChanged(int value)
 {
     ui->doubleSpinBox_X->setValue(value);
     if (!linking) {
-        triggerVisRef->setOriginX((int) passageValue);
         triggerVisRef->updateTriggerOrigin((int) value, triggerVisRef->getOriginY());
         triggerVisRef->updateTriggerPosition(triggerVisRef->getOriginX(),triggerVisRef->getOriginY());
     }

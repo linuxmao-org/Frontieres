@@ -416,7 +416,6 @@ void CloudDialog::on_doubleSpinBox_Y_valueChanged(double arg1)
 {
     ui->dial_Y->setValue((int) arg1);
     if (!linking){
-        cloudVisRef->setOriginY((int) arg1);
         cloudVisRef->updateCloudOrigin(cloudVisRef->getOriginX(), (int) arg1);
         cloudVisRef->updateCloudPosition(cloudVisRef->getOriginX(),cloudVisRef->getOriginY());
     }
@@ -432,7 +431,6 @@ void CloudDialog::on_doubleSpinBox_X_valueChanged(double arg1)
 {
     ui->dial_X->setValue((int) arg1);
     if (!linking) {
-        cloudVisRef->setOriginX((int) arg1);
         cloudVisRef->updateCloudOrigin((int) arg1, cloudVisRef->getOriginY());
         cloudVisRef->updateCloudPosition(cloudVisRef->getOriginX(),cloudVisRef->getOriginY());
     }
