@@ -25,8 +25,10 @@
 #include "ui_MyGLWindow.h"
 #include "ui_AboutDialog.h"
 #include "model/Cloud.h"
+#include "model/Trigger.h"
 #include "model/Scene.h"
 #include "visual/CloudVis.h"
+#include "visual/TriggerVis.h"
 #include "visual/SampleVis.h"
 #include "visual/Circular.h"
 #include "visual/Hypotrochoid.h"
@@ -139,6 +141,7 @@ void MyGLWindow::initialize()
 
 void MyGLWindow::closeEvent(QCloseEvent *e)
 {
+    theApplication->destroyAllTriggerDialogs();
     theApplication->destroyAllCloudDialogs();
 }
 
@@ -302,6 +305,7 @@ void MyGLScreen::paintGL()
         Scene *scene = ::currentScene;
         SceneSample *selectedSample = scene->selectedSample();
         SceneCloud *selectedCloud = scene->selectedCloud();
+        SceneTrigger *selectedTrigger = scene->selectedTrigger();
 
         // render rectangles
         for (int i = 0, n = scene->m_samples.size(); i < n; i++) {
@@ -313,6 +317,12 @@ void MyGLScreen::paintGL()
         for (int i = 0, n = scene->m_clouds.size(); i < n; i++) {
             CloudVis &gv = *scene->m_clouds[i]->view;
             gv.draw();
+        }
+
+        // render triggers if they exist
+        for (int i = 0, n = scene->m_triggers.size(); i < n; i++) {
+            TriggerVis &tv = *scene->m_triggers[i]->view;
+            tv.draw();
         }
 
         // print current param if editing
@@ -486,6 +496,7 @@ void MyGLScreen::keyAction_Cloud(int dir)
 
     paramString = "";
     scene->deselect(RECT);
+    scene->deselect(TRIGG);
     std::lock_guard<std::mutex> lock(::currentSceneMutex);
     if (dir < 0) {
         if (!scene->m_clouds.empty()) {
@@ -511,18 +522,113 @@ void MyGLScreen::keyAction_Cloud(int dir)
     }
 }
 
+void MyGLScreen::keyAction_Trigger(int dir)
+{
+    Scene *scene = ::currentScene;
+    SceneTrigger *selectedTrigger = scene->selectedTrigger();
 
+    paramString = "";
+    scene->deselect(RECT);
+    scene->deselect(CLOUD);
+    //std::lock_guard<std::mutex> lock(::currentSceneMutex);
+    if (dir < 0) {
+        if (!scene->m_triggers.empty()) {
+            scene->m_triggers.pop_back();
+        }
+        if (scene->m_triggers.empty()) {
+            scene->m_selectedTrigger = -1;
+        }
+        else {
+            // still have a trigger so select
+            scene->m_selectedTrigger = scene->m_triggers.size() - 1;
+            scene->m_triggers.back()->view->setSelectState(true);
+        }
+    }
+    else {
+        if (selectedTrigger) {
+            if (!scene->m_triggers.empty()) {
+                selectedTrigger->view->setSelectState(false);
+            }
+        }
+        scene->addNewTrigger();
+        scene->m_selectedTrigger = scene->m_triggers.size() - 1;
+    }
+}
 
 void MyGLScreen::keyAction_Trajectory(int dir)
 {
     Scene *scene = ::currentScene;
     SceneCloud *selectedCloud = scene->selectedCloud();
-
+    SceneTrigger *selectedTrigger = scene->selectedTrigger();
 
     Trajectory *tr=nullptr;
     paramString = "";
 
-    if (selectedCloud) {
+    if (selectedTrigger) {
+        if (currentParam != TRAJECTORY) {
+            currentParam = TRAJECTORY;
+        }
+        else {
+            if (dir < 0) {
+                selectedTrigger->view->stopTrajectory();
+            }
+            else  {
+                if (selectedTrigger->view->getTrajectory() == nullptr) {
+                    cout << "BOUNCING" << endl;
+                    tr=new Circular(g_defaultCloudParams.speed,selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY(),g_defaultCloudParams.radius,
+                                    g_defaultCloudParams.angle, 0, 1);
+                    selectedTrigger->trigger->setTrajectoryType (BOUNCING);
+                    selectedTrigger->view->updateTriggerPosition(selectedTrigger->view->getOriginX(),selectedTrigger->view->getOriginY());
+                    selectedTrigger->view->setTrajectory(tr);
+                    selectedTrigger->view->startTrajectory();
+                }
+                else {
+                    switch (selectedTrigger->trigger->getTrajectoryType())  {
+                    case BOUNCING: {
+                        cout << "CIRCULAR" << endl;
+                        tr=new Circular(g_defaultCloudParams.speed,selectedTrigger->view->getOriginX(),selectedTrigger->view->getOriginY(),g_defaultCloudParams.radius,
+                                        g_defaultCloudParams.angle, g_defaultCloudParams.stretch, g_defaultCloudParams.progress);
+                        selectedTrigger->trigger->setTrajectoryType (CIRCULAR);
+                        selectedTrigger->view->updateTriggerPosition(selectedTrigger->view->getOriginX(),selectedTrigger->view->getOriginY());
+                        selectedTrigger->view->setTrajectory(tr);
+                        selectedTrigger->view->startTrajectory();
+                        break;
+                    }
+                    case CIRCULAR: {
+                        cout << "HYPOTROCHOID" << endl;
+                        tr=new Hypotrochoid(g_defaultCloudParams.speed,selectedTrigger->view->getOriginX(),selectedTrigger->view->getOriginY(),g_defaultCloudParams.radius,
+                                            g_defaultCloudParams.radiusInt,g_defaultCloudParams.expansion,g_defaultCloudParams.angle, g_defaultCloudParams.progress);
+                        selectedTrigger->trigger->setTrajectoryType (HYPOTROCHOID);
+                        selectedTrigger->view->updateTriggerPosition(selectedTrigger->view->getOriginX(),selectedTrigger->view->getOriginY());
+                        selectedTrigger->view->setTrajectory(tr);
+                        selectedTrigger->view->startTrajectory();
+                        break;
+                    }
+                    case HYPOTROCHOID: {
+                        cout << "RECORD" << endl;
+                        contextMenu_recordTrajectory();
+                        break;
+                    }
+                    case RECORDED: {
+                        cout << "STATIC" << endl;
+                        RecordTrajectoryAsked = false;
+                        RecordingTrajectory = false;
+                        selectedTrigger->view->setRecordTrajectoryAsked(false);
+                        tr=nullptr;
+                        selectedTrigger->trigger->setTrajectoryType (STATIC);
+                        selectedTrigger->view->updateTriggerPosition(selectedTrigger->view->getOriginX(),selectedTrigger->view->getOriginY());
+                        selectedTrigger->view->setTrajectory(tr);
+                        break;
+                    }
+                    default :
+                        break;
+                    }
+
+                }
+            }
+        }
+    }
+    else if (selectedCloud) {
         if (currentParam != TRAJECTORY) {
             currentParam = TRAJECTORY;
         }
@@ -685,11 +791,16 @@ void MyGLScreen::keyAction_Active()
 {
     Scene *scene = ::currentScene;
     SceneCloud *selectedCloud = scene->selectedCloud();
+    SceneTrigger *selectedTrigger = scene->selectedTrigger();
 
     paramString = "";
-    if (selectedCloud) {
-        selectedCloud->cloud->toggleActive();
+    if (selectedTrigger) {
+        selectedTrigger->trigger->toggleActive();
     }
+    else
+        if (selectedCloud) {
+            selectedCloud->cloud->toggleActive();
+        }
 }
 
 void MyGLScreen::keyAction_EditEnvelope()
@@ -716,6 +827,18 @@ void MyGLScreen::keyAction_EditCloud()
     }
 }
 
+void MyGLScreen::keyAction_EditTrigger()
+{
+    Scene *scene = ::currentScene;
+    SceneTrigger *selectedTrigger = scene->selectedTrigger();
+
+    // all parameters in a separate window
+    paramString = "";
+    if (selectedTrigger) {
+        theApplication->showTriggerDialog(selectedTrigger);
+    }
+}
+
 void MyGLScreen::keyAction_SampleNames()
 {
     // see name of cloud or sample
@@ -727,53 +850,95 @@ void MyGLScreen::keyAction_ShowParameters()
 {
     Scene *scene = ::currentScene;
     SceneCloud *selectedCloud = scene->selectedCloud();
-    if (scene->selectedCloud())
-        scene->selectedCloud()->cloud->showParameters();
+    SceneTrigger *selectedTrigger = scene->selectedTrigger();
+
+    if (scene->selectedTrigger())
+        scene->selectedTrigger()->trigger->showParameters();
+    else
+        if (scene->selectedCloud())
+            scene->selectedCloud()->cloud->showParameters();
 }
 
 void MyGLScreen::contextMenu_parameters()
 {
-    keyAction_EditCloud();
+    Scene *scene = ::currentScene;
+    SceneCloud *selectedCloud = scene->selectedCloud();
+    SceneTrigger *selectedTrigger = scene->selectedTrigger();
+    if (selectedTrigger)
+        keyAction_EditTrigger();
+    else if (selectedCloud)
+            keyAction_EditCloud();
 }
 
 void MyGLScreen::contextMenu_recordTrajectory()
 {
     Scene *scene = ::currentScene;
     SceneCloud *selectedCloud = scene->selectedCloud();
+    SceneTrigger *selectedTrigger = scene->selectedTrigger();
 
     Trajectory *tr=nullptr;
 
-    tr=new Recorded(0, selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY());
-    selectedCloud->cloud->setTrajectoryType(RECORDED);
-    selectedCloud->view->updateCloudPosition(selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY());
-    selectedCloud->view->setTrajectory(tr);
-    selectedCloud->view->setRecordTrajectoryAsked(true);
+    if (selectedTrigger) {
+        tr=new Recorded(0, selectedTrigger->view->getOriginX(),selectedTrigger->view->getOriginY());
+        selectedTrigger->trigger->setTrajectoryType(RECORDED);
+        selectedTrigger->view->updateTriggerPosition(selectedTrigger->view->getOriginX(),selectedTrigger->view->getOriginY());
+        selectedTrigger->view->setTrajectory(tr);
+        selectedTrigger->view->setRecordTrajectoryAsked(true);
+    }
+    else
+        if (selectedCloud) {
+            tr=new Recorded(0, selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY());
+            selectedCloud->cloud->setTrajectoryType(RECORDED);
+            selectedCloud->view->updateCloudPosition(selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY());
+            selectedCloud->view->setTrajectory(tr);
+            selectedCloud->view->setRecordTrajectoryAsked(true);
+        }
 }
 
 void MyGLScreen::contextMenu_loadTrajectory()
 {
     Scene *scene = ::currentScene;
     SceneCloud *selectedCloud = scene->selectedCloud();
+    SceneTrigger *selectedTrigger = scene->selectedTrigger();
 
     Trajectory *tr=nullptr;
 
-    tr=new Recorded(0, selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY());
-    selectedCloud->cloud->setTrajectoryType(RECORDED);
-    selectedCloud->view->setTrajectory(tr);
-    theApplication->loadTrajectoryFile(selectedCloud);
+    if (selectedTrigger) {
+        tr=new Recorded(0, selectedTrigger->view->getOriginX(),selectedTrigger->view->getOriginY());
+        selectedTrigger->trigger->setTrajectoryType(RECORDED);
+        selectedTrigger->view->setTrajectory(tr);
+        theApplication->loadTriggerTrajectoryFile(selectedTrigger);
+    }
+    else
+        if (selectedCloud) {
+            tr=new Recorded(0, selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY());
+            selectedCloud->cloud->setTrajectoryType(RECORDED);
+            selectedCloud->view->setTrajectory(tr);
+            theApplication->loadCloudTrajectoryFile(selectedCloud);
+        }
 }
 
 void MyGLScreen::contextMenu_saveTrajectory()
 {
     Scene *scene = ::currentScene;
     SceneCloud *selectedCloud = scene->selectedCloud();
+    SceneTrigger *selectedTrigger = scene->selectedTrigger();
 
-    theApplication->saveTrajectoryFile(selectedCloud);
+    if (selectedTrigger)
+        theApplication->saveTriggerTrajectoryFile(selectedTrigger);
+    else
+        if (selectedCloud)
+            theApplication->saveCloudTrajectoryFile(selectedCloud);
 }
 
 void MyGLScreen::contextMenu_newCloud()
 {
     keyAction_Cloud(1);
+}
+
+void MyGLScreen::contextMenu_newTrigger()
+{
+    keyAction_Trigger(1);
 }
 
 void MyGLScreen::mousePressEvent(QMouseEvent *event)
@@ -791,29 +956,47 @@ void MyGLScreen::mousePressEvent(QMouseEvent *event)
         if (menuFlag == true)
             menuFlag = false;
 
-        scene->deselect(CLOUD);
         // deselect existing selections
+        scene->deselect(TRIGG);
+        scene->deselect(CLOUD);
         scene->deselect(RECT);
         // exit parameter editing
         currentParam = -1;
 
         lastDragX = veryHighNumber;
         lastDragY = veryHighNumber;
-        // first check clouds to see if we have selection
-        for (int i = 0, n = scene->m_clouds.size(); i < n; i++) {
-            CloudVis &gv = *scene->m_clouds[i]->view;
+        // first check trigger to see if we have selection
+        for (int i = 0, n = scene->m_triggers.size(); i < n; i++) {
+            TriggerVis &gv = *scene->m_triggers[i]->view;
             if (gv.select(mouseX, mouseY)) {
                 gv.setSelectState(true);
-                scene->m_selectedCloud = i;
+                scene->m_selectedTrigger = i;
                 break;
             }
         }
-
+        // then check clouds to see if we have selection
+        if (!scene->selectedTrigger()) {
+            for (int i = 0, n = scene->m_clouds.size(); i < n; i++) {
+                CloudVis &gv = *scene->m_clouds[i]->view;
+                if (gv.select(mouseX, mouseY)) {
+                    gv.setSelectState(true);
+                    scene->m_selectedCloud = i;
+                    break;
+                }
+            }
+        }
         // clear selection buffer
         scene->m_selectionIndices.clear();
         scene->m_selectionIndex = 0;
 
         // start recording trajectory
+        if (scene->selectedTrigger())
+            if (scene->selectedTrigger()->view->getRecordTrajectoryAsked()) {
+                scene->selectedTrigger()->view->setRecordTrajectoryAsked(false);
+                scene->selectedTrigger()->view->startTrajectory();
+                scene->selectedTrigger()->view->setRecordingTrajectory(true);
+            }
+
         if (scene->selectedCloud())
             if (scene->selectedCloud()->view->getRecordTrajectoryAsked()) {
                 scene->selectedCloud()->view->setRecordTrajectoryAsked(false);
@@ -821,8 +1004,8 @@ void MyGLScreen::mousePressEvent(QMouseEvent *event)
                 scene->selectedCloud()->view->setRecordingTrajectory(true);
             }
 
-        // if cloud is not selected - search for rectangle selection
-        if (!scene->selectedCloud()) {
+        // if cloud or trigger are not selected - search for rectangle selection
+        if ((!scene->selectedCloud()) && (!scene->selectedTrigger())) {
             // search for selections
             resizeDir = false;  // set resize direction to horizontal
             for (int i = 0, n = scene->m_samples.size(); i < n; i++) {
@@ -846,21 +1029,29 @@ void MyGLScreen::mousePressEvent(QMouseEvent *event)
         break;
     }
     case Qt::RightButton: {
-        if (scene->selectedCloud()) {
+        //cout << "right button" << endl;
+        if (scene->selectedTrigger()) {
+            //cout << "selectedtrigger" << endl;
             QMenu contextMenu(this);
             QIcon icon;
 
-            QAction * pAction_parameters = contextMenu.addAction(icon, QObject::tr("Cloud parameters"));
+            QAction * pAction_parameters = contextMenu.addAction(icon, QObject::tr("Trigger parameters (P)"));
             connect(pAction_parameters, SIGNAL(triggered()), this, SLOT(contextMenu_parameters()));
 
             QAction *separator_1 = contextMenu.addSeparator();
             addAction(separator_1);
 
-            QAction * pAction_newCloud = contextMenu.addAction(icon, QObject::tr("Create new cloud"));
+            QAction * pAction_newCloud = contextMenu.addAction(icon, QObject::tr("Create new cloud (G)"));
             connect(pAction_newCloud, SIGNAL(triggered()), this, SLOT(contextMenu_newCloud()));
 
             QAction *separator_2 = contextMenu.addSeparator();addAction(separator_2);
             addAction(separator_2);
+
+            QAction * pAction_newTrigger = contextMenu.addAction(icon, QObject::tr("Create new trigger (H)"));
+            connect(pAction_newTrigger, SIGNAL(triggered()), this, SLOT(contextMenu_newTrigger()));
+
+            QAction *separator_3 = contextMenu.addSeparator();addAction(separator_2);
+            addAction(separator_3);
 
             QAction * pAction_recordTraj = contextMenu.addAction(icon, QObject::tr("Record trajectory"));
             connect(pAction_recordTraj, SIGNAL(triggered()), this, SLOT(contextMenu_recordTrajectory()));
@@ -868,19 +1059,63 @@ void MyGLScreen::mousePressEvent(QMouseEvent *event)
             QAction * pAction_loadTraj = contextMenu.addAction(icon, QObject::tr("Load trajectory"));
             connect(pAction_loadTraj, SIGNAL(triggered()), this, SLOT(contextMenu_loadTrajectory()));
 
-            if (scene->selectedCloud()->view->getTrajectoryType() == RECORDED) {
+            if (scene->selectedTrigger()->view->getTrajectoryType() == RECORDED) {
                 QAction * pAction_saveTraj = contextMenu.addAction(icon, QObject::tr("Save trajectory"));
                 connect(pAction_saveTraj, SIGNAL(triggered()), this, SLOT(contextMenu_saveTrajectory()));
             }
             contextMenu.exec(QCursor::pos());
-
         }
         else {
-            QMenu contextMenu(this);
-            QIcon icon;
-            QAction * pAction_newCloud = contextMenu.addAction(icon, QObject::tr("Create new cloud"));
-            connect(pAction_newCloud, SIGNAL(triggered()), this, SLOT(contextMenu_newCloud()));
-            contextMenu.exec(QCursor::pos());
+            if (scene->selectedCloud()) {
+                QMenu contextMenu(this);
+                QIcon icon;
+
+                QAction * pAction_parameters = contextMenu.addAction(icon, QObject::tr("Cloud parameters (P)"));
+                connect(pAction_parameters, SIGNAL(triggered()), this, SLOT(contextMenu_parameters()));
+
+                QAction *separator_1 = contextMenu.addSeparator();
+                addAction(separator_1);
+
+                QAction * pAction_newCloud = contextMenu.addAction(icon, QObject::tr("Create new cloud (G)"));
+                connect(pAction_newCloud, SIGNAL(triggered()), this, SLOT(contextMenu_newCloud()));
+
+                QAction *separator_2 = contextMenu.addSeparator();addAction(separator_2);
+                addAction(separator_2);
+
+                QAction * pAction_newTrigger = contextMenu.addAction(icon, QObject::tr("Create new trigger (H)"));
+                connect(pAction_newTrigger, SIGNAL(triggered()), this, SLOT(contextMenu_newTrigger()));
+
+                QAction *separator_3 = contextMenu.addSeparator();addAction(separator_2);
+                addAction(separator_3);
+
+                QAction * pAction_recordTraj = contextMenu.addAction(icon, QObject::tr("Record trajectory"));
+                connect(pAction_recordTraj, SIGNAL(triggered()), this, SLOT(contextMenu_recordTrajectory()));
+
+                QAction * pAction_loadTraj = contextMenu.addAction(icon, QObject::tr("Load trajectory"));
+                connect(pAction_loadTraj, SIGNAL(triggered()), this, SLOT(contextMenu_loadTrajectory()));
+
+                if (scene->selectedCloud()->view->getTrajectoryType() == RECORDED) {
+                    QAction * pAction_saveTraj = contextMenu.addAction(icon, QObject::tr("Save trajectory"));
+                    connect(pAction_saveTraj, SIGNAL(triggered()), this, SLOT(contextMenu_saveTrajectory()));
+                }
+                contextMenu.exec(QCursor::pos());
+
+            }
+            else {
+                QMenu contextMenu(this);
+                QIcon icon;
+
+                QAction * pAction_newCloud = contextMenu.addAction(icon, QObject::tr("Create new cloud (G)"));
+                connect(pAction_newCloud, SIGNAL(triggered()), this, SLOT(contextMenu_newCloud()));
+
+                QAction *separator_1 = contextMenu.addSeparator();
+                addAction(separator_1);
+
+                QAction * pAction_newTrigger = contextMenu.addAction(icon, QObject::tr("Create new trigger (H)"));
+                connect(pAction_newTrigger, SIGNAL(triggered()), this, SLOT(contextMenu_newTrigger()));
+
+                contextMenu.exec(QCursor::pos());
+            }
         }
 
         break;
@@ -893,13 +1128,22 @@ void MyGLScreen::mousePressEvent(QMouseEvent *event)
 void MyGLScreen::mouseReleaseEvent(QMouseEvent *event)
 {
     Scene *scene = ::currentScene;
-    if (scene->selectedCloud())
-        if (scene->selectedCloud()->view->getRecordingTrajectory()) {
-            scene->selectedCloud()->view->trajectoryAddPosition(mouseX, mouseY);
-            scene->selectedCloud()->view->trajectoryAddPosition(mouseX, mouseY);
-            scene->selectedCloud()->view->setRecordingTrajectory(false);
-            scene->selectedCloud()->view->copyTrajectoryPositionsToMidi();
+
+    if (scene->selectedTrigger()) {
+        if (scene->selectedTrigger()->view->getRecordingTrajectory()) {
+            scene->selectedTrigger()->view->trajectoryAddPosition(mouseX, mouseY);
+            scene->selectedTrigger()->view->trajectoryAddPosition(mouseX, mouseY);
+            scene->selectedTrigger()->view->setRecordingTrajectory(false);
         }
+    }
+    else
+        if (scene->selectedCloud())
+            if (scene->selectedCloud()->view->getRecordingTrajectory()) {
+                scene->selectedCloud()->view->trajectoryAddPosition(mouseX, mouseY);
+                scene->selectedCloud()->view->trajectoryAddPosition(mouseX, mouseY);
+                scene->selectedCloud()->view->setRecordingTrajectory(false);
+                scene->selectedCloud()->view->copyTrajectoryPositionsToMidi();
+            }
 
     Qt::MouseButton button = event->button();
 
@@ -924,91 +1168,113 @@ void MyGLScreen::mouseMoveEvent(QMouseEvent *event)
 
     //origin of trajectory
     pt2d origin {0.,0.};
-    double posCloudX=0.;
-    double posCloudY=0.;
+    double posX=0.;
+    double posY=0.;
 
     Scene *scene = ::currentScene;
     SceneSample *selectedSample = scene->selectedSample();
     SceneCloud *selectedCloud = scene->selectedCloud();
+    SceneTrigger *selectedTrigger = scene->selectedTrigger();
 
-    if (selectedCloud) {
-        if (selectedCloud->cloud->getLockedState())
-            if (selectedCloud->cloud->dialogLocked())
+    if (selectedTrigger) {
+        if (selectedTrigger->trigger->getLockedState())
+            if (selectedTrigger->trigger->dialogLocked())
                 return;
-        posCloudX=selectedCloud->view->getOriginX(); //traj
-        posCloudY=selectedCloud->view->getOriginY();
-        if (selectedCloud->view->getRecordingTrajectory() == true){
+        posX=selectedTrigger->view->getOriginX(); //traj
+        posY=selectedTrigger->view->getOriginY();
+        if (selectedTrigger->view->getRecordingTrajectory() == true){
             // add position in recorded trajectory
-            selectedCloud->view->trajectoryAddPosition(mouseX, mouseY);
+            selectedTrigger->view->trajectoryAddPosition(mouseX, mouseY);
         }
         else {
-            selectedCloud->view->updateCloudOrigin(mouseX, mouseY);
-            selectedCloud->view->updateCloudPosition(selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY());
-            if(selectedCloud->view->getIsMoving())
+            selectedTrigger->view->updateTriggerOrigin(mouseX, mouseY);
+            selectedTrigger->view->updateTriggerPosition(selectedTrigger->view->getOriginX(),selectedTrigger->view->getOriginY());
+            if(selectedTrigger->view->getIsMoving())
             {
-                origin=selectedCloud->view->getTrajectory()->getOrigin();
-                selectedCloud->view->getTrajectory()->updateOrigin(origin.x-posCloudX+mouseX,origin.y-posCloudY+mouseY);
+                origin=selectedTrigger->view->getTrajectory()->getOrigin();
+                selectedTrigger->view->getTrajectory()->updateOrigin(origin.x-posX+mouseX,origin.y-posY+mouseY);
             }
         }
-
     }
-    else {
-
-        switch (dragMode) {
-        case MOVE:
-            if ((lastDragX != veryHighNumber) && (lastDragY != veryHighNumber)) {
-
-                if (selectedSample) {  // movement case
-                    selectedSample->view->move(mouseX - lastDragX, mouseY - lastDragY);
+    else
+        if (selectedCloud) {
+            if (selectedCloud->cloud->getLockedState())
+                if (selectedCloud->cloud->dialogLocked())
+                    return;
+            posX=selectedCloud->view->getOriginX(); //traj
+            posY=selectedCloud->view->getOriginY();
+            if (selectedCloud->view->getRecordingTrajectory() == true){
+                // add position in recorded trajectory
+                selectedCloud->view->trajectoryAddPosition(mouseX, mouseY);
+            }
+            else {
+                selectedCloud->view->updateCloudOrigin(mouseX, mouseY);
+                selectedCloud->view->updateCloudPosition(selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY());
+                if(selectedCloud->view->getIsMoving())
+                {
+                    origin=selectedCloud->view->getTrajectory()->getOrigin();
+                    selectedCloud->view->getTrajectory()->updateOrigin(origin.x-posX+mouseX,origin.y-posY+mouseY);
                 }
             }
-            lastDragX = mouseX;
-            lastDragY = mouseY;
-            break;
 
-        case RESIZE:
-            if ((lastDragX != veryHighNumber) && (lastDragY != veryHighNumber)) {
-                // for width height - use screen coords
+        }
+        else {
 
-                if (selectedSample) {
-                    xDiff = x - lastDragX;
-                    yDiff = y - lastDragY;
-                    // get width and height
-                    float newWidth = selectedSample->view->getWidth();
-                    float newHeight = selectedSample->view->getHeight();
+            switch (dragMode) {
+            case MOVE:
+                if ((lastDragX != veryHighNumber) && (lastDragY != veryHighNumber)) {
 
-                    int thresh = 0;
-                    // check motion mag
-                    if (xDiff < -thresh) {
-                        newWidth = newWidth * 0.8 +
-                            0.2 * (newWidth * (1.1 + abs(xDiff / 50.0)));
+                    if (selectedSample) {  // movement case
+                        selectedSample->view->move(mouseX - lastDragX, mouseY - lastDragY);
                     }
-                    else {
-                        if (xDiff > thresh)
+                }
+                lastDragX = mouseX;
+                lastDragY = mouseY;
+                break;
+
+            case RESIZE:
+                if ((lastDragX != veryHighNumber) && (lastDragY != veryHighNumber)) {
+                    // for width height - use screen coords
+
+                    if (selectedSample) {
+                        xDiff = x - lastDragX;
+                        yDiff = y - lastDragY;
+                        // get width and height
+                        float newWidth = selectedSample->view->getWidth();
+                        float newHeight = selectedSample->view->getHeight();
+
+                        int thresh = 0;
+                        // check motion mag
+                        if (xDiff < -thresh) {
                             newWidth = newWidth * 0.8 +
-                                0.2 * (newWidth * (0.85 - abs(xDiff / 50.0)));
-                    }
-                    if (yDiff > thresh) {
-                        newHeight = newHeight * 0.8 +
-                            0.2 * (newHeight * (1.1 + abs(yDiff / 50.0)));
-                    }
-                    else {
-                        if (yDiff < -thresh)
+                                0.2 * (newWidth * (1.1 + abs(xDiff / 50.0)));
+                        }
+                        else {
+                            if (xDiff > thresh)
+                                newWidth = newWidth * 0.8 +
+                                    0.2 * (newWidth * (0.85 - abs(xDiff / 50.0)));
+                        }
+                        if (yDiff > thresh) {
                             newHeight = newHeight * 0.8 +
-                                0.2 * (newHeight * (0.85 - abs(yDiff / 50.0)));
-                    }
+                                0.2 * (newHeight * (1.1 + abs(yDiff / 50.0)));
+                        }
+                        else {
+                            if (yDiff < -thresh)
+                                newHeight = newHeight * 0.8 +
+                                    0.2 * (newHeight * (0.85 - abs(yDiff / 50.0)));
+                        }
 
-                    // update width and height
-                    selectedSample->view->setWidthHeight(newWidth, newHeight);
+                        // update width and height
+                        selectedSample->view->setWidthHeight(newWidth, newHeight);
+                    }
                 }
+                lastDragX = x;
+                lastDragY = y;
+                break;
+            default:
+                break;
             }
-            lastDragX = x;
-            lastDragY = y;
-            break;
-        default:
-            break;
         }
-    }
 }
 
 void MyGLScreen::mousePassiveMoveEvent(QMouseEvent *event)
@@ -1019,22 +1285,39 @@ void MyGLScreen::mousePassiveMoveEvent(QMouseEvent *event)
 
     Scene *scene = ::currentScene;
     SceneCloud *selectedCloud = scene->selectedCloud();
+    SceneTrigger *selectedTrigger = scene->selectedTrigger();
 
-    if (selectedCloud) {
+    if (selectedTrigger) {
         switch (currentParam) {
         case MOTIONX:
-            selectedCloud->view->setXRandExtent(mouseX);
+            selectedTrigger->view->setZoneExtent(mouseX, mouseX);
             break;
         case MOTIONY:
-            selectedCloud->view->setYRandExtent(mouseY);
+            selectedTrigger->view->setZoneExtent(mouseY, mouseY);
             break;
         case MOTIONXY:
-            selectedCloud->view->setRandExtent(mouseX, mouseY);
+            selectedTrigger->view->setZoneExtent(mouseX, mouseY);
             break;
         default:
             break;
         }
     }
+    else
+        if (selectedCloud) {
+            switch (currentParam) {
+            case MOTIONX:
+                selectedCloud->view->setXRandExtent(mouseX);
+                break;
+            case MOTIONY:
+                selectedCloud->view->setYRandExtent(mouseY);
+                break;
+            case MOTIONXY:
+                selectedCloud->view->setRandExtent(mouseX, mouseY);
+                break;
+            default:
+                break;
+            }
+        }
 }
 
 void MyGLScreen::keyPressEvent(QKeyEvent *event)
@@ -1048,6 +1331,7 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
     Scene *scene = ::currentScene;
     SceneSample *selectedSample = scene->selectedSample();
     SceneCloud *selectedCloud = scene->selectedCloud();
+    SceneTrigger *selectedTrigger = scene->selectedTrigger();
 
     if (selectedCloud and selectedCloud->cloud->getLockedState())
         if ((event->key() != Qt::Key_Escape)
@@ -1233,6 +1517,10 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
         keyAction_Cloud((modkey == Qt::ShiftModifier) ? -1 : +1);
         break;
     }
+    case Qt::Key_H: {
+        keyAction_Trigger((modkey == Qt::ShiftModifier) ? -1 : +1);
+        break;
+    }
 
     case Qt::Key_V:  // grains (add, delete)
         keyAction_Grain((modkey == Qt::ShiftModifier) ? -1 : +1);
@@ -1268,17 +1556,24 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
         break;
     case Qt::Key_Delete:  // delete selected
         if (paramString == "") {
-            if (selectedCloud) {
-                theApplication->destroyCloudDialog(selectedCloud->cloud->getId());
+            if (selectedTrigger) {
+                theApplication->destroyTriggerDialog(selectedTrigger->trigger->getId());
                 std::lock_guard<std::mutex> lock(::currentSceneMutex);
-                scene->m_clouds.erase(scene->m_clouds.begin() + scene->m_selectedCloud);
-                scene->m_selectedCloud = -1;
+                scene->m_triggers.erase(scene->m_triggers.begin() + scene->m_selectedTrigger);
+                scene->m_selectedTrigger = -1;
             }
-            else if (selectedSample) {
-                std::lock_guard<std::mutex> lock(::currentSceneMutex);
-                scene->removeSampleAt(scene->m_selectedSample);
-                scene->m_selectedSample = -1;
-            }
+            else
+                if (selectedCloud) {
+                    theApplication->destroyCloudDialog(selectedCloud->cloud->getId());
+                    std::lock_guard<std::mutex> lock(::currentSceneMutex);
+                    scene->m_clouds.erase(scene->m_clouds.begin() + scene->m_selectedCloud);
+                    scene->m_selectedCloud = -1;
+                }
+                else if (selectedSample) {
+                    std::lock_guard<std::mutex> lock(::currentSceneMutex);
+                    scene->removeSampleAt(scene->m_selectedSample);
+                    scene->m_selectedSample = -1;
+                }
         }
         else {
             if (paramString.size() > 0)
@@ -1331,7 +1626,10 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
         break;
     }
     case Qt::Key_P: {
-        keyAction_EditCloud();
+        if (selectedTrigger)
+            keyAction_EditTrigger();
+        else if (selectedCloud)
+                keyAction_EditCloud();
         break;
     }
     case Qt::Key_U : {

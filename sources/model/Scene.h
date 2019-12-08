@@ -32,15 +32,19 @@
 
 struct SceneSample;
 struct SceneCloud;
+struct SceneTrigger;
 struct Sample;
 struct SampleVis;
 struct Cloud;
 struct CloudVis;
+struct Trigger;
+struct TriggerVis;
 class SampleSet;
 class QFile;
 
 typedef std::vector<std::unique_ptr<SceneSample>> VecSceneSample;
 typedef std::vector<std::unique_ptr<SceneCloud>> VecSceneCloud;
+typedef std::vector<std::unique_ptr<SceneTrigger>> VecSceneTrigger;
 
 extern unsigned int samp_rate;
 
@@ -63,8 +67,10 @@ public:
     bool loadCloudDefault(QFile &cloudFile);
     bool save(QFile &sceneFile);
     bool saveCloud(QFile &cloudFile, SceneCloud *selectedCloudSave);
-    bool saveRecordedTrajectory(QFile &trajectoryFile, SceneCloud *selectedCloudSave);
-    bool loadRecordedTrajectory(QFile &trajectoryFile, SceneCloud *selectedCloudLoad);
+    bool saveCloudRecordedTrajectory(QFile &trajectoryFile, SceneCloud *selectedCloudSave);
+    bool loadCloudRecordedTrajectory(QFile &trajectoryFile, SceneCloud *selectedCloudLoad);
+    bool saveTriggerRecordedTrajectory(QFile &trajectoryFile, SceneTrigger *selectedTriggerSave);
+    bool loadTriggerRecordedTrajectory(QFile &trajectoryFile, SceneTrigger *selectedTriggerLoad);
 
     bool loadSampleSet(bool interactive);
     Sample *loadNewSample(const std::string &path);
@@ -74,18 +80,21 @@ public:
 
     void addSampleVis(Sample *sampleToAdd);
     void addNewCloud(int numGrains);
-
+    void addNewTrigger();
 
     // init default cloud params
     void initDefaultCloudParams();
 
     int getNumCloud(SceneCloud *cloudCurrent);
+    int getNumTrigger(SceneTrigger *triggerCurrent);
 
     void changeParamEnvelopeVolume ( SceneCloud *selectedCloud);
 
     SceneSample *selectedSample();
     SceneCloud *selectedCloud();
+    SceneTrigger *selectedTrigger();
 
+    SceneTrigger *findTriggerById(unsigned id);
     SceneCloud *findCloudById(unsigned id);
 
     // handle deselections
@@ -95,6 +104,7 @@ public:
     std::vector<std::string> m_audioPaths;
     VecSceneSample m_samples;
     VecSceneCloud m_clouds;
+    VecSceneTrigger m_triggers;
 
     // Samples
     std::unique_ptr<SampleSet> m_sampleSet;
@@ -102,6 +112,7 @@ public:
     // selection helper vars
     int m_selectedCloud = -1;
     int m_selectedSample = -1;
+    int m_selectedTrigger = -1;
     int m_selectionIndex = 0;
     std::vector<int> m_selectionIndices;
 
@@ -127,6 +138,13 @@ struct SceneCloud {
     std::unique_ptr<CloudVis> view;
 
     ~SceneCloud();
+};
+
+struct SceneTrigger {
+    std::unique_ptr<Trigger> trigger;
+    std::unique_ptr<TriggerVis> view;
+
+    ~SceneTrigger();
 };
 
 #endif // SCENE_H

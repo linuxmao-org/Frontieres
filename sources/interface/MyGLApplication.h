@@ -47,15 +47,21 @@ public:
     bool saveSceneFile();
     bool saveCloudFile(SceneCloud *selectedCloudSave);
     bool loadCloudDefaultFile();
-    bool saveTrajectoryFile(SceneCloud *selectedCloudSave);
-    bool loadTrajectoryFile(SceneCloud *selectedCloudLoad);
+    bool saveCloudTrajectoryFile(SceneCloud *selectedCloudSave);
+    bool loadCloudTrajectoryFile(SceneCloud *selectedCloudLoad);
+    bool saveTriggerTrajectoryFile(SceneTrigger *selectedTriggerSave);
+    bool loadTriggerTrajectoryFile(SceneTrigger *selectedTriggerLoad);
+
     void addSample();
     void showDialogVolumeEnvelope(SceneCloud *selectedCloudToVolumeEnvelope);
     void showCloudDialog(SceneCloud *selectedCloud);
+    void showTriggerDialog(SceneTrigger *selectedTrigger);
     void destroyCloudDialog(unsigned selectedCloudId);
+    void destroyTriggerDialog(unsigned selectedTriggerId);
     void midiNoteOn (int midiChannelToPlay, int midiKeyToPlay, int midiVeloToPlay);
     void midiNoteOff (int midiChannelToStop, int midiKeyToStop);
     void destroyAllCloudDialogs();
+    void destroyAllTriggerDialogs();
     void showOptionsDialog();
     void showMidiBankDialog();
     void showMidiInstrumentDialog();

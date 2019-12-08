@@ -198,7 +198,8 @@ Cloud::Cloud(VecSceneSample *sampleSet, float theNumGrains)
     }
 
     // state - (user can remove cloud from "play" for editing)
-    //isActive = true;
+    //isActive = g_defaultCloudParams.activateState;
+
     setActiveState(g_defaultCloudParams.activateState);
 
     //midi polyphony
@@ -570,7 +571,6 @@ void Cloud::setTrajectoryType(int l_TrajectoryType)
         return;
     }
     trajectoryType = l_TrajectoryType;
-    //cout << "cloud trajtype="<<l_TrajectoryType<<endl;
     myCloudVis->setTrajectoryType(l_TrajectoryType);
     changed_trajectoryType = true;
 }
@@ -786,6 +786,7 @@ void Cloud::changesDone(bool done)
     changed_myDirMode = done;
     changed_spatialMode = done;
     changed_trajectoryType = done;
+    changed_ActiveRestartTrajectory = done;
 }
 
 void Cloud::showMessageLocked()
@@ -829,12 +830,24 @@ void Cloud::showParameters()
     default:
         break;
     }
-
-
 }
 
+void Cloud::setActiveRestartTrajectory(bool l_choice)
+{
+    if (activeRestartTrajectory != l_choice)
+        changed_ActiveRestartTrajectory = true;
+    activeRestartTrajectory = l_choice;
+}
 
+bool Cloud::changedActiveRestartTrajectory()
+{
+    return changed_ActiveRestartTrajectory;
+}
 
+bool Cloud::getActiveRestartTrajectory()
+{
+    return activeRestartTrajectory;
+}
 
 // print information
 void Cloud::describe(std::ostream &out)
@@ -927,7 +940,7 @@ void Cloud::nextBuffer(BUFFERPREC *accumBuff, unsigned int numFrames)
                     // TODO:  get position vector for grain with idx nextGrain from controller
                     // udate positions vector (currently randomized)q
                     if (myCloudVis)
-                        myCloudVis->getTriggerPos(nextGrain, playPositions, playVols, duration);
+                        myCloudVis->getCloudPos(nextGrain, playPositions, playVols, duration);
                 }
 
                 // get next pitch (using LFO) -  eventually generalize to an applyLFOs method (if LFO control will be exerted over multiple params)
@@ -1038,7 +1051,7 @@ void Cloud::nextBuffer(BUFFERPREC *accumBuff, unsigned int numFrames)
                             // TODO:  get position vector for grain with idx nextGrain from controller
                             // udate positions vector (currently randomized)q
                             if (myCloudVis)
-                                myCloudVis->getMidiCloudVis(ii)->getTriggerPos(nextGrain, playPositions, playVols, duration);
+                                myCloudVis->getMidiCloudVis(ii)->getCloudPos(nextGrain, playPositions, playVols, duration);
                         }
 
                         // get next pitch (using LFO) -  eventually generalize to an applyLFOs method (if LFO control will be exerted over multiple params)

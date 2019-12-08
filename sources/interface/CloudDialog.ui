@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>814</width>
-    <height>441</height>
+    <width>860</width>
+    <height>458</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -129,7 +129,7 @@
                <enum>QFrame::Raised</enum>
               </property>
               <property name="text">
-               <string>Volume (b)</string>
+               <string>Volume (B)</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignBottom|Qt::AlignHCenter</set>
@@ -255,7 +255,7 @@ border-bottom-left-radius: 9px;
             </font>
            </property>
            <property name="text">
-            <string>Envelope (e)</string>
+            <string>Envelope (E)</string>
            </property>
            <property name="autoDefault">
             <bool>false</bool>
@@ -454,7 +454,7 @@ border-bottom-left-radius: 9px;
                      <enum>QFrame::Raised</enum>
                     </property>
                     <property name="text">
-                     <string>Grains (v)</string>
+                     <string>Grains (V)</string>
                     </property>
                     <property name="alignment">
                      <set>Qt::AlignCenter</set>
@@ -659,7 +659,7 @@ border-bottom-left-radius: 9px;
                      <enum>QFrame::Raised</enum>
                     </property>
                     <property name="text">
-                     <string>LFO Freq (l)</string>
+                     <string>LFO Freq (L)</string>
                     </property>
                     <property name="alignment">
                      <set>Qt::AlignCenter</set>
@@ -873,7 +873,7 @@ border-bottom-left-radius: 9px;
                      <enum>QFrame::Raised</enum>
                     </property>
                     <property name="text">
-                     <string>Pitch (z)</string>
+                     <string>Pitch (Z)</string>
                     </property>
                     <property name="alignment">
                      <set>Qt::AlignCenter</set>
@@ -1090,7 +1090,7 @@ border-bottom-left-radius: 9px;
                      <enum>QFrame::Raised</enum>
                     </property>
                     <property name="text">
-                     <string>X Extent (x)</string>
+                     <string>X Extent (X)</string>
                     </property>
                     <property name="alignment">
                      <set>Qt::AlignCenter</set>
@@ -1554,7 +1554,7 @@ border-bottom-left-radius: 9px;
                      <enum>QFrame::Raised</enum>
                     </property>
                     <property name="text">
-                     <string>Overlap (s)</string>
+                     <string>Overlap (S)</string>
                     </property>
                     <property name="alignment">
                      <set>Qt::AlignCenter</set>
@@ -1756,7 +1756,7 @@ border-bottom-left-radius: 9px;
                      <enum>QFrame::Raised</enum>
                     </property>
                     <property name="text">
-                     <string>LFO Amp (k)</string>
+                     <string>LFO Amp (K)</string>
                     </property>
                     <property name="alignment">
                      <set>Qt::AlignCenter</set>
@@ -1967,7 +1967,7 @@ border-bottom-left-radius: 9px;
                      <enum>QFrame::Raised</enum>
                     </property>
                     <property name="text">
-                     <string>Duration (d)</string>
+                     <string>Duration (D)</string>
                     </property>
                     <property name="alignment">
                      <set>Qt::AlignCenter</set>
@@ -2181,7 +2181,7 @@ border-bottom-left-radius: 9px;
                      <enum>QFrame::Raised</enum>
                     </property>
                     <property name="text">
-                     <string>Y Extent (y)</string>
+                     <string>Y Extent (Y)</string>
                     </property>
                     <property name="alignment">
                      <set>Qt::AlignCenter</set>
@@ -4144,7 +4144,7 @@ border-bottom-left-radius: 9px;
                </font>
               </property>
               <property name="title">
-               <string>Balance (t)</string>
+               <string>Balance (T)</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
@@ -4160,7 +4160,7 @@ border-bottom-left-radius: 9px;
                <item>
                 <widget class="QRadioButton" name="radioButton_Balance_Stereo">
                  <property name="text">
-                  <string>S&amp;tereo</string>
+                  <string>&amp;Stereo</string>
                  </property>
                  <property name="autoExclusive">
                   <bool>true</bool>
@@ -4471,16 +4471,16 @@ border-bottom-left-radius: 9px;
               </property>
               <layout class="QFormLayout" name="formLayout">
                <property name="horizontalSpacing">
-                <number>6</number>
+                <number>0</number>
                </property>
                <property name="verticalSpacing">
-                <number>2</number>
+                <number>0</number>
                </property>
                <property name="leftMargin">
-                <number>2</number>
+                <number>6</number>
                </property>
                <property name="topMargin">
-                <number>0</number>
+                <number>4</number>
                </property>
                <property name="rightMargin">
                 <number>0</number>
@@ -4488,7 +4488,7 @@ border-bottom-left-radius: 9px;
                <property name="bottomMargin">
                 <number>0</number>
                </property>
-               <item row="1" column="0">
+               <item row="0" column="0">
                 <widget class="QLabel" name="label_Id">
                  <property name="frameShape">
                   <enum>QFrame::Panel</enum>
@@ -4501,24 +4501,31 @@ border-bottom-left-radius: 9px;
                  </property>
                 </widget>
                </item>
-               <item row="1" column="1">
+               <item row="0" column="1">
                 <widget class="QLabel" name="label_Id_Value">
                  <property name="text">
                   <string/>
                  </property>
                 </widget>
                </item>
-               <item row="4" column="0">
+               <item row="1" column="0">
                 <widget class="QCheckBox" name="checkBox_Active">
                  <property name="text">
                   <string>Active</string>
                  </property>
                 </widget>
                </item>
-               <item row="5" column="0">
+               <item row="3" column="0">
                 <widget class="QCheckBox" name="checkBox_Locked">
                  <property name="text">
                   <string>Locked</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QCheckBox" name="checkBox_Restart">
+                 <property name="text">
+                  <string>Restart</string>
                  </property>
                 </widget>
                </item>
@@ -4695,7 +4702,7 @@ border-bottom-left-radius: 9px;
                   </font>
                  </property>
                  <property name="title">
-                  <string>Direction (f)</string>
+                  <string>Direction (F)</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignCenter</set>
@@ -4720,14 +4727,14 @@ border-bottom-left-radius: 9px;
                   <item>
                    <widget class="QRadioButton" name="radioButton_Direction_Backward">
                     <property name="text">
-                     <string>Bac&amp;kward</string>
+                     <string>&amp;Backward</string>
                     </property>
                    </widget>
                   </item>
                   <item>
                    <widget class="QRadioButton" name="radioButton_Direction_Random">
                     <property name="text">
-                     <string>Rando&amp;m</string>
+                     <string>&amp;Random</string>
                     </property>
                     <property name="autoExclusive">
                      <bool>true</bool>
@@ -4787,7 +4794,7 @@ border-bottom-left-radius: 9px;
                </font>
               </property>
               <property name="title">
-               <string>Trajectory (i)</string>
+               <string>Trajectory (I)</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>
@@ -4816,7 +4823,7 @@ border-bottom-left-radius: 9px;
                <item>
                 <widget class="QRadioButton" name="radioButton_Trajectory_Circular">
                  <property name="text">
-                  <string>Ci&amp;rcular</string>
+                  <string>&amp;Circular</string>
                  </property>
                  <property name="autoExclusive">
                   <bool>true</bool>
@@ -4826,7 +4833,7 @@ border-bottom-left-radius: 9px;
                <item>
                 <widget class="QRadioButton" name="radioButton_Trajectory_Hypotrochoid">
                  <property name="text">
-                  <string>H&amp;ypotrochoid</string>
+                  <string>&amp;Hypotrochoid</string>
                  </property>
                 </widget>
                </item>
@@ -4882,7 +4889,7 @@ border-bottom-left-radius: 9px;
                <item row="0" column="0">
                 <widget class="QCommandLinkButton" name="commandLinkButton_stop">
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                  <sizepolicy hsizetype="Ignored" vsizetype="Maximum">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
@@ -4915,7 +4922,7 @@ border-bottom-left-radius: 9px;
                <item row="0" column="1">
                 <widget class="QCommandLinkButton" name="commandLinkButton_go">
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                  <sizepolicy hsizetype="Ignored" vsizetype="Maximum">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
@@ -4930,39 +4937,6 @@ border-bottom-left-radius: 9px;
                   <iconset theme="boutontransport" resource="../../resources/buttons.qrc">
                    <normaloff>:/resources/boutonstransports-1-4.png</normaloff>
                    <normalon>:/resources/boutonstransports-1-2.png</normalon>:/resources/boutonstransports-1-4.png</iconset>
-                 </property>
-                 <property name="iconSize">
-                  <size>
-                   <width>15</width>
-                   <height>15</height>
-                  </size>
-                 </property>
-                 <property name="checkable">
-                  <bool>true</bool>
-                 </property>
-                 <property name="checked">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="2">
-                <widget class="QCommandLinkButton" name="commandLinkButton_record">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="focusPolicy">
-                  <enum>Qt::NoFocus</enum>
-                 </property>
-                 <property name="text">
-                  <string/>
-                 </property>
-                 <property name="icon">
-                  <iconset theme="boutontransport" resource="../../resources/buttons.qrc">
-                   <normaloff>:/resources/boutonstransports-1-6.png</normaloff>
-                   <normalon>:/resources/boutonstransports-1-5.png</normalon>:/resources/boutonstransports-1-6.png</iconset>
                  </property>
                  <property name="iconSize">
                   <size>
@@ -5022,7 +4996,7 @@ border-bottom-left-radius: 9px;
                </font>
               </property>
               <property name="title">
-               <string>Window (w)</string>
+               <string>Window (W)</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignCenter</set>

@@ -69,6 +69,7 @@ public slots:
     void keyAction_Window(int dir = +1);
     void keyAction_Volume(int dir = +1);
     void keyAction_Cloud(int dir = +1);
+    void keyAction_Trigger(int dir = +1);
     void keyAction_Grain(int dir = +1);
     void keyAction_Duration(int dir = +1);
     void keyAction_LfoFreq(int dir = +1);
@@ -78,6 +79,7 @@ public slots:
     void keyAction_Active();
     void keyAction_EditEnvelope();
     void keyAction_EditCloud();
+    void keyAction_EditTrigger();
     void keyAction_SampleNames();
     void keyAction_ShowParameters();
 
@@ -87,6 +89,7 @@ private slots:
     void contextMenu_loadTrajectory();
     void contextMenu_saveTrajectory();
     void contextMenu_newCloud();
+    void contextMenu_newTrigger();
     void contextMenu_parameters();
 
 protected:

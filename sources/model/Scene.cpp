@@ -23,6 +23,7 @@
 #include "Scene.h"
 #include "Frontieres.h"
 #include "Cloud.h"
+#include "Trigger.h"
 #include "Grain.h"
 #include "Sample.h"
 #include "ParamCloud.h"
@@ -41,6 +42,9 @@
 
 // TODO arrange this later
 #include "visual/CloudVis.h"
+#include "visual/TriggerVis.h"
+
+#include "Version.h"
 
 extern CloudParams g_defaultCloudParams;
 
@@ -175,6 +179,15 @@ bool Scene::load(QFile &sceneFile)
 
     QJsonObject docRoot = doc.object();
 
+    QJsonArray docVersion = docRoot["version"].toArray();
+    for (const QJsonValue &jsonElement : docVersion) {
+        QJsonObject objVersion = jsonElement.toObject();
+        int l_version_major = objVersion["major"].toInt();
+        int l_version_minor = objVersion["minor"].toInt();
+        int l_version_patch = objVersion["patch"].toInt();
+        cout << "scene version " << l_version_major << "." << l_version_minor << "." << l_version_patch << endl;
+    }
+
     QJsonValue valAudioPath = docRoot["audio-path"];
 
     // path
@@ -222,6 +235,8 @@ bool Scene::load(QFile &sceneFile)
              << ", y : " << ySample << "\n";
     }
 
+    // clouds
+
     QJsonArray docClouds = docRoot["clouds"].toArray();
     m_clouds.clear();
     m_clouds.reserve(docClouds.size());
@@ -266,6 +281,7 @@ bool Scene::load(QFile &sceneFile)
         cloudEnvelopeVolume.t4 = objCloud["volume-envelope-T4"].toInt();
         int cloudNumGrains = objCloud["num-grains"].toInt();
         int cloudActiveState = objCloud["active-state"].toBool();
+        int cloudActiveRestartTrajectory = objCloud["active-restart-trajectory"].toBool();
         double cloudX = objCloud["x"].toDouble();
         double cloudY = objCloud["y"].toDouble();
         double cloudXRandExtent = objCloud["x-rand-extent"].toDouble();
@@ -373,6 +389,7 @@ bool Scene::load(QFile &sceneFile)
         cout << "volume envelope T4 = " << cloudEnvelopeVolume.t4 << "\n";
         cout << "grains = " << cloudNumGrains << "\n";
         cout << "active = " << cloudActiveState << "\n";
+        cout << "active restart trajectory = " << cloudActiveRestartTrajectory << "\n";
         cout << "X = " << cloudX << "\n";
         cout << "Y = " << cloudY << "\n";
         cout << "X extent = " << cloudXRandExtent << "\n";
@@ -403,6 +420,7 @@ bool Scene::load(QFile &sceneFile)
         cloudToLoad->setMidiNote(cloudMidiNote);
         cloudToLoad->setVolumeDb(cloudVolumeDb);
         cloudToLoad->setActiveState(cloudActiveState);
+        cloudToLoad->setActiveRestartTrajectory(cloudActiveRestartTrajectory);
         cloudVisToLoad->setIsPlayed(cloudActiveState);
         cloudVisToLoad->setFixedXRandExtent(cloudXRandExtent);
         cloudVisToLoad->setFixedYRandExtent(cloudYRandExtent);
@@ -501,6 +519,218 @@ bool Scene::load(QFile &sceneFile)
 
     }
 
+    // triggers
+
+    QJsonArray docTriggers = docRoot["triggers"].toArray();
+    m_triggers.clear();
+    m_triggers.reserve(docTriggers.size());
+    for (const QJsonValue &jsonElement : docTriggers) {
+        QJsonObject objTrigger = jsonElement.toObject();
+        SceneTrigger *sceneTrigger = new SceneTrigger;
+        m_triggers.emplace_back(sceneTrigger);
+
+        int triggerId = objTrigger["id"].toInt();
+        QString triggerName = objTrigger["name"].toString();
+        int triggerActiveState = objTrigger["active-state"].toBool();
+        int triggerActiveRestartTrajectory = objTrigger["active-restart-trajectory"].toBool();
+        int triggerIn = objTrigger["in"].toInt();
+        int triggerOut = objTrigger["out"].toInt();
+        double triggerX = objTrigger["x"].toDouble();
+        double triggerY = objTrigger["y"].toDouble();
+        int triggerZoneExtent = objTrigger["zone-extent"].toInt();
+
+        //common trajectory parameters
+        bool hasTrajectory=objTrigger["has-trajectory"].toBool();
+        int type=0;
+        double xTrajectoryOrigin=0;
+        double yTrajectoryOrigin=0;
+        double phase=0;
+        bool move=false;
+        double speed=0;
+
+        //specific trajectory parameters
+
+        double centerX=0;
+        double centerY=0;
+        double radius=0;
+        double angle=0;
+        double stretch=0;
+        double radiusInt=0;
+        double expansion=0;
+        double progress=0;
+        int nbPositions=0;
+
+        if(hasTrajectory)
+        {
+            type=objTrigger["trajectory-type"].toInt();
+            xTrajectoryOrigin=objTrigger["xTrajectoryOrigin"].toDouble();
+            yTrajectoryOrigin=objTrigger["yTrajectoryOrigin"].toDouble();
+            phase=objTrigger["phase"].toDouble();
+            move=objTrigger["move"].toBool();
+            speed=objTrigger["speed"].toDouble();
+            switch (type)
+            {
+                case BOUNCING:
+                {
+                    radius=objTrigger["radius"].toDouble();
+                    angle=objTrigger["angle"].toDouble();
+                }
+                break;
+
+                case CIRCULAR:
+                {
+
+                    centerX=objTrigger["centerX"].toDouble();
+                    centerY=objTrigger["centerY"].toDouble();
+                    radius=objTrigger["radius"].toDouble();
+                    angle=objTrigger["angle"].toDouble();
+                    stretch=objTrigger["stretch"].toDouble();
+                    progress=objTrigger["progress"].toDouble();
+                }
+                break;
+
+            case HYPOTROCHOID:
+            {
+                centerX = objTrigger["centerX"].toDouble();
+                centerY = objTrigger["centerY"].toDouble();
+                radius = objTrigger["radius"].toDouble();
+                radiusInt = objTrigger["radiusInt"].toDouble();
+                angle = objTrigger["angle"].toDouble();
+                expansion = objTrigger["expansion"].toDouble();
+                progress=objTrigger["progress"].toDouble();
+            }
+            break;
+            case RECORDED:
+            {
+                centerX = objTrigger["centerX"].toDouble();
+                centerY = objTrigger["centerY"].toDouble();
+                nbPositions = objTrigger["positions-number"].toInt();
+            }
+            break;
+            default:
+            break;
+            }
+        }
+
+        cout << "trigger " << m_triggers.size() << " :" << "\n";
+        cout << "id " << triggerId << " :" << "\n";
+        cout << "active = " << triggerActiveState << "\n";
+        cout << "active restart trajectory = " << triggerActiveRestartTrajectory << "\n";
+        cout << "in = " << triggerIn << "\n";
+        cout << "out = " << triggerOut << "\n";
+        cout << "X = " << triggerX << "\n";
+        cout << "Y = " << triggerY << "\n";
+        cout << "extent = " << triggerZoneExtent << "\n";
+        // create trigger
+        Trigger *triggerToLoad = new Trigger();
+        sceneTrigger->trigger.reset(triggerToLoad);
+        // create visualization
+        TriggerVis *triggerVisToLoad = new TriggerVis(triggerX, triggerY);
+        sceneTrigger->view.reset(triggerVisToLoad);
+        // register visualization with trigger
+        triggerVisToLoad->setSelectState(true);
+        triggerToLoad->registerTriggerVis(triggerVisToLoad);
+        triggerVisToLoad->registerTrigger(triggerToLoad);
+        triggerToLoad->setId(triggerId);
+        triggerToLoad->setName(triggerName);
+        triggerToLoad->setActiveState(triggerActiveState);
+        triggerToLoad->setActiveRestartTrajectory(triggerActiveRestartTrajectory);
+        triggerToLoad->setIn(triggerIn);
+        triggerToLoad->setOut(triggerOut);
+        triggerVisToLoad->setIsPlayed(triggerActiveState);
+        triggerVisToLoad->setFixedZoneExtent(triggerZoneExtent, triggerZoneExtent);
+        triggerVisToLoad->setSelectState(false);
+
+        if(hasTrajectory) {
+            Trajectory *tr=nullptr;
+            switch (type)
+            {
+                case BOUNCING:
+                {
+                    //tr=new Bouncing(bounceWidth,speed,0,xTrajectoryOrigin,yTrajectoryOrigin);
+                    tr=new Circular(speed,xTrajectoryOrigin,yTrajectoryOrigin,radius, angle, 0, 1);
+                    triggerVisToLoad->setTrajectory(tr);
+                    triggerToLoad->setTrajectoryType(BOUNCING);
+                    cout << "trigger has radius = " << radius << "\n";
+                    cout << "trigger has angle = " << angle << "\n";
+                }
+                break;
+
+                case CIRCULAR:
+                {
+
+                    tr=new Circular(speed,xTrajectoryOrigin,yTrajectoryOrigin,radius, angle, stretch, progress);
+                    triggerVisToLoad->setTrajectory(tr);
+                    triggerToLoad->setTrajectoryType(CIRCULAR);
+                    cout << "trigger has center = (" << centerX << ","<<centerY<<")"<<"\n";
+                    cout << "trigger has radius = " << radius << "\n";
+                    cout << "trigger has angle = " << angle << "\n";
+                    cout << "trigger has stretch = " << stretch << "\n";
+                    cout << "trigger has progress = " << progress << "\n";
+                }
+                break;
+
+                case HYPOTROCHOID:
+                {
+                    tr=new Hypotrochoid(speed,xTrajectoryOrigin,yTrajectoryOrigin,radius,radiusInt,expansion,angle, progress);
+                    triggerVisToLoad->setTrajectory(tr);
+                    triggerToLoad->setTrajectoryType(HYPOTROCHOID);
+                    cout << "trigger has center = (" << centerX << ","<<centerY<<")"<<"\n";
+                    cout << "trigger has radius = " << radius << "\n";
+                    cout << "trigger has radius Int = " << radiusInt << "\n";
+                    cout << "trigger has angle = " << angle << "\n";
+                    cout << "trigger has expansion = " << expansion << "\n";
+                    cout << "trigger has progress = " << progress << "\n";
+                }
+                break;
+                case RECORDED:
+                {
+                    tr=new Recorded(0, xTrajectoryOrigin, yTrajectoryOrigin);
+                    Recorded *tr_rec=dynamic_cast<Recorded*>(tr);
+                    triggerVisToLoad->setTrajectory(tr);
+                    triggerToLoad->setTrajectoryType(RECORDED);
+                    QJsonArray docPositions = objTrigger["positions"].toArray();
+
+                    for (const QJsonValue &jsonElementPosition : docPositions) { // positions
+                        QJsonObject objPosition = jsonElementPosition.toObject();
+                        int l_x;
+                        int l_y;
+                        double l_delay;
+                        l_x = objPosition["x"].toInt();
+                        l_y = objPosition["y"].toInt();
+                        l_delay = objPosition["delay"].toDouble();
+
+                        triggerVisToLoad->trajectoryAddPositionDelayed(l_x, l_y, l_delay);
+                    }
+                    tr_rec->setRecording(false);
+                }
+                break;
+                default:
+                break;
+            }
+
+            if(move){
+                triggerVisToLoad->startTrajectory();
+            }
+            else{
+                triggerVisToLoad->stopTrajectory();
+            }
+        }
+
+       cout << "trigger has trajectory type = " << type << "\n";
+       cout << "trigger has trajectory = " << hasTrajectory << "\n";
+       cout << "trigger is moving = " << move << "\n";
+       cout << "trigger phase = " << phase << "\n";
+       cout << "trigger trajectory x origin = " << xTrajectoryOrigin << "\n";
+       cout << "trigger trajectory y origin = " << yTrajectoryOrigin << "\n";
+       cout << "trigger has speed = " <<speed <<"\n";
+       cout << "trigger has radius = " <<radius <<"\n";
+       cout << "trigger has angle = " <<angle <<"\n";
+       cout << "trigger has stretch = " <<stretch <<"\n";
+       cout << "trigger has progress = " <<progress <<"\n";
+
+    }
+
     // midi combis
 
     QJsonArray docCombis = docRoot["combis"].toArray();
@@ -569,6 +799,16 @@ bool Scene::save(QFile &sceneFile)
 
     // audio path
     cout << "record scene " << sceneFile.fileName().toStdString() << "\n";
+
+    QJsonArray docVersion;
+    QJsonObject objVersion;
+    objVersion["major"] = version_major;
+    objVersion["minor"] = version_minor;
+    objVersion["patch"] = version_patch;
+
+    docRoot["version"] = objVersion;
+    docVersion.append(objVersion);
+
 
     QJsonArray docPaths;
     for (const std::string &path : m_audioPaths) {
@@ -650,6 +890,7 @@ bool Scene::save(QFile &sceneFile)
         objCloud["volume-envelope-T4"] = cloudEnvelopeVolumeParam.t4;
         objCloud["num-grains"] = (int)cloudToSave->getNumGrains();
         objCloud["active-state"] = cloudToSave->getActiveState();
+        objCloud["active-restart-trajectory"] = cloudToSave->getActiveRestartTrajectory();
         objCloud["x"] = cloudVisToSave->getOriginX();
         objCloud["y"] = cloudVisToSave->getOriginY();
         objCloud["x-rand-extent"] = cloudVisToSave->getXRandExtent();
@@ -746,6 +987,121 @@ bool Scene::save(QFile &sceneFile)
         docClouds.append(objCloud);
     }
 
+    // triggers
+    QJsonArray docTriggers;
+    for (int i = 0, n = m_triggers.size(); i < n; i++) {
+        SceneTrigger *trigger = m_triggers[i].get();
+        Trigger *triggerToSave = trigger->trigger.get();
+        TriggerVis *triggerVisToSave = trigger->view.get();
+
+        std::ostream &out = std::cout;
+        out << "Trigger " << i << ":";
+        triggerToSave->describe(out);
+        out << "Trigger Vis " << i << ":";
+        triggerVisToSave->describe(out);
+
+        QJsonObject objTrigger;
+        objTrigger["id"] = (int)triggerToSave->getId();
+        objTrigger["name"] = triggerToSave->getName();
+        objTrigger["active-state"] = triggerToSave->getActiveState();
+        objTrigger["active-restart-trajectory"] = triggerToSave->getActiveRestartTrajectory();
+        objTrigger["in"] = triggerToSave->getIn();
+        objTrigger["out"] = triggerToSave->getOut();
+        objTrigger["x"] = triggerVisToSave->getOriginX();
+        objTrigger["y"] = triggerVisToSave->getOriginY();
+        objTrigger["extent"] = triggerVisToSave->getZoneExtent();
+
+        //trajectory
+        objTrigger["has-trajectory"] = triggerVisToSave->hasTrajectory();
+        if(triggerVisToSave->hasTrajectory()){
+            objTrigger["trajectory-type"] = triggerToSave->getTrajectoryType();
+            int type = triggerToSave->getTrajectoryType();
+
+            switch ( type )
+            {
+                case BOUNCING:
+                {
+                    Circular *b = dynamic_cast<Circular*>(triggerVisToSave->getTrajectory());
+                    objTrigger["radius"]=b->getRadius();
+                    objTrigger["angle"]=b->getAngle();
+                    std::cout<<"radius saved "<<b->getRadius()<<std::endl;
+                    std::cout<<"angle saved "<<b->getAngle()<<std::endl;
+                }
+                break;
+
+                case CIRCULAR:
+                {
+                    Circular *c=dynamic_cast<Circular*>(triggerVisToSave->getTrajectory());
+                    objTrigger["radius"]=c->getRadius();
+                    objTrigger["centerX"]=c->getCenterX();
+                    objTrigger["centerY"]=c->getCenterY();
+                    objTrigger["angle"]=c->getAngle();
+                    objTrigger["stretch"]=c->getStretch();
+                    objTrigger["progress"]=c->getProgress();
+                    std::cout<<"centerX saved "<<c->getCenterX()<<std::endl;
+                    std::cout<<"centerY saved "<<c->getCenterY()<<std::endl;
+                    std::cout<<"radius saved "<<c->getRadius()<<std::endl;
+                    std::cout<<"angle saved "<<c->getAngle()<<std::endl;
+                    std::cout<<"stretch saved "<<c->getStretch()<<std::endl;
+                    std::cout<<"progress saved "<<c->getProgress()<<std::endl;
+                }
+                break;
+
+            case HYPOTROCHOID:
+            {
+                Hypotrochoid *c=dynamic_cast<Hypotrochoid*>(triggerVisToSave->getTrajectory());
+                objTrigger["radius"]=c->getRadius();
+                objTrigger["centerX"]=c->getCenterX();
+                objTrigger["centerY"]=c->getCenterY();
+                objTrigger["angle"]=c->getAngle();
+                objTrigger["radiusInt"]=c->getRadiusInt();
+                objTrigger["expansion"]=c->getExpansion();
+                objTrigger["progress"]=c->getProgress();
+                std::cout<<"centerX saved "<<c->getCenterX()<<std::endl;
+                std::cout<<"centerY saved "<<c->getCenterY()<<std::endl;
+                std::cout<<"radius saved "<<c->getRadius()<<std::endl;
+                std::cout<<"radius Int saved "<<c->getRadiusInt()<<std::endl;
+                std::cout<<"angle saved "<<c->getAngle()<<std::endl;
+                std::cout<<"expansion saved "<<c->getExpansion()<<std::endl;
+                std::cout<<"progress saved "<<c->getProgress()<<std::endl;
+            }
+            break;
+            case RECORDED:
+            {
+                Recorded *c=dynamic_cast<Recorded*>(triggerVisToSave->getTrajectory());
+                objTrigger["positions-number"] = c->lastPosition();
+                std::cout<<"number positions saved "<<c->getCenterX()<<std::endl;
+                QJsonArray docPositions;
+                for (int j = 1; j < c->lastPosition(); j++){
+                    QJsonObject objPosition;
+                    objPosition["num"] = j;
+                    objPosition["x"] = c->getPosition(j).x;
+                    objPosition["y"] = c->getPosition(j).y;
+                    objPosition["delay"] = c->getPosition(j).delay;
+                    std::cout<<"num "<<j<<std::endl;
+                    std::cout<<"x "<<c->getPosition(j).x<<std::endl;
+                    std::cout<<"y "<<c->getPosition(j).y<<std::endl;
+                    std::cout<<"delay "<<c->getPosition(j).delay<<std::endl;
+                    docPositions.append(objPosition);
+                }
+                objTrigger["positions"] = docPositions;
+            }
+            break;
+            default:
+            break;
+
+            }
+
+            objTrigger["xTrajectoryOrigin"] = triggerVisToSave->getTrajectory()->getOrigin().x;
+            objTrigger["yTrajectoryOrigin"] = triggerVisToSave->getTrajectory()->getOrigin().y;
+            objTrigger["phase"] = triggerVisToSave->getTrajectory()->getPhase();
+            objTrigger["move"] = triggerVisToSave->getIsMoving();
+            objTrigger["speed"] = triggerVisToSave->getTrajectory()->getSpeed();
+        }
+
+        docTriggers.append(objTrigger);
+    }
+
     // midi combinations
 
     QJsonArray docCombis;
@@ -792,9 +1148,10 @@ bool Scene::save(QFile &sceneFile)
         docInstruments.append(objInstrument);
     }
 
-
+    docRoot["version"] = docVersion;
     docRoot["samples"] = docSamples;
     docRoot["clouds"] = docClouds;
+    docRoot["triggers"] = docTriggers;
     docRoot["combis"] = docCombis;
     docRoot["instruments"] = docInstruments;
 
@@ -864,6 +1221,7 @@ bool Scene::loadCloudDefault(QFile &cloudFile)
     g_defaultCloudParams.envelope.t4 = objCloud["volume-envelope-T4"].toInt();
     g_defaultCloudParams.numGrains = objCloud["num-grains"].toInt();
     g_defaultCloudParams.activateState = objCloud["active-state"].toBool();
+    g_defaultCloudParams.activateRestartTrajectory = objCloud["active-restart-trajectory"].toBool();
     g_defaultCloudParams.xRandExtent = objCloud["x-rand-extent"].toDouble();
     g_defaultCloudParams.yRandExtent = objCloud["y-rand-extent"].toDouble();
     g_defaultCloudParams.hasTrajectory = objCloud["hastrajectory"].toBool();
@@ -922,6 +1280,7 @@ bool Scene::loadCloudDefault(QFile &cloudFile)
     cout << "volume = " << g_defaultCloudParams.volumeDB << "\n";
     cout << "grains = " << g_defaultCloudParams.numGrains << "\n";
     cout << "active = " << g_defaultCloudParams.activateState << "\n";
+    cout << "active restart trajectory = " << g_defaultCloudParams.activateRestartTrajectory << "\n";
     cout << "xRandExtent = " << g_defaultCloudParams.xRandExtent << "\n";
     cout << "yRandExtent = " << g_defaultCloudParams.yRandExtent << "\n";
     cout << "volume-envelope-L1 = " << g_defaultCloudParams.envelope.l1 << "\n";
@@ -1089,7 +1448,89 @@ bool Scene::saveCloud(QFile &cloudFile, SceneCloud *selectedCloudSave)
     return true;
 }
 
-bool Scene::saveRecordedTrajectory(QFile &trajectoryFile, SceneCloud *selectedCloudSave)
+bool Scene::saveTriggerRecordedTrajectory(QFile &trajectoryFile, SceneTrigger *selectedTriggerSave)
+{
+    QString trajectoryFileName = trajectoryFile.fileName();
+    QDir trajectoryFileDir = QFileInfo(trajectoryFileName).dir();
+
+    if (!trajectoryFile.open(QIODevice::WriteOnly | QIODevice::Text))
+        return false;
+
+    TriggerVis *triggerVisToSave = selectedTriggerSave->view.get();
+
+    QJsonObject docRoot;
+
+    QJsonObject objTrajectory;
+
+    Recorded *c=dynamic_cast<Recorded*>(triggerVisToSave->getTrajectory());
+    objTrajectory["number-positions"] = c->lastPosition();
+    std::cout<<"number positions saved "<<c->getCenterX()<<std::endl;
+    QJsonArray docPositions;
+    for (int j = 1; j < c->lastPosition(); j++){
+        QJsonObject objPosition;
+        objPosition["num"] = j;
+        objPosition["x"] = c->getPosition(j).x;
+        objPosition["y"] = c->getPosition(j).y;
+        objPosition["delay"] = c->getPosition(j).delay;
+        std::cout<<"num "<<j<<std::endl;
+        std::cout<<"x "<<c->getPosition(j).x<<std::endl;
+        std::cout<<"y "<<c->getPosition(j).y<<std::endl;
+        std::cout<<"delay "<<c->getPosition(j).delay<<std::endl;
+        docPositions.append(objPosition);
+    }
+    objTrajectory["positions"] = docPositions;
+    docRoot["trajectory"] = objTrajectory;
+
+    QJsonDocument document;
+    document.setObject(docRoot);
+    trajectoryFile.write(document.toJson());
+    if (!trajectoryFile.flush())
+        return false;
+
+    return true;
+}
+
+bool Scene::loadTriggerRecordedTrajectory(QFile &trajectoryFile, SceneTrigger *selectedTriggerLoad)
+{
+    QString trajectoryFileName = trajectoryFile.fileName();
+    QDir trajectoryFileDir = QFileInfo(trajectoryFileName).dir();
+
+    if (!trajectoryFile.open(QIODevice::ReadOnly | QIODevice::Text))
+        return false;
+
+    QJsonParseError jsonParseError;
+    QJsonDocument doc = QJsonDocument::fromJson(trajectoryFile.readAll(), &jsonParseError);
+    if (jsonParseError.error != QJsonParseError::NoError)
+        return false;
+
+    QJsonObject docRoot = doc.object();
+
+    QJsonObject objTrajectory = docRoot["trajectory"].toObject();
+    int nbPos = objTrajectory["number-positions"].toInt();
+
+    TriggerVis *triggerVisToLoad = selectedTriggerLoad->view.get();
+
+    Recorded *tr_load=dynamic_cast<Recorded*>(triggerVisToLoad->getTrajectory());
+
+    QJsonArray docPositions = objTrajectory["positions"].toArray();
+    for (const QJsonValue &jsonElementPosition : docPositions) { // positions
+        QJsonObject objPosition = jsonElementPosition.toObject();
+        int l_x;
+        int l_y;
+        double l_delay;
+        l_x = objPosition["x"].toInt();
+        l_y = objPosition["y"].toInt();
+        l_delay = objPosition["delay"].toDouble();
+        triggerVisToLoad->trajectoryAddPositionDelayed(l_x, l_y, l_delay);
+    }
+    tr_load->setRecording(false);
+    selectedTriggerLoad->view.get()->startTrajectory();
+
+    return true;
+
+}
+
+bool Scene::saveCloudRecordedTrajectory(QFile &trajectoryFile, SceneCloud *selectedCloudSave)
 {
     QString trajectoryFileName = trajectoryFile.fileName();
     QDir trajectoryFileDir = QFileInfo(trajectoryFileName).dir();
@@ -1131,7 +1572,7 @@ bool Scene::saveRecordedTrajectory(QFile &trajectoryFile, SceneCloud *selectedCl
     return true;
 }
 
-bool Scene::loadRecordedTrajectory(QFile &trajectoryFile, SceneCloud *selectedCloudLoad)
+bool Scene::loadCloudRecordedTrajectory(QFile &trajectoryFile, SceneCloud *selectedCloudLoad)
 {
     QString trajectoryFileName = trajectoryFile.fileName();
     QDir trajectoryFileDir = QFileInfo(trajectoryFileName).dir();
@@ -1309,6 +1750,7 @@ void Scene::initDefaultCloudParams()
     g_defaultCloudParams.channelLocation = -1;
     g_defaultCloudParams.numGrains = 8;
     g_defaultCloudParams.activateState = true;
+    g_defaultCloudParams.activateRestartTrajectory = true;
     g_defaultCloudParams.midiChannel = 0;
     g_defaultCloudParams.midiNote = 69;
     g_defaultCloudParams.xRandExtent = 3.0f;
@@ -1332,6 +1774,9 @@ void Scene::initDefaultCloudParams()
     g_defaultCloudParams.expansion = 50;
     g_defaultCloudParams.progress = 150;
     g_defaultCloudParams.trajectoryType = STATIC;
+    g_defaultCloudParams.triggerZoneExtent = 0;
+    g_defaultCloudParams.triggerIn = ON;
+    g_defaultCloudParams.triggerOut = OFF;
 }
 
 Sample *Scene::loadNewSample(const std::string &path)
@@ -1415,8 +1860,6 @@ void Scene::addNewCloud(int numGrains)
     sceneCloud->cloud.reset(new Cloud(&m_samples, numGrains));
     // create visualization
     sceneCloud->view.reset(new CloudVis(mouseX, mouseY, numGrains, &m_samples,false));
-    //std::cout<<"mouseX "<<mouseX<<std::endl;
-    //std::cout<<"mouseY "<<mouseY<<std::endl;
     // select new cloud
     sceneCloud->view->setSelectState(true);
     // register visualization with audio
@@ -1424,6 +1867,23 @@ void Scene::addNewCloud(int numGrains)
     sceneCloud->view->registerCloud(sceneCloud->cloud.get());
     std::ostream &out = std::cout;
     sceneCloud->cloud->describe(out);
+}
+
+void Scene::addNewTrigger()
+{
+    //cout << "scene addnewtrigger" << endl;
+    SceneTrigger *sceneTrigger = new SceneTrigger;
+    m_triggers.emplace_back(sceneTrigger);
+    sceneTrigger->trigger.reset(new Trigger());
+    // create visualization
+    sceneTrigger->view.reset(new TriggerVis(mouseX, mouseY));
+    // select new trigger
+    sceneTrigger->view->setSelectState(true);
+    // register visualization
+    sceneTrigger->trigger->registerTriggerVis(sceneTrigger->view.get());
+    sceneTrigger->view->registerTrigger(sceneTrigger->trigger.get());
+    std::ostream &out = std::cout;
+    sceneTrigger->trigger->describe(out);
 }
 
 
@@ -1440,6 +1900,23 @@ SceneCloud *Scene::selectedCloud()
     if ((unsigned)m_selectedCloud >= m_clouds.size())
         return nullptr;
     return m_clouds[(unsigned)m_selectedCloud].get();
+}
+
+SceneTrigger *Scene::selectedTrigger()
+{
+    if ((unsigned)m_selectedTrigger >= m_triggers.size())
+        return nullptr;
+    return m_triggers[(unsigned)m_selectedTrigger].get();
+}
+
+SceneTrigger *Scene::findTriggerById(unsigned id)
+{
+    for (size_t i = 0, n = m_triggers.size(); i < n; i++) {
+        SceneTrigger &trigger = *m_triggers[i];
+        if (trigger.trigger->getId() == id)
+            return &trigger;
+    }
+    return nullptr;
 }
 
 SceneCloud *Scene::findCloudById(unsigned id)
@@ -1469,6 +1946,13 @@ void Scene::deselect(int shapeType)
             // cout << "deselecting rect" << endl;
             sceneSample->view->setSelectState(false);
             m_selectedSample = -1;
+        }
+        break;
+    case TRIGG:
+        if (SceneTrigger *trigger = selectedTrigger()) {
+            trigger->view->setSelectState(false);
+            // reset selected trigger
+            m_selectedTrigger = -1;
         }
         break;
     }
@@ -1513,6 +1997,17 @@ int Scene::getNumCloud(SceneCloud *cloudCurrent)
     return -1;
 }
 
+int Scene::getNumTrigger(SceneTrigger *triggerCurrent)
+{
+    for (int i = 0, n = m_triggers.size(); i < n; i++) {
+        Trigger *triggerForNum = triggerCurrent->trigger.get();
+        Trigger *triggerToExplore = m_triggers[i]->trigger.get();
+        if (triggerForNum->getId() == triggerToExplore->getId())
+            return i;
+    }
+    return -1;
+}
+
 void Scene::changeParamEnvelopeVolume(SceneCloud *selectedCloud)
 {
     ParamEnv localParamEnv;
@@ -1530,5 +2025,10 @@ SceneSample::~SceneSample()
 
 // destructor
 SceneCloud::~SceneCloud()
+{
+}
+
+// destructor
+SceneTrigger::~SceneTrigger()
 {
 }

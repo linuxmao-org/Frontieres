@@ -8,6 +8,7 @@
 #include "visual/CloudVis.h"
 #include "visual/Circular.h"
 #include "visual/Hypotrochoid.h"
+#include "visual/Recorded.h"
 #include "visual/Trajectory.h"
 
 namespace Ui {
@@ -39,33 +40,17 @@ private slots:
 
     void on_dial_Y_valueChanged(int value);
 
-    void on_doubleSpinBox_Y_editingFinished();
-
-    void update_Y();
-
     void on_doubleSpinBox_X_valueChanged(double arg1);
 
     void on_dial_X_valueChanged(int value);
-
-    void on_doubleSpinBox_X_editingFinished();
-
-    void update_X();
 
     void on_dial_X_Extent_valueChanged(int value);
 
     void on_doubleSpinBox_X_Extent_valueChanged(double arg1);
 
-    void on_doubleSpinBox_X_Extent_editingFinished();
-
-    void update_X_Extent();
-
     void on_dial_Y_Extent_valueChanged(int value);
 
     void on_doubleSpinBox_Y_Extent_valueChanged(double arg1);
-
-    void on_doubleSpinBox_Y_Extent_editingFinished();
-
-    void update_Y_Extent();
 
     void on_dial_LFO_Freq_valueChanged(int value);
 
@@ -88,8 +73,6 @@ private slots:
     void on_doubleSpinBox_Volume_valueChanged(double arg1);
 
     void on_doubleSpinBox_Midi_Note_valueChanged(double arg1);
-
-    void on_doubleSpinBox_Midi_Channel_valueChanged(double arg1);
 
     void on_checkBox_Active_toggled(bool checked);
 
@@ -131,33 +114,17 @@ private slots:
 
     void on_doubleSpinBox_Speed_valueChanged(double arg1);
 
-    void on_doubleSpinBox_Speed_editingFinished();
-
-    void update_Speed();
-
     void on_dial_Radius_valueChanged(int value);
 
     void on_doubleSpinBox_Radius_valueChanged(double arg1);
-
-    void on_doubleSpinBox_Radius_editingFinished();
-
-    void update_Radius();
 
     void on_dial_Angle_valueChanged(int value);
 
     void on_doubleSpinBox_Angle_valueChanged(double arg1);
 
-    void on_doubleSpinBox_Angle_editingFinished();
-
-    void update_Angle();
-
     void on_dial_Stretch_valueChanged(int value);
 
     void on_doubleSpinBox_Stretch_valueChanged(double arg1);
-
-    void on_doubleSpinBox_Stretch_editingFinished();
-
-    void update_Stretch();
 
     void on_radioButton_Trajectory_Bouncing_toggled(bool checked);
 
@@ -169,25 +136,13 @@ private slots:
 
     void on_dial_RadiusInt_valueChanged(int value);
 
-    void on_doubleSpinBox_RadiusInt_editingFinished();
-
-    void update_RadiusInt();
-
     void on_dial_Expansion_valueChanged(int value);
 
     void on_doubleSpinBox_Expansion_valueChanged(double arg1);
 
-    void on_doubleSpinBox_Expansion_editingFinished();
-
-    void update_Expansion();
-
     void on_dial_Progress_valueChanged(int value);
 
     void on_doubleSpinBox_Progress_valueChanged(double arg1);
-
-    void on_doubleSpinBox_Progress_editingFinished();
-
-    void update_Progress();
 
     void on_radioButton_Trajectory_Hypotrochoid_toggled(bool checked);
 
@@ -197,11 +152,11 @@ private slots:
 
     void on_radioButton_Trajectory_Recorded_toggled(bool checked);
 
+    void on_checkBox_Restart_toggled(bool checked);
+
 private:
     Ui::CloudDialog *ui;
     bool linking = false;
-    bool editing = false;
-    double passageValue;
     Cloud *cloudRef;
     CloudVis *cloudVisRef;
     bool autoUpdating = false;
