@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>634</width>
-    <height>307</height>
+    <height>349</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -2638,19 +2638,16 @@
            </property>
            <layout class="QFormLayout" name="formLayout">
             <property name="horizontalSpacing">
-             <number>0</number>
+             <number>3</number>
             </property>
             <property name="verticalSpacing">
-             <number>0</number>
-            </property>
-            <property name="leftMargin">
-             <number>6</number>
+             <number>3</number>
             </property>
             <property name="topMargin">
-             <number>4</number>
+             <number>6</number>
             </property>
             <property name="rightMargin">
-             <number>0</number>
+             <number>3</number>
             </property>
             <property name="bottomMargin">
              <number>0</number>
@@ -2668,14 +2665,7 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="1">
-             <widget class="QLabel" name="label_Id_Value">
-              <property name="text">
-               <string/>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
+            <item row="2" column="0">
              <widget class="QCheckBox" name="checkBox_Active">
               <property name="text">
                <string>Active</string>
@@ -2683,16 +2673,39 @@
              </widget>
             </item>
             <item row="3" column="0">
+             <widget class="QCheckBox" name="checkBox_Restart">
+              <property name="text">
+               <string>Restart</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0">
              <widget class="QCheckBox" name="checkBox_Locked">
               <property name="text">
                <string>Locked</string>
               </property>
              </widget>
             </item>
-            <item row="2" column="0">
-             <widget class="QCheckBox" name="checkBox_Restart">
+            <item row="5" column="0">
+             <widget class="QLabel" name="label_Priority">
+              <property name="frameShape">
+               <enum>QFrame::Panel</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Raised</enum>
+              </property>
               <property name="text">
-               <string>Restart</string>
+               <string>Priority : </string>
+              </property>
+             </widget>
+            </item>
+            <item row="5" column="1">
+             <widget class="QSpinBox" name="spinBox_Priority"/>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLabel" name="label_Id_Value">
+              <property name="text">
+               <string/>
               </property>
              </widget>
             </item>
@@ -2749,7 +2762,7 @@
             <item>
              <widget class="QRadioButton" name="radioButton_Trajectory_Static">
               <property name="text">
-               <string>&amp;Static </string>
+               <string>S&amp;tatic </string>
               </property>
               <property name="checked">
                <bool>false</bool>

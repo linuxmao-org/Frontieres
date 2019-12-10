@@ -91,6 +91,14 @@ public:
     void computeCloudsIn ();
     void computeCloudsOut ();
 
+    void computeTriggersIn ();
+    void computeTriggersOut ();
+
+    void setPriority (int l_priority);
+    int getPriority ();
+    bool changedPriority();
+    bool isInListTriggersIn(int l_triggerId);
+
 private:
 
     unsigned int myId;  // unique id
@@ -120,6 +128,13 @@ private:
 
     // List of Clouds In
     QList<int> listCloudsIn;
+
+    // List of Triggers In
+    QList<int> listTriggersIn;
+
+    // Priority for trigger action on other triggers
+    int priority = 0;
+    bool changed_Priority = false;
 
 };
 

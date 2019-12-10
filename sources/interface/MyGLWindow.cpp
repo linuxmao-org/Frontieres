@@ -879,6 +879,7 @@ void MyGLScreen::contextMenu_recordTrajectory()
     Trajectory *tr=nullptr;
 
     if (selectedTrigger) {
+        theApplication->destroyTriggerDialog(selectedTrigger->trigger->getId());
         tr=new Recorded(0, selectedTrigger->view->getOriginX(),selectedTrigger->view->getOriginY());
         selectedTrigger->trigger->setTrajectoryType(RECORDED);
         selectedTrigger->view->updateTriggerPosition(selectedTrigger->view->getOriginX(),selectedTrigger->view->getOriginY());
@@ -887,6 +888,7 @@ void MyGLScreen::contextMenu_recordTrajectory()
     }
     else
         if (selectedCloud) {
+            theApplication->destroyCloudDialog(selectedCloud->cloud->getId());
             tr=new Recorded(0, selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY());
             selectedCloud->cloud->setTrajectoryType(RECORDED);
             selectedCloud->view->updateCloudPosition(selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY());

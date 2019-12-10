@@ -65,7 +65,7 @@ private:
     double stretch;
     double radiusInt;
     double expansion;
-    double trajectoryStartTime;
+    double trajectoryStartTime = 0;
     int lastComputedPosition = 0;
     double delayCumul = 0;
 };

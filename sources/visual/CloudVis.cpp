@@ -542,7 +542,6 @@ void CloudVis::draw()
     if (isMidiVis & !isPlayed) {
         return;
     }
-
     double t_sec = 0;
     double dt = 0;
 

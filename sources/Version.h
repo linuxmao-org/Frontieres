@@ -4,7 +4,7 @@
 // versioning following specifications on https://semver.org/
 
 int version_major = 0;
-int version_minor = 5;
+int version_minor = 6;
 int version_patch = 1;
 
 #endif // VERSION_H

@@ -333,7 +333,6 @@ void CloudDialog::linkCloud(Cloud *cloudLinked, CloudVis *cloudVisLinked)
         default :
             break;
         }
-
     cloudRef->changesDone(false);
     linking = false;
 }
