@@ -43,10 +43,10 @@
 // TODO arrange this later
 #include "visual/CloudVis.h"
 #include "visual/TriggerVis.h"
-
 #include "Version.h"
 
 extern CloudParams g_defaultCloudParams;
+extern int version_major, version_minor, version_patch;
 
 //-----------------------------------------------------------------------------
 // Destructor

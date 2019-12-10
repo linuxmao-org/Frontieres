@@ -47,6 +47,7 @@
 
 extern string g_audioPath;
 extern CloudParams g_defaultCloudParams;
+extern int version_major, version_minor, version_patch;
 
 struct MyGLWindow::Impl {
     MyGLWindow *Q = nullptr;
@@ -160,6 +161,9 @@ void MyGLWindow::on_actionAbout_triggered()
     QDialog dlg(this);
     Ui::AboutDialog ui;
     ui.setupUi(&dlg);
+    ui.label_Vers->setText("Version " + QString::number(version_major, 10) + "."
+                                      + QString::number(version_minor, 10) + "."
+                                      + QString::number(version_patch, 10));
     dlg.exec();
 }
 
