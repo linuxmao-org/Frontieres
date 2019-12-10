@@ -117,8 +117,10 @@ Scene *currentScene = nullptr;
 // current scene mutex
 std::mutex currentSceneMutex;
 
+// number of input channels
+int theInChannelCount = 16;
 // number of output channels
-int theChannelCount = 16;
+int theOutChannelCount = 16;
 // sample rate - Hz
 unsigned int samp_rate = 0;
 
@@ -176,7 +178,7 @@ float dspMonitorValue = 0;
 void updateMouseCoords(int x, int y);
 void draw_string(GLfloat x, GLfloat y, GLfloat z, const QString &str, GLfloat scale);
 void drawAxis();
-void audioCallback(BUFFERPREC *out, unsigned int numFrames, void *userData);
+void audioCallback(const BUFFERPREC *in, BUFFERPREC *out, unsigned int numFrames, void *userData);
 void processMidiMessage(const unsigned char *message, unsigned length);
 void processOscMessage(const char *message, size_t length, rtosc::Ports &ports);
 void midiInCallback(const unsigned char *message, unsigned size, void *userData);
@@ -204,7 +206,7 @@ void cleaningFunction()
 //================================================================================
 
 // audio callback
-void audioCallback(BUFFERPREC *out, unsigned int numFrames, void *)
+void audioCallback(const BUFFERPREC *in, BUFFERPREC *out, unsigned int numFrames, void *)
 {
     // process the midi messages
     unsigned char midiMessageSize;
@@ -232,8 +234,11 @@ void audioCallback(BUFFERPREC *out, unsigned int numFrames, void *)
         }
     }
 
+    #pragma message("TODO: handle the audio input")
+    (void)in;
+
     // cast audio buffers
-    memset(out, 0, sizeof(BUFFERPREC) * numFrames * theChannelCount);
+    memset(out, 0, sizeof(BUFFERPREC) * numFrames * theOutChannelCount);
     if (menuFlag == false) {
         std::unique_lock<std::mutex> lock(::currentSceneMutex, std::try_to_lock);
         if (lock.owns_lock()) {
@@ -923,11 +928,17 @@ int main(int argc, char **argv)
         QCommandLineOption optHelp = cmdParser->addHelpOption();
         QCommandLineOption optVersion = cmdParser->addVersionOption();
 
-        QCommandLineOption optNumChannels(
-            QStringList() << "c" << "channels",
+        QCommandLineOption optNumInChannels(
+            QStringList() << "i" << "input-channels",
+            QObject::tr("Set the number of input channels."),
+            QObject::tr("input-channel-count"));
+        cmdParser->addOption(optNumInChannels);
+
+        QCommandLineOption optNumOutChannels(
+            QStringList() << "c" << "output-channels",
             QObject::tr("Set the number of output channels."),
-            QObject::tr("channel-count"));
-        cmdParser->addOption(optNumChannels);
+            QObject::tr("output-channel-count"));
+        cmdParser->addOption(optNumOutChannels);
 
         QCommandLineOption optAutoconnect(
             QStringList() << "a" << "autoconnect",
@@ -942,8 +953,10 @@ int main(int argc, char **argv)
 
         cmdParser->process(app);
 
-        if (cmdParser->isSet(optNumChannels))
-            theChannelCount = cmdParser->value(optNumChannels).toUInt();
+        if (cmdParser->isSet(optNumInChannels))
+            theInChannelCount = cmdParser->value(optNumInChannels).toUInt();
+        if (cmdParser->isSet(optNumOutChannels))
+            theOutChannelCount = cmdParser->value(optNumOutChannels).toUInt();
         if (cmdParser->isSet(optAutoconnect))
             autoconnect = true;
         if (cmdParser->isSet(optFps)) {
@@ -961,7 +974,7 @@ int main(int argc, char **argv)
 
     // configure Jack or RtAudio
     std::cerr << "* try JACK audio\n";
-    theAudio = new MyRtJack(theChannelCount);
+    theAudio = new MyRtJack(theInChannelCount, theOutChannelCount);
     // open audio stream/assign callback
     if (!theAudio->openStream(&audioCallback, nullptr)) {
         delete theAudio;
@@ -969,16 +982,20 @@ int main(int argc, char **argv)
     }
     if (!theAudio) {
         std::cerr << "* try RtAudio\n";
-        theAudio = new MyRtAudio(theChannelCount);
+        theAudio = new MyRtAudio(theInChannelCount, theOutChannelCount);
         if (!theAudio->openStream(&audioCallback, nullptr)) {
             cleaningFunction();
             return 1;
         }
     }
 
-    std::cerr << "desired channels: " << theChannelCount << "\n";
-    theChannelCount = theAudio->getObtainedOutputChannels();
-    std::cerr << "obtained channels: " << theChannelCount << "\n";
+    std::cerr << "desired input channels: " << theInChannelCount << "\n";
+    theInChannelCount = theAudio->getObtainedInputChannels();
+    std::cerr << "obtained input channels: " << theInChannelCount << "\n";
+
+    std::cerr << "desired output channels: " << theOutChannelCount << "\n";
+    theOutChannelCount = theAudio->getObtainedOutputChannels();
+    std::cerr << "obtained output channels: " << theOutChannelCount << "\n";
 
     unsigned sampleRate = theAudio->getSampleRate();
     ::samp_rate = sampleRate;

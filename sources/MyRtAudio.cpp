@@ -28,39 +28,42 @@
 //-----------------------------------------------------------------------------
 
 #include "MyRtAudio.h"
+#include <algorithm>
 #include <string.h>
 
 
-MyRtAudio::MyRtAudio(unsigned int numOuts)
+MyRtAudio::MyRtAudio(unsigned int numIns, unsigned int numOuts)
 {
     // configure RtAudio
     // create the object
     audio.reset(new RtAudio);
 
-    // check audio devices
-    const RtAudio::DeviceInfo &info =
+    // check audio devices, set i/o count
+    const RtAudio::DeviceInfo &infoOutput =
         audio->getDeviceInfo(audio->getDefaultOutputDevice());
+    numOutputs = std::max(infoOutput.outputChannels, numOuts);
 
-    // io
-    if (numOuts <= info.outputChannels)
-        numOutputs = numOuts;
-    else
-        numOutputs = info.outputChannels;
+    if (numIns > 0) {
+        const RtAudio::DeviceInfo &infoInput =
+            audio->getDeviceInfo(audio->getDefaultInputDevice());
+        numInputs = std::max(infoInput.inputChannels, numIns);
+    }
 
-    // store pointer to bufferSize
+    // store buffer size
     myBufferSize = 1024;
 
     // set sample rate;
-    mySRate = info.preferredSampleRate;
+    mySRate = infoOutput.preferredSampleRate;
 }
 
 
 int MyRtAudio::rtaudioCallback(
-    void *outputBuffer, void *, unsigned int numFrames,
+    void *outputBuffer, void *inputBuffer, unsigned int numFrames,
     double, RtAudioStreamStatus, void *userData)
 {
     MyRtAudio *self = (MyRtAudio *)userData;
-    self->audioCallback((float *)outputBuffer, numFrames, self->audioUserData);
+    self->audioCallback(
+        (const float *)inputBuffer, (float *)outputBuffer, numFrames, self->audioUserData);
     return 0;
 }
 
@@ -75,16 +78,23 @@ bool MyRtAudio::openStream(AudioCallback callback, void *userData)
     RtAudio::StreamOptions options;
     options.streamName = "Frontieres";
 
+    RtAudio::StreamParameters iParams;
     RtAudio::StreamParameters oParams;
     // i/o params
+    if (numInputs > 0) {
+        iParams.deviceId = audio->getDefaultInputDevice();
+        iParams.nChannels = numInputs;
+        iParams.firstChannel = 0;
+    }
     oParams.deviceId = audio->getDefaultOutputDevice();
     oParams.nChannels = numOutputs;
     oParams.firstChannel = 0;
 
     // open stream
     hasError = false;
-    audio->openStream(&oParams, nullptr, RTAUDIO_FLOAT32, mySRate,
-                      &myBufferSize, &rtaudioCallback, this, &options, &errorCallback);
+    audio->openStream(
+        &oParams, (numInputs > 0) ? &iParams : nullptr, RTAUDIO_FLOAT32,
+        mySRate, &myBufferSize, &rtaudioCallback, this, &options, &errorCallback);
 
     return !hasError;
 }
@@ -100,6 +110,13 @@ unsigned int MyRtAudio::getSampleRate()
 unsigned int MyRtAudio::getBufferSize()
 {
     return myBufferSize;
+}
+
+
+// get the obtained channel count
+unsigned int MyRtAudio::getObtainedInputChannels()
+{
+    return numInputs;
 }
 
 
@@ -170,14 +187,17 @@ int MyRtAudio::openMidiInput(ReceiveMidi receive, unsigned bufferSize, void *use
 bool MyRtAudio::hasError;
 
 //------------------------------------------------------------------------------
-MyRtJack::MyRtJack(unsigned int numOuts)
+MyRtJack::MyRtJack(unsigned int numIns, unsigned int numOuts)
 {
+    numInputs = numIns;
     numOutputs = numOuts;
 }
 
 int MyRtJack::jackProcess(jack_nframes_t nframes, void *userData)
 {
     MyRtJack *self = (MyRtJack *)userData;
+
+    // handle MIDI messages
 
     if (self->midiIn && self->receiveMidiIn) {
         void *buffer = jack_port_get_buffer(self->midiIn, nframes);
@@ -189,13 +209,27 @@ int MyRtJack::jackProcess(jack_nframes_t nframes, void *userData)
         }
     }
 
-    float *temp = self->outputBuffer.get();
-    self->audioCallback(temp, nframes, self->audioUserData);
+    float *inputTemp = self->inputBuffer.get();
+    float *outputTemp = self->outputBuffer.get();
+
+    // transfer the the Jack inputs to the interleaved buffer
+
+    for (unsigned c = 0, nc = self->numInputs; c < nc; ++c) {
+        const float *buffer = (float *)jack_port_get_buffer(self->inputs[c], nframes);
+        for (unsigned i = 0; i < nframes; ++i)
+            inputTemp[i * nc + c] = buffer[i];
+    }
+
+    // process
+
+    self->audioCallback(inputTemp, outputTemp, nframes, self->audioUserData);
+
+    // transfer the interleaved buffer to Jack outputs
 
     for (unsigned c = 0, nc = self->numOutputs; c < nc; ++c) {
         float *buffer = (float *)jack_port_get_buffer(self->outputs[c], nframes);
         for (unsigned i = 0; i < nframes; ++i)
-            buffer[i] = temp[i * nc + c];
+            buffer[i] = outputTemp[i * nc + c];
     }
 
     return 0;
@@ -210,10 +244,29 @@ bool MyRtJack::openStream(AudioCallback callback, void *userData)
     if (!client)
         return false;
 
-    outputBuffer.reset(new float[numOutputs * jack_get_buffer_size(client.get())]);
+    // allocate temporary buffers
+
+    unsigned int systemBufferSize = jack_get_buffer_size(client.get());
+
+    inputBuffer.reset(new float[numInputs * systemBufferSize]);
+    outputBuffer.reset(new float[numOutputs * systemBufferSize]);
+
+    // store the callback to Frontieres sound processing
 
     audioCallback = callback;
     audioUserData = userData;
+
+    // register input ports
+
+    for (unsigned i = 0; i < numInputs; ++i) {
+        char name[64];
+        sprintf(name, "Input %u", i + 1);
+        jack_port_t *port = jack_port_register(client.get(), name, JACK_DEFAULT_AUDIO_TYPE, JackPortIsInput, 0);
+        if (!port) return false;
+        inputs.push_back(port);
+    }
+
+    // register output ports
 
     for (unsigned i = 0; i < numOutputs; ++i) {
         char name[64];
@@ -266,6 +319,11 @@ unsigned int MyRtJack::getSampleRate()
 unsigned int MyRtJack::getBufferSize()
 {
     return jack_get_buffer_size(client.get());
+}
+
+unsigned int MyRtJack::getObtainedInputChannels()
+{
+    return (unsigned)inputs.size();
 }
 
 unsigned int MyRtJack::getObtainedOutputChannels()

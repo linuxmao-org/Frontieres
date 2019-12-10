@@ -48,7 +48,8 @@ public:
     virtual ~AbstractAudio() {}
 
     // set the audio callback and start the audio stream
-    typedef void (*AudioCallback)(BUFFERPREC *out, unsigned int numFrames, void *userData);
+    typedef void (*AudioCallback)(
+        const BUFFERPREC *in, BUFFERPREC *out, unsigned int numFrames, void *userData);
     virtual bool openStream(AudioCallback callback, void *userData) = 0;
 
     // connect outputs
@@ -59,6 +60,9 @@ public:
 
     // report the current buffer size
     virtual unsigned int getBufferSize() = 0;
+
+    // get the obtained channel count
+    virtual unsigned int getObtainedInputChannels() = 0;
 
     // get the obtained channel count
     virtual unsigned int getObtainedOutputChannels() = 0;
@@ -86,7 +90,7 @@ class MyRtAudio : public AbstractAudio {
 
 public:
     // constructor - args =
-    explicit MyRtAudio(unsigned int numOuts);
+    MyRtAudio(unsigned int numIns, unsigned int numOuts);
 
     // set the audio callback and start the audio stream
     bool openStream(AudioCallback callback, void *userData) override;
@@ -94,6 +98,7 @@ public:
 
     unsigned int getSampleRate() override;
     unsigned int getBufferSize() override;
+    unsigned int getObtainedInputChannels() override;
     unsigned int getObtainedOutputChannels() override;
     bool startStream() override;
     bool stopStream() override;
@@ -106,6 +111,7 @@ private:
     // rtaudio pointer
     std::unique_ptr<RtAudio> audio;
     std::unique_ptr<RtMidiIn> midiIn;
+    unsigned int numInputs;
     unsigned int numOutputs;
 
     // buffer size, sample rate, rt audio format
@@ -134,7 +140,7 @@ class MyRtJack : public AbstractAudio {
 
 public:
     // constructor - args =
-    explicit MyRtJack(unsigned int numOuts);
+    MyRtJack(unsigned int numIns, unsigned int numOuts);
 
     // set the audio callback and start the audio stream
     bool openStream(AudioCallback callback, void *userData) override;
@@ -142,6 +148,7 @@ public:
 
     unsigned int getSampleRate() override;
     unsigned int getBufferSize() override;
+    unsigned int getObtainedInputChannels() override;
     unsigned int getObtainedOutputChannels() override;
     bool startStream() override;
     bool stopStream() override;
@@ -156,9 +163,12 @@ private:
     ReceiveMidi receiveMidiIn = nullptr;
     void *receiveMidiInUserData = nullptr;
 
+    unsigned numInputs = 0;
     unsigned numOutputs = 0;
+    std::unique_ptr<float[]> inputBuffer;
     std::unique_ptr<float[]> outputBuffer;
 
+    std::vector<jack_port_t *> inputs;
     std::vector<jack_port_t *> outputs;
     jack_port_t *midiIn = nullptr;
 

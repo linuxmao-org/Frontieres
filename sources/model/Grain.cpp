@@ -55,7 +55,7 @@ Grain::~Grain()
 
 Grain::Grain(VecSceneSample *sampleSet, float durationMs, float thePitch)
 {
-    unsigned channelCount = theChannelCount;
+    unsigned channelCount = theOutChannelCount;
 
     // store pointer to external vector of sample files
     theSamples = sampleSet;
@@ -176,7 +176,7 @@ bool Grain::isPlaying()
 //-----------------------------------------------------------------------------
 void Grain::setChannelMultipliers(double *multipliers)
 {
-    unsigned channelCount = theChannelCount;
+    unsigned channelCount = theOutChannelCount;
     for (int i = 0; i < channelCount; i++) {
         queuedChanMults[i] = multipliers[i];
     }
@@ -238,7 +238,7 @@ float Grain::getPitch()
 //-----------------------------------------------------------------------------
 void Grain::updateParams()
 {
-    unsigned channelCount = theChannelCount;
+    unsigned channelCount = theOutChannelCount;
 
     // update parameter set
 
@@ -331,7 +331,7 @@ void Grain::setDirection(float thedir)
 void Grain::nextBuffer(double *accumBuff, unsigned int numFrames,
                             unsigned int bufferOffset, int name)
 {
-    unsigned channelCount = theChannelCount;
+    unsigned channelCount = theOutChannelCount;
 
     // fill stereo accumulation buffer.  note, buffer output must be interlaced
     // ch1,ch2,ch1,ch2, etc... and playPositions are in frames, NOT SAMPLES.
