@@ -1746,7 +1746,7 @@ void Scene::initDefaultCloudParams()
     g_defaultCloudParams.windowType = HANNING;
     g_defaultCloudParams.spatialMode = UNITY;
     g_defaultCloudParams.outputFirst = 0;
-    g_defaultCloudParams.outputLast = theChannelCount - 1;
+    g_defaultCloudParams.outputLast = theOutChannelCount - 1;
     g_defaultCloudParams.channelLocation = -1;
     g_defaultCloudParams.numGrains = 8;
     g_defaultCloudParams.activateState = true;

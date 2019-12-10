@@ -107,8 +107,8 @@ CloudDialog::CloudDialog(QWidget *parent) :
 
     ui->doubleSpinBox_Output_First->setMinimum(0);
     ui->doubleSpinBox_Output_Last->setMinimum(0);
-    ui->doubleSpinBox_Output_First->setMaximum(theChannelCount - 1);
-    ui->doubleSpinBox_Output_Last->setMaximum(theChannelCount - 1);
+    ui->doubleSpinBox_Output_First->setMaximum(theOutChannelCount - 1);
+    ui->doubleSpinBox_Output_Last->setMaximum(theOutChannelCount - 1);
 
     QTimer *tmAutoUpdate = new QTimer(this);
     connect(tmAutoUpdate, &QTimer::timeout, this, &CloudDialog::autoUpdate);

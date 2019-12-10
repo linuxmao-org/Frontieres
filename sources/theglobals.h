@@ -37,8 +37,10 @@
 
 // create BUFFERPREC datatype
 typedef float BUFFERPREC;
+// number of input channels
+extern int theInChannelCount;
 // number of output channels
-extern int theChannelCount;
+extern int theOutChannelCount;
 
 // window length
 #define WINDOW_LEN 2048
