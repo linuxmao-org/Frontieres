@@ -60,7 +60,7 @@ public:
     // render
     void draw();
     // get playback position in registered sample visuals and return to grain cloud
-    void getTriggerPos(unsigned int idx, double *playPos, double *playVols, float dur);
+    void getCloudPos(unsigned int idx, double *playPos, double *playVols, float dur);
     // move grains
     void updateCloudPosition(float newX, float newY);
     void updateCloudOrigin (float newOriginX, float newOriginY);
@@ -180,7 +180,7 @@ private:
 
     // trajectory of the cloud
     int trajectoryType;
-    Trajectory *myTrajectory;
+    Trajectory *myTrajectory = nullptr;
     bool restartingTrajectory = false;
     bool recordingTrajectory = false;
     bool recordTrajectoryAsked = false;

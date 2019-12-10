@@ -89,7 +89,7 @@ public:
     // cloud parameters duplicated for each midi note
     // int midiNote = - 1;
     // registered visualization
-    CloudVis *myCloudVis;
+    CloudVis *myCloudVis = nullptr;
     // register visualization
     void registerCloudVis(CloudVis *cloudVisToRegister);
     float pitch,duration;
@@ -175,11 +175,6 @@ public:
     float getVolumeDb();
     bool changedVolumeDb();
 
-    // trajectory
-    void setTrajectory(Trajectory *tr);
-    Trajectory* getTrajectory();
-    bool getIsMoving();
-
     // trajectory type
     void setTrajectoryType(int l_TrajectoryType);
     int getTrajectoryType();
@@ -245,6 +240,10 @@ public:
 
     // console message with all cloud parameters
     void showParameters();
+
+    void setActiveRestartTrajectory (bool l_choice);
+    bool getActiveRestartTrajectory ();
+    bool changedActiveRestartTrajectory();
 
 protected:
     // update internal trigger point
@@ -323,6 +322,9 @@ private:
     // lock switch
     bool locked = false;
 
+    // active restart trajectory
+    bool activeRestartTrajectory = false;
+    bool changed_ActiveRestartTrajectory = false;
 
     // midi polyphony
     CloudMidi *playedCloudMidi[g_maxMidiVoices];

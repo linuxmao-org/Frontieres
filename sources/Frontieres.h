@@ -46,7 +46,7 @@ extern pt3d position;
 
 // ENUMS
 // user selection mode
-enum { RECT, CLOUD };
+enum { RECT, CLOUD, TRIGG };
 enum { MOVE, RESIZE };
 // default selection mode
 extern int selectionMode;

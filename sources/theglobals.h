@@ -37,8 +37,10 @@
 
 // create BUFFERPREC datatype
 typedef float BUFFERPREC;
+// number of input channels
+extern int theInChannelCount;
 // number of output channels
-extern int theChannelCount;
+extern int theOutChannelCount;
 
 // window length
 #define WINDOW_LEN 2048
@@ -56,10 +58,12 @@ static const double globalAtten = 0.5;
 
 int constexpr g_maxMidiVoices(128);
 
+// minimum zone of clouds and triggers
+static const int minZone = 15;
+
 // osc local port
 //#define LOCAL_PORT 10001
 //#define OUTPUT_BUFFER_SIZE 1024
-
 
 //-----------------------------------------------------------------------------
 // Defines a point in a 3D space (coords x, y and z)

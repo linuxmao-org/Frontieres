@@ -22,6 +22,7 @@
 #include "MyGLApplication.h"
 #include "MyGLWindow.h"
 #include "CloudDialog.h"
+#include "TriggerDialog.h"
 #include "OptionsDialog.h"
 #include "Frontieres.h"
 #include "model/Sample.h"
@@ -46,6 +47,9 @@ struct MyGLApplication::Impl {
 
     // cloud dialogs, according to cloud ID
     std::map<unsigned, CloudDialog *> cloudDialogs;
+
+    // trigger dialogs, according to trigger ID
+    std::map<unsigned, TriggerDialog *> triggerDialogs;
 
     void onIdle();
 };
@@ -147,25 +151,45 @@ bool MyGLApplication::loadCloudDefaultFile()
     return currentScene->loadCloudDefault(cloudFile);
 }
 
-bool MyGLApplication::saveTrajectoryFile(SceneCloud *selectedCloudSave)
+bool MyGLApplication::saveCloudTrajectoryFile(SceneCloud *selectedCloudSave)
 {
     std::string nameTrajectoryFile = Scene::askNameTrajectory(FileDirection::Save);
     if (nameTrajectoryFile.empty())
         return false;
 
     QFile trajectoryFile(QString::fromStdString(nameTrajectoryFile));
-    return ::currentScene->saveRecordedTrajectory(trajectoryFile, selectedCloudSave);
+    return ::currentScene->saveCloudRecordedTrajectory(trajectoryFile, selectedCloudSave);
 
 }
 
-bool MyGLApplication::loadTrajectoryFile(SceneCloud *selectedCloudLoad)
+bool MyGLApplication::loadCloudTrajectoryFile(SceneCloud *selectedCloudLoad)
 {
     std::string nameTrajectoryFile = Scene::askNameTrajectory(FileDirection::Load);
     if (nameTrajectoryFile.empty())
         return false;
 
     QFile trajectoryFile(QString::fromStdString(nameTrajectoryFile));
-    return ::currentScene->loadRecordedTrajectory(trajectoryFile, selectedCloudLoad);
+    return ::currentScene->loadCloudRecordedTrajectory(trajectoryFile, selectedCloudLoad);
+}
+
+bool MyGLApplication::saveTriggerTrajectoryFile(SceneTrigger *selectedTriggerSave)
+{
+    std::string nameTrajectoryFile = Scene::askNameTrajectory(FileDirection::Save);
+    if (nameTrajectoryFile.empty())
+        return false;
+
+    QFile trajectoryFile(QString::fromStdString(nameTrajectoryFile));
+    return ::currentScene->saveTriggerRecordedTrajectory(trajectoryFile, selectedTriggerSave);
+}
+
+bool MyGLApplication::loadTriggerTrajectoryFile(SceneTrigger *selectedTriggerLoad)
+{
+    std::string nameTrajectoryFile = Scene::askNameTrajectory(FileDirection::Load);
+    if (nameTrajectoryFile.empty())
+        return false;
+
+    QFile trajectoryFile(QString::fromStdString(nameTrajectoryFile));
+    return ::currentScene->loadTriggerRecordedTrajectory(trajectoryFile, selectedTriggerLoad);
 }
 
 bool MyGLApplication::saveSceneFile()
@@ -238,7 +262,33 @@ void MyGLApplication::showCloudDialog(SceneCloud *selectedCloud)
         dlg->move(posdlg);
     }
     selectedCloud->cloud.get()->changesDone(true);
+    selectedCloud->view.get()->changesDone(true);
     dlg->linkCloud(selectedCloud->cloud.get(), selectedCloud->view.get());
+}
+
+void MyGLApplication::showTriggerDialog(SceneTrigger *selectedTrigger)
+{
+    unsigned id = selectedTrigger->trigger->getId();
+
+    TriggerDialog *&dlgslot = P->triggerDialogs[id];
+    TriggerDialog *dlg = dlgslot;
+
+    if (!dlg) {
+        // if not existing, create it and insert it in the map
+        dlg = new TriggerDialog;
+        dlg->setWindowTitle(tr("Trigger parameters"));
+        dlgslot = dlg;
+        dlg->show();
+    }
+    else {
+        QPoint posdlg = dlg->pos();
+        dlg->hide();
+        dlg->show();
+        dlg->move(posdlg);
+    }
+    selectedTrigger->trigger.get()->changesDone(true);
+    selectedTrigger->view.get()->changesDone(true);
+    dlg->linkTrigger(selectedTrigger->trigger.get(), selectedTrigger->view.get());
 }
 
 void MyGLApplication::destroyCloudDialog(unsigned selectedCloudId)
@@ -256,6 +306,21 @@ void MyGLApplication::destroyCloudDialog(unsigned selectedCloudId)
     P->cloudDialogs.erase(it);
 }
 
+void MyGLApplication::destroyTriggerDialog(unsigned selectedTriggerId)
+{
+    auto it = P->triggerDialogs.find(selectedTriggerId);
+
+    if (it == P->triggerDialogs.end())
+        return;  // not found
+
+    TriggerDialog *dlg = it->second;
+    if (!dlg)
+        return;
+
+    delete dlg;
+    P->triggerDialogs.erase(it);
+}
+
 void MyGLApplication::midiNoteOn(int midiChannelToPlay, int midiKeyToPlay, int midiVeloToPlay)
 {
     currentScene->midiNoteOn(midiChannelToPlay, midiKeyToPlay, midiVeloToPlay);
@@ -270,6 +335,13 @@ void MyGLApplication::destroyAllCloudDialogs()
 {
     while (P->cloudDialogs.size() > 0){
         destroyCloudDialog(P->cloudDialogs.begin()->first);
+    }
+}
+
+void MyGLApplication::destroyAllTriggerDialogs()
+{
+    while (P->triggerDialogs.size() > 0){
+        destroyTriggerDialog(P->triggerDialogs.begin()->first);
     }
 }
 

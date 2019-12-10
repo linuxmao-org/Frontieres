@@ -1,0 +1,126 @@
+#ifndef TRIGGER_H
+#define TRIGGER_H
+
+#include "theglobals.h"
+#include <Stk.h>
+#include <map>
+#include <vector>
+#include <memory>
+#include <iostream>
+#include <string>
+#include <atomic>
+#include <cstdlib>
+#include <time.h>
+#include <ctime>
+#include <QFile>
+#include <QDir>
+#include <QMap>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QTranslator>
+#include <mutex>
+#include "Frontieres.h"
+#include "visual/Trajectory.h"
+#include <QtMath>
+
+
+enum { NOTHING, ON, OFF, COMMUTE};
+
+// forward declarations
+class Trigger;
+class TriggerVis;
+
+class Trigger {
+
+public:
+    // destructor
+    virtual ~Trigger();
+
+    // constructor
+    Trigger();
+
+    // trajectory type
+    void setTrajectoryType(int l_TrajectoryType);
+    int getTrajectoryType();
+    bool changedTrajectoryType();
+
+    // get unique id of trigger
+    unsigned int getId();
+    void setId(int triggerId);
+
+    void setName(QString newName);
+    QString getName();
+
+    // register visualization
+    void registerTriggerVis(TriggerVis *triggerVisToRegister);
+
+    // turn on/off
+    void toggleActive();
+    void setActiveState(bool activateState);
+    bool getActiveState();
+
+    // print information
+    void describe(std::ostream &out);
+
+    // lock flag
+    void setLockedState(bool newLockedState);
+    bool getLockedState();
+    bool dialogLocked();
+
+    // changes done
+    void changesDone(bool done);
+
+    // message when osc or midi want to change locked cloud
+    void showMessageLocked();
+
+    // console message with all cloud parameters
+    void showParameters();
+
+    void setActiveRestartTrajectory (bool l_choice);
+    bool getActiveRestartTrajectory ();
+    bool changedActiveRestartTrajectory();
+
+    void setIn(int n_In);
+    int getIn();
+    bool changedIn();
+
+    void setOut(int n_Out);
+    int getOut();
+    bool changedOut();
+
+    void computeCloudsIn ();
+    void computeCloudsOut ();
+
+private:
+
+    unsigned int myId;  // unique id
+
+    QString myName;
+
+    bool isActive;  // on/off state
+
+    // registered visualization
+    TriggerVis *myTriggerVis;
+
+    // trigger params
+    int trajectoryType;
+    bool changed_trajectoryType = false;
+
+    // lock switch
+    bool locked = false;
+
+    // active restart trajectory
+    bool activeRestartTrajectory = false;
+    bool changed_ActiveRestartTrajectory = false;
+
+    // In and Out actions
+    int actionIn, actionOut;
+    bool changed_In = false;
+    bool changed_Out = false;
+
+    // List of Clouds In
+    QList<int> listCloudsIn;
+
+};
+
+#endif // TRIGGER_H

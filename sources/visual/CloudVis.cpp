@@ -169,8 +169,8 @@ CloudVis::CloudVis(float x, float y, unsigned int numGrainsVis,
 
 
     // visualization stuff
-    minSelRad = 15.0f;
-    maxSelRad = 19.0f;
+    minSelRad = minZone - 5;
+    maxSelRad = minZone;
     lambda = 0.997;
     selRad = minSelRad;
     targetRad = maxSelRad;
@@ -375,6 +375,12 @@ bool CloudVis::getIsPlayed()
 void CloudVis::setIsPlayed(bool l_isPlayed)
 {
     isPlayed = l_isPlayed;
+    if (myTrajectory != nullptr)
+        if ((l_isPlayed) && (myCloud->getActiveRestartTrajectory())) {
+            stopTrajectory();
+            restartTrajectory();
+            startTrajectory();
+        }
 }
 
 void CloudVis::setTrajectoryType(int l_trajectoryType)
@@ -430,7 +436,12 @@ void CloudVis::trajectoryChangeSpeed(double newValue)
 
 void CloudVis::trajectoryChangeProgress(double newValue)
 {
-
+    getTrajectory()->setProgress(newValue);
+    if (!isMidiVis) {
+        for (int i = 0; i < g_maxMidiVoices; i++) {
+            playedCloudVisMidi[i]->trajectoryChangeProgress(newValue);
+        }
+    }
 }
 
 void CloudVis::trajectoryChangeRadius(double newValue)
@@ -562,14 +573,18 @@ void CloudVis::draw()
         else
                 glColor4f(0.1, 0.7, 0.6, 0.35);
         else
-            glColor4f(0.0, 0.4, 0.7, 0.8);
+            glColor4f(0.0, 0.4, 0.7, 0.2);
 
-    selRad = minSelRad + 0.5 * (maxSelRad - minSelRad) *
-                             sin(2 * PI * (freq * t_sec + 0.125));
-    if (xRandExtent >= yRandExtent)
-        gluDisk(gluNewQuadric(), selRad + xRandExtent, selRad + xRandExtent + 1.0, 128, 2);
-    else
-        gluDisk(gluNewQuadric(), selRad + yRandExtent, selRad + yRandExtent + 1.0, 128, 2);
+    //selRad = minSelRad + 0.5 * (maxSelRad - minSelRad) * sin(2 * PI * (freq * t_sec + 0.125));
+    selRad = xRandExtent - 0.5 * (maxSelRad - minSelRad) * sin(2 * PI * (freq * t_sec + 0.125));
+    if (xRandExtent >= yRandExtent) {
+        selRad = xRandExtent - 0.5 * (maxSelRad - minSelRad) * sin(2 * PI * (freq * t_sec + 0.125));
+        gluDisk(gluNewQuadric(), maxSelRad + xRandExtent, maxSelRad + xRandExtent + 1.0, 128, 2);
+    }
+    else {
+        selRad = yRandExtent - 0.5 * (maxSelRad - minSelRad) * sin(2 * PI * (freq * t_sec + 0.125));
+        gluDisk(gluNewQuadric(), maxSelRad + yRandExtent, maxSelRad + yRandExtent + 1.0, 128, 2);
+    }
     glPopMatrix();
     glPushMatrix();
 
@@ -586,9 +601,22 @@ void CloudVis::draw()
         else
                 glColor4f(0.1, 0.7, 0.6, 0.35);
         else
-            glColor4f(0.0, 0.4, 0.7, 0.8);
+            glColor4f(0.0, 0.4, 0.7, 0.2);
 
-        gluDisk(gluNewQuadric(), selRad, selRad + 5.0, 128, 2);
+        int l_Extent = 0;
+        if (xRandExtent >= yRandExtent)
+            l_Extent = maxSelRad + xRandExtent;
+
+        else
+            l_Extent = maxSelRad + yRandExtent;
+
+        gluDisk(gluNewQuadric(), l_Extent, l_Extent + 1.0, 128, 2);
+        gluDisk(gluNewQuadric(), maxSelRad, maxSelRad + 5, 128, 2);
+        if (myCloud->getActiveState())
+            gluDisk(gluNewQuadric(), selRad + 10, selRad + 15, 128, 2);
+        else
+            gluDisk(gluNewQuadric(), l_Extent - 5, l_Extent, 128, 2);
+
         glPopMatrix();
         glPushMatrix();
 
@@ -630,7 +658,7 @@ void CloudVis::draw()
 
 
 // get trigger position/volume relative to sample visuals for single grain voice
-void CloudVis::getTriggerPos(unsigned int idx, double *playPos,
+void CloudVis::getCloudPos(unsigned int idx, double *playPos,
                                     double *playVol, float theDur)
 {
     bool trigger = false;
