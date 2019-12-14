@@ -128,12 +128,12 @@ void TriggerDialog::linkTrigger(Trigger *triggerLinked, TriggerVis *triggerVisLi
         default :
             break;
         }
+    if (triggerLinked->changedPriority())
+        ui->spinBox_Priority->setValue(triggerLinked->getPriority());
     //cout << "forme trigger, link" << endl;
     if (triggerLinked->changedTrajectoryType())
-        cout << "forme trigger, traj changee" << endl;
         switch (triggerLinked->getTrajectoryType()) {
         case STATIC:
-            cout << "static" << endl;
             ui->radioButton_Trajectory_Static->setChecked(true);
             ui->doubleSpinBox_Speed->setDisabled(true);
             ui->doubleSpinBox_Radius->setDisabled(true);
@@ -152,7 +152,6 @@ void TriggerDialog::linkTrigger(Trigger *triggerLinked, TriggerVis *triggerVisLi
             break;
         case BOUNCING:
         {
-            cout << "bouncing" << endl;
             ui->radioButton_Trajectory_Bouncing->setChecked(true);
             ui->doubleSpinBox_Speed->setDisabled(false);
             ui->doubleSpinBox_Radius->setDisabled(false);
@@ -590,4 +589,10 @@ void TriggerDialog::on_radioButton_Out_Commute_toggled(bool checked)
 void TriggerDialog::on_checkBox_Restart_toggled(bool checked)
 {
     triggerRef->setActiveRestartTrajectory(checked);
+}
+
+void TriggerDialog::on_spinBox_Priority_valueChanged(int arg1)
+{
+    if (!linking)
+        triggerRef->setPriority(arg1);
 }

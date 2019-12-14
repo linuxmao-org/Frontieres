@@ -43,10 +43,10 @@
 // TODO arrange this later
 #include "visual/CloudVis.h"
 #include "visual/TriggerVis.h"
-
 #include "Version.h"
 
 extern CloudParams g_defaultCloudParams;
+extern int version_major, version_minor, version_patch;
 
 //-----------------------------------------------------------------------------
 // Destructor
@@ -535,6 +535,7 @@ bool Scene::load(QFile &sceneFile)
         int triggerActiveRestartTrajectory = objTrigger["active-restart-trajectory"].toBool();
         int triggerIn = objTrigger["in"].toInt();
         int triggerOut = objTrigger["out"].toInt();
+        int triggerPriority = objTrigger["priority"].toInt();
         double triggerX = objTrigger["x"].toDouble();
         double triggerY = objTrigger["y"].toDouble();
         int triggerZoneExtent = objTrigger["zone-extent"].toInt();
@@ -613,7 +614,8 @@ bool Scene::load(QFile &sceneFile)
         }
 
         cout << "trigger " << m_triggers.size() << " :" << "\n";
-        cout << "id " << triggerId << " :" << "\n";
+        cout << "id : " << triggerId << "\n";
+        cout << "priority " << triggerPriority << "\n";
         cout << "active = " << triggerActiveState << "\n";
         cout << "active restart trajectory = " << triggerActiveRestartTrajectory << "\n";
         cout << "in = " << triggerIn << "\n";
@@ -633,6 +635,7 @@ bool Scene::load(QFile &sceneFile)
         triggerVisToLoad->registerTrigger(triggerToLoad);
         triggerToLoad->setId(triggerId);
         triggerToLoad->setName(triggerName);
+        triggerToLoad->setPriority(triggerPriority);
         triggerToLoad->setActiveState(triggerActiveState);
         triggerToLoad->setActiveRestartTrajectory(triggerActiveRestartTrajectory);
         triggerToLoad->setIn(triggerIn);
@@ -1003,6 +1006,7 @@ bool Scene::save(QFile &sceneFile)
         QJsonObject objTrigger;
         objTrigger["id"] = (int)triggerToSave->getId();
         objTrigger["name"] = triggerToSave->getName();
+        objTrigger["priority"] = triggerToSave->getPriority();
         objTrigger["active-state"] = triggerToSave->getActiveState();
         objTrigger["active-restart-trajectory"] = triggerToSave->getActiveRestartTrajectory();
         objTrigger["in"] = triggerToSave->getIn();

@@ -39,21 +39,17 @@ MyRtAudio::MyRtAudio(unsigned int numIns, unsigned int numOuts)
     audio.reset(new RtAudio);
 
     // check audio devices, set i/o count
-    const RtAudio::DeviceInfo &infoOutput =
-        audio->getDeviceInfo(audio->getDefaultOutputDevice());
-    numOutputs = std::max(infoOutput.outputChannels, numOuts);
+    unsigned deviceIndex = audio->getDefaultOutputDevice();
+    const RtAudio::DeviceInfo &deviceInfo = audio->getDeviceInfo(deviceIndex);
 
-    if (numIns > 0) {
-        const RtAudio::DeviceInfo &infoInput =
-            audio->getDeviceInfo(audio->getDefaultInputDevice());
-        numInputs = std::max(infoInput.inputChannels, numIns);
-    }
+    numOutputs = std::min(deviceInfo.outputChannels, numOuts);
+    numInputs = std::min(deviceInfo.inputChannels, numIns);
 
     // store buffer size
     myBufferSize = 1024;
 
     // set sample rate;
-    mySRate = infoOutput.preferredSampleRate;
+    mySRate = deviceInfo.preferredSampleRate;
 }
 
 

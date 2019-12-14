@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>516</width>
+    <width>548</width>
     <height>257</height>
    </rect>
   </property>
@@ -21,6 +21,13 @@
      </property>
      <property name="textFormat">
       <enum>Qt::RichText</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_Vers">
+     <property name="text">
+      <string>Version </string>
      </property>
     </widget>
    </item>

@@ -133,6 +133,8 @@ void Trigger::changesDone(bool done)
     changed_trajectoryType = done;
     changed_In = done;
     changed_Out = done;
+    changed_ActiveRestartTrajectory = done;
+    changed_Priority = done;
 }
 
 void Trigger::showMessageLocked()
@@ -144,11 +146,17 @@ void Trigger::showParameters()
 {
     cout << "trigger parameters :" << endl;
     cout << "id:" << myId << endl;
+    cout << "active = " << isActive << endl;
     cout << "locked = " << locked << endl;
     cout << "x = " << myTriggerVis->getX() << endl;
     cout << "y = " << myTriggerVis->getY() << endl;
     cout << "extent = " << myTriggerVis->getZoneExtent() << endl;
     cout << "trajectoryType = " << myTriggerVis->getTrajectoryType() << endl;
+    cout << "priority = " << priority << endl;
+    cout << "restart trajectory = " << activeRestartTrajectory << endl;
+    cout << "action in = " << actionIn << endl;
+    cout << "action out = " << actionOut << endl;
+
     switch (myTriggerVis->getTrajectoryType())  {
     case RECORDED: {
         Recorded *tr_show = dynamic_cast<Recorded*>(myTriggerVis->getTrajectory());
@@ -323,3 +331,137 @@ void Trigger::computeCloudsOut()
         }
     }
 }
+
+void Trigger::computeTriggersIn()
+{
+    if (!isActive)
+        return;
+    Scene *scene = ::currentScene;
+    for (int i = 0; i < scene->m_triggers.size(); i = i + 1) {
+        //cout << "i=" << i << endl;
+        SceneTrigger *trigger = scene->m_triggers[i].get();
+        Trigger *triggerToCompute = trigger->trigger.get();
+        TriggerVis *triggerVisToCompute = trigger->view.get();
+        if ((listTriggersIn.indexOf(triggerToCompute->getId()) == -1) && (triggerToCompute->getId() != getId())) {
+            //cout << "recherche, id =" << triggerToCompute->getId() << endl;
+            int x1 = triggerVisToCompute->getOriginX();
+            int y1 = triggerVisToCompute->getOriginY();
+            int x2 = myTriggerVis->getX();
+            int y2 = myTriggerVis->getY();
+            double distance = (qSqrt((pow((x1 - x2),2)+pow((y1 - y2),2))));
+            double radiusSum = minZone + myTriggerVis->getZoneExtent() + minZone;
+            //cout << "distance =" << distance << ", rayons =" << radiusSum << endl;
+            if (distance > radiusSum) {
+                //cout << "dehors" << endl;
+            }
+            else {
+                //cout << "dedans" << endl;
+                if (!(triggerToCompute->isInListTriggersIn(getId())) && (triggerToCompute->getPriority() <= getPriority())) {
+                    listTriggersIn << triggerToCompute->getId();
+                    switch (getIn()) {
+                    case NOTHING:
+                        //cout << " NOTHING" << endl;
+                        break;
+                    case ON:
+                        //cout << " ON" << endl;
+                        triggerToCompute->setActiveState(true);
+                        triggerVisToCompute->setIsPlayed(true);
+                        break;
+                    case OFF:
+                        //cout << " OFF" << endl;
+                        triggerToCompute->setActiveState(false);
+                        triggerVisToCompute->setIsPlayed(false);
+                        break;
+                    case COMMUTE:
+                        //cout << " COMMUTE" << endl;
+                        triggerToCompute->toggleActive();
+                        break;
+                    default:
+                        break;
+                    }
+                }
+            }
+        }
+        else {
+            //cout << "déjà dedans" << endl;
+        }
+    }
+}
+
+void Trigger::computeTriggersOut()
+{
+    if (!isActive)
+        return;
+    Scene *scene = ::currentScene;
+    for (int i = 0; i < listTriggersIn.size(); i = i + 1) {
+        //cout << " out i=" << i << ", id=" << listTriggersIn[i] << endl;
+        SceneTrigger *trigger = scene->findTriggerById(listTriggersIn[i]);
+        Trigger *triggerToCompute = trigger->trigger.get();
+        TriggerVis *triggerVisToCompute = trigger->view.get();
+        //cout << "recherche out, id =" << triggerToCompute->getId() << endl;
+        if ((triggerToCompute->getId() != getId()) && (triggerToCompute->getPriority() <= getPriority())) {
+            int x1 = triggerVisToCompute->getOriginX();
+            int y1 = triggerVisToCompute->getOriginY();
+            int x2 = myTriggerVis->getX();
+            int y2 = myTriggerVis->getY();
+            double distance = (qSqrt((pow((x1 - x2),2)+pow((y1 - y2),2))));
+            double radiusSum = minZone + myTriggerVis->getZoneExtent() + minZone;
+            //cout << "distance =" << distance << ", rayons =" << radiusSum << endl;
+            if (distance > radiusSum) {
+                //cout << "dehors" << endl;
+                listTriggersIn.removeAll(triggerToCompute->getId());
+                switch (getOut()) {
+                    case NOTHING:
+                        //cout << " NOTHING" << endl;
+                        break;
+                    case ON:
+                        //cout << " ON" << endl;
+                        triggerToCompute->setActiveState(true);
+                        break;
+                    case OFF:
+                        //cout << " OFF" << endl;
+                        triggerToCompute->setActiveState(false);
+                        break;
+                    case COMMUTE:
+                        //cout << " COMMUTE" << endl;
+                        triggerToCompute->setActiveState(!triggerToCompute->getActiveState());
+                        break;
+                    default:
+                        break;
+                    }
+                }
+            else {
+                //cout << "dedans" << endl;
+            }
+        }
+        else {
+            if (triggerToCompute->getId() != getId())
+                listTriggersIn.removeAll(triggerToCompute->getId());
+        }
+    }
+}
+
+void Trigger::setPriority(int l_priority)
+{
+    priority = l_priority;
+    changed_Priority = true;
+}
+
+int Trigger::getPriority()
+{
+    return priority;
+}
+
+bool Trigger::changedPriority()
+{
+    return changed_Priority;
+}
+
+bool Trigger::isInListTriggersIn(int l_triggerId)
+{
+    if (listTriggersIn.indexOf(l_triggerId) == -1)
+        return false;
+    else
+        return true;
+}
+
