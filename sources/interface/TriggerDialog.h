@@ -106,6 +106,8 @@ private slots:
     
     void on_checkBox_Restart_toggled(bool checked);
 
+    void on_spinBox_Priority_valueChanged(int arg1);
+
 private:
     Ui::TriggerDialog *ui;
     bool linking = false;

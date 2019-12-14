@@ -47,6 +47,7 @@
 
 extern string g_audioPath;
 extern CloudParams g_defaultCloudParams;
+extern int version_major, version_minor, version_patch;
 
 struct MyGLWindow::Impl {
     MyGLWindow *Q = nullptr;
@@ -160,6 +161,9 @@ void MyGLWindow::on_actionAbout_triggered()
     QDialog dlg(this);
     Ui::AboutDialog ui;
     ui.setupUi(&dlg);
+    ui.label_Vers->setText("Version " + QString::number(version_major, 10) + "."
+                                      + QString::number(version_minor, 10) + "."
+                                      + QString::number(version_patch, 10));
     dlg.exec();
 }
 
@@ -879,6 +883,7 @@ void MyGLScreen::contextMenu_recordTrajectory()
     Trajectory *tr=nullptr;
 
     if (selectedTrigger) {
+        theApplication->destroyTriggerDialog(selectedTrigger->trigger->getId());
         tr=new Recorded(0, selectedTrigger->view->getOriginX(),selectedTrigger->view->getOriginY());
         selectedTrigger->trigger->setTrajectoryType(RECORDED);
         selectedTrigger->view->updateTriggerPosition(selectedTrigger->view->getOriginX(),selectedTrigger->view->getOriginY());
@@ -887,6 +892,7 @@ void MyGLScreen::contextMenu_recordTrajectory()
     }
     else
         if (selectedCloud) {
+            theApplication->destroyCloudDialog(selectedCloud->cloud->getId());
             tr=new Recorded(0, selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY());
             selectedCloud->cloud->setTrajectoryType(RECORDED);
             selectedCloud->view->updateCloudPosition(selectedCloud->view->getOriginX(),selectedCloud->view->getOriginY());

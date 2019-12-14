@@ -131,7 +131,6 @@ void Trajectory::setTrajectoryStartTime()
 {
     trajectoryStartTime = GTime::instance().sec;
 }
-
 void Trajectory::setLastComputedPosition(int l_lcp)
 {
     lastComputedPosition = l_lcp;

@@ -149,6 +149,8 @@ void TriggerVis::draw()
         updateTriggerPosition(pos.x,pos.y);
         myTrigger->computeCloudsIn();
         myTrigger->computeCloudsOut();
+        myTrigger->computeTriggersIn();
+        myTrigger->computeTriggersOut();
     }
 
     glPushMatrix();
