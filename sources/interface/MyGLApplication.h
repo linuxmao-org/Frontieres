@@ -53,6 +53,7 @@ public:
     bool loadTriggerTrajectoryFile(SceneTrigger *selectedTriggerLoad);
 
     void addSample();
+    void addInput();
     void showDialogVolumeEnvelope(SceneCloud *selectedCloudToVolumeEnvelope);
     void showCloudDialog(SceneCloud *selectedCloud);
     void showTriggerDialog(SceneTrigger *selectedTrigger);

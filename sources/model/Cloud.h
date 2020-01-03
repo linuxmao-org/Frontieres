@@ -102,6 +102,7 @@ public:
     // vector of grains
     vector<Grain *> myGrains;
     bool addFlag, removeFlag;  // add/remove requests submitted?
+    unsigned int nextGrain;  // grain index
 };
 
 // class interface

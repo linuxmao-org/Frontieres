@@ -39,34 +39,30 @@
 #include "theglobals.h"
 using namespace std;
 
+// forward declarations
+class SampleVis;
 
 // basic encapsulation of an audio file
 struct Sample {
 
     // constructor
     Sample(string myName, string thePath, unsigned int numChan,
-              unsigned long numFrames, unsigned int srate, BUFFERPREC *theWave)
-    {
-        cout << numFrames << endl;
-        this->name = myName;
-        this->path = thePath;
-        this->frames = numFrames;
-        this->channels = numChan;
-        this->sampleRate = srate;
-        this->wave = theWave;
-    }
+              unsigned long numFrames, unsigned int srate, BUFFERPREC *theWave);
     // destructor
-    ~Sample()
-    {
-        if (wave != NULL) {
-            delete[] wave;
-        }
-    }
+    ~Sample();
+
+    // operations on input audio buffer
+    void nextBuffer(const BUFFERPREC *accumBuff, unsigned int numFrames);
+    void extractVoice (const BUFFERPREC *accumBuff, BUFFERPREC *voiceBuff, unsigned int numFrames);
 
     void resampleTo(unsigned int newRate);
 
     // print information
     void describe(std::ostream &out);
+
+    void registerSampleVis(SampleVis *sampleVisToRegister);
+
+    SampleVis *mySampleVis = nullptr;
 
     string name;
     string path;
@@ -74,6 +70,8 @@ struct Sample {
     unsigned long frames;
     unsigned int channels;
     unsigned int sampleRate;
+    bool isInput = false;
+    int voice = -1;
 };
 
 
@@ -90,6 +88,9 @@ public:
 
     // load a single file in the collection, or return if the same name already exists
     Sample *loadFile(const std::string &path);
+
+    // load from input
+    Sample *loadInput(const int n_input);
 
     // remove a single sample from the set
     void removeSample(Sample *sampleToRemove);

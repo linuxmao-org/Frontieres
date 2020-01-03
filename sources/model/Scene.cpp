@@ -1793,6 +1793,16 @@ Sample *Scene::loadNewSample(const std::string &path)
     return af;
 }
 
+Sample *Scene::loadNewInput(const int l_input)
+{
+    Sample *af = m_sampleSet->loadInput(l_input);
+    if (!af) {
+        // cannot load
+        return nullptr;
+    }
+    return af;
+}
+
 bool Scene::removeSampleAt(unsigned index)
 {
     if (index >= m_samples.size())
@@ -1849,6 +1859,7 @@ void Scene::addSampleVis(Sample *sampleToAdd)
     SampleVis *sv = new SampleVis;
     sceneSample->view.reset(sv);
     sv->associateSample(sampleToAdd->wave, sampleToAdd->frames, sampleToAdd->channels, sampleToAdd->name);
+    sampleToAdd->registerSampleVis(sv);
 
     for (unsigned i = 0, n = m_clouds.size(); i < n; ++i) {
         Cloud &cloudToUpdate = *m_clouds[i]->cloud;
