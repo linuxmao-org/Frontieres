@@ -236,6 +236,22 @@ void MyGLApplication::addSample()
     }
 }
 
+void MyGLApplication::addInput()
+{
+    //todo : demander numero d'input
+  /*  int l_input = 1;
+
+    std::unique_lock<std::mutex> lock(::currentSceneMutex);
+    Scene *scene = ::currentScene;
+
+    Sample *af = scene->loadNewInput(l_input);
+    if (af) {
+        // add into the scene
+        scene->addSampleVis(af);
+    }
+    */
+}
+
 void MyGLApplication::showDialogVolumeEnvelope(SceneCloud *selectedCloudToVolumeEnvelope)
 {
     currentScene->changeParamEnvelopeVolume(selectedCloudToVolumeEnvelope);

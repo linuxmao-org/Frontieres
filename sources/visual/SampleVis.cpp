@@ -415,6 +415,7 @@ void SampleVis::draw()
 
     // draw audio buffer
     if ((myBuff) && ((showBuff == true) || (pendingBuffState == true))) {
+        cout << "affiche sample" << endl;
         // fade in out waveform
         if (pendingBuffState == false) {
             buffAlpha = 0.996 * buffAlpha;

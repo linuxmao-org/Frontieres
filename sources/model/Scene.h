@@ -74,6 +74,7 @@ public:
 
     bool loadSampleSet(bool interactive);
     Sample *loadNewSample(const std::string &path);
+    Sample *loadNewInput(const int l_input);
     bool removeSampleAt(unsigned index);
     void removeSampleIfNotUsed(Sample *sampleToRemove);
     void addAudioPath(const std::string &path);

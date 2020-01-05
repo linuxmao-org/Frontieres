@@ -342,11 +342,13 @@ void CloudVis::setIsMidiVis(bool md)
 
 void CloudVis::activateMidiVis(int l_numNote, bool l_activate)
 {
+    cout << "activateMidiVis : " << l_activate << " , note : " << l_numNote << endl;
     if (!isMidiVis) {
         isPlayedCloudVisMidi[l_numNote] = l_activate;
         playedCloudVisMidi[l_numNote]->setIsPlayed(l_activate);
         if (l_activate) {
             if (myTrajectory != nullptr) {
+                playedCloudVisMidi[l_numNote]->restartTrajectory();
                 playedCloudVisMidi[l_numNote]->startTrajectory();
             }
         }
@@ -507,6 +509,7 @@ void CloudVis::startTrajectory()
 void CloudVis::restartTrajectory()
 {
     if (myTrajectory != nullptr) {
+        startTime = GTime::instance().sec;
         myTrajectory->restart();
         restartingTrajectory = true;
         draw();
@@ -540,6 +543,7 @@ bool CloudVis::getRecordTrajectoryAsked()
 void CloudVis::draw()
 {
     if (isMidiVis & !isPlayed) {
+        cout << "(isMidiVis & !isPlayed), return" << endl;
         return;
     }
     double t_sec = 0;
@@ -555,6 +559,7 @@ void CloudVis::draw()
     pt2d pos = {0.,0.};
 
     if (this->getIsMoving() || restartingTrajectory) {
+        // cout << "(this->getIsMoving() || restartingTrajectory)" << endl;
         pos = this->myTrajectory->computeTrajectory(dt);
         updateCloudPosition(pos.x,pos.y);
     }
@@ -647,6 +652,7 @@ void CloudVis::draw()
     if (!isMidiVis) {
         for (int i = 0; i < g_maxMidiVoices; i++) {
             if (isPlayedCloudVisMidi[i]) {
+                // cout << "played midi : " << i << endl;
                 playedCloudVisMidi[i]->draw();
             }
         }
@@ -809,6 +815,11 @@ void CloudVis::updateCloudOrigin(float newOriginX, float newOriginY)
     origin_gcY = newOriginY;
     if (myTrajectory != nullptr){
         myTrajectory->setOrigin(newOriginX, newOriginY);
+    }
+    else {
+        if (isMidiVis) {
+            updateCloudPosition(newOriginX, newOriginY) ;
+        }
     }
     if (!isMidiVis) {
         for (int i = 0; i < g_maxMidiVoices; i++){
