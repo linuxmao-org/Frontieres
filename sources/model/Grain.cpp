@@ -141,11 +141,20 @@ bool Grain::playMe(double *startPositions, double *startVols)
         activeSamples.clear();
 
         VecSceneSample &sceneSamples = *theSamples;
+        double l_playPos = 0;
+        int ptrWave = 0;
         for (int i = 0, n = sceneSamples.size(); i < n; i++) {
             if (startPositions[i] != -1) {
                 activeSamples.push_back(i);
-                playPositions[i] =
-                    floor(startPositions[i] * (sceneSamples[i]->sample->frames - 1));
+                //playPositions[i] =
+                //    floor(startPositions[i] * (sceneSamples[i]->sample->frames - 1));
+                l_playPos = floor(startPositions[i] * (sceneSamples[i]->sample->frames - 1)) + sceneSamples[i]->sample->ptrLagWave;
+                if (l_playPos >= (sceneSamples[i]->sample->frames - 1))
+                    l_playPos = l_playPos - ((sceneSamples[i]->sample->frames));
+
+                playPositions[i] = l_playPos;
+
+
                 playVols[i] = startVols[i];
             }
         }

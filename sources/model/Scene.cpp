@@ -1798,6 +1798,7 @@ Sample *Scene::loadNewInput(const int l_input)
     Sample *af = m_sampleSet->loadInput(l_input);
     if (!af) {
         // cannot load
+        cout << "cannot load input..." << endl;
         return nullptr;
     }
     return af;
@@ -1860,6 +1861,7 @@ void Scene::addSampleVis(Sample *sampleToAdd)
     sceneSample->view.reset(sv);
     sv->associateSample(sampleToAdd->wave, sampleToAdd->frames, sampleToAdd->channels, sampleToAdd->name);
     sampleToAdd->registerSampleVis(sv);
+    sv->registerSample(sampleToAdd);
 
     for (unsigned i = 0, n = m_clouds.size(); i < n; ++i) {
         Cloud &cloudToUpdate = *m_clouds[i]->cloud;

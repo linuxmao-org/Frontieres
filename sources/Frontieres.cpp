@@ -242,7 +242,6 @@ void audioCallback(const BUFFERPREC *in, BUFFERPREC *out, unsigned int numFrames
 
     // cast audio buffers
     memset(out, 0, sizeof(BUFFERPREC) * numFrames * theOutChannelCount);
-    // memset(in, 0, sizeof(BUFFERPREC) * numFrames * theOutChannelCount);
     if (menuFlag == false) {
         std::unique_lock<std::mutex> lock(::currentSceneMutex, std::try_to_lock);
         if (lock.owns_lock()) {
@@ -256,11 +255,11 @@ void audioCallback(const BUFFERPREC *in, BUFFERPREC *out, unsigned int numFrames
             }
 
             // dispatch input if used
-            /*for (int i = 0, n = scene->m_samples.size(); i < n; i++) {
+            for (int i = 0, n = scene->m_samples.size(); i < n; i++) {
                 //cout << "i = " << i << endl;
                 Sample &theSample = *scene->m_samples[i]->sample;
                 theSample.nextBuffer(in, numFrames);
-            }*/
+            }
 
             auto tp2 = std::chrono::steady_clock::now(); // record time after computation
 

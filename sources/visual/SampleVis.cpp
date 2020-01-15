@@ -37,6 +37,8 @@
 #include "interface/MyGLApplication.h"
 #include "interface/MyGLWindow.h"
 
+#include "model/Sample.h"
+
 // graphics includes
 #include <qopengl.h>
 
@@ -352,6 +354,11 @@ void SampleVis::associateSample(BUFFERPREC *theBuff, unsigned long buffFrames, u
     setWaveDisplayParams();
 }
 
+void SampleVis::registerSample(Sample *sampleToRegister)
+{
+    mySample = sampleToRegister;
+}
+
 void SampleVis::setWaveDisplayParams()
 {
     if (orientation == true) {
@@ -415,8 +422,7 @@ void SampleVis::draw()
 
     // draw audio buffer
     if ((myBuff) && ((showBuff == true) || (pendingBuffState == true))) {
-        cout << "affiche sample" << endl;
-        // fade in out waveform
+        //cout << "affiche sample" << endl;        // fade in out waveform
         if (pendingBuffState == false) {
             buffAlpha = 0.996 * buffAlpha;
             if (buffAlpha < 0.001)
@@ -433,28 +439,41 @@ void SampleVis::draw()
         glColor4f(waveCol, waveCol, waveCol, colA * buffAlpha);
         glPointSize(1.0);
         switch (myBuffChans) {
-        case 1:
+        case 1: {
+            //cout << "sampleview mono " << mySample->myId << ", canal " << mySample->voice << ", frames=" << mySample->frames << endl;
             glBegin(GL_LINE_STRIP);
+            double waveAmplitude = 0;
+            int ptrWave = 0;
             if (orientation == true) {
-
+                //cout << "orientation true" << endl;
                 for (int i = 0; i < rWidth * ups; i++) {
                     float nextI = (float)i / ups;
-
+                    // circular buffer for inputs
+                    ptrWave = (int)floor(i * myBuffInc) + mySample->ptrLagWave;
+                    if (ptrWave > mySample->frames - 1)
+                        ptrWave = ptrWave - mySample->frames;
+                    waveAmplitude = (myBuff[ptrWave]);
                     glVertex3f((rleft + nextI),
-                               rY + 0.5f * rHeight * (myBuff[(int)floor(i * myBuffInc)]),
+                               rY + 0.5f * rHeight * waveAmplitude,
                                0.0f);
                 }
             }
             else {
                 for (int i = 0; i < rHeight * ups; i++) {
                     float nextI = (float)i / ups;
-
-                    glVertex3f(rX + 0.5f * rWidth * (myBuff[(int)floor(i * myBuffInc)]),
+                    // circular buffer for inputs
+                    ptrWave = (int)floor(i * myBuffInc) + mySample->ptrLagWave;
+                    if (ptrWave > mySample->frames - 1)
+                        ptrWave = ptrWave - mySample->frames;
+                    waveAmplitude = (myBuff[ptrWave]);
+                    glVertex3f(rX + 0.5f * rWidth * waveAmplitude,
                                (rbot + nextI), 0.0f);
                 }
             }
             glEnd();
+            //cout << "sampleview monosortie" << endl;
             break;
+        }
         case 2:
             // left channel
             if (orientation == true) {

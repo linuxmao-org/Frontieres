@@ -30,6 +30,7 @@
 #include <QLibraryInfo>
 #include <QTimer>
 #include <QDebug>
+#include <QInputDialog>
 #include <map>
 
 struct MyGLApplication::Impl {
@@ -239,17 +240,21 @@ void MyGLApplication::addSample()
 void MyGLApplication::addInput()
 {
     //todo : demander numero d'input
-  /*  int l_input = 1;
+    bool ok = false;
+    int l_input = QInputDialog::getInt(P->window, "",
+                                 tr("Input number : "), 1, 1, theInChannelCount, 1, &ok);
+    if (ok) {
+        //int l_input = 1;
 
-    std::unique_lock<std::mutex> lock(::currentSceneMutex);
-    Scene *scene = ::currentScene;
+        std::unique_lock<std::mutex> lock(::currentSceneMutex);
+        Scene *scene = ::currentScene;
 
-    Sample *af = scene->loadNewInput(l_input);
-    if (af) {
-        // add into the scene
-        scene->addSampleVis(af);
+        Sample *af = scene->loadNewInput(l_input);
+        if (af) {
+            // add into the scene
+            scene->addSampleVis(af);
+        }
     }
-    */
 }
 
 void MyGLApplication::showDialogVolumeEnvelope(SceneCloud *selectedCloudToVolumeEnvelope)
