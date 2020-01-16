@@ -81,6 +81,8 @@ void MyGLWindow::initialize()
             this, []() { theApplication->saveSceneFile(); });
     connect(P->ui.action_Add_sample, &QAction::triggered,
             this, []() { theApplication->addSample(); });
+    connect(P->ui.action_Add_input, &QAction::triggered,
+            this, []() { theApplication->addInput(); });
     connect(P->ui.action_Load_clouds_defaults, &QAction::triggered,
             this, []() { theApplication->loadCloudDefaultFile(); });
     connect(P->ui.action_Options, &QAction::triggered,

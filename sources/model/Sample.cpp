@@ -28,6 +28,7 @@
 //
 
 #include "Sample.h"
+#include "visual/SampleVis.h"
 #include <minimp3_custom.h>
 #include <QFileInfo>
 #include <algorithm>
@@ -36,6 +37,7 @@
 #include <math.h>
 
 extern unsigned int samp_rate;
+extern int timeInputs;
 
 //---------------------------------------------------------------------------
 // Destructor
@@ -157,6 +159,25 @@ Sample *SampleSet::loadFile(const std::string &path)
     return sample;
 }
 
+Sample *SampleSet::loadInput(const int n_input)
+{
+    //numFrames c'est la durée du bloc à traiter exprimée en échantillons.
+    //Tu as la durée du bloc en secondes qui s'exprime T = numFrames / sampleRate.
+    //(qu'on appelle aussi la latence)
+    int n_channels = 1;
+    string n_filename = "input " + to_string(n_input);
+    string n_path = "";
+    unsigned long n_frames = ::timeInputs * ::samp_rate;
+    unsigned int n_samplerate = ::samp_rate;
+    Sample *n_sample = new Sample(n_filename, n_path, n_channels,
+                                n_frames, n_samplerate,
+                                new BUFFERPREC[n_frames]());
+    fileSet.push_back(n_sample);
+    n_sample->isInput = true;
+    n_sample->voice = n_input;
+    return n_sample;
+}
+
 void SampleSet::removeSample(Sample *sampleToRemove)
 {
     unsigned index = 0;
@@ -170,6 +191,68 @@ void SampleSet::removeSample(Sample *sampleToRemove)
 
     fileSet.erase(fileSet.begin() + index);
     delete sampleToRemove;
+}
+
+Sample::Sample(string myName, string thePath, unsigned int numChan, unsigned long numFrames, unsigned int srate, BUFFERPREC *theWave)
+{
+    cout << numFrames << endl;
+    this->name = myName;
+    this->path = thePath;
+    this->frames = numFrames;
+    this->channels = numChan;
+    this->sampleRate = srate;
+    this->wave = theWave;
+}
+
+Sample::~Sample()
+{
+    if (wave != NULL) {
+        delete[] wave;
+    }
+}
+
+void Sample::nextBuffer(const BUFFERPREC *accumBuff, unsigned int numFrames)
+{
+    if (isInput) {
+        cout << "entree sample nextbuffer" << endl;
+        //BUFFERPREC *newWave = new BUFFERPREC[numFrames];
+        //extractVoice(accumBuff, newWave, numFrames);
+        unsigned long l_lenghtWave = ::timeInputs * ::samp_rate;
+        int l_lenghtNewInput = int (numFrames/theInChannelCount);
+        /*int size=sizeof(wave)/sizeof(int);
+        rotate(wave, wave + size-1, tab+size); // 5 1 2 3 4
+        int tmp = tab[taille - 1];
+
+            memmove(&tab[1], tab, (taille - 1) * sizeof(int));
+            tab[0] = tmp;
+        */
+        for (int i = 0; i <= (l_lenghtWave - 1) - l_lenghtNewInput; i = i + 1) {
+           // cout << "i=" << i << endl;
+            wave[i] = wave[i + l_lenghtNewInput];
+        }
+        for (int j = 0; j <= numFrames - 1; j = j + 1) {
+         //   cout << "j=" << j << endl;
+            int k = int (j/theInChannelCount);
+            wave[(l_lenghtWave - 1) - l_lenghtNewInput + j] = accumBuff[k + voice];
+        }
+        //wave = newWave;
+        //mySampleVis->associateSample(wave, numFrames, 1, "input"); // todo name
+        //mySampleVis->draw();
+    }
+}
+
+void Sample::extractVoice(const BUFFERPREC *accumBuff, BUFFERPREC *voiceBuff, unsigned int numFrames)
+{
+    cout << "extractvoice, numframes = " << numFrames << endl;
+    for (int i = theInChannelCount; i <= numFrames - 1; i = i + theInChannelCount) {
+
+        //donc si tu veux récupérer le son entrant du premier canal dans cet exemple, il faut que tu prennes les échantillon d'indice 0,4,8,12,...
+        //plus généralement i * n + c avec c le canal, n le nombre total de canaux, et i dans [0,numFrames-1]
+
+        int j = int (i/theInChannelCount);
+        cout << "i = " << i << ", j = " << j << " , accumBuff[i + voice] = " << accumBuff[i + voice] << endl;
+        voiceBuff[j] = accumBuff[i + voice];
+    }
 }
 
 void Sample::resampleTo(unsigned int newRate)
@@ -314,4 +397,9 @@ void Sample::describe(std::ostream &out)
 {
     out << "- name : " << this->name << "\n";
     out << "- path : " << this->path << "\n";
+}
+
+void Sample::registerSampleVis(SampleVis *sampleVisToRegister)
+{
+    mySampleVis = sampleVisToRegister;
 }

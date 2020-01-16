@@ -1,3 +1,5 @@
+
+#include "theglobals.h"
 #include "model/Trigger.h"
 #include "model/Cloud.h"
 #include "model/ParamCloud.h"

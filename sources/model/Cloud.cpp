@@ -63,6 +63,8 @@ CloudMidi::CloudMidi(VecSceneSample *sampleSet, float theNumGrains, float theDur
     addFlag = false;
     removeFlag = false;
     duration = theDuration;
+    // trigger idx
+    nextGrain = 0;
     // populate grain cloud
     for (int i = 0; i < theNumGrains; i++) {
         myGrains.push_back(new Grain(sampleSet, theDuration, thePitch));
@@ -247,9 +249,10 @@ void Cloud::setActiveState(bool activateState)
 
 void Cloud::setActiveMidiState(bool activateMidiState, int l_midiNote, int l_midiVelo)
 {
-    cleanMidiClouds();
+    //cleanMidiClouds();
     if (activateMidiState){
         // midi note on
+        cout << "midi on, note = " << l_midiNote << endl;
         // calculate pitch
         int ecartNotes = l_midiNote - midiNote;
         float musicalPitch = (12*log2f(pitch));
@@ -263,9 +266,11 @@ void Cloud::setActiveMidiState(bool activateMidiState, int l_midiNote, int l_mid
         playedCloudMidi[l_midiNote]->isActive = true;
         // visual
         myCloudVis->activateMidiVis(l_midiNote, true);
+        playedCloudMidi[l_midiNote]->myCloudVis->restartTrajectory();
     }
     else {
         // midi note off
+        cout << "midi off, note = " << l_midiNote << endl;
         playedCloudMidi[l_midiNote]->envelopeAction.store(ReleaseEnvelope);
     }
 }
@@ -740,10 +745,13 @@ bool Cloud::changedMidiNote()
 
 void Cloud::cleanMidiClouds()
 {
+    cout << "cleanmidiclouds" << endl;
     for (int i = 0; i < g_maxMidiVoices; i++){
-        if (playedCloudMidi[i]->envelopeVolume->state() == Env::State::Off){
+        if (playedCloudMidi[i]->envelopeVolume->state() == Env::State::Off) {
             playedCloudMidi[i]->isActive = false;
         }
+        else
+            cout << "not cleaned : " << i << endl;
     }
 }
 
@@ -1007,15 +1015,15 @@ void Cloud::nextBuffer(BUFFERPREC *accumBuff, unsigned int numFrames)
             //debug: std::cout << "envelope state=" << (int) playedCloudMidi[ii]->envelopeVolume->state() << std::endl;
             switch (midiEnvelopeAction) {
                 case TriggerEnvelope:
-                    //debug : std::cout << "trigger" << std::endl;
+                    //debug: std::cout << "trigger" << std::endl;
                     playedCloudMidi[ii]->envelopeVolume->trigger();
                     break;
                 case ReleaseEnvelope:
-                    //debug : std::cout << "release" << std::endl;
+                    //debug: std::cout << "release" << std::endl;
                     playedCloudMidi[ii]->envelopeVolume->release();
                     break;
                 default:
-                    //debug : std::cout << "autre ?" << std::endl;
+                    //debug: std::cout << "autre ?" << std::endl;
                     break;
             }
             playedCloudMidi[ii]->envelopeVolume->generate(playedCloudMidi[ii]->envelopeVolumeBuff, numFrames);
@@ -1051,7 +1059,7 @@ void Cloud::nextBuffer(BUFFERPREC *accumBuff, unsigned int numFrames)
                             // TODO:  get position vector for grain with idx nextGrain from controller
                             // udate positions vector (currently randomized)q
                             if (myCloudVis)
-                                myCloudVis->getMidiCloudVis(ii)->getCloudPos(nextGrain, playPositions, playVols, duration);
+                                myCloudVis->getMidiCloudVis(ii)->getCloudPos(playedCloudMidi[ii]->nextGrain, playPositions, playVols, duration);
                         }
 
                         // get next pitch (using LFO) -  eventually generalize to an applyLFOs method (if LFO control will be exerted over multiple params)
@@ -1060,28 +1068,28 @@ void Cloud::nextBuffer(BUFFERPREC *accumBuff, unsigned int numFrames)
                             float pitchPow = pow(2, ((pitch + ii - midiNote) / 12));
                             float nextPitchPow = fabsf(pitchPow + pitchLFOAmount * sinf(2 * PI * pitchLFOFreq * GTime::instance().sec));
                             float nextPitch = 12 * log2(nextPitchPow);
-                            playedCloudMidi[ii]->myGrains[nextGrain]->setPitch(nextPitch);
+                            playedCloudMidi[ii]->myGrains[playedCloudMidi[ii]->nextGrain]->setPitch(nextPitch);
                         }
                         else
                             //playedCloudMidi[ii]->myGrains[nextGrain]->setPitch(playedCloudMidi[ii]->pitch);
-                            playedCloudMidi[ii]->myGrains[nextGrain]->setPitch(pitch + ii - midiNote);
+                            playedCloudMidi[ii]->myGrains[playedCloudMidi[ii]->nextGrain]->setPitch(pitch + ii - midiNote);
 
 
                         // update spatialization/get new channel multiplier set
                         updateSpatialization();
-                        playedCloudMidi[ii]->myGrains[nextGrain]->setChannelMultipliers(channelMults);
+                        playedCloudMidi[ii]->myGrains[playedCloudMidi[ii]->nextGrain]->setChannelMultipliers(channelMults);
 
                         // trigger grain
-                        awaitingPlay = playedCloudMidi[ii]->myGrains[nextGrain]->playMe(playPositions, playVols);
+                        awaitingPlay = playedCloudMidi[ii]->myGrains[playedCloudMidi[ii]->nextGrain]->playMe(playPositions, playVols);
 
                         // only advance if next grain is playable.  otherwise, cycle
                         // through again to wait for playback
                         if (!awaitingPlay) {
                             // queue next grain for trigger
-                            nextGrain++;
+                            playedCloudMidi[ii]->nextGrain++;
                             // wrap grain idx
-                            if (nextGrain >= playedCloudMidi[ii]->myGrains.size())
-                                nextGrain = 0;
+                            if (playedCloudMidi[ii]->nextGrain >= playedCloudMidi[ii]->myGrains.size())
+                                playedCloudMidi[ii]->nextGrain = 0;
                         }
                         else {
                             // debug
@@ -1114,8 +1122,8 @@ void Cloud::nextBuffer(BUFFERPREC *accumBuff, unsigned int numFrames)
                 }
             }
             else {
-                if (myCloudVis->getStateMidiVis(ii))
-                    myCloudVis->activateMidiVis(ii, false);
+                myCloudVis->activateMidiVis(ii, false);
+                playedCloudMidi[ii]->isActive = false;
             }
         }
 

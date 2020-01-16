@@ -57,6 +57,7 @@
      <string>&amp;Edit</string>
     </property>
     <addaction name="action_Add_sample"/>
+    <addaction name="action_Add_input"/>
     <addaction name="separator"/>
     <addaction name="action_Options"/>
    </widget>
@@ -288,6 +289,11 @@
   <action name="actionTrajectory">
    <property name="text">
     <string>Trajectory (&amp;I)</string>
+   </property>
+  </action>
+  <action name="action_Add_input">
+   <property name="text">
+    <string>Add input...</string>
    </property>
   </action>
  </widget>

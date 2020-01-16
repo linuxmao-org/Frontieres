@@ -1,7 +1,6 @@
 #ifndef TRIGGER_H
 #define TRIGGER_H
 
-#include "theglobals.h"
 #include <Stk.h>
 #include <map>
 #include <vector>
