@@ -176,7 +176,7 @@ Sample *SampleSet::loadInput(const int n_input)
                                 new BUFFERPREC[n_frames]());
     fileSet.push_back(n_sample);
     n_sample->isInput = true;
-    n_sample->voice = n_input;
+    n_sample->myInputNumber = n_input;
     return n_sample;
 }
 
@@ -204,6 +204,7 @@ Sample::Sample(string myName, string thePath, unsigned int numChan, unsigned lon
     this->channels = numChan;
     this->sampleRate = srate;
     this->wave = theWave;
+    this->isInput = false;
     myId = ++sampleId;
 }
 
@@ -219,13 +220,10 @@ void Sample::nextBuffer(const BUFFERPREC *accumBuff, unsigned int numFrames)
     int offsetWave = ptrLagWave;
     if (isInput) {
         int l_lenghtWave = ::timeInputs * int (::samp_rate);
-        //out << "entree sample nextbuffer, voice = " << voice << ",l_lenghtWave = " << l_lenghtWave << ",ptrLagWave =" << ptrLagWave << endl;
         for (int i = 0; i < numFrames - 1; i = i + 1) {
             //généralement i * n + c avec c le canal, n le nombre total de canaux, et i dans [0,numFrames-1]
-            //cout << "i = " << i << endl;
-            //cout << "nextbuffer,ptrLagWave =" << ptrLagWave << endl;
 
-            wave[i + offsetWave] = accumBuff[(i * theInChannelCount) + (voice - 1)];
+            wave[i + offsetWave] = accumBuff[(i * theInChannelCount) + (myInputNumber - 1)];
 
             ptrLagWave = ptrLagWave + 1;
             if (ptrLagWave > l_lenghtWave) {
@@ -233,7 +231,6 @@ void Sample::nextBuffer(const BUFFERPREC *accumBuff, unsigned int numFrames)
                 offsetWave = offsetWave - l_lenghtWave;
             }
         }
-        //cout << "sortie sample nextbuffer" << endl;
     }
 }
 

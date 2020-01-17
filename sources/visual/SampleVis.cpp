@@ -440,12 +440,10 @@ void SampleVis::draw()
         glPointSize(1.0);
         switch (myBuffChans) {
         case 1: {
-            //cout << "sampleview mono " << mySample->myId << ", canal " << mySample->voice << ", frames=" << mySample->frames << endl;
             glBegin(GL_LINE_STRIP);
             double waveAmplitude = 0;
             int ptrWave = 0;
             if (orientation == true) {
-                //cout << "orientation true" << endl;
                 for (int i = 0; i < rWidth * ups; i++) {
                     float nextI = (float)i / ups;
                     // circular buffer for inputs
@@ -471,7 +469,6 @@ void SampleVis::draw()
                 }
             }
             glEnd();
-            //cout << "sampleview monosortie" << endl;
             break;
         }
         case 2:
