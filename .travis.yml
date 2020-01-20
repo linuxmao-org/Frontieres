@@ -54,9 +54,9 @@ env:
   global:
     secure: srCY+efSrFNk16HgJh5WntvTaQnfLVZOltwl2dPSLn9xZnGwKHiGNpVJtBMeKmu0Wpv/OmQ1yI9iVEfPCXb7AQ5uNahqPalth8GxK/kSCFT6eCtfDKDyfTS8/91eC3GClkJdugImp1YE+NFMVIQsyzwbs7/4ay/I57Xg4WRn57lTjK6NzGh72wro45hFfYVAP7fI/XzPYQ3oi7N73WYLHxsex8uMM6bb4hmKkE2THPKJDcs4Paz3BWyrmkk3QPY1a5LmppnGJBEPoKE6gaxxyxn55L7ROwBqPnRSdlQi+bc2JSgQxoVudp90N5vHL7NiumIOyNGM8Z8PoYzROAhea0UVx+/zDuwundiINzYHq0j7XVjFjQnTvQKgQOs5wScQNlplVNt+Vm8MEUm0T26NDN3Ng0wDH669cesu1WIhn4VbNE67BAPShYaDIXDdaYSM8t7CnfeeJdRYSprrwZHWBMYh7VT15ZKop+USubLHQA96/SPwlxlGg3NLbDB+xHxIyypUQXv8KZBLKMHFwfC9XJVx2gMAtMdsWnPuu/pMY/7ob3WHEBeZLdP66p9PshbUJ0oDoXYyAY6aPTOoXw23H5aHHWZVn4pRxpCuih1pLFc32U5faDA/zPL/sEjP7oS7fY+WCoskEKHJeZd4levOI4wtAM+B4C4lQF+9Z3x5wBc=
 
-# notifications:
-#   irc:
-#     template:
-#       - "%{repository_slug}#%{build_number} (%{branch} - %{commit} : %{author}): %{message}"
-#     channels:
-#       - "ircs://chat.freenode.net:7070/#librazik"
+notifications:
+  irc:
+    template:
+      - "%{repository_slug}#%{build_number} (%{branch} - %{commit} : %{author}): %{message}"
+    channels:
+      - "ircs://chat.freenode.net:7070/#librazik"
