@@ -53,7 +53,6 @@ struct Sample {
 
     // operations on input audio buffer
     void nextBuffer(const BUFFERPREC *accumBuff, unsigned int numFrames);
-    void extractVoice (const BUFFERPREC *accumBuff, BUFFERPREC *voiceBuff, unsigned int numFrames);
 
     void resampleTo(unsigned int newRate);
 
@@ -64,6 +63,8 @@ struct Sample {
 
     SampleVis *mySampleVis = nullptr;
 
+    unsigned int myId;  // unique id
+
     string name;
     string path;
     BUFFERPREC *wave;
@@ -71,7 +72,8 @@ struct Sample {
     unsigned int channels;
     unsigned int sampleRate;
     bool isInput = false;
-    int voice = -1;
+    int myInputNumber = -1;
+    int ptrLagWave = 0; // for circular waves to use input waves
 };
 
 

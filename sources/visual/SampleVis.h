@@ -39,6 +39,7 @@
 #include <algorithm>
 #include <Stk.h>
 
+class Sample;
 
 // id for this class, which is incremented for each instance
 // static unsigned int boxId = 0;
@@ -77,6 +78,9 @@ public:
 
     void toggleWaveDisplay();
     void associateSample(BUFFERPREC *theBuff, unsigned long buffFrames, unsigned int buffChans, const string &name);
+    // register model
+    void registerSample(Sample *sampleToRegister);
+
     // return id
     // unsigned int getId();
 
@@ -113,6 +117,7 @@ private:
     bool isSelected;
     float colR, colG, colB, colA;
     float minDim;
+    Sample *mySample;
     BUFFERPREC *myBuff;
     double startTime;
     float ups;

@@ -128,6 +128,7 @@ public:
 
 struct SceneSample {
     std::string name;
+    int myInputNumber = 0;
     Sample *sample = nullptr;
     std::unique_ptr<SampleVis> view;
 
