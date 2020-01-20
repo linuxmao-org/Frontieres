@@ -216,11 +216,14 @@ bool Scene::load(QFile &sceneFile)
         m_samples.emplace_back(sceneSample);
 
         std::string name = objSample["name"].toString().toStdString(); // sample
+        int inputNumber = objSample["input"].toInt();
         sceneSample->name = name;
+        sceneSample->myInputNumber = inputNumber;
         cout << name << "\n";
 
         SampleVis *sv = new SampleVis();
         sceneSample->view.reset(sv);
+
         if ((bool)objSample["orientation"].toInt() != sv->getOrientation())
             sv->toggleOrientation();
         double heightSample = objSample["height"].toDouble();
@@ -781,7 +784,6 @@ bool Scene::load(QFile &sceneFile)
         m_midiInstrument.setMidiCombi(l_channel, l_numCombi);
     }
 
-
     return true;
 }
 
@@ -836,6 +838,10 @@ bool Scene::save(QFile &sceneFile)
         sv->describe(out);
 
         QJsonObject objSample;
+        if (sceneSample->sample->isInput)
+           objSample["input"] = sceneSample->sample->myInputNumber;
+        else
+           objSample["input"] = (int) 0;
         objSample["name"] = QString::fromStdString(sceneSample->name);
         objSample["orientation"] = (int)sv->getOrientation();
         objSample["height"] = sv->getHeight();
@@ -1154,6 +1160,7 @@ bool Scene::save(QFile &sceneFile)
 
     docRoot["version"] = docVersion;
     docRoot["samples"] = docSamples;
+    //docRoot["Inputs"] = docInputs;
     docRoot["clouds"] = docClouds;
     docRoot["triggers"] = docTriggers;
     docRoot["combis"] = docCombis;
@@ -1652,18 +1659,23 @@ bool Scene::loadSampleSet(bool interactive)
 
             // locate this file and load
             Sample *af = nullptr;
-            QString qname = QString::fromStdString(m_samples[i]->name);
-            for (unsigned i = 0, n = effectiveAudioPaths.size(); !af && i < n; ++i) {
-                QDir dir(QString::fromStdString(*effectiveAudioPaths[i]));
-                QString curpath = dir.filePath(qname);
-                af = samples->loadFile(curpath.toStdString());
+            if (m_samples[i]->myInputNumber == 0) {
+                QString qname = QString::fromStdString(m_samples[i]->name);
+                for (unsigned i = 0, n = effectiveAudioPaths.size(); !af && i < n; ++i) {
+                    QDir dir(QString::fromStdString(*effectiveAudioPaths[i]));
+                    QString curpath = dir.filePath(qname);
+                    af = samples->loadFile(curpath.toStdString());
 
-                // successful load from a candidate path?
-                if (af && i < candidateAudioPaths.size()) {
-                    // move the candidate path into the recognized audio path (front)
-                    audioPaths.insert(audioPaths.begin(), *effectiveAudioPaths[i]);
-                    candidateAudioPaths.erase(candidateAudioPaths.begin() + i);
+                    // successful load from a candidate path?
+                    if (af && i < candidateAudioPaths.size()) {
+                        // move the candidate path into the recognized audio path (front)
+                        audioPaths.insert(audioPaths.begin(), *effectiveAudioPaths[i]);
+                        candidateAudioPaths.erase(candidateAudioPaths.begin() + i);
+                    }
                 }
+            }
+            else {
+                af = samples->loadInput(m_samples[i]->myInputNumber);
             }
 
             if (af) {
@@ -1727,6 +1739,8 @@ bool Scene::loadSampleSet(bool interactive)
             SceneSample &sceneSample = *m_samples[j++];
             sceneSample.sample = assoc;
             sceneSample.view->associateSample(assoc->wave, assoc->frames, assoc->channels, assoc->name);
+            sceneSample.view->registerSample(sceneSample.sample);
+            sceneSample.sample->registerSampleVis(sceneSample.view.get());
         }
     }
 
@@ -1798,6 +1812,7 @@ Sample *Scene::loadNewInput(const int l_input)
     Sample *af = m_sampleSet->loadInput(l_input);
     if (!af) {
         // cannot load
+        cout << "cannot load input..." << endl;
         return nullptr;
     }
     return af;
@@ -1860,6 +1875,7 @@ void Scene::addSampleVis(Sample *sampleToAdd)
     sceneSample->view.reset(sv);
     sv->associateSample(sampleToAdd->wave, sampleToAdd->frames, sampleToAdd->channels, sampleToAdd->name);
     sampleToAdd->registerSampleVis(sv);
+    sv->registerSample(sampleToAdd);
 
     for (unsigned i = 0, n = m_clouds.size(); i < n; ++i) {
         Cloud &cloudToUpdate = *m_clouds[i]->cloud;
