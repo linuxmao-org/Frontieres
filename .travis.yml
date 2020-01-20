@@ -26,15 +26,15 @@ matrix:
       - cmake --build .
       - echo "An Interactive Granular Sampler" > description-pak
       - |
-        if test "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false"; then
-          sudo checkinstall --type=debian --install=no --default --pkgname=frontieres --pkgversion="`git describe --abbrev=0 | sed 's/^v//'``git log -n 1 --pretty=format:"+%cd~git%h" --date=short master | sed 's/-//g'`" --pkgarch=amd64 --pkgrelease=0linuxmao1 --pkglicense=GPL-3.0-only --pkggroup=sound --maintainer="jp-dev@inbox.ru" --nodoc
+        if test "$TRAVIS_BRANCH" = "develop" -a "$TRAVIS_PULL_REQUEST" = "false"; then
+          sudo checkinstall --type=debian --install=no --default --pkgname=frontieres --pkgversion="`git describe --abbrev=0 | sed 's/^v//'``git log -n 1 --pretty=format:"+%cd~git%h" --date=short develop | sed 's/-//g'`" --pkgarch=amd64 --pkgrelease=0linuxmao1 --pkglicense=GPL-3.0-only --pkggroup=sound --maintainer="jp-dev@inbox.ru" --nodoc
           sudo mv -f *.deb ../release/frontieres-"$_BUILD".deb
         fi
       - cd ..
 
 before_deploy:
   - |
-    if test "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false"; then
+    if test "$TRAVIS_BRANCH" = "develop" -a "$TRAVIS_PULL_REQUEST" = "false"; then
       export TRAVIS_TAG=automatic
       git tag -f "$TRAVIS_TAG"
     fi
@@ -48,7 +48,7 @@ deploy:
   overwrite: true
   edge: true
   on:
-    branch: master
+    branch: develop
 
 env:
   global:
