@@ -1,0 +1,62 @@
+language: c++
+
+branches:
+  except:
+    - automatic
+
+cache:
+  directories:
+    - download
+
+matrix:
+  include:
+    os: linux
+    dist: xenial
+    env:
+      - _BUILD=linux64
+    before_install:
+      - sudo apt-get update -qq
+    install:
+      - sudo apt-get install build-essential pkg-config libasound2-dev libpulse-dev libglu1-mesa-dev libjack-jackd2-dev libsndfile1-dev libsoxr-dev mesa-common-dev libqt5opengl5-dev libqt5x11extras5-dev qtbase5-dev qttools5-dev qttools5-dev-tools qt5-default liblo-dev checkinstall
+    script:
+      - mkdir release
+      - mkdir build
+      - cd build
+      - cmake -DCMAKE_BUILD_TYPE=Release ..
+      - cmake --build .
+      - echo "An Interactive Granular Sampler" > description-pak
+      - sudo checkinstall --type=debian --install=no --default --pkgname=frontieres --pkgversion="`git describe --abbrev=0 | sed 's/^v//'``git log -n 1 --pretty=format:"+%cd~git%h" --date=short master | sed 's/-//g'`" --pkgarch=amd64 --pkgrelease=0linuxmao1 --pkglicense=GPL-3.0-only --pkggroup=sound --maintainer="jp-dev@inbox.ru" --nodoc
+      - |
+        if test "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false"; then
+          sudo mv -f *.deb ../release/frontieres-"$_BUILD".deb
+        fi
+      - cd ..
+
+before_deploy:
+  - |
+    if test "$TRAVIS_BRANCH" = "master" -a "$TRAVIS_PULL_REQUEST" = "false"; then
+      export TRAVIS_TAG=automatic
+      git tag -f "$TRAVIS_TAG"
+    fi
+
+deploy:
+  provider: releases
+  api_key: "$GITHUB_TOKEN"
+  file: release/*
+  file_glob: true
+  prerelease: true
+  overwrite: true
+  edge: true
+  on:
+    branch: master
+
+env:
+  global:
+    secure: srCY+efSrFNk16HgJh5WntvTaQnfLVZOltwl2dPSLn9xZnGwKHiGNpVJtBMeKmu0Wpv/OmQ1yI9iVEfPCXb7AQ5uNahqPalth8GxK/kSCFT6eCtfDKDyfTS8/91eC3GClkJdugImp1YE+NFMVIQsyzwbs7/4ay/I57Xg4WRn57lTjK6NzGh72wro45hFfYVAP7fI/XzPYQ3oi7N73WYLHxsex8uMM6bb4hmKkE2THPKJDcs4Paz3BWyrmkk3QPY1a5LmppnGJBEPoKE6gaxxyxn55L7ROwBqPnRSdlQi+bc2JSgQxoVudp90N5vHL7NiumIOyNGM8Z8PoYzROAhea0UVx+/zDuwundiINzYHq0j7XVjFjQnTvQKgQOs5wScQNlplVNt+Vm8MEUm0T26NDN3Ng0wDH669cesu1WIhn4VbNE67BAPShYaDIXDdaYSM8t7CnfeeJdRYSprrwZHWBMYh7VT15ZKop+USubLHQA96/SPwlxlGg3NLbDB+xHxIyypUQXv8KZBLKMHFwfC9XJVx2gMAtMdsWnPuu/pMY/7ob3WHEBeZLdP66p9PshbUJ0oDoXYyAY6aPTOoXw23H5aHHWZVn4pRxpCuih1pLFc32U5faDA/zPL/sEjP7oS7fY+WCoskEKHJeZd4levOI4wtAM+B4C4lQF+9Z3x5wBc=
+
+# notifications:
+#   irc:
+#     template:
+#       - "%{repository_slug}#%{build_number} (%{branch} - %{commit} : %{author}): %{message}"
+#     channels:
+#       - "ircs://chat.freenode.net:7070/#librazik"
