@@ -5,7 +5,7 @@
 
 # Construction
 
-[![Build Status](https://semaphoreci.com/api/v1/jpcima/frontieres/branches/master/badge.svg)](https://semaphoreci.com/jpcima/frontieres)
+[![Build Status](https://travis-ci.com/linuxmao-org/Frontieres.svg?branch=master)](https://travis-ci.com/linuxmao-org/Frontieres)
 
 ## Généralités
 
