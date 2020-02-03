@@ -270,7 +270,7 @@ void Cloud::setActiveMidiState(bool activateMidiState, int l_midiNote, int l_mid
     }
     else {
         // midi note off
-        cout << "midi off, note = " << l_midiNote << endl;
+        // cout << "midi off, note = " << l_midiNote << endl;
         playedCloudMidi[l_midiNote]->envelopeAction.store(ReleaseEnvelope);
     }
 }
@@ -295,7 +295,7 @@ void Cloud::setWindowType(int winType)
         windowType = Window::Instance().numWindows() - 1;
     }
     if (windowType == RANDOM_WIN) {
-        for (int i = 0; i < myGrains.size(); i++) {
+        for (unsigned long i = 0; i < myGrains.size(); i++) {
             myGrains[i]->setWindow(
                 (int)floor(randf() * Window::Instance().numWindows() - 1));
         }
@@ -403,6 +403,7 @@ void Cloud::removeGrain()
     delete myGrains.back();
     //delete myGrains[myGrains.size() - 1];
     myGrains.pop_back();
+    nextGrain = 0;
     if (nextGrain >= myGrains.size() - 1) {
         nextGrain = 0;
     }
@@ -672,6 +673,16 @@ void Cloud::setNumGrains(unsigned int newNumGrains)
             addGrain();
 }
 
+bool Cloud::getGrainsRandom()
+{
+    return grainsRandom;
+}
+
+void Cloud::setGrainsRandom(bool l_random)
+{
+    grainsRandom = l_random;
+}
+
 // update after a change of sample set
 void Cloud::updateSampleSet()
 {
@@ -745,13 +756,10 @@ bool Cloud::changedMidiNote()
 
 void Cloud::cleanMidiClouds()
 {
-    cout << "cleanmidiclouds" << endl;
     for (int i = 0; i < g_maxMidiVoices; i++){
         if (playedCloudMidi[i]->envelopeVolume->state() == Env::State::Off) {
             playedCloudMidi[i]->isActive = false;
         }
-        else
-            cout << "not cleaned : " << i << endl;
     }
 }
 

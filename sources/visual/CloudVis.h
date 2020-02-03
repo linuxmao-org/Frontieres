@@ -148,6 +148,10 @@ public:
     void trajectoryChangeRadiusInt(double newValue);
     void trajectoryChangeExpansion(double newValue);
 
+    void setGrainPosition (unsigned long l_numGrain, int new_x, int new_y);
+    int getGrainPositionX(unsigned long l_numGrain);
+    int getGrainPositionY(unsigned long l_numGrain);
+
 protected:
 private:
 

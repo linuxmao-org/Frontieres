@@ -153,6 +153,7 @@ public:
     void removeGrain();
     bool changedNumGrains();
 
+
     // set window type
     void setWindowType(int windowType);
     int getWindowType();
@@ -201,6 +202,8 @@ public:
     // number of Grains
     unsigned int getNumGrains();
     void setNumGrains(unsigned int newNumGrains);
+    bool getGrainsRandom();
+    void setGrainsRandom(bool l_random);
 
     // update after a change of sample set
     void updateSampleSet();
@@ -294,6 +297,7 @@ private:
     // number of grains in this cloud
     unsigned int numGrains;
     bool changed_numGrains = false;
+    bool grainsRandom = true;
 
     // cloud params
     float overlap, overlapNorm, pitch, duration, pitchLFOFreq, pitchLFOAmount;

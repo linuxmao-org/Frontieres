@@ -1,3 +1,11 @@
+## frontieres version 0.8.0
+
+apport du dernier pr :
+
+- gestion de la place des grains
+      depuis la fenetre parametre des nuages, dans un onglet grains
+      révision de la fenêtre de parametres des nuages, maintenant sur 3 onglets (nuage, trajectoire, grains)
+
 ## frontieres version 0.7.0
 
 apports du dernier pr : 

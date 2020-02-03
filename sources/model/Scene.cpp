@@ -243,7 +243,7 @@ bool Scene::load(QFile &sceneFile)
     QJsonArray docClouds = docRoot["clouds"].toArray();
     m_clouds.clear();
     m_clouds.reserve(docClouds.size());
-    for (const QJsonValue &jsonElement : docClouds) { // samples
+    for (const QJsonValue &jsonElement : docClouds) { // clouds
         QJsonObject objCloud = jsonElement.toObject();
         SceneCloud *sceneCloud = new SceneCloud;
         m_clouds.emplace_back(sceneCloud);
@@ -283,6 +283,7 @@ bool Scene::load(QFile &sceneFile)
         cloudEnvelopeVolume.t3 = objCloud["volume-envelope-T3"].toInt();
         cloudEnvelopeVolume.t4 = objCloud["volume-envelope-T4"].toInt();
         int cloudNumGrains = objCloud["num-grains"].toInt();
+        bool cloudRandomGrains = objCloud["random-grains"].toBool();
         int cloudActiveState = objCloud["active-state"].toBool();
         int cloudActiveRestartTrajectory = objCloud["active-restart-trajectory"].toBool();
         double cloudX = objCloud["x"].toDouble();
@@ -429,7 +430,20 @@ bool Scene::load(QFile &sceneFile)
         cloudVisToLoad->setFixedYRandExtent(cloudYRandExtent);
         cloudVisToLoad->setSelectState(false);
         cloudToLoad->setEnvelopeVolumeParam(cloudEnvelopeVolume);
+        cloudToLoad->setGrainsRandom(cloudRandomGrains);
 
+        QJsonArray docGrains = objCloud["grains"].toArray();
+        for (const QJsonValue &jsonElementGrain : docGrains) { // grains
+            QJsonObject objGrain = jsonElementGrain.toObject();
+
+            int l_numGrain = objGrain["num"].toInt();
+            int l_g_x = objGrain["x"].toInt();
+            int l_g_y = objGrain["y"].toInt();
+
+            cout << "grain : " << l_numGrain << endl;
+
+            cloudVisToLoad->setGrainPosition(l_numGrain, l_g_x, l_g_y);
+        }
 
         //cloudVisToLoad->setTrajectoryType(type);
         if(hasTrajectory) {
@@ -859,9 +873,9 @@ bool Scene::save(QFile &sceneFile)
         CloudVis *cloudVisToSave = cloud->view.get();
 
         std::ostream &out = std::cout;
-        out << "Cloud " << i << ":";
+        out << "Cloud " << i << ":\n";
         cloudToSave->describe(out);
-        out << "Cloud Vis " << i << ":";
+        out << "Cloud Vis " << i << ":\n";
         cloudVisToSave->describe(out);
 
         QJsonObject objCloud;
@@ -897,13 +911,34 @@ bool Scene::save(QFile &sceneFile)
         objCloud["volume-envelope-T2"] = cloudEnvelopeVolumeParam.t2;
         objCloud["volume-envelope-T3"] = cloudEnvelopeVolumeParam.t3;
         objCloud["volume-envelope-T4"] = cloudEnvelopeVolumeParam.t4;
-        objCloud["num-grains"] = (int)cloudToSave->getNumGrains();
         objCloud["active-state"] = cloudToSave->getActiveState();
         objCloud["active-restart-trajectory"] = cloudToSave->getActiveRestartTrajectory();
         objCloud["x"] = cloudVisToSave->getOriginX();
         objCloud["y"] = cloudVisToSave->getOriginY();
         objCloud["x-rand-extent"] = cloudVisToSave->getXRandExtent();
         objCloud["y-rand-extent"] = cloudVisToSave->getYRandExtent();
+        objCloud["num-grains"] = (int)cloudToSave->getNumGrains();
+        objCloud["random-grains"] = cloudToSave->getGrainsRandom();
+
+        int l_numGrains = cloudToSave->getNumGrains();
+
+        // grains
+        QJsonArray docGrains;
+        QJsonObject objGrain;
+        for (int j = 0; j < l_numGrains; j = j + 1) {
+            std::ostream &out = std::cout;
+            out << "Grain " << j << ":\n";
+
+            objGrain["num"] = j;
+            objGrain["x"] = cloudVisToSave->getGrainPositionX(j);
+            objGrain["y"] = cloudVisToSave->getGrainPositionY(j);
+
+            out << "x : " << cloudVisToSave->getGrainPositionX(j) << ", ";
+            out << "y : " << cloudVisToSave->getGrainPositionY(j) << "\n";
+
+            docGrains.append(objGrain);
+        }
+        objCloud["grains"] = docGrains;
 
         //trajectory
         objCloud["has-trajectory"] = cloudVisToSave->hasTrajectory();
@@ -1205,6 +1240,7 @@ bool Scene::loadCloudDefault(QFile &cloudFile)
     g_defaultCloudParams.midiChannel = objCloud["midi-channel"].toInt();
     g_defaultCloudParams.midiNote = objCloud["midi-note"].toInt();
     g_defaultCloudParams.volumeDB = objCloud["volume"].toDouble();
+    g_defaultCloudParams.grainsRandom = objCloud["random-grains"].toBool();
     ParamEnv cloudEnvelopeVolume;
     {
         double l1 = objCloud["volume-envelope-L1"].toDouble();
@@ -1290,6 +1326,7 @@ bool Scene::loadCloudDefault(QFile &cloudFile)
     cout << "midi note = " << g_defaultCloudParams.midiNote << "\n";
     cout << "volume = " << g_defaultCloudParams.volumeDB << "\n";
     cout << "grains = " << g_defaultCloudParams.numGrains << "\n";
+    cout << "grains random = " << g_defaultCloudParams.grainsRandom << "\n";
     cout << "active = " << g_defaultCloudParams.activateState << "\n";
     cout << "active restart trajectory = " << g_defaultCloudParams.activateRestartTrajectory << "\n";
     cout << "xRandExtent = " << g_defaultCloudParams.xRandExtent << "\n";
@@ -1375,6 +1412,7 @@ bool Scene::saveCloud(QFile &cloudFile, SceneCloud *selectedCloudSave)
     objCloud["volume-envelope-T3"] = cloudEnvelopeVolumeParam.t3;
     objCloud["volume-envelope-T4"] = cloudEnvelopeVolumeParam.t4;
     objCloud["num-grains"] = (int)cloudToSave->getNumGrains();
+    objCloud["random-grains"] = (bool)cloudToSave->getGrainsRandom();
     objCloud["active-state"] = cloudToSave->getActiveState();
     objCloud["x-rand-extent"] = cloudVisToSave->getXRandExtent();
     objCloud["y-rand-extent"] = cloudVisToSave->getYRandExtent();
@@ -1767,6 +1805,7 @@ void Scene::initDefaultCloudParams()
     g_defaultCloudParams.outputLast = theOutChannelCount - 1;
     g_defaultCloudParams.channelLocation = -1;
     g_defaultCloudParams.numGrains = 8;
+    g_defaultCloudParams.grainsRandom = true;
     g_defaultCloudParams.activateState = true;
     g_defaultCloudParams.activateRestartTrajectory = true;
     g_defaultCloudParams.midiChannel = 0;

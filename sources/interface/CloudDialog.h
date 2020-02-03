@@ -4,12 +4,23 @@
 #include <QDialog>
 #include <QtCore>
 #include <QtGui>
+#include <QGraphicsScene>
+#include <QGraphicsEllipseItem>
 #include "model/Cloud.h"
 #include "visual/CloudVis.h"
 #include "visual/Circular.h"
 #include "visual/Hypotrochoid.h"
 #include "visual/Recorded.h"
 #include "visual/Trajectory.h"
+#include "interface/Node.h"
+
+struct GrainPosition {
+public:
+    Node myNode;
+    QGraphicsLineItem myLine;
+    QPointF myPointNode;
+    NodeLimits myLimits;
+};
 
 namespace Ui {
 class CloudDialog;
@@ -24,6 +35,12 @@ public:
     ~CloudDialog();
     void linkCloud (Cloud *cloudLinked, CloudVis *cloudVisLinked);
     void setDisableAllWidgets(bool disable);
+    void createGrainsPositions();
+    void deleteGrainsPositions();
+    void updateGrainPosition(unsigned long l_numGrain, int new_x, int new_y);
+
+public slots:
+    void updateFromGraph();
 
 private slots:
     void autoUpdate();
@@ -154,16 +171,44 @@ private slots:
 
     void on_checkBox_Restart_toggled(bool checked);
 
+    void on_radioButton_PositionManual_toggled(bool checked);
+
+    void on_radioButton_PositionRandom_toggled(bool checked);
+
+    void on_doubleSpinBox_Grain_valueChanged(double arg1);
+
+    void on_dial_Grain_valueChanged(int value);
+
+    void on_doubleSpinBox_Grain_X_valueChanged(double arg1);
+
+    void on_dial_Grain_X_valueChanged(int value);
+
+    void on_doubleSpinBox_Grain_Y_valueChanged(double arg1);
+
+    void on_dial_Grain_Y_valueChanged(int value);
+
 private:
     Ui::CloudDialog *ui;
     bool linking = false;
     Cloud *cloudRef;
     CloudVis *cloudVisRef;
+    QGraphicsScene *grainsGraphicScene;
+    QRectF rectGrains;
     bool autoUpdating = false;
     bool have_trajectory_bouncing = false;
     bool have_trajectory_circular = false;
     bool have_trajectory_hypotrochoid = false;
     bool have_trajectory_recorded =false;
+    int widthNodes = 10;
+    int heightMaxAff = 200;
+    int coeffAffMS = 50;
+    int xSustain = 40;
+    bool affUpdated = false;
+    bool editing = false;
+    float valueEditing;
+    float currentXMove = 0;
+    bool mouseIsPressed = false;
+    vector<GrainPosition *> myGrainPositions;
 };
 
 #endif // CLOUDDIALOG_H
