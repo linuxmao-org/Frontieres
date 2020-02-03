@@ -48,6 +48,10 @@ public:
     float getY();
     void trigger(float theDur);
 
+    void setGrainPosition (int l_x, int l_y);
+    int getGrainPositionX ();
+    int getGrainPositionY ();
+
 private:
     bool isOn, firstTrigger;
     bool isMidiVis = false;
@@ -58,6 +62,9 @@ private:
     float defG, defB;
     float mySize, defSize, onSize;  // GL point size
     float durSec;
+
+    int grainPositionX = 0;
+    int grainPositionY = 0;
 };
 
 #endif

@@ -342,7 +342,6 @@ void CloudVis::setIsMidiVis(bool md)
 
 void CloudVis::activateMidiVis(int l_numNote, bool l_activate)
 {
-    cout << "activateMidiVis : " << l_activate << " , note : " << l_numNote << endl;
     if (!isMidiVis) {
         isPlayedCloudVisMidi[l_numNote] = l_activate;
         playedCloudVisMidi[l_numNote]->setIsPlayed(l_activate);
@@ -496,6 +495,21 @@ void CloudVis::trajectoryChangeExpansion(double newValue)
     }
 }
 
+void CloudVis::setGrainPosition(unsigned long l_numGrain, int new_x, int new_y)
+{
+    myGrainsV[l_numGrain]->setGrainPosition(new_x,new_y);
+}
+
+int CloudVis::getGrainPositionX(unsigned long l_numGrain)
+{
+    return myGrainsV[l_numGrain]->getGrainPositionX();
+}
+
+int CloudVis::getGrainPositionY(unsigned long l_numGrain)
+{
+    return myGrainsV[l_numGrain]->getGrainPositionY();
+}
+
 void CloudVis::stopTrajectory()
 {
     isMoving = false;
@@ -543,7 +557,7 @@ bool CloudVis::getRecordTrajectoryAsked()
 void CloudVis::draw()
 {
     if (isMidiVis & !isPlayed) {
-        cout << "(isMidiVis & !isPlayed), return" << endl;
+        //cout << "(isMidiVis & !isPlayed), return" << endl;
         return;
     }
     double t_sec = 0;
@@ -559,7 +573,7 @@ void CloudVis::draw()
     pt2d pos = {0.,0.};
 
     if (this->getIsMoving() || restartingTrajectory) {
-        // cout << "(this->getIsMoving() || restartingTrajectory)" << endl;
+
         pos = this->myTrajectory->computeTrajectory(dt);
         updateCloudPosition(pos.x,pos.y);
     }
@@ -652,7 +666,6 @@ void CloudVis::draw()
     if (!isMidiVis) {
         for (int i = 0; i < g_maxMidiVoices; i++) {
             if (isPlayedCloudVisMidi[i]) {
-                // cout << "played midi : " << i << endl;
                 playedCloudVisMidi[i]->draw();
             }
         }
@@ -669,21 +682,30 @@ void CloudVis::getCloudPos(unsigned int idx, double *playPos,
     bool trigger = false;
     SampleVis *theRect = NULL;
     if (idx < myGrainsV.size()) {
-        GrainVis *theGrain = myGrainsV[idx];
+        GrainVis *theGrainVis = myGrainsV[idx];
         // TODO: motion models
-        updateGrainPosition(idx, gcX + (randf() * xRandExtent - randf() * xRandExtent),
-                            gcY + (randf() * yRandExtent - randf() * yRandExtent));
+        if (myCloud->getGrainsRandom()) {
+            //cout << "position grain aléatoire" << endl;
+            updateGrainPosition(idx, gcX + (randf() * xRandExtent - randf() * xRandExtent),
+                                     gcY + (randf() * yRandExtent - randf() * yRandExtent));
+        }
+        else {
+            float decal_x = (theGrainVis->getGrainPositionX() * xRandExtent) / 100;
+            float decal_y = (theGrainVis->getGrainPositionY() * yRandExtent) / 100;
+            updateGrainPosition(idx, gcX + (decal_x),
+                                     gcY + (decal_y));
+        }
         VecSceneSample &landscape = *theLandscape;
         for (int i = 0, n = landscape.size(); i < n; i++) {
             theRect = landscape[i]->view.get();
             bool tempTrig = false;
-            tempTrig = theRect->getNormedPosition(playPos, playVol, theGrain->getX(),
-                                                  theGrain->getY(), i);
+            tempTrig = theRect->getNormedPosition(playPos, playVol, theGrainVis->getX(),
+                                                  theGrainVis->getY(), i);
             if (tempTrig == true)
                 trigger = true;
         }
         if (trigger == true) {
-            theGrain->trigger(theDur);
+            theGrainVis->trigger(theDur);
         }
     }
 }
@@ -836,7 +858,7 @@ void CloudVis::updateCloudTrajectoryPosition(float newX, float newY)
     float yDiff = newY - gcY;
     origin_gcX = newX - gcX;
     origin_gcY = newX - gcY;
-    for (int i = 0; i < myGrainsV.size(); i++) {
+    for (unsigned long i = 0; i < myGrainsV.size(); i++) {
         float newGrainX = myGrainsV[i]->getX() + xDiff;
         float newGrainY = myGrainsV[i]->getY() + yDiff;
         myGrainsV[i]->moveTo(newGrainX, newGrainY);

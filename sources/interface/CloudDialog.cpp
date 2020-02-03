@@ -110,6 +110,30 @@ CloudDialog::CloudDialog(QWidget *parent) :
     ui->doubleSpinBox_Output_First->setMaximum(theOutChannelCount - 1);
     ui->doubleSpinBox_Output_Last->setMaximum(theOutChannelCount - 1);
 
+    grainsGraphicScene = new QGraphicsScene(this);
+    ui->graphicsView->setScene(grainsGraphicScene);
+
+    setMouseTracking(true);
+
+    QPen blackPen (Qt::black);
+    blackPen.setWidth(1);
+
+    QRectF zoneGrains;
+    zoneGrains.setX(-100);
+    zoneGrains.setY(-100);
+    zoneGrains.setWidth(200);
+    zoneGrains.setHeight(200);
+    QBrush *whiteBrush = new QBrush(Qt::white);
+
+    ui->graphicsView->setBackgroundBrush(QBrush(Qt::white, Qt::SolidPattern));
+
+    grainsGraphicScene->addEllipse (zoneGrains, blackPen, *whiteBrush);
+
+    ui->graphicsView->hide();
+
+    connect(grainsGraphicScene, SIGNAL(changed(QList<QRectF>)),
+            this, SLOT(updateFromGraph()));
+
     QTimer *tmAutoUpdate = new QTimer(this);
     connect(tmAutoUpdate, &QTimer::timeout, this, &CloudDialog::autoUpdate);
     tmAutoUpdate->start(500);
@@ -117,6 +141,11 @@ CloudDialog::CloudDialog(QWidget *parent) :
 
 CloudDialog::~CloudDialog()
 {
+    int lastGrain = myGrainPositions.size();
+    for (int i = 0;i < lastGrain;i = i + 1) {
+        delete myGrainPositions.back();
+        myGrainPositions.pop_back();
+    }
     delete ui;
 }
 
@@ -133,6 +162,11 @@ void CloudDialog::linkCloud(Cloud *cloudLinked, CloudVis *cloudVisLinked)
     linking = true;
     cloudRef = cloudLinked;
     cloudVisRef = cloudVisLinked;
+    if (!autoUpdating)
+        if (cloudRef->getGrainsRandom())
+            ui->radioButton_PositionRandom->setChecked(true);
+        else
+            ui->radioButton_PositionManual->setChecked(true);
     if (cloudLinked->changedDurationMs())
         ui->doubleSpinBox_Duration->setValue(cloudLinked->getDurationMs());
     if (cloudLinked->changedNumGrains())
@@ -141,8 +175,9 @@ void CloudDialog::linkCloud(Cloud *cloudLinked, CloudVis *cloudVisLinked)
         ui->doubleSpinBox_LFO_Amp->setValue(cloudLinked->getPitchLFOAmount());
     if (cloudLinked->changedPitchLFOFreq())
         ui->doubleSpinBox_LFO_Freq->setValue(cloudLinked->getPitchLFOFreq());
-    if (cloudLinked->changedOverlap())
+    if (cloudLinked->changedOverlap()) {
         ui->doubleSpinBox_Overlap->setValue(cloudLinked->getOverlap());
+    }
     if (cloudLinked->changedVolumeDb())
         ui->doubleSpinBox_Volume->setValue(cloudLinked->getVolumeDb());
     if (cloudLinked->changedPitch())
@@ -387,23 +422,144 @@ void CloudDialog::setDisableAllWidgets(bool disabled)
     ui->dial_Progress->setDisabled(disabled);
 }
 
+void CloudDialog::createGrainsPositions()
+{
+    ui->graphicsView->show();
+    QPen whitePen (Qt::white);
+    whitePen.setWidth(1);
+
+    ui->dial_Grain_X->setDisabled(false);
+    ui->doubleSpinBox_Grain_X->setDisabled(false);
+    ui->dial_Grain_Y->setDisabled(false);
+    ui->doubleSpinBox_Grain_Y->setDisabled(false);
+    ui->dial_Grain->setDisabled(false);
+    ui->doubleSpinBox_Grain->setDisabled(false);
+    ui->dial_Grain->setMaximum(ui->dial_Grains->value());
+    ui->doubleSpinBox_Grain->setMaximum(ui->dial_Grains->value());
+    int previousX = 0;
+    int previousY = 0;
+    for (unsigned long i = 0; i < cloudRef->getNumGrains(); i = i + 1) {
+        myGrainPositions.push_back(new GrainPosition());
+        int currentX = cloudVisRef->getGrainPositionX(i);
+        int currentY = - cloudVisRef->getGrainPositionY(i);
+
+        myGrainPositions[i]->myNode.setX(currentX);
+        myGrainPositions[i]->myNode.setY(currentY);
+        myGrainPositions[i]->myPointNode.setX(currentX);
+        myGrainPositions[i]->myPointNode.setY(currentY);
+
+        myGrainPositions[i]->myLine.setLine(currentX,currentY,previousX,previousY);
+        myGrainPositions[i]->myLine.setZValue(1);
+        myGrainPositions[i]->myNode.setZValue(2);
+        grainsGraphicScene->addItem(&myGrainPositions[i]->myLine);
+        grainsGraphicScene->addItem(&myGrainPositions[i]->myNode);
+
+        myGrainPositions[i]->myLimits.maxX.exist = true;
+        myGrainPositions[i]->myLimits.maxY.exist = true;
+        myGrainPositions[i]->myLimits.minX.exist = true;
+        myGrainPositions[i]->myLimits.minY.exist = true;
+
+        previousX = currentX;
+        previousY = currentY;
+        if (i == cloudRef->getNumGrains() - 1)
+            myGrainPositions[0]->myLine.setLine(myGrainPositions[0]->myPointNode.x(),
+                                                myGrainPositions[0]->myPointNode.y(),
+                                                previousX,previousY);
+    }
+}
+
+void CloudDialog::deleteGrainsPositions()
+{
+    ui->graphicsView->hide();
+    ui->dial_Grain_X->setDisabled(true);
+    ui->doubleSpinBox_Grain_X->setDisabled(true);
+    ui->dial_Grain_Y->setDisabled(true);
+    ui->doubleSpinBox_Grain_Y->setDisabled(true);
+    ui->dial_Grain->setDisabled(true);
+    ui->doubleSpinBox_Grain->setDisabled(true);
+    unsigned long lastGrain = myGrainPositions.size();
+    for (unsigned long i = 0;i < lastGrain;i = i + 1) {
+        delete myGrainPositions.back();
+        myGrainPositions.pop_back();
+    }
+
+}
+
+void CloudDialog::updateGrainPosition(unsigned long l_numGrain, int new_x, int new_y)
+{
+    myGrainPositions[l_numGrain]->myPointNode.setX(new_x);
+    myGrainPositions[l_numGrain]->myPointNode.setY(new_y);
+    unsigned long currentGrainPos = l_numGrain;
+    unsigned long lastGrainPos = l_numGrain - 1;
+    unsigned long nextGrainPos = l_numGrain + 1;
+    if (l_numGrain == 0) {
+        lastGrainPos = cloudRef->getNumGrains() - 1;
+        if (cloudRef->getNumGrains() == 1)
+           nextGrainPos = l_numGrain;
+    }
+    else if ((l_numGrain + 1) == cloudRef->getNumGrains())
+        nextGrainPos = 0;
+
+    myGrainPositions[currentGrainPos]->myLine.setLine(new_x, new_y, myGrainPositions[lastGrainPos]->myPointNode.x(),
+                                                                    myGrainPositions[lastGrainPos]->myPointNode.y());
+    myGrainPositions[nextGrainPos]->myLine.setLine(myGrainPositions[nextGrainPos]->myPointNode.x(),
+                                                   myGrainPositions[nextGrainPos]->myPointNode.y(), new_x, new_y);
+
+    myGrainPositions[l_numGrain]->myLimits.maxX.value = int(sqrt(10000 - pow(new_y, 2)));
+    myGrainPositions[l_numGrain]->myLimits.maxY.value = int(sqrt(10000 - pow(new_x, 2)));
+    myGrainPositions[l_numGrain]->myLimits.minX.value = int(- sqrt(10000 - pow(myGrainPositions[currentGrainPos]->myPointNode.y(), 2)));
+    myGrainPositions[l_numGrain]->myLimits.minY.value = int(- sqrt(10000 - pow(myGrainPositions[currentGrainPos]->myPointNode.x(), 2)));
+
+    myGrainPositions[l_numGrain]->myNode.setLimits(myGrainPositions[l_numGrain]->myLimits);
+    myGrainPositions[l_numGrain]->myNode.moveToPos(new_x,new_y);
+    myGrainPositions[l_numGrain]->myNode.endMove();
+
+    cloudVisRef->setGrainPosition(l_numGrain, new_x, - new_y);
+
+    if (int (l_numGrain + 1) == int (ui->doubleSpinBox_Grain->value())) {
+        ui->doubleSpinBox_Grain_X->setValue(new_x);
+        ui->doubleSpinBox_Grain_X->setMaximum(int(sqrt(10000 - pow(new_y, 2))));
+        ui->doubleSpinBox_Grain_X->setMinimum(-int(sqrt(10000 - pow(new_y, 2))));
+        ui->doubleSpinBox_Grain_Y->setValue(new_y);
+        ui->doubleSpinBox_Grain_Y->setMaximum(int(sqrt(10000 - pow(new_x, 2))));
+        ui->doubleSpinBox_Grain_Y->setMinimum(-int(sqrt(10000 - pow(new_x, 2))));
+        ui->dial_Grain_X->setValue(new_x);
+        ui->dial_Grain_X->setMaximum(int(sqrt(10000 - pow(new_y, 2))));
+        ui->dial_Grain_X->setMinimum(-int(sqrt(10000 - pow(new_y, 2))));
+        ui->dial_Grain_Y->setValue(new_y);
+        ui->dial_Grain_Y->setMaximum(int(sqrt(10000 - pow(new_x, 2))));
+        ui->dial_Grain_Y->setMinimum(-int(sqrt(10000 - pow(new_x, 2))));
+    }
+}
+
+void CloudDialog::updateFromGraph()
+{
+    if (ui->radioButton_PositionManual->isChecked()) {
+        for (unsigned long i = 0; i < cloudRef->getNumGrains(); i = i + 1) {
+            if (myGrainPositions[i]->myNode.moved()) {
+                updateGrainPosition(i, int(myGrainPositions[i]->myNode.x()), int(myGrainPositions[i]->myNode.y()));
+            }
+        }
+    }
+}
+
 void CloudDialog::on_dial_Overlap_valueChanged(int value)
 {
-    ui->doubleSpinBox_Overlap->setValue((double) value / 100);
+    ui->doubleSpinBox_Overlap->setValue(double (value) / 100);
 }
 
 void CloudDialog::on_doubleSpinBox_Overlap_valueChanged(double arg1)
 {
-    ui->dial_Overlap->setValue(arg1 * 100);
+    ui->dial_Overlap->setValue(int (arg1 * 100));
     if (!linking)
         cloudRef->setOverlap(arg1);
 }
 
 void CloudDialog::on_doubleSpinBox_Grains_valueChanged(double arg1)
 {
-    ui->dial_Grains->setValue((int) arg1);
+    ui->dial_Grains->setValue(int (arg1));
     if (!linking)
-        cloudRef->setNumGrains((int) arg1);
+        cloudRef->setNumGrains(int (arg1));
 }
 
 void CloudDialog::on_dial_Grains_valueChanged(int value)
@@ -413,9 +569,9 @@ void CloudDialog::on_dial_Grains_valueChanged(int value)
 
 void CloudDialog::on_doubleSpinBox_Y_valueChanged(double arg1)
 {
-    ui->dial_Y->setValue((int) arg1);
+    ui->dial_Y->setValue(int (arg1));
     if (!linking){
-        cloudVisRef->updateCloudOrigin(cloudVisRef->getOriginX(), (int) arg1);
+        cloudVisRef->updateCloudOrigin(cloudVisRef->getOriginX(), int(arg1));
         cloudVisRef->updateCloudPosition(cloudVisRef->getOriginX(),cloudVisRef->getOriginY());
     }
 
@@ -428,9 +584,9 @@ void CloudDialog::on_dial_Y_valueChanged(int value)
 
 void CloudDialog::on_doubleSpinBox_X_valueChanged(double arg1)
 {
-    ui->dial_X->setValue((int) arg1);
+    ui->dial_X->setValue(int(arg1));
     if (!linking) {
-        cloudVisRef->updateCloudOrigin((int) arg1, cloudVisRef->getOriginY());
+        cloudVisRef->updateCloudOrigin(int(arg1), cloudVisRef->getOriginY());
         cloudVisRef->updateCloudPosition(cloudVisRef->getOriginX(),cloudVisRef->getOriginY());
     }
 }
@@ -447,9 +603,9 @@ void CloudDialog::on_dial_X_Extent_valueChanged(int value)
 
 void CloudDialog::on_doubleSpinBox_X_Extent_valueChanged(double arg1)
 {
-    ui->dial_X_Extent->setValue((int) arg1);
+    ui->dial_X_Extent->setValue(int(arg1));
     if (!linking){
-        cloudVisRef->setFixedXRandExtent((int) arg1);
+        cloudVisRef->setFixedXRandExtent(int(arg1));
     }
 }
 
@@ -460,9 +616,9 @@ void CloudDialog::on_dial_Y_Extent_valueChanged(int value)
 
 void CloudDialog::on_doubleSpinBox_Y_Extent_valueChanged(double arg1)
 {
-    ui->dial_Y_Extent->setValue((int) arg1);
+    ui->dial_Y_Extent->setValue(int(arg1));
     if (!linking){
-        cloudVisRef->setFixedYRandExtent((int) arg1);
+        cloudVisRef->setFixedYRandExtent(int(arg1));
     }
 }
 
@@ -497,7 +653,7 @@ void CloudDialog::on_dial_Duration_valueChanged(int value)
 
 void CloudDialog::on_doubleSpinBox_Duration_valueChanged(double arg1)
 {
-    ui->dial_Duration->setValue((int) arg1);
+    ui->dial_Duration->setValue(int(arg1));
     if (!linking)
         cloudRef->setDurationMs(arg1);
 }
@@ -529,7 +685,7 @@ void CloudDialog::on_doubleSpinBox_Volume_valueChanged(double arg1)
 void CloudDialog::on_doubleSpinBox_Midi_Note_valueChanged(double arg1)
 {
     if (!linking)
-        cloudRef->setMidiNote((int) arg1);
+        cloudRef->setMidiNote(int(arg1));
 }
 
 void CloudDialog::on_checkBox_Active_toggled(bool checked)
@@ -660,7 +816,7 @@ void CloudDialog::on_dial_Speed_valueChanged(int value)
 
 void CloudDialog::on_doubleSpinBox_Speed_valueChanged(double arg1)
 {
-    ui->dial_Speed->setValue((int) arg1);
+    ui->dial_Speed->setValue(int(arg1));
     if (!linking) {
         if (cloudVisRef->getTrajectory() != nullptr)
             cloudVisRef->trajectoryChangeSpeed(arg1);
@@ -674,7 +830,7 @@ void CloudDialog::on_dial_Radius_valueChanged(int value)
 
 void CloudDialog::on_doubleSpinBox_Radius_valueChanged(double arg1)
 {
-    ui->dial_Radius->setValue((int) arg1);
+    ui->dial_Radius->setValue(int(arg1));
     if (!linking) {
         if (cloudVisRef->getTrajectory() != nullptr)
             cloudVisRef->trajectoryChangeRadius(arg1);
@@ -688,7 +844,7 @@ void CloudDialog::on_dial_Angle_valueChanged(int value)
 
 void CloudDialog::on_doubleSpinBox_Angle_valueChanged(double arg1)
 {
-    ui->dial_Angle->setValue((int) arg1);
+    ui->dial_Angle->setValue(int(arg1));
     if (!linking) {
         if (cloudVisRef->getTrajectory() != nullptr)
             cloudVisRef->trajectoryChangeAngle(arg1);
@@ -755,10 +911,10 @@ void CloudDialog::on_radioButton_Trajectory_Static_toggled(bool checked)
 
 void CloudDialog::on_doubleSpinBox_RadiusInt_valueChanged(double arg1)
 {
-    ui->dial_RadiusInt->setValue((int) arg1);
+    ui->dial_RadiusInt->setValue(int(arg1));
     if (!linking) {
         if (cloudVisRef->getTrajectory() != nullptr)
-            cloudVisRef->trajectoryChangeRadiusInt((int) arg1);
+            cloudVisRef->trajectoryChangeRadiusInt(int(arg1));
     }
 }
 
@@ -774,10 +930,10 @@ void CloudDialog::on_dial_Expansion_valueChanged(int value)
 
 void CloudDialog::on_doubleSpinBox_Expansion_valueChanged(double arg1)
 {
-    ui->dial_Expansion->setValue((int) arg1);
+    ui->dial_Expansion->setValue(int(arg1));
     if (!linking) {
         if (cloudVisRef->getTrajectory() != nullptr)
-            cloudVisRef->trajectoryChangeExpansion((int) arg1);
+            cloudVisRef->trajectoryChangeExpansion(int(arg1));
     }
 }
 
@@ -788,10 +944,10 @@ void CloudDialog::on_dial_Progress_valueChanged(int value)
 
 void CloudDialog::on_doubleSpinBox_Progress_valueChanged(double arg1)
 {
-    ui->dial_Progress->setValue((int) arg1);
+    ui->dial_Progress->setValue(int(arg1));
     if (!linking) {
         if (cloudVisRef->getTrajectory() != nullptr)
-            cloudVisRef->trajectoryChangeProgress((int) arg1);
+            cloudVisRef->trajectoryChangeProgress(int(arg1));
     }
 }
 
@@ -831,7 +987,7 @@ void CloudDialog::on_commandLinkButton_stop_clicked()
 
 void CloudDialog::on_radioButton_Trajectory_Recorded_toggled(bool checked)
 {
-    if (!cloudVisRef->getTrajectoryType() == RECORDED) {
+    if (!(cloudVisRef->getTrajectoryType() == RECORDED)) {
         Trajectory *tr=nullptr;
         tr=new Recorded(0, cloudVisRef->getOriginX(),cloudVisRef->getOriginY());
         cloudRef->setTrajectoryType(RECORDED);
@@ -846,4 +1002,54 @@ void CloudDialog::on_radioButton_Trajectory_Recorded_toggled(bool checked)
 void CloudDialog::on_checkBox_Restart_toggled(bool checked)
 {
     cloudRef->setActiveRestartTrajectory(checked);
+}
+
+void CloudDialog::on_radioButton_PositionManual_toggled(bool checked)
+{
+    if (checked) {
+        createGrainsPositions();
+        cloudRef->setGrainsRandom(false);
+    }
+}
+
+void CloudDialog::on_radioButton_PositionRandom_toggled(bool checked)
+{
+    if (checked) {
+        deleteGrainsPositions();
+        cloudRef->setGrainsRandom(true);
+    }
+}
+
+void CloudDialog::on_doubleSpinBox_Grain_valueChanged(double arg1)
+{
+    ui->dial_Grain->setValue(int(arg1));
+}
+
+void CloudDialog::on_dial_Grain_valueChanged(int value)
+{
+    ui->doubleSpinBox_Grain->setValue(value);
+}
+
+void CloudDialog::on_doubleSpinBox_Grain_X_valueChanged(double arg1)
+{
+    ui->dial_Grain_X->setValue(int(arg1));
+    unsigned long l_numGrain = int (ui->doubleSpinBox_Grain->value() - 1);
+    updateGrainPosition(l_numGrain, int(arg1), int(myGrainPositions[l_numGrain]->myNode.y()));
+}
+
+void CloudDialog::on_dial_Grain_X_valueChanged(int value)
+{
+    ui->doubleSpinBox_Grain_X->setValue(value);
+}
+
+void CloudDialog::on_doubleSpinBox_Grain_Y_valueChanged(double arg1)
+{
+    ui->dial_Grain_Y->setValue(int(arg1));
+    unsigned long l_numGrain = int (ui->doubleSpinBox_Grain->value() - 1);
+    updateGrainPosition(l_numGrain, int(myGrainPositions[l_numGrain]->myNode.x()), int(arg1));
+}
+
+void CloudDialog::on_dial_Grain_Y_valueChanged(int value)
+{
+    ui->doubleSpinBox_Grain_Y->setValue(value);
 }

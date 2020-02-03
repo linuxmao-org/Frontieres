@@ -1558,7 +1558,7 @@ void MyGLScreen::keyPressEvent(QKeyEvent *event)
         keyAction_Pitch((modkey == Qt::ShiftModifier) ? -1 : +1);
         break;
 
-    case Qt::Key_Minus:
+
     case Qt::Key_Underscore:
         paramString.insert(0, "-");
         break;

@@ -142,9 +142,26 @@ void GrainVis::trigger(float theDur)
     triggerTime = GTime::instance().sec;
 }
 
+
+void GrainVis::setGrainPosition(int l_x, int l_y)
+{
+    grainPositionX = l_x;
+    grainPositionY = l_y;
+}
+
+int GrainVis::getGrainPositionX()
+{
+    return grainPositionX;
+}
+
+int GrainVis::getGrainPositionY()
+{
+    return grainPositionY;
+}
 // move to
 void GrainVis::moveTo(float x, float y)
 {
+    //std::cout << "move to " << x << ", " << y << std::endl;
     gX = x;
     gY = y;
 }
