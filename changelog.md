@@ -1,3 +1,11 @@
+## frontieres version 0.8.1
+
+apport du dernier pr :
+
+- réparation bug enêtre paramètres nuage : par défaut la trajectoire doit être sur statique, et non sur enregistrée, ce qui faisait planter le programme en tentant de passer en enregistrement.
+
+- complément de traduction pour la fenêtre paramètres nuage
+
 ## frontieres version 0.8.0
 
 apport du dernier pr :
