@@ -58,7 +58,7 @@
       <enum>QTabWidget::Rounded</enum>
      </property>
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <property name="elideMode">
       <enum>Qt::ElideNone</enum>
@@ -4696,22 +4696,22 @@ border-bottom-left-radius: 9px;
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_23">
                    <item>
-                    <widget class="QRadioButton" name="radioButton_Trajectory_Bouncing">
-                     <property name="text">
-                      <string>&amp;Bouncing</string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
                     <widget class="QRadioButton" name="radioButton_Trajectory_Static">
                      <property name="text">
                       <string>&amp;Static</string>
                      </property>
                      <property name="checked">
-                      <bool>false</bool>
+                      <bool>true</bool>
                      </property>
                      <property name="autoExclusive">
                       <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QRadioButton" name="radioButton_Trajectory_Bouncing">
+                     <property name="text">
+                      <string>&amp;Bouncing</string>
                      </property>
                     </widget>
                    </item>
@@ -4738,7 +4738,7 @@ border-bottom-left-radius: 9px;
                       <string>&amp;Recorded</string>
                      </property>
                      <property name="checked">
-                      <bool>true</bool>
+                      <bool>false</bool>
                      </property>
                      <property name="autoExclusive">
                       <bool>true</bool>
