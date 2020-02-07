@@ -72,6 +72,7 @@ struct Sample {
     unsigned int channels;
     unsigned int sampleRate;
     bool isInput = false;
+    bool inputToRecord = false;
     int myInputNumber = -1;
     int ptrLagWave = 0; // for circular waves to use input waves
 };

@@ -24,6 +24,7 @@
 #include "interface/MonitorWidget.h"
 #include "ui_MyGLWindow.h"
 #include "ui_AboutDialog.h"
+#include "model/Sample.h"
 #include "model/Cloud.h"
 #include "model/Trigger.h"
 #include "model/Scene.h"
@@ -873,7 +874,17 @@ void MyGLScreen::contextMenu_parameters()
     if (selectedTrigger)
         keyAction_EditTrigger();
     else if (selectedCloud)
-            keyAction_EditCloud();
+        keyAction_EditCloud();
+}
+
+void MyGLScreen::contextMenu_fixInput()
+{
+    Scene *scene = ::currentScene;
+    SceneSample *selectedSample = scene->selectedSample();
+    if (selectedSample) {
+        selectedSample->sample->isInput = false;
+        selectedSample->sample->inputToRecord = true;
+    }
 }
 
 void MyGLScreen::contextMenu_recordTrajectory()
@@ -1110,19 +1121,59 @@ void MyGLScreen::mousePressEvent(QMouseEvent *event)
 
             }
             else {
-                QMenu contextMenu(this);
-                QIcon icon;
+                if (scene->selectedSample()) {
+                    if (scene->selectedSample()->sample->isInput) {
+                        QMenu contextMenu(this);
+                        QIcon icon;
 
-                QAction * pAction_newCloud = contextMenu.addAction(icon, QObject::tr("Create new cloud (G)"));
-                connect(pAction_newCloud, SIGNAL(triggered()), this, SLOT(contextMenu_newCloud()));
+                        QAction * pAction_newCloud = contextMenu.addAction(icon, QObject::tr("Create new cloud (G)"));
+                        connect(pAction_newCloud, SIGNAL(triggered()), this, SLOT(contextMenu_newCloud()));
 
-                QAction *separator_1 = contextMenu.addSeparator();
-                addAction(separator_1);
+                        QAction *separator_1 = contextMenu.addSeparator();
+                        addAction(separator_1);
 
-                QAction * pAction_newTrigger = contextMenu.addAction(icon, QObject::tr("Create new trigger (H)"));
-                connect(pAction_newTrigger, SIGNAL(triggered()), this, SLOT(contextMenu_newTrigger()));
+                        QAction * pAction_newTrigger = contextMenu.addAction(icon, QObject::tr("Create new trigger (H)"));
+                        connect(pAction_newTrigger, SIGNAL(triggered()), this, SLOT(contextMenu_newTrigger()));
 
-                contextMenu.exec(QCursor::pos());
+                        QAction *separator_2 = contextMenu.addSeparator();
+                        addAction(separator_2);
+
+                        QAction * pAction_FixInput = contextMenu.addAction(icon, QObject::tr("Turn input into fixed sample"));
+                        connect(pAction_FixInput, SIGNAL(triggered()), this, SLOT(contextMenu_fixInput()));
+
+                        contextMenu.exec(QCursor::pos());
+                    }
+                    else {
+                        QMenu contextMenu(this);
+                        QIcon icon;
+
+                        QAction * pAction_newCloud = contextMenu.addAction(icon, QObject::tr("Create new cloud (G)"));
+                        connect(pAction_newCloud, SIGNAL(triggered()), this, SLOT(contextMenu_newCloud()));
+
+                        QAction *separator_1 = contextMenu.addSeparator();
+                        addAction(separator_1);
+
+                        QAction * pAction_newTrigger = contextMenu.addAction(icon, QObject::tr("Create new trigger (H)"));
+                        connect(pAction_newTrigger, SIGNAL(triggered()), this, SLOT(contextMenu_newTrigger()));
+
+                        contextMenu.exec(QCursor::pos());
+                    }
+                }
+                else {
+                    QMenu contextMenu(this);
+                    QIcon icon;
+
+                    QAction * pAction_newCloud = contextMenu.addAction(icon, QObject::tr("Create new cloud (G)"));
+                    connect(pAction_newCloud, SIGNAL(triggered()), this, SLOT(contextMenu_newCloud()));
+
+                    QAction *separator_1 = contextMenu.addSeparator();
+                    addAction(separator_1);
+
+                    QAction * pAction_newTrigger = contextMenu.addAction(icon, QObject::tr("Create new trigger (H)"));
+                    connect(pAction_newTrigger, SIGNAL(triggered()), this, SLOT(contextMenu_newTrigger()));
+
+                    contextMenu.exec(QCursor::pos());
+                }
             }
         }
 
