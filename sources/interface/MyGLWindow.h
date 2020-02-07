@@ -91,6 +91,7 @@ private slots:
     void contextMenu_newCloud();
     void contextMenu_newTrigger();
     void contextMenu_parameters();
+    void contextMenu_fixInput();
 
 protected:
     void initializeGL() override;

@@ -124,7 +124,7 @@ int theOutChannelCount = 16;
 // sample rate - Hz
 unsigned int samp_rate = 0;
 
-// time of input samples (in sec)
+// défault time of input samples (in sec)
 int timeInputs = 10;
 
 // global time increment - samples per second

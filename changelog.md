@@ -1,3 +1,11 @@
+## frontieres version 0.9.0
+
+apport du dernier pr :
+
+- gestion des entrées audio :
+ajout possibilité de modifier la longueur des entrées audio par défaut (menu edition, options, onglet entrées)
+ajout d'un fonction permettant de "figer" le contenu d'un echantillon dynamique d'entrée audio pour le transformer en échantillon fixe (menu contextuel sur un echantillon d'entrée préalablement sélectionné)
+
 ## frontieres version 0.8.1
 
 apport du dernier pr :

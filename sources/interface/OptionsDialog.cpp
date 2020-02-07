@@ -1,7 +1,9 @@
+#include "Frontieres.h"
 #include "OptionsDialog.h"
 #include "ui_OptionsDialog.h"
 #include "MyRtOsc.h"
 
+extern int timeInputs;
 
 OptionsDialog::OptionsDialog(QWidget *parent) :
     QDialog(parent),
@@ -55,4 +57,9 @@ void OptionsDialog::on_pushButton_clicked()
     std::cout << "OSC address: " << oscUrl << "\n";
     ui->label_OSCServerLauncher->setText(QString::fromStdString(oscUrl));
     //GLwindow->setupOscUrl(QString::fromStdString(oscUrl));
+}
+
+void OptionsDialog::on_spinBox_valueChanged(int arg1)
+{
+    ::timeInputs = arg1;
 }
