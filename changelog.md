@@ -1,3 +1,10 @@
+## frontieres version 0.9.1
+
+apport du dernier pr :
+
+- gestion des entrées audio :
+traduction fr
+
 ## frontieres version 0.9.0
 
 apport du dernier pr :
