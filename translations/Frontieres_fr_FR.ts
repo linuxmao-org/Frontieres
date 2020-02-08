@@ -819,12 +819,12 @@
         <translation type="vanished">Trajectoire (i)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="177"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="178"/>
         <source>User manual</source>
         <translation>Manuel utilisateur</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="228"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="229"/>
         <source>DSP%</source>
         <translation></translation>
     </message>
@@ -845,37 +845,52 @@
         <translation>Options</translation>
     </message>
     <message>
-        <location filename="../sources/interface/OptionsDialog.ui" line="54"/>
+        <location filename="../sources/interface/OptionsDialog.ui" line="24"/>
+        <source>&amp;OSC</source>
+        <translation>&amp;OSC</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/OptionsDialog.ui" line="64"/>
         <source>&amp;Start controller</source>
         <translation>Démarrer le contrôleur (&amp;S)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/OptionsDialog.ui" line="88"/>
+        <location filename="../sources/interface/OptionsDialog.ui" line="98"/>
         <source>Restart OSC</source>
         <translation>Redémarrer OSC</translation>
     </message>
     <message>
-        <location filename="../sources/interface/OptionsDialog.ui" line="122"/>
+        <location filename="../sources/interface/OptionsDialog.ui" line="132"/>
         <source>OSC Port : </source>
         <translation>Port OSC : </translation>
     </message>
     <message>
-        <location filename="../sources/interface/OptionsDialog.ui" line="129"/>
+        <location filename="../sources/interface/OptionsDialog.ui" line="139"/>
         <source>99999</source>
         <translation>99999</translation>
     </message>
     <message>
-        <location filename="../sources/interface/OptionsDialog.cpp" line="38"/>
+        <location filename="../sources/interface/OptionsDialog.ui" line="153"/>
+        <source>&amp;Inputs</source>
+        <translation>&amp;Entrées</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/OptionsDialog.ui" line="174"/>
+        <source>Length (in sec) :</source>
+        <translation>Longueur (en sec) :</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/OptionsDialog.cpp" line="40"/>
         <source>Error</source>
         <translation>Erreur</translation>
     </message>
     <message>
-        <location filename="../sources/interface/OptionsDialog.cpp" line="39"/>
+        <location filename="../sources/interface/OptionsDialog.cpp" line="41"/>
         <source>Cannot lanch the program: %1</source>
         <translation>Impossible de lancer le programme : %1</translation>
     </message>
     <message>
-        <location filename="../sources/interface/OptionsDialog.cpp" line="40"/>
+        <location filename="../sources/interface/OptionsDialog.cpp" line="42"/>
         <source>Please ensure the software is installed and the path is correct.</source>
         <translation>Veuillez vous assurer que le logiciel est installé et que le chemin est correct.</translation>
     </message>
@@ -1170,48 +1185,57 @@
         <translation type="vanished">Nouveau nuage</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1081"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1092"/>
         <source>Cloud parameters (P)</source>
         <translation>Paramètres du nuage (P)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1052"/>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1087"/>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1116"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1063"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1098"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1129"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1150"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1166"/>
         <source>Create new cloud (G)</source>
         <translation>Nouveau nuage (G)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1046"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1057"/>
         <source>Trigger parameters (P)</source>
         <translation>Paramètres du déclencheur (P)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1058"/>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1093"/>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1122"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1069"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1104"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1135"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1156"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1172"/>
         <source>Create new trigger (H)</source>
         <translation>Nouveau déclencheur (H)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1064"/>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1099"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1075"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1110"/>
         <source>Record trajectory</source>
         <translation>Enregistrer la trajectoire</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1067"/>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1102"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1078"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1113"/>
         <location filename="../sources/model/Scene.cpp" line="152"/>
         <source>Load trajectory</source>
         <translation>Charger une trajectoire</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1071"/>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1106"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1082"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1117"/>
         <location filename="../sources/model/Scene.cpp" line="148"/>
         <source>Save trajectory</source>
         <translation>Sauvegarder la trajectoire</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1141"/>
+        <source>Turn input into fixed sample</source>
+        <translation>Transformer l&apos;entrée en échantillon fixe</translation>
     </message>
 </context>
 <context>
