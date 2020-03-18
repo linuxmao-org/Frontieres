@@ -860,6 +860,26 @@ bool Cloud::changedActiveRestartTrajectory()
     return changed_ActiveRestartTrajectory;
 }
 
+void Cloud::setCtrlInterval(float l_ctrInterval)
+{
+    ctrlInterval = l_ctrInterval;
+}
+
+float Cloud::getCtrlInterval()
+{
+    return ctrlInterval;
+}
+
+void Cloud::setCtrlShade(float l_ctrShade)
+{
+    ctrlShade = l_ctrShade;
+}
+
+float Cloud::getCtrlShade()
+{
+    return ctrlShade;
+}
+
 bool Cloud::getActiveRestartTrajectory()
 {
     return activeRestartTrajectory;
@@ -962,13 +982,13 @@ void Cloud::nextBuffer(BUFFERPREC *accumBuff, unsigned int numFrames)
                 // get next pitch (using LFO) -  eventually generalize to an applyLFOs method (if LFO control will be exerted over multiple params)
                 if ((pitchLFOAmount > 0.0f) && (pitchLFOFreq > 0.0f)) {
                     //float nextPitch = fabsf(pitch + pitchLFOAmount * sinf(2 * PI * pitchLFOFreq * GTime::instance().sec));
-                    float pitchPow = pow(2, (pitch / 12));
-                    float nextPitchPow = fabsf(pitchPow + pitchLFOAmount * sinf(2 * PI * pitchLFOFreq * GTime::instance().sec));
+                    float pitchPow = pow(2, ((pitch + ctrlInterval) / 12));
+                    float nextPitchPow = fabsf(pitchPow + ctrlInterval + pitchLFOAmount * sinf(2 * PI * pitchLFOFreq * GTime::instance().sec));
                     float nextPitch = 12 * log2(nextPitchPow);
                     myGrains[nextGrain]->setPitch(nextPitch);
                 }
                 else
-                    myGrains[nextGrain]->setPitch(pitch);
+                    myGrains[nextGrain]->setPitch(pitch + ctrlInterval);
 
                 // update spatialization/get new channel multiplier set
                 updateSpatialization();
@@ -1008,7 +1028,7 @@ void Cloud::nextBuffer(BUFFERPREC *accumBuff, unsigned int numFrames)
             for (int i = 0; i < numFrames; ++i) {
                 //for (int j = 0; j < channelCount; ++j)
                 for (int j = myOutputFirstNumber; j <= myOutputLastNumber; ++j)
-                    accumBuff[i * channelCount + j] += intermediateBuff[i * channelCount + j] * envelopeVolumeBuff[i] * ((float) midiVelocity / 127);
+                    accumBuff[i * channelCount + j] += intermediateBuff[i * channelCount + j] * envelopeVolumeBuff[i] * ctrlShade * ((float) midiVelocity / 127);
             }
         }
     }

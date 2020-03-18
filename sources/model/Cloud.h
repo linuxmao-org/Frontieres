@@ -52,6 +52,7 @@
 #include "model/Adsr.h"
 #include "dsp/Window.h"
 #include "visual/Trajectory.h"
+#include "model/Phrase.h"
 
 class Grain;
 struct SceneSample;
@@ -68,10 +69,7 @@ enum {
     AROUND
 };  // eventually include channel list specification and VBAP?
 
-enum EnvelopeAction { TriggerEnvelope = 1, ReleaseEnvelope = 2 };
-
 using namespace std;
-
 
 // forward declarations
 class Cloud;
@@ -249,6 +247,11 @@ public:
     bool getActiveRestartTrajectory ();
     bool changedActiveRestartTrajectory();
 
+    void setCtrlInterval(float l_ctrInterval);
+    float getCtrlInterval();
+    void setCtrlShade(float l_ctrShade);
+    float getCtrlShade();
+
 protected:
     // update internal trigger point
     void updateBangTime();
@@ -290,6 +293,8 @@ private:
     double *intermediateBuff;
     //enum EnvelopeAction { TriggerEnvelope = 1, ReleaseEnvelope = 2 };
     std::atomic<int> envelopeAction;
+    float ctrlInterval = 0.0f;
+    float ctrlShade = 0.1f;
 
 
     // vector of grains
@@ -333,8 +338,10 @@ private:
 
     // midi polyphony
     CloudMidi *playedCloudMidi[g_maxMidiVoices];
-    //int actualyPlayedMidi = 0;
-    //void deletePlayedCloudMidi(int l_numCloudMidi);
+
+    // sequence actualisation
+    Control myControl;
+    Phrase myPhrase;
 
 };
 

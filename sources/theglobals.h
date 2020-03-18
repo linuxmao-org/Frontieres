@@ -34,6 +34,7 @@
 
 #include <stdlib.h>
 
+enum EnvelopeAction { TriggerEnvelope = 1, ReleaseEnvelope = 2 };
 
 // create BUFFERPREC datatype
 typedef float BUFFERPREC;

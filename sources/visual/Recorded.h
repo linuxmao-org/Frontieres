@@ -6,7 +6,6 @@
 #include <vector>
 #include "theglobals.h"
 #include "Trajectory.h"
-#include "Recorded.h"
 
 using namespace std;
 

@@ -16,6 +16,8 @@ AdsrDialog::AdsrDialog(QWidget *parent) :
     envelopeGraphicScene = new QGraphicsScene(this);
     ui->graphicsView->setScene(envelopeGraphicScene);
 
+    ui->graphicsView->setBackgroundBrush(QBrush(Qt::white, Qt::SolidPattern));
+
     setMouseTracking(true);
 
     QPen blackPen (Qt::black);

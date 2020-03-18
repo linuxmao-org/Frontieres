@@ -2,6 +2,14 @@
 
 apport du dernier pr :
 
+- nouvelle fonctionnalité controleur de nuage
+accessible depuis menu contextuel d'un cloud, permet de gérer hauteur de son et volume dans un controleur carré qu'on peut orienter verticalement (hauteur de son a la verticale, puissance à l'horizontale) ou horizontalement (le contraire) et de règler l'echelle de modification de la hauteur.
+on peut faire glisser le controleur ou cliquer ailleur pour le deplacer, arreter le nuage en cliquant droit
+
+## frontieres version 0.9.1
+
+apport du dernier pr :
+
 - gestion des entrées audio :
 traduction fr
 

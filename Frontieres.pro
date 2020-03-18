@@ -17,12 +17,16 @@ INCLUDEPATH += $$PWD/libraries/QtFont3D
 SOURCES += libraries/QtFont3D/QtFont3D.cpp \
     sources/visual/TriggerVis.cpp \
     sources/model/Trigger.cpp \
-    sources/interface/TriggerDialog.cpp
+    sources/interface/TriggerDialog.cpp \
+    sources/model/Phrase.cpp \
+    sources/interface/ControlDialog.cpp
 HEADERS += libraries/QtFont3D/QtFont3D.h \
     sources/visual/TriggerVis.h \
     sources/model/Trigger.h \
     sources/interface/TriggerDialog.h \
-    sources/Version.h
+    sources/Version.h \
+    sources/model/Phrase.h \
+    sources/interface/ControlDialog.h
 unix: {
   isEmpty(INSTALL_PREFIX) {
     INSTALL_PREFIX = /usr/local
@@ -144,7 +148,8 @@ FORMS += \
   sources/interface/BankDialog.ui \
   sources/interface/InstrumDialog.ui \
   sources/interface/AboutDialog.ui \
-    sources/interface/TriggerDialog.ui
+    sources/interface/TriggerDialog.ui \
+    sources/interface/ControlDialog.ui
 
 TRANSLATIONS += \
   translations/Frontieres_fr_FR.ts
