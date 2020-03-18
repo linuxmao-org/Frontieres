@@ -14,15 +14,10 @@ DEFINES += __LINUX_ALSA__
 DEFINES += __LINUX_PULSE__
 
 INCLUDEPATH += $$PWD/libraries/QtFont3D
-SOURCES += libraries/QtFont3D/QtFont3D.cpp \
-    sources/visual/TriggerVis.cpp \
-    sources/model/Trigger.cpp \
-    sources/interface/TriggerDialog.cpp
+SOURCES += libraries/QtFont3D/QtFont3D.cpp
 HEADERS += libraries/QtFont3D/QtFont3D.h \
-    sources/visual/TriggerVis.h \
-    sources/model/Trigger.h \
-    sources/interface/TriggerDialog.h \
     sources/Version.h
+
 unix: {
   isEmpty(INSTALL_PREFIX) {
     INSTALL_PREFIX = /usr/local
@@ -64,6 +59,8 @@ SOURCES += \
   sources/interface/OptionsDialog.cpp \
   sources/interface/Node.cpp \
   sources/interface/MonitorWidget.cpp \
+  sources/interface/TriggerDialog.cpp \
+  sources/interface/ControlDialog.cpp \
   sources/dsp/Window.cpp \
   sources/model/MidiBank.cpp \
   sources/model/MidiCombi.cpp \
@@ -74,6 +71,8 @@ SOURCES += \
   sources/model/Cloud.cpp \
   sources/model/Scene.cpp \
   sources/model/ParamAdsr.cpp \
+  sources/model/Trigger.cpp \
+  sources/model/Phrase.cpp \
   sources/visual/SampleVis.cpp \
   sources/visual/GrainVis.cpp \
   sources/visual/CloudVis.cpp \
@@ -81,6 +80,7 @@ SOURCES += \
   sources/visual/Circular.cpp \
   sources/visual/Hypotrochoid.cpp \
   sources/visual/Recorded.cpp \
+  sources/visual/TriggerVis.cpp \
   sources/utility/GTime.cpp \
   libraries/Stk.cpp \
   libraries/RtAudio.cpp \
@@ -107,6 +107,8 @@ HEADERS += \
   sources/interface/OptionsDialog.h \
   sources/interface/Node.h \
   sources/interface/MonitorWidget.h \
+  sources/interface/TriggerDialog.h \
+  sources/interface/ControlDialog.h \
   sources/dsp/Window.h \
   sources/model/MidiBank.h \
   sources/model/MidiCombi.h \
@@ -118,6 +120,8 @@ HEADERS += \
   sources/model/Scene.h \
   sources/model/ParamAdsr.h \
   sources/model/ParamCloud.h \
+  sources/model/Trigger.h \
+  sources/model/Phrase.h \
   sources/visual/SampleVis.h \
   sources/visual/GrainVis.h \
   sources/visual/CloudVis.h \
@@ -125,6 +129,7 @@ HEADERS += \
   sources/visual/Circular.h \
   sources/visual/Hypotrochoid.h \
   sources/visual/Recorded.h \
+  sources/visual/TriggerVis.h \
   sources/utility/GTime.h \
   libraries/RtMidi.h \
   libraries/RtAudio.h \
@@ -144,7 +149,8 @@ FORMS += \
   sources/interface/BankDialog.ui \
   sources/interface/InstrumDialog.ui \
   sources/interface/AboutDialog.ui \
-    sources/interface/TriggerDialog.ui
+  sources/interface/TriggerDialog.ui \
+  sources/interface/ControlDialog.ui
 
 TRANSLATIONS += \
   translations/Frontieres_fr_FR.ts

@@ -8,7 +8,7 @@ Node::Node()
 
 QRectF Node::boundingRect() const
 {
-    return QRectF(-15.5, -15.5, 34, 34);
+    return QRectF(- (widthNodes + 0.5), - (widthNodes + 0.5), widthNodes + 10, widthNodes + 10);
 }
 
 void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -16,10 +16,19 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
+    if (activeState) {
+        currentColor = colorActive;
+        currentDarkColor = colorDarkActive;
+    }
+    else {
+        currentColor = colorInActive;
+        currentDarkColor = colorDarkInActive;
+    }
+
     QRadialGradient gradient(- widthNodes / 3, - widthNodes / 3, widthNodes);
 
-    gradient.setColorAt(0, Qt::yellow);
-    gradient.setColorAt(1, Qt::darkYellow);
+    gradient.setColorAt(0, currentColor);
+    gradient.setColorAt(1, currentDarkColor);
     painter->setPen(Qt::NoPen);
     painter->setBrush(Qt::gray);
     painter->drawEllipse(- widthNodes / 2 + 3, - widthNodes / 2 + 2, widthNodes, widthNodes);
@@ -54,6 +63,35 @@ bool Node::moved()
 void Node::endMove()
 {
     flagMoved = false;
+}
+
+void Node::setActiveState(bool l_activeSate)
+{
+    activeState = l_activeSate;
+    if (activeState) {
+        currentColor = colorActive;
+        currentDarkColor = colorDarkActive;
+    }
+    else
+    {
+        currentColor = colorInActive;
+        currentDarkColor = colorDarkInActive;
+    }
+}
+
+bool Node::getActiveSate()
+{
+    return activeState;
+}
+
+void Node::setWidthNodes(int l_widthNodes)
+{
+    widthNodes = l_widthNodes;
+}
+
+int Node::getWidthNodes()
+{
+    return widthNodes;
 }
 
 void Node::mousePressEvent(QGraphicsSceneMouseEvent *)

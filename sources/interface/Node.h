@@ -31,22 +31,32 @@ public:
     void moveToPos (float newX, float newY);
     bool moved();
     void endMove();
+    void setActiveState(bool l_activeSate);
+    bool getActiveSate();
+    void setWidthNodes(int l_widthNodes);
+    int getWidthNodes();
     float coordNodeX = 0;
     float coordNodeY = 0;
+
 protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent *) Q_DECL_OVERRIDE;
+
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *) Q_DECL_OVERRIDE;
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
 
 private:
 
-    QColor color;
+    QColor colorActive = Qt::yellow;
+    QColor colorDarkActive = Qt::darkYellow;
+    QColor colorInActive = Qt::red;
+    QColor colorDarkInActive = Qt::darkRed;
+    QColor currentColor = Qt::yellow;
+    QColor currentDarkColor = Qt::darkYellow;
+
     NodeLimits limits;
     int widthNodes = 15;
-    int heightMaxAff = 180;
-    int coeffAffMS = 50;
-    int xSustain = 40;
     bool flagMoved = false;
+    bool activeState = true;
 
     float limitPlus_x, limitPlus_y;
 };

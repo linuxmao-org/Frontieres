@@ -23,6 +23,7 @@
 #include "MyGLWindow.h"
 #include "CloudDialog.h"
 #include "TriggerDialog.h"
+#include "ControlDialog.h"
 #include "OptionsDialog.h"
 #include "Frontieres.h"
 #include "model/Sample.h"
@@ -51,6 +52,9 @@ struct MyGLApplication::Impl {
 
     // trigger dialogs, according to trigger ID
     std::map<unsigned, TriggerDialog *> triggerDialogs;
+
+    // control dialogs, according to cloud ID
+    std::map<unsigned, ControlDialog *> controlDialogs;
 
     void onIdle();
 };
@@ -119,9 +123,11 @@ bool MyGLApplication::loadSceneFile()
         return false;
 
 
-    // delete cloudMaps if existing
+    // delete Maps if existing
 
     destroyAllCloudDialogs();
+    destroyAllTriggerDialogs();
+    destroyAllControlDialogs();
 
     // load the scene and its samples
     Scene *scene = new Scene;
@@ -312,6 +318,33 @@ void MyGLApplication::showTriggerDialog(SceneTrigger *selectedTrigger)
     dlg->linkTrigger(selectedTrigger->trigger.get(), selectedTrigger->view.get());
 }
 
+void MyGLApplication::showControlDialog(SceneCloud *selectedCloud)
+{
+    cout << "showcontroldialog entree" << endl;
+    unsigned id = selectedCloud->cloud->getId();
+
+    ControlDialog *&dlgslot = P->controlDialogs[id];
+    ControlDialog *dlg = dlgslot;
+
+    if (!dlg) {
+        // if not existing, create it and insert it in the map
+        dlg = new ControlDialog;
+        dlg->setWindowTitle(tr("Cloud controller"));
+        dlgslot = dlg;
+        dlg->show();
+    }
+    else {
+        QPoint posdlg = dlg->pos();
+        dlg->hide();
+        dlg->show();
+        dlg->move(posdlg);
+    }
+    //selectedCloud->cloud.get()->changesDone(true);
+    //selectedCloud->view.get()->changesDone(true);
+    dlg->linkCloud(selectedCloud->cloud.get());
+    cout << "showcontroldialog sortie" << endl;
+}
+
 void MyGLApplication::destroyCloudDialog(unsigned selectedCloudId)
 {
     auto it = P->cloudDialogs.find(selectedCloudId);
@@ -342,6 +375,23 @@ void MyGLApplication::destroyTriggerDialog(unsigned selectedTriggerId)
     P->triggerDialogs.erase(it);
 }
 
+void MyGLApplication::destroyControlDialog(unsigned selectedCloudId)
+{
+    cout << "entree destroycontroldialog" << endl;
+    auto it = P->controlDialogs.find(selectedCloudId);
+
+    if (it == P->controlDialogs.end())
+        return;  // not found
+
+    ControlDialog *dlg = it->second;
+    if (!dlg)
+        return;
+
+    delete dlg;
+    P->controlDialogs.erase(it);
+    cout << "sortie destroycontroldialog" << endl;
+}
+
 void MyGLApplication::midiNoteOn(int midiChannelToPlay, int midiKeyToPlay, int midiVeloToPlay)
 {
     currentScene->midiNoteOn(midiChannelToPlay, midiKeyToPlay, midiVeloToPlay);
@@ -363,6 +413,13 @@ void MyGLApplication::destroyAllTriggerDialogs()
 {
     while (P->triggerDialogs.size() > 0){
         destroyTriggerDialog(P->triggerDialogs.begin()->first);
+    }
+}
+
+void MyGLApplication::destroyAllControlDialogs()
+{
+    while (P->controlDialogs.size() > 0){
+        destroyControlDialog(P->controlDialogs.begin()->first);
     }
 }
 

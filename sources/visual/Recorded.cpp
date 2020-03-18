@@ -117,7 +117,7 @@ void Recorded::addPositionDelayed(int l_x, int l_y, double l_delay)
 
 Recorded::~Recorded()
 {
-    for (int i = 0; i < myPosition.size(); i++) {
+    for (unsigned long i = 0; i < myPosition.size(); i++) {
         delete myPosition[i];
     }
 }

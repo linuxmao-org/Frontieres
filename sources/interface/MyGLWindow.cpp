@@ -846,6 +846,16 @@ void MyGLScreen::keyAction_EditTrigger()
     }
 }
 
+void MyGLScreen::keyAction_EditControl()
+{
+    Scene *scene = ::currentScene;
+    SceneCloud *selectedCloud = scene->selectedCloud();
+
+    if (selectedCloud) {
+        theApplication->showControlDialog(selectedCloud);
+    }
+}
+
 void MyGLScreen::keyAction_SampleNames()
 {
     // see name of cloud or sample
@@ -875,6 +885,14 @@ void MyGLScreen::contextMenu_parameters()
         keyAction_EditTrigger();
     else if (selectedCloud)
         keyAction_EditCloud();
+}
+
+void MyGLScreen::contextMenu_control()
+{
+    Scene *scene = ::currentScene;
+    SceneCloud *selectedCloud = scene->selectedCloud();
+    if (selectedCloud)
+        keyAction_EditControl();
 }
 
 void MyGLScreen::contextMenu_fixInput()
@@ -1095,17 +1113,23 @@ void MyGLScreen::mousePressEvent(QMouseEvent *event)
                 QAction *separator_1 = contextMenu.addSeparator();
                 addAction(separator_1);
 
+                QAction * pAction_control = contextMenu.addAction(icon, QObject::tr("Cloud control"));
+                connect(pAction_control, SIGNAL(triggered()), this, SLOT(contextMenu_control()));
+
+                QAction *separator_2 = contextMenu.addSeparator();
+                addAction(separator_2);
+
                 QAction * pAction_newCloud = contextMenu.addAction(icon, QObject::tr("Create new cloud (G)"));
                 connect(pAction_newCloud, SIGNAL(triggered()), this, SLOT(contextMenu_newCloud()));
 
-                QAction *separator_2 = contextMenu.addSeparator();addAction(separator_2);
-                addAction(separator_2);
+                QAction *separator_3 = contextMenu.addSeparator();addAction(separator_2);
+                addAction(separator_3);
 
                 QAction * pAction_newTrigger = contextMenu.addAction(icon, QObject::tr("Create new trigger (H)"));
                 connect(pAction_newTrigger, SIGNAL(triggered()), this, SLOT(contextMenu_newTrigger()));
 
-                QAction *separator_3 = contextMenu.addSeparator();addAction(separator_2);
-                addAction(separator_3);
+                QAction *separator_4 = contextMenu.addSeparator();addAction(separator_2);
+                addAction(separator_4);
 
                 QAction * pAction_recordTraj = contextMenu.addAction(icon, QObject::tr("Record trajectory"));
                 connect(pAction_recordTraj, SIGNAL(triggered()), this, SLOT(contextMenu_recordTrajectory()));

@@ -57,12 +57,15 @@ public:
     void showDialogVolumeEnvelope(SceneCloud *selectedCloudToVolumeEnvelope);
     void showCloudDialog(SceneCloud *selectedCloud);
     void showTriggerDialog(SceneTrigger *selectedTrigger);
+    void showControlDialog(SceneCloud *selectedCloud);
     void destroyCloudDialog(unsigned selectedCloudId);
     void destroyTriggerDialog(unsigned selectedTriggerId);
+    void destroyControlDialog(unsigned selectedCloudId);
     void midiNoteOn (int midiChannelToPlay, int midiKeyToPlay, int midiVeloToPlay);
     void midiNoteOff (int midiChannelToStop, int midiKeyToStop);
     void destroyAllCloudDialogs();
     void destroyAllTriggerDialogs();
+    void destroyAllControlDialogs();
     void showOptionsDialog();
     void showMidiBankDialog();
     void showMidiInstrumentDialog();
