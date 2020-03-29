@@ -33,7 +33,10 @@ public:
     explicit ControlDialog(QWidget *parent = nullptr);
     ~ControlDialog();
     void linkCloud (Cloud *cloudLinked);
+
+    void updateFromControlPosition(float l_x, float l_y);
     void updateControlPosition();
+    void updateMinMax();
     void setLimits(Node &nodeToLimit, NodeLimits &nodeLimitsToGive,
                    bool t_minX, float valueMinX,
                    bool t_maxX, float valueMaxX,
@@ -47,13 +50,6 @@ public:
     int getOrientation();
 
 private slots:
-    void on_dial_Interval_valueChanged(int value);
-
-    void on_doubleSpinBox_Interval_valueChanged(double arg1);
-
-    void on_dial_Shade_valueChanged(int value);
-
-    void on_doubleSpinBox_Shade_valueChanged(double arg1);
 
     void on_doubleSpinBox_Scale_valueChanged(double arg1);
 
@@ -61,7 +57,11 @@ private slots:
 
     void on_radioButton_orientation_horizontal_toggled(bool checked);
 
-    void on_dial_Scale_valueChanged(int value);
+    void on_doubleSpinBox_Shade_editingFinished();
+
+    void on_doubleSpinBox_Interval_editingFinished();
+
+    void on_doubleSpinBox_Scale_editingFinished();
 
 private:
     const int ampControl = 240;

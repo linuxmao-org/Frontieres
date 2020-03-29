@@ -1,4 +1,17 @@
-## frontieres version 0.9.1
+
+## frontieres version 0.10.2
+
+apport du dernier pr :
+
+- controleur de nuage
+enlevé les potentiometres inutiles
+gestion des minimums et maximums au niveau des doublespinboxs
+mise à jour du controleur depuis les doublespinbox
+réparation bug orientation horizontale
+- changelog
+précédent pr en 0.10.1 et non 0.9.1
+
+## frontieres version 0.10.1
 
 apport du dernier pr :
 
