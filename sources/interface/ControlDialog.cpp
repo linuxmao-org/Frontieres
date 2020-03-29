@@ -15,6 +15,7 @@ ControlDialog::ControlDialog(QWidget *parent) :
     setMouseTracking(true);
 
     QPen blackPen (Qt::black);
+    QPen graypen (Qt::gray);
     blackPen.setWidth(1);
 
     QRectF zoneControl;
@@ -25,16 +26,28 @@ ControlDialog::ControlDialog(QWidget *parent) :
 
     QLine vertLine;
     QLine horzLine;
-    vertLine.setLine(0,-(ampControl + 10),0,(ampControl + 10));
-    horzLine.setLine(-(ampControl + 10),0,ampControl + 10,0);
+
     QBrush *whiteBrush = new QBrush(Qt::white);
 
     controlGraphicsView->setBackgroundBrush(QBrush(Qt::white, Qt::SolidPattern));
 
     controlGraphicScene->setBackgroundBrush(QBrush(Qt::white, Qt::SolidPattern));
     controlGraphicScene->addRect(zoneControl, blackPen, *whiteBrush);
+
+    vertLine.setLine(0,-(ampControl + 10),0,(ampControl + 10));
+    horzLine.setLine(-(ampControl + 10),0,ampControl + 10,0);
     controlGraphicScene->addLine(vertLine,blackPen);
     controlGraphicScene->addLine(horzLine,blackPen);
+
+    vertLine.setLine(-(ampControl/2),-(ampControl + 10),-(ampControl/2),(ampControl + 10));
+    horzLine.setLine(-(ampControl + 10),-(ampControl/2),ampControl + 10,-(ampControl/2));
+    controlGraphicScene->addLine(vertLine,graypen);
+    controlGraphicScene->addLine(horzLine,graypen);
+
+    vertLine.setLine((ampControl/2),-(ampControl + 10),(ampControl/2),(ampControl + 10));
+    horzLine.setLine(-(ampControl + 10),(ampControl/2),ampControl + 10,(ampControl/2));
+    controlGraphicScene->addLine(vertLine,graypen);
+    controlGraphicScene->addLine(horzLine,graypen);
 
     setLimits(myNode, limits_control, true, - ampControl, true, ampControl, true, -ampControl, true, ampControl);
     controlGraphicScene->addItem(&myNode);
@@ -42,8 +55,6 @@ ControlDialog::ControlDialog(QWidget *parent) :
     myNode.setY(0);
 
     scale = ui->doubleSpinBox_Scale->value();
-
-    //std::cout << "sortie creation controlDialog" << std::endl;
 }
 
 ControlDialog::~ControlDialog()
@@ -58,17 +69,63 @@ void ControlDialog::linkCloud(Cloud *cloudLinked)
     controlGraphicsView->linkCloud(cloudLinked, this);
     if (!cloudRef->getActiveState())
         myNode.setActiveState(false);
-    myNode.moveToPos(0,0);
-    updateControlPosition();
-    //cloudRef->changesDone(false);
+    updateFromControlPosition(0, 0);
     linking = false;
+}
+
+void ControlDialog::updateFromControlPosition(float l_x, float l_y)
+{
+    bool c_limited = false;
+    if ((myNode.getLimits().minX.exist) && (l_x < myNode.getLimits().minX.value))
+        c_limited = true;
+    if ((myNode.getLimits().maxX.exist) && (l_x > myNode.getLimits().maxX.value))
+        c_limited = true;
+    if ((myNode.getLimits().minY.exist) && (l_y < myNode.getLimits().minY.value))
+        c_limited = true;
+    if ((myNode.getLimits().maxY.exist) && (l_y > myNode.getLimits().maxY.value))
+        c_limited = true;
+    if (!c_limited) {
+        myNode.moveToPos(l_x, l_y);
+        if (orientation == VERTICAL) {
+            cloudRef->setCtrlInterval(-(l_y * scale));
+            cloudRef->setCtrlShade(float(l_x + ampControl) / ampControl);
+        }
+        else {
+            cloudRef->setCtrlInterval(l_x * scale);
+            cloudRef->setCtrlShade(2 - float(l_y + ampControl) / ampControl);
+        }
+        ui->doubleSpinBox_Interval->setValue(cloudRef->getCtrlInterval());
+        ui->doubleSpinBox_Shade->setValue(cloudRef->getCtrlShade());
+        updateMinMax();
+    }
 }
 
 void ControlDialog::updateControlPosition()
 {
-    //cout << "update controlposition" << endl;
-    ui->doubleSpinBox_Interval->setValue(cloudRef->getCtrlInterval());
-    ui->doubleSpinBox_Shade->setValue(cloudRef->getCtrlShade());
+    if (linking)
+        return;
+
+    int n_shade = ((ui->doubleSpinBox_Shade->value() - 1) * ampControl);
+    int n_interval = - (ui->doubleSpinBox_Interval->value() / ui->doubleSpinBox_Scale->value());
+
+    if (orientation == VERTICAL) {
+       myNode.moveToPos(n_shade, n_interval);
+    }
+    else {
+       myNode.moveToPos(-n_interval, n_shade);
+    }
+}
+
+void ControlDialog::updateMinMax()
+{
+    float n_interval = ui->doubleSpinBox_Interval->value();
+    float n_scale = ui->doubleSpinBox_Scale->value();
+
+    float n_scaleMin = (n_interval / 240);
+    ui->doubleSpinBox_Scale->setMinimum(abs(n_scaleMin));
+    float n_intervalMax = (n_scale * 240);
+    ui->doubleSpinBox_Interval->setMaximum(abs(n_intervalMax));
+    ui->doubleSpinBox_Interval->setMinimum(-abs(n_intervalMax));
 }
 
 void ControlDialog::setLimits(Node &nodeToLimit, NodeLimits &nodeLimitsToGive,
@@ -115,36 +172,6 @@ int ControlDialog::getOrientation()
     return orientation;
 }
 
-void ControlDialog::on_dial_Interval_valueChanged(int value)
-{
-    ui->doubleSpinBox_Interval->setValue(value);
-}
-
-void ControlDialog::on_doubleSpinBox_Interval_valueChanged(double arg1)
-{
-    ui->dial_Interval->setValue(int (arg1));
-}
-
-void ControlDialog::on_dial_Shade_valueChanged(int value)
-{
-    //ui->doubleSpinBox_Shade->setValue(value);
-}
-
-void ControlDialog::on_doubleSpinBox_Shade_valueChanged(double arg1)
-{
-    ui->dial_Shade->setValue(int (arg1));
-    if (linking)
-        return;
-    int n_pos = (arg1 - 1) * (ampControl);
-    if (orientation == VERTICAL) {
-       //cout << "arg=" << arg1 << ", nodex=" << myNode.x() << ", np=" << n_pos << endl;
-       myNode.moveToPos(n_pos, myNode.y());
-    }
-    else {
-       myNode.moveToPos(myNode.x(), 2 - n_pos);
-    }
-}
-
 MyQGraphicsView::MyQGraphicsView(QWidget *parent, ControlDialog *l_controlDialog, QGraphicsScene *l_graphicsScene, Node *l_Node)
 {
     this->setParent(parent);
@@ -158,55 +185,32 @@ MyQGraphicsView::MyQGraphicsView(QWidget *parent, ControlDialog *l_controlDialog
 
 void MyQGraphicsView::linkCloud(Cloud *cloudLinked, ControlDialog *l_controldialog)
 {
-        cloudRef = cloudLinked;
-        myControl = l_controldialog;
+    cloudRef = cloudLinked;
+    myControl = l_controldialog;
 }
 
 void MyQGraphicsView::mousePressEvent(QMouseEvent *eventMouse)
 {
-    //std::cout << "button=" << eventMouse->button() << std::endl;
-    if (eventMouse->button() == 2) {
-        myNode->setActiveState(false);
-        cloudRef->setActiveState(false);
-    }
-    else {
-        myNode->setActiveState(true);
-        if (!cloudRef->getActiveState())
-            cloudRef->setActiveState(true);
-    }
-    int c_x = eventMouse->x() - (ampControl + (myNode->getWidthNodes() + 3));
-    int c_y = eventMouse->y() - (ampControl + (myNode->getWidthNodes() + 3));
-    /*std::cout << "c_x=" << c_x << ",c_y=" << c_y << std::endl;
-    std::cout << "nodex=" << myNode->x() << ",nodey=" << myNode->y() << std::endl;*/
-    if ((c_x > (myNode->x() - (myNode->getWidthNodes()/2 + 2))) && (c_x < (myNode->x() + (myNode->getWidthNodes()/2 + 2))) &&
-        (c_y > (myNode->y() - (myNode->getWidthNodes()/2 + 2))) && (c_y < (myNode->y() + (myNode->getWidthNodes()/2 + 2)))) {
-        //std::cout << "gagné !" << std::endl;
-        draging = true;
-    }
-    else {
-        bool c_limited = false;
-        if ((myNode->getLimits().minX.exist) && (c_x < myNode->getLimits().minX.value))
-            c_limited = true;
-        if ((myNode->getLimits().maxX.exist) && (c_x > myNode->getLimits().maxX.value))
-            c_limited = true;
-        if ((myNode->getLimits().minY.exist) && (c_y < myNode->getLimits().minY.value))
-            c_limited = true;
-        if ((myNode->getLimits().maxY.exist) && (c_y > myNode->getLimits().maxY.value))
-            c_limited = true;
-        if (!c_limited) {
-            myNode->moveToPos(c_x, c_y);
-            if (myControl->getOrientation() == VERTICAL) {
-                cloudRef->setCtrlInterval(-(c_y * myControl->getScale()));
-                cloudRef->setCtrlShade(float(c_x + ampControl) / ampControl);
-            }
-            else {
-                cloudRef->setCtrlInterval(c_x * myControl->getScale());
-                cloudRef->setCtrlShade(2 - float(c_y + ampControl) / ampControl);
-            }
-            myControl->updateControlPosition();
-        }
-        draging = true;
-    }
+   if (eventMouse->button() == 2) {
+       myNode->setActiveState(false);
+       cloudRef->setActiveState(false);
+   }
+   else {
+       myNode->setActiveState(true);
+       if (!cloudRef->getActiveState())
+           cloudRef->setActiveState(true);
+   }
+   int c_x = eventMouse->x() - (ampControl + (myNode->getWidthNodes() + 3));
+   int c_y = eventMouse->y() - (ampControl + (myNode->getWidthNodes() + 3));
+
+   if ((c_x > (myNode->x() - (myNode->getWidthNodes()/2 + 2))) && (c_x < (myNode->x() + (myNode->getWidthNodes()/2 + 2))) &&
+       (c_y > (myNode->y() - (myNode->getWidthNodes()/2 + 2))) && (c_y < (myNode->y() + (myNode->getWidthNodes()/2 + 2)))) {
+       draging = true;
+   }
+   else {
+       myControl->updateFromControlPosition(c_x, c_y);
+       draging = true;
+   }
 }
 
 void MyQGraphicsView::mouseReleaseEvent(QMouseEvent *eventMouse)
@@ -216,39 +220,10 @@ void MyQGraphicsView::mouseReleaseEvent(QMouseEvent *eventMouse)
 
 void MyQGraphicsView::mouseMoveEvent(QMouseEvent *eventMouse)
 {
-    //std::cout << "mmove" << std::endl;
     if (draging) {
-        //std::cout << "draging" << std::endl;
-        QGraphicsSceneMouseEvent c_qgmevent;
-        QPoint c_qpoint;
-//        c_qpoint.setX(eventMouse->x());
-  //      c_qpoint.setY(eventMouse->y());
-        //_qgmevent.setPos(c_qpoint);
         int c_x = eventMouse->x() - (ampControl + (myNode->getWidthNodes() + 3));
         int c_y = eventMouse->y() - (ampControl + (myNode->getWidthNodes() + 3));
-        //std::cout << "c_x=" << c_x << std::endl;;
-        //std::cout << "c_y=" << c_y << std::endl;
-        bool c_limited = false;
-        if ((myNode->getLimits().minX.exist) && (c_x < myNode->getLimits().minX.value))
-            c_limited = true;
-        if ((myNode->getLimits().maxX.exist) && (c_x > myNode->getLimits().maxX.value))
-            c_limited = true;
-        if ((myNode->getLimits().minY.exist) && (c_y < myNode->getLimits().minY.value))
-            c_limited = true;
-        if ((myNode->getLimits().maxY.exist) && (c_y > myNode->getLimits().maxY.value))
-            c_limited = true;
-        if (!c_limited) {
-            myNode->moveToPos(c_x, c_y);
-            if (myControl->getOrientation() == VERTICAL) {
-                cloudRef->setCtrlInterval(-(c_y * myControl->getScale()));
-                cloudRef->setCtrlShade(float(c_x + ampControl) / ampControl);
-            }
-            else {
-                cloudRef->setCtrlInterval(c_x * myControl->getScale());
-                cloudRef->setCtrlShade(2 - float(c_y + ampControl) / ampControl);
-            }
-            myControl->updateControlPosition();
-        }
+        myControl->updateFromControlPosition(c_x, c_y);
     }
 
 }
@@ -256,25 +231,38 @@ void MyQGraphicsView::mouseMoveEvent(QMouseEvent *eventMouse)
 void ControlDialog::on_doubleSpinBox_Scale_valueChanged(double arg1)
 {
     scale = arg1;
-    ui->dial_Scale->setValue(int (arg1));
-
-}
-
-void ControlDialog::on_dial_Scale_valueChanged(int value)
-{
-    ui->doubleSpinBox_Scale->setValue(value);
 }
 
 void ControlDialog::on_radioButton_orientation_vertical_toggled(bool checked)
 {
-    if (checked)
+    if (checked) {
         orientation =  VERTICAL;
+        updateControlPosition();
+    }
 }
 
 void ControlDialog::on_radioButton_orientation_horizontal_toggled(bool checked)
 {
-    if (checked)
+    if (checked) {
         orientation =  HORIZONTAL;
+        updateControlPosition();
+    }
 }
 
+void ControlDialog::on_doubleSpinBox_Shade_editingFinished()
+{
+    updateControlPosition();
+}
 
+void ControlDialog::on_doubleSpinBox_Interval_editingFinished()
+{
+    updateControlPosition();
+    updateMinMax();
+}
+
+void ControlDialog::on_doubleSpinBox_Scale_editingFinished()
+{
+    scale = ui->doubleSpinBox_Scale->value();
+    updateControlPosition();
+    updateMinMax();
+}

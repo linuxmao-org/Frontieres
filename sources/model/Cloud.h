@@ -294,7 +294,7 @@ private:
     //enum EnvelopeAction { TriggerEnvelope = 1, ReleaseEnvelope = 2 };
     std::atomic<int> envelopeAction;
     float ctrlInterval = 0.0f;
-    float ctrlShade = 0.1f;
+    float ctrlShade = 1.0f;
 
 
     // vector of grains
