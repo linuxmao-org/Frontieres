@@ -5,6 +5,6 @@
 
 int version_major = 0;
 int version_minor = 10;
-int version_patch = 2;
+int version_patch = 3;
 
 #endif // VERSION_H
