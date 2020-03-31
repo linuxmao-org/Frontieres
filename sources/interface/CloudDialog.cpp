@@ -368,6 +368,7 @@ void CloudDialog::linkCloud(Cloud *cloudLinked, CloudVis *cloudVisLinked)
         default :
             break;
         }
+
     cloudRef->changesDone(false);
     linking = false;
 }
@@ -886,6 +887,9 @@ void CloudDialog::on_radioButton_Trajectory_Bouncing_toggled(bool checked)
 
 void CloudDialog::on_radioButton_Trajectory_Circular_toggled(bool checked)
 {
+    if (linking)
+        return;
+
     Trajectory *tr=nullptr;
     if ((cloudVisRef->getTrajectory() != nullptr) & (have_trajectory_circular))
         tr=new Circular(ui->doubleSpinBox_Speed->value(),ui->doubleSpinBox_X->value(),ui->doubleSpinBox_Y->value(),
@@ -903,6 +907,9 @@ void CloudDialog::on_radioButton_Trajectory_Circular_toggled(bool checked)
 
 void CloudDialog::on_radioButton_Trajectory_Static_toggled(bool checked)
 {
+    if (linking)
+        return;
+
     Trajectory *tr = nullptr;
     cloudRef->setTrajectoryType(STATIC);
     cloudVisRef->setTrajectory(tr);
@@ -953,6 +960,9 @@ void CloudDialog::on_doubleSpinBox_Progress_valueChanged(double arg1)
 
 void CloudDialog::on_radioButton_Trajectory_Hypotrochoid_toggled(bool checked)
 {
+    if (linking)
+        return;
+
     Trajectory *tr=nullptr;
     if ((cloudVisRef->getTrajectory() != nullptr) and (have_trajectory_hypotrochoid))
         tr=new Hypotrochoid(ui->doubleSpinBox_Speed->value(), ui->doubleSpinBox_X->value(),ui->doubleSpinBox_Y->value(),ui->doubleSpinBox_Radius->value(),
@@ -987,7 +997,11 @@ void CloudDialog::on_commandLinkButton_stop_clicked()
 
 void CloudDialog::on_radioButton_Trajectory_Recorded_toggled(bool checked)
 {
+    if (linking)
+        return;
+
     if (!(cloudVisRef->getTrajectoryType() == RECORDED)) {
+        cout << "creation trajectory" << endl;
         Trajectory *tr=nullptr;
         tr=new Recorded(0, cloudVisRef->getOriginX(),cloudVisRef->getOriginY());
         cloudRef->setTrajectoryType(RECORDED);

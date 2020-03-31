@@ -1,3 +1,9 @@
+## frontieres version 0.10.3
+
+apport du dernier pr :
+
+- dialogue parametres nuage
+réparation bug qui faisait relancer l'enregistrement d'une trajectoire déjà enregistrée, à la création du dialogue
 
 ## frontieres version 0.10.2
 
