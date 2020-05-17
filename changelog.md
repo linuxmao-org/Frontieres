@@ -1,3 +1,10 @@
+## frontieres version 0.11.0
+
+apport du dernier pr :
+
+- nouvelle fonctionnalité dans le contrôleur de nuage
+possiblité de créer une gamme à partir des positions du contrôleur, et de demander une attirance vers les intervalles de la gamme ou relachement de la souris.
+
 ## frontieres version 0.10.3
 
 apport du dernier pr :

@@ -7,7 +7,9 @@
 #include <QGraphicsScene>
 #include <QGraphicsRectItem>
 #include <QSizePolicy>
+#include <QString>
 #include "model/Cloud.h"
+#include "model/Scale.h"
 #include "interface/Node.h"
 
 enum {VERTICAL, HORIZONTAL};
@@ -32,6 +34,7 @@ class ControlDialog : public QDialog
 public:
     explicit ControlDialog(QWidget *parent = nullptr);
     ~ControlDialog();
+    void initScene();
     void linkCloud (Cloud *cloudLinked);
 
     void updateFromControlPosition(float l_x, float l_y);
@@ -44,14 +47,22 @@ public:
                    bool t_maxY, float valueMaxY);
     void setActiveState(bool l_activeState);
     bool getActiveState();
-    float getScale();
-    void setScale (float l_scale);
+    float getZoom();
+    void setZoom (float l_zoom);
     void setOrientation(int l_orientation);
     int getOrientation();
+    double getInterval();
+    void setInterval(double n_interval);
+    double getMinInterval();
+    double getMaxInterval();
+    void drawScale();
+    double nearestScalePosition(double c_interval, double c_minInterval, double c_maxInterval);
+    double getIntervalFromScale(int l_i);
+    bool scaleAttraction();
 
 private slots:
 
-    void on_doubleSpinBox_Scale_valueChanged(double arg1);
+    void on_doubleSpinBox_Zoom_valueChanged(double arg1);
 
     void on_radioButton_orientation_vertical_toggled(bool checked);
 
@@ -61,7 +72,13 @@ private slots:
 
     void on_doubleSpinBox_Interval_editingFinished();
 
-    void on_doubleSpinBox_Scale_editingFinished();
+    void on_doubleSpinBox_Zoom_editingFinished();
+
+    void on_pushButton_add_pressed();
+
+    void on_pushButton_reset_pressed();
+
+    void on_pushButton_attraction_toggled(bool checked);
 
 private:
     const int ampControl = 240;
@@ -75,8 +92,11 @@ private:
     QRectF rectControl;
     ControlPosition myControlPosition;
     bool activeState = true;
-    float scale = 0.05f;
+    float zoom = 0.05f;
     bool orientation = VERTICAL;
+    bool myScaleAttraction = false;
+    Scale myScale;
+//    vector<ScalePosition *> myScalePositions;
 };
 
 class MyQGraphicsView : public QGraphicsView
