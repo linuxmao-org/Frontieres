@@ -537,27 +537,47 @@
         <translation>Intervalle</translation>
     </message>
     <message>
-        <location filename="../sources/interface/ControlDialog.ui" line="385"/>
+        <location filename="../sources/interface/ControlDialog.ui" line="303"/>
         <source>Shade</source>
         <translation>Nuance</translation>
     </message>
     <message>
-        <location filename="../sources/interface/ControlDialog.ui" line="612"/>
+        <location filename="../sources/interface/ControlDialog.ui" line="448"/>
+        <source>Zoom</source>
+        <translation>Zoom</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/ControlDialog.ui" line="618"/>
         <source>Scale</source>
         <translation>Echelle</translation>
     </message>
     <message>
-        <location filename="../sources/interface/ControlDialog.ui" line="805"/>
+        <location filename="../sources/interface/ControlDialog.ui" line="637"/>
+        <source>&amp;Add</source>
+        <translation>&amp;Ajouter</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/ControlDialog.ui" line="653"/>
+        <source>&amp;Reset</source>
+        <translation>&amp;Réinitialiser</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/ControlDialog.ui" line="674"/>
+        <source>&amp;Attraction</source>
+        <translation>&amp;Attraction</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/ControlDialog.ui" line="559"/>
         <source>&amp;Orientation</source>
         <translation>&amp;Orientation</translation>
     </message>
     <message>
-        <location filename="../sources/interface/ControlDialog.ui" line="814"/>
+        <location filename="../sources/interface/ControlDialog.ui" line="568"/>
         <source>&amp;Vertical</source>
         <translation>&amp;Vertical</translation>
     </message>
     <message>
-        <location filename="../sources/interface/ControlDialog.ui" line="824"/>
+        <location filename="../sources/interface/ControlDialog.ui" line="578"/>
         <source>&amp;Horizontal</source>
         <translation>&amp;Horizontal</translation>
     </message>

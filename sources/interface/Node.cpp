@@ -30,10 +30,12 @@ void Node::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
     gradient.setColorAt(0, currentColor);
     gradient.setColorAt(1, currentDarkColor);
     painter->setPen(Qt::NoPen);
-    painter->setBrush(Qt::gray);
+    painter->setBrush(Qt::black);
+    painter->setOpacity(0.5f);
     painter->drawEllipse(- widthNodes / 2 + 3, - widthNodes / 2 + 2, widthNodes, widthNodes);
     painter->setBrush(gradient);
     painter->setPen(QPen(Qt::black, 0));
+    painter->setOpacity(1.0f);
     painter->drawEllipse(- widthNodes / 2, - widthNodes / 2, widthNodes, widthNodes);
 }
 
