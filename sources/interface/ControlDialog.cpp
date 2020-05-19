@@ -14,6 +14,21 @@ ControlDialog::ControlDialog(QWidget *parent) :
 
     setMouseTracking(true);
 
+    initScene();
+
+    myNode.setX(0);
+    myNode.setY(0);
+
+    zoom = ui->doubleSpinBox_Zoom->value();
+}
+
+ControlDialog::~ControlDialog()
+{
+    delete ui;
+}
+
+void ControlDialog::initScene()
+{
     QPen blackPen (Qt::black);
     QPen graypen (Qt::gray);
     blackPen.setWidth(1);
@@ -39,27 +54,8 @@ ControlDialog::ControlDialog(QWidget *parent) :
     controlGraphicScene->addLine(vertLine,blackPen);
     controlGraphicScene->addLine(horzLine,blackPen);
 
-    vertLine.setLine(-(ampControl/2),-(ampControl + 10),-(ampControl/2),(ampControl + 10));
-    horzLine.setLine(-(ampControl + 10),-(ampControl/2),ampControl + 10,-(ampControl/2));
-    controlGraphicScene->addLine(vertLine,graypen);
-    controlGraphicScene->addLine(horzLine,graypen);
-
-    vertLine.setLine((ampControl/2),-(ampControl + 10),(ampControl/2),(ampControl + 10));
-    horzLine.setLine(-(ampControl + 10),(ampControl/2),ampControl + 10,(ampControl/2));
-    controlGraphicScene->addLine(vertLine,graypen);
-    controlGraphicScene->addLine(horzLine,graypen);
-
     setLimits(myNode, limits_control, true, - ampControl, true, ampControl, true, -ampControl, true, ampControl);
     controlGraphicScene->addItem(&myNode);
-    myNode.setX(0);
-    myNode.setY(0);
-
-    scale = ui->doubleSpinBox_Scale->value();
-}
-
-ControlDialog::~ControlDialog()
-{
-    delete ui;
 }
 
 void ControlDialog::linkCloud(Cloud *cloudLinked)
@@ -87,11 +83,11 @@ void ControlDialog::updateFromControlPosition(float l_x, float l_y)
     if (!c_limited) {
         myNode.moveToPos(l_x, l_y);
         if (orientation == VERTICAL) {
-            cloudRef->setCtrlInterval(-(l_y * scale));
+            cloudRef->setCtrlInterval(-(l_y * zoom));
             cloudRef->setCtrlShade(float(l_x + ampControl) / ampControl);
         }
         else {
-            cloudRef->setCtrlInterval(l_x * scale);
+            cloudRef->setCtrlInterval(l_x * zoom);
             cloudRef->setCtrlShade(2 - float(l_y + ampControl) / ampControl);
         }
         ui->doubleSpinBox_Interval->setValue(cloudRef->getCtrlInterval());
@@ -106,24 +102,24 @@ void ControlDialog::updateControlPosition()
         return;
 
     int n_shade = ((ui->doubleSpinBox_Shade->value() - 1) * ampControl);
-    int n_interval = - (ui->doubleSpinBox_Interval->value() / ui->doubleSpinBox_Scale->value());
+    int n_interval = - (ui->doubleSpinBox_Interval->value() / ui->doubleSpinBox_Zoom->value());
 
     if (orientation == VERTICAL) {
-       myNode.moveToPos(n_shade, n_interval);
+        updateFromControlPosition(n_shade, n_interval);
     }
     else {
-       myNode.moveToPos(-n_interval, n_shade);
+        updateFromControlPosition(-n_interval, n_shade);
     }
 }
 
 void ControlDialog::updateMinMax()
 {
     float n_interval = ui->doubleSpinBox_Interval->value();
-    float n_scale = ui->doubleSpinBox_Scale->value();
+    float n_zoom = ui->doubleSpinBox_Zoom->value();
 
-    float n_scaleMin = (n_interval / 240);
-    ui->doubleSpinBox_Scale->setMinimum(abs(n_scaleMin));
-    float n_intervalMax = (n_scale * 240);
+    float n_zoomMin = (n_interval / 240);
+    ui->doubleSpinBox_Zoom->setMinimum(abs(n_zoomMin));
+    float n_intervalMax = (n_zoom * 240);
     ui->doubleSpinBox_Interval->setMaximum(abs(n_intervalMax));
     ui->doubleSpinBox_Interval->setMinimum(-abs(n_intervalMax));
 }
@@ -157,9 +153,9 @@ bool ControlDialog::getActiveState()
     return activeState;
 }
 
-float ControlDialog::getScale()
+float ControlDialog::getZoom()
 {
-    return scale;
+    return zoom;
 }
 
 void ControlDialog::setOrientation(int l_orientation)
@@ -170,6 +166,87 @@ void ControlDialog::setOrientation(int l_orientation)
 int ControlDialog::getOrientation()
 {
     return orientation;
+}
+
+double ControlDialog::getInterval()
+{
+    cout << "getinterval, value = " << ui->doubleSpinBox_Interval->value() << endl;
+    return ui->doubleSpinBox_Interval->value();
+}
+
+void ControlDialog::setInterval(double n_interval)
+{
+    ui->doubleSpinBox_Interval->setValue(n_interval);
+    updateControlPosition();
+    updateMinMax();
+}
+
+double ControlDialog::getMinInterval()
+{
+    return ui->doubleSpinBox_Interval->minimum();
+}
+
+double ControlDialog::getMaxInterval()
+{
+    return ui->doubleSpinBox_Interval->maximum();
+}
+
+void ControlDialog::drawScale()
+{
+
+    controlGraphicScene->removeItem(&myNode);
+    controlGraphicScene->clear();
+    initScene();
+
+    QPen graypen (Qt::gray);
+
+    for (int i = 0; i < myScale.getSize(); i = i + 1) {
+        if (orientation == VERTICAL) {
+            int l_y = - (myScale.getScalePosition(i).pitchInterval / ui->doubleSpinBox_Zoom->value());
+            if ((l_y >= - ampControl) && (l_y <= ampControl)) {
+                QGraphicsItem *l_line;
+                l_line = controlGraphicScene->addLine(-(ampControl + 10),
+                                                      l_y,
+                                                      ampControl + 10,
+                                                      l_y,
+                                                      graypen);
+            }
+        }
+        else {
+            int l_y = (myScale.getScalePosition(i).pitchInterval / ui->doubleSpinBox_Zoom->value());
+            if ((l_y >= - ampControl) && (l_y <= ampControl)) {
+                QGraphicsItem *l_line;
+                l_line = controlGraphicScene->addLine(l_y,
+                                                      -(ampControl + 10),
+                                                      l_y,
+                                                      ampControl + 10,
+                                                      graypen);
+            }
+           /* myScalePositions[i]->line = controlGraphicScene->addLine((ampControl/2),
+                                                                     -(ampControl + 10),
+                                                                     (ampControl/2),
+                                                                     (ampControl + 10),
+                                                                     graypen);
+            //controlGraphicScene->addLine(vertLine,graypen);
+            //controlGraphicScene->addLine(myScalePositions[i]->line);//,graypen);*/
+        }
+    }
+//    cout << endl;
+}
+
+double ControlDialog::nearestScalePosition(double c_interval, double c_minInterval, double c_maxInterval)
+{
+    return myScale.nearest(c_interval, c_minInterval, c_maxInterval);
+}
+
+double ControlDialog::getIntervalFromScale(int l_i)
+{
+    return myScale.getScalePosition(l_i - 1).pitchInterval;
+}
+
+bool ControlDialog::scaleAttraction()
+{
+    return myScaleAttraction;
 }
 
 MyQGraphicsView::MyQGraphicsView(QWidget *parent, ControlDialog *l_controlDialog, QGraphicsScene *l_graphicsScene, Node *l_Node)
@@ -216,6 +293,11 @@ void MyQGraphicsView::mousePressEvent(QMouseEvent *eventMouse)
 void MyQGraphicsView::mouseReleaseEvent(QMouseEvent *eventMouse)
 {
     draging = false;
+    if (myControl->scaleAttraction()) {
+        double l_interval = myControl->getInterval();
+        double l_nearestPosition = myControl->nearestScalePosition(l_interval, myControl->getMinInterval(),myControl->getMaxInterval());
+        myControl->setInterval(l_nearestPosition);
+    }
 }
 
 void MyQGraphicsView::mouseMoveEvent(QMouseEvent *eventMouse)
@@ -228,9 +310,9 @@ void MyQGraphicsView::mouseMoveEvent(QMouseEvent *eventMouse)
 
 }
 
-void ControlDialog::on_doubleSpinBox_Scale_valueChanged(double arg1)
+void ControlDialog::on_doubleSpinBox_Zoom_valueChanged(double arg1)
 {
-    scale = arg1;
+    zoom = arg1;
 }
 
 void ControlDialog::on_radioButton_orientation_vertical_toggled(bool checked)
@@ -238,6 +320,7 @@ void ControlDialog::on_radioButton_orientation_vertical_toggled(bool checked)
     if (checked) {
         orientation =  VERTICAL;
         updateControlPosition();
+        drawScale();
     }
 }
 
@@ -246,6 +329,7 @@ void ControlDialog::on_radioButton_orientation_horizontal_toggled(bool checked)
     if (checked) {
         orientation =  HORIZONTAL;
         updateControlPosition();
+        drawScale();
     }
 }
 
@@ -260,9 +344,32 @@ void ControlDialog::on_doubleSpinBox_Interval_editingFinished()
     updateMinMax();
 }
 
-void ControlDialog::on_doubleSpinBox_Scale_editingFinished()
+void ControlDialog::on_doubleSpinBox_Zoom_editingFinished()
 {
-    scale = ui->doubleSpinBox_Scale->value();
+    zoom = ui->doubleSpinBox_Zoom->value();
     updateControlPosition();
     updateMinMax();
+    drawScale();
+}
+
+void ControlDialog::on_pushButton_add_pressed()
+{
+    ScalePosition l_scalePosition;
+    l_scalePosition.pitchInterval = ui->doubleSpinBox_Interval->value();
+    myScale.insertScalePosition(l_scalePosition);
+
+    drawScale();
+}
+
+void ControlDialog::on_pushButton_reset_pressed()
+{
+    controlGraphicScene->removeItem(&myNode);
+    controlGraphicScene->clear();
+    myScale.reset();
+    initScene();
+}
+
+void ControlDialog::on_pushButton_attraction_toggled(bool checked)
+{
+    myScaleAttraction = checked;
 }
