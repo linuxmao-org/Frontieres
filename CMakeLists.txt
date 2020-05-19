@@ -55,6 +55,7 @@ add_executable(Frontieres WIN32
   sources/model/ParamAdsr.cpp
   sources/model/Trigger.cpp
   sources/model/Phrase.cpp
+  sources/model/Scale.cpp
   sources/visual/GrainVis.cpp
   sources/visual/CloudVis.cpp
   sources/visual/SampleVis.cpp
