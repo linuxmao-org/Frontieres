@@ -1341,131 +1341,131 @@
 <context>
     <name>TriggerDialog</name>
     <message>
-        <location filename="../sources/interface/TriggerDialog.ui" line="14"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="19"/>
         <source>Dialog</source>
         <translation>Dialogue</translation>
     </message>
     <message>
-        <location filename="../sources/interface/TriggerDialog.ui" line="163"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="168"/>
         <source>X</source>
         <translation>X</translation>
     </message>
     <message>
-        <location filename="../sources/interface/TriggerDialog.ui" line="383"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="388"/>
         <source>Y</source>
         <translation>Y</translation>
     </message>
     <message>
-        <location filename="../sources/interface/TriggerDialog.ui" line="597"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="602"/>
         <source>Extent (XY)</source>
         <translation>Extension (xy)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/TriggerDialog.ui" line="781"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="786"/>
         <source>Action In</source>
-        <translation>Extension à l&apos;entrée</translation>
+        <translation>Action à l&apos;entrée</translation>
     </message>
     <message>
-        <location filename="../sources/interface/TriggerDialog.ui" line="797"/>
-        <location filename="../sources/interface/TriggerDialog.ui" line="899"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="802"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="904"/>
         <source>&amp;On</source>
         <translation>&amp;On</translation>
     </message>
     <message>
-        <location filename="../sources/interface/TriggerDialog.ui" line="807"/>
-        <location filename="../sources/interface/TriggerDialog.ui" line="909"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="812"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="914"/>
         <source>&amp;Off</source>
         <translation>&amp;Off</translation>
     </message>
     <message>
-        <location filename="../sources/interface/TriggerDialog.ui" line="820"/>
-        <location filename="../sources/interface/TriggerDialog.ui" line="922"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="825"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="927"/>
         <source>&amp;Commute</source>
         <translation>&amp;Commute</translation>
     </message>
     <message>
-        <location filename="../sources/interface/TriggerDialog.ui" line="883"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="888"/>
         <source>Action Out</source>
         <translation>Action à la sortie</translation>
     </message>
     <message>
-        <location filename="../sources/interface/TriggerDialog.ui" line="790"/>
-        <location filename="../sources/interface/TriggerDialog.ui" line="892"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="795"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="897"/>
         <source>&amp;Nothing</source>
         <translation>&amp;Rien</translation>
     </message>
     <message>
-        <location filename="../sources/interface/TriggerDialog.ui" line="1072"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="1077"/>
         <source>Speed</source>
         <translation>Vitesse</translation>
     </message>
     <message>
-        <location filename="../sources/interface/TriggerDialog.ui" line="1286"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="1291"/>
         <source>Progress</source>
         <translation>Progression</translation>
     </message>
     <message>
-        <location filename="../sources/interface/TriggerDialog.ui" line="1500"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="1505"/>
         <source>Angle</source>
         <translation>Angle</translation>
     </message>
     <message>
-        <location filename="../sources/interface/TriggerDialog.ui" line="1714"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="1719"/>
         <source>Radius</source>
         <translation>Rayon</translation>
     </message>
     <message>
-        <location filename="../sources/interface/TriggerDialog.ui" line="1928"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="1933"/>
         <source>Radius Int</source>
         <translation>Rayon interne</translation>
     </message>
     <message>
-        <location filename="../sources/interface/TriggerDialog.ui" line="2142"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="2147"/>
         <source>Stretch</source>
         <translation>Etirement</translation>
     </message>
     <message>
-        <location filename="../sources/interface/TriggerDialog.ui" line="2359"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="2364"/>
         <source>Expansion</source>
         <translation>Extension</translation>
     </message>
     <message>
-        <location filename="../sources/interface/TriggerDialog.ui" line="2549"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="2554"/>
         <source>Name : </source>
         <translation>Nom : </translation>
     </message>
     <message>
-        <location filename="../sources/interface/TriggerDialog.ui" line="2664"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="2669"/>
         <source>Id : </source>
         <translation>Id : </translation>
     </message>
     <message>
-        <location filename="../sources/interface/TriggerDialog.ui" line="2671"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="2676"/>
         <source>Active</source>
         <translation>Actif</translation>
     </message>
     <message>
-        <location filename="../sources/interface/TriggerDialog.ui" line="2685"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="2690"/>
         <source>Locked</source>
         <translation>Verrouillé</translation>
     </message>
     <message>
-        <location filename="../sources/interface/TriggerDialog.ui" line="2765"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="2770"/>
         <source>S&amp;tatic </source>
         <translation>&amp;Statique </translation>
     </message>
     <message>
-        <location filename="../sources/interface/TriggerDialog.ui" line="2678"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="2683"/>
         <source>Restart</source>
         <translation>Redémarre</translation>
     </message>
     <message>
-        <location filename="../sources/interface/TriggerDialog.ui" line="2698"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="2703"/>
         <source>Priority : </source>
         <translation>Priorité : </translation>
     </message>
     <message>
-        <location filename="../sources/interface/TriggerDialog.ui" line="2756"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="2761"/>
         <source>Trajectory (I)</source>
         <translation>Trajectoire (I)</translation>
     </message>
@@ -1474,22 +1474,22 @@
         <translation type="vanished">&amp;Statique</translation>
     </message>
     <message>
-        <location filename="../sources/interface/TriggerDialog.ui" line="2784"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="2789"/>
         <source>&amp;Bouncing</source>
         <translation>&amp;Rebond</translation>
     </message>
     <message>
-        <location filename="../sources/interface/TriggerDialog.ui" line="2791"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="2796"/>
         <source>&amp;Circular</source>
         <translation>&amp;Circulaire</translation>
     </message>
     <message>
-        <location filename="../sources/interface/TriggerDialog.ui" line="2801"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="2806"/>
         <source>&amp;Hypotrochoid</source>
         <translation>&amp;Hypotrochoïde</translation>
     </message>
     <message>
-        <location filename="../sources/interface/TriggerDialog.ui" line="2808"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="2813"/>
         <source>&amp;Recorded</source>
         <translation>&amp;Enregistrée</translation>
     </message>
