@@ -10,6 +10,11 @@
     <height>349</height>
    </rect>
   </property>
+  <property name="font">
+   <font>
+    <pointsize>7</pointsize>
+   </font>
+  </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
@@ -147,7 +152,7 @@
                 <widget class="QLabel" name="label_X">
                  <property name="font">
                   <font>
-                   <pointsize>9</pointsize>
+                   <pointsize>7</pointsize>
                   </font>
                  </property>
                  <property name="autoFillBackground">
@@ -262,7 +267,7 @@
               </property>
               <property name="font">
                <font>
-                <pointsize>9</pointsize>
+                <pointsize>7</pointsize>
                </font>
               </property>
               <property name="wrapping">
@@ -367,7 +372,7 @@
                 <widget class="QLabel" name="label_Y">
                  <property name="font">
                   <font>
-                   <pointsize>9</pointsize>
+                   <pointsize>7</pointsize>
                   </font>
                  </property>
                  <property name="autoFillBackground">
@@ -476,7 +481,7 @@
               </property>
               <property name="font">
                <font>
-                <pointsize>9</pointsize>
+                <pointsize>7</pointsize>
                </font>
               </property>
               <property name="wrapping">
@@ -581,7 +586,7 @@
                 <widget class="QLabel" name="label_Extent">
                  <property name="font">
                   <font>
-                   <pointsize>9</pointsize>
+                   <pointsize>7</pointsize>
                   </font>
                  </property>
                  <property name="autoFillBackground">
@@ -690,7 +695,7 @@
               </property>
               <property name="font">
                <font>
-                <pointsize>9</pointsize>
+                <pointsize>7</pointsize>
                </font>
               </property>
               <property name="wrapping">
@@ -774,7 +779,7 @@
               </property>
               <property name="font">
                <font>
-                <pointsize>9</pointsize>
+                <pointsize>7</pointsize>
                </font>
               </property>
               <property name="title">
@@ -876,7 +881,7 @@
               </property>
               <property name="font">
                <font>
-                <pointsize>9</pointsize>
+                <pointsize>7</pointsize>
                </font>
               </property>
               <property name="title">
@@ -1056,7 +1061,7 @@
                    <widget class="QLabel" name="label_Speed">
                     <property name="font">
                      <font>
-                      <pointsize>9</pointsize>
+                      <pointsize>7</pointsize>
                      </font>
                     </property>
                     <property name="autoFillBackground">
@@ -1165,7 +1170,7 @@
                  </property>
                  <property name="font">
                   <font>
-                   <pointsize>9</pointsize>
+                   <pointsize>7</pointsize>
                   </font>
                  </property>
                  <property name="wrapping">
@@ -1270,7 +1275,7 @@
                    <widget class="QLabel" name="label_Progress">
                     <property name="font">
                      <font>
-                      <pointsize>9</pointsize>
+                      <pointsize>7</pointsize>
                      </font>
                     </property>
                     <property name="autoFillBackground">
@@ -1484,7 +1489,7 @@
                    <widget class="QLabel" name="label_Angle">
                     <property name="font">
                      <font>
-                      <pointsize>9</pointsize>
+                      <pointsize>7</pointsize>
                      </font>
                     </property>
                     <property name="autoFillBackground">
@@ -1593,7 +1598,7 @@
                  </property>
                  <property name="font">
                   <font>
-                   <pointsize>9</pointsize>
+                   <pointsize>7</pointsize>
                   </font>
                  </property>
                  <property name="wrapping">
@@ -1698,7 +1703,7 @@
                    <widget class="QLabel" name="label_Radius">
                     <property name="font">
                      <font>
-                      <pointsize>9</pointsize>
+                      <pointsize>7</pointsize>
                      </font>
                     </property>
                     <property name="autoFillBackground">
@@ -1807,7 +1812,7 @@
                  </property>
                  <property name="font">
                   <font>
-                   <pointsize>9</pointsize>
+                   <pointsize>7</pointsize>
                   </font>
                  </property>
                  <property name="wrapping">
@@ -1912,7 +1917,7 @@
                    <widget class="QLabel" name="label_RadiusInt">
                     <property name="font">
                      <font>
-                      <pointsize>9</pointsize>
+                      <pointsize>7</pointsize>
                      </font>
                     </property>
                     <property name="autoFillBackground">
@@ -2021,7 +2026,7 @@
                  </property>
                  <property name="font">
                   <font>
-                   <pointsize>9</pointsize>
+                   <pointsize>7</pointsize>
                   </font>
                  </property>
                  <property name="wrapping">
@@ -2126,7 +2131,7 @@
                    <widget class="QLabel" name="label_Stretch">
                     <property name="font">
                      <font>
-                      <pointsize>9</pointsize>
+                      <pointsize>7</pointsize>
                      </font>
                     </property>
                     <property name="autoFillBackground">
@@ -2235,7 +2240,7 @@
                  </property>
                  <property name="font">
                   <font>
-                   <pointsize>9</pointsize>
+                   <pointsize>7</pointsize>
                   </font>
                  </property>
                  <property name="wrapping">
@@ -2340,7 +2345,7 @@
                    <widget class="QLabel" name="label_Expansion">
                     <property name="font">
                      <font>
-                      <pointsize>9</pointsize>
+                      <pointsize>7</pointsize>
                      </font>
                     </property>
                     <property name="whatsThis">
@@ -2452,7 +2457,7 @@
                  </property>
                  <property name="font">
                   <font>
-                   <pointsize>9</pointsize>
+                   <pointsize>7</pointsize>
                   </font>
                  </property>
                  <property name="wrapping">
@@ -2536,7 +2541,7 @@
           <widget class="QLabel" name="label_Name">
            <property name="font">
             <font>
-             <pointsize>9</pointsize>
+             <pointsize>7</pointsize>
             </font>
            </property>
            <property name="frameShape">
@@ -2627,7 +2632,7 @@
            </property>
            <property name="font">
             <font>
-             <pointsize>9</pointsize>
+             <pointsize>7</pointsize>
             </font>
            </property>
            <property name="frameShape">
@@ -2749,7 +2754,7 @@
            </property>
            <property name="font">
             <font>
-             <pointsize>9</pointsize>
+             <pointsize>7</pointsize>
             </font>
            </property>
            <property name="title">
