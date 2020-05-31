@@ -1,3 +1,11 @@
+## frontieres version 0.11.1
+
+apport du dernier pr :
+
+- documentation. version 0.11.1-1 de la doc de Frontieres repertoire doc
+- traduction. quelques changement (gamme plutot que échelle, par exemple)
+- visuel parametres. changement de taille de quelques textes pour uniformiser
+
 ## frontieres version 0.11.0
 
 apport du dernier pr :
