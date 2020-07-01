@@ -62,6 +62,7 @@ void ControlDialog::linkCloud(Cloud *cloudLinked)
 {
     linking = true;
     cloudRef = cloudLinked;
+    scaleRef = cloudLinked->getScale();
     controlGraphicsView->linkCloud(cloudLinked, this);
     if (!cloudRef->getActiveState())
         myNode.setActiveState(false);
@@ -200,9 +201,9 @@ void ControlDialog::drawScale()
 
     QPen graypen (Qt::gray);
 
-    for (int i = 0; i < myScale.getSize(); i = i + 1) {
+    for (int i = 0; i < scaleRef->getSize(); i = i + 1) {
         if (orientation == VERTICAL) {
-            int l_y = - (myScale.getScalePosition(i).pitchInterval / ui->doubleSpinBox_Zoom->value());
+            int l_y = - (scaleRef->getScalePosition(i).pitchInterval / ui->doubleSpinBox_Zoom->value());
             if ((l_y >= - ampControl) && (l_y <= ampControl)) {
                 QGraphicsItem *l_line;
                 l_line = controlGraphicScene->addLine(-(ampControl + 10),
@@ -213,7 +214,7 @@ void ControlDialog::drawScale()
             }
         }
         else {
-            int l_y = (myScale.getScalePosition(i).pitchInterval / ui->doubleSpinBox_Zoom->value());
+            int l_y = (scaleRef->getScalePosition(i).pitchInterval / ui->doubleSpinBox_Zoom->value());
             if ((l_y >= - ampControl) && (l_y <= ampControl)) {
                 QGraphicsItem *l_line;
                 l_line = controlGraphicScene->addLine(l_y,
@@ -236,12 +237,12 @@ void ControlDialog::drawScale()
 
 double ControlDialog::nearestScalePosition(double c_interval, double c_minInterval, double c_maxInterval)
 {
-    return myScale.nearest(c_interval, c_minInterval, c_maxInterval);
+    return scaleRef->nearest(c_interval, c_minInterval, c_maxInterval);
 }
 
 double ControlDialog::getIntervalFromScale(int l_i)
 {
-    return myScale.getScalePosition(l_i - 1).pitchInterval;
+    return scaleRef->getScalePosition(l_i - 1).pitchInterval;
 }
 
 bool ControlDialog::scaleAttraction()
@@ -356,7 +357,7 @@ void ControlDialog::on_pushButton_add_pressed()
 {
     ScalePosition l_scalePosition;
     l_scalePosition.pitchInterval = ui->doubleSpinBox_Interval->value();
-    myScale.insertScalePosition(l_scalePosition);
+    scaleRef->insertScalePosition(l_scalePosition);
 
     drawScale();
 }
@@ -365,11 +366,38 @@ void ControlDialog::on_pushButton_reset_pressed()
 {
     controlGraphicScene->removeItem(&myNode);
     controlGraphicScene->clear();
-    myScale.reset();
+    scaleRef->reset();
     initScene();
 }
 
 void ControlDialog::on_pushButton_attraction_toggled(bool checked)
 {
     myScaleAttraction = checked;
+}
+
+void ControlDialog::on_pushButton_save_pressed()
+{
+    std::string nameScaleFile = scaleRef->askNameScale(FileDirection::Save);
+    if (nameScaleFile.empty())
+        return;
+
+    QFile scaleFile(QString::fromStdString(nameScaleFile));
+    scaleRef->save(scaleFile);
+}
+
+void ControlDialog::on_pushButton_load_pressed()
+{
+    std::string nameScaleFile = scaleRef->askNameScale(FileDirection::Load);
+    if (nameScaleFile.empty())
+        return;
+    
+    controlGraphicScene->removeItem(&myNode);
+    controlGraphicScene->clear();
+    scaleRef->reset();
+    
+    QFile scaleFile(QString::fromStdString(nameScaleFile));
+    scaleRef->load(scaleFile);
+
+    initScene();
+    drawScale();
 }

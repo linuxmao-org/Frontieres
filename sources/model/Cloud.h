@@ -53,6 +53,7 @@
 #include "dsp/Window.h"
 #include "visual/Trajectory.h"
 #include "model/Phrase.h"
+#include "model/Scale.h"
 
 class Grain;
 struct SceneSample;
@@ -252,6 +253,8 @@ public:
     void setCtrlShade(float l_ctrShade);
     float getCtrlShade();
 
+    Scale* getScale();
+
 protected:
     // update internal trigger point
     void updateBangTime();
@@ -341,6 +344,7 @@ private:
 
     // sequence actualisation
     Control myControl;
+    Scale myScale;
     Phrase myPhrase;
 
 };

@@ -590,13 +590,13 @@
         <property name="minimumSize">
          <size>
           <width>100</width>
-          <height>100</height>
+          <height>150</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
           <width>100</width>
-          <height>100</height>
+          <height>150</height>
          </size>
         </property>
         <property name="frameShape">
@@ -627,7 +627,7 @@
            <property name="font">
             <font>
              <pointsize>7</pointsize>
-             <italic>true</italic>
+             <italic>false</italic>
             </font>
            </property>
            <property name="focusPolicy">
@@ -643,7 +643,7 @@
            <property name="font">
             <font>
              <pointsize>7</pointsize>
-             <italic>true</italic>
+             <italic>false</italic>
             </font>
            </property>
            <property name="focusPolicy">
@@ -675,6 +675,36 @@
            </property>
            <property name="checkable">
             <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_save">
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text">
+            <string>&amp;Save</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pushButton_load">
+           <property name="font">
+            <font>
+             <pointsize>7</pointsize>
+            </font>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="text">
+            <string>&amp;Load</string>
            </property>
           </widget>
          </item>

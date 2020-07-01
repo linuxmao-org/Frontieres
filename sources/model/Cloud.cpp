@@ -880,6 +880,11 @@ float Cloud::getCtrlShade()
     return ctrlShade;
 }
 
+Scale *Cloud::getScale()
+{
+    return &myScale;
+}
+
 bool Cloud::getActiveRestartTrajectory()
 {
     return activeRestartTrajectory;
