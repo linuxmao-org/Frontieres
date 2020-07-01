@@ -31,6 +31,7 @@
 // my includes
 #include "theglobals.h"
 #include "Frontieres.h"
+#include "Version.h"
 
 // graphics includes
 #include <qopengl.h>

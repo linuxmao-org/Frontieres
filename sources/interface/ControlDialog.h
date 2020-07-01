@@ -59,6 +59,7 @@ public:
     double nearestScalePosition(double c_interval, double c_minInterval, double c_maxInterval);
     double getIntervalFromScale(int l_i);
     bool scaleAttraction();
+    std::string askNameScale(FileDirection direction);
 
 private slots:
 
@@ -80,6 +81,10 @@ private slots:
 
     void on_pushButton_attraction_toggled(bool checked);
 
+    void on_pushButton_save_pressed();
+
+    void on_pushButton_load_pressed();
+
 private:
     const int ampControl = 240;
     Ui::ControlDialog *ui;
@@ -95,7 +100,7 @@ private:
     float zoom = 0.05f;
     bool orientation = VERTICAL;
     bool myScaleAttraction = false;
-    Scale myScale;
+    Scale *scaleRef;
 //    vector<ScalePosition *> myScalePositions;
 };
 

@@ -1,3 +1,11 @@
+## frontieres version 0.11.2
+
+apport du dernier pr :
+
+- documentation. version 0.11.2-1 de la doc de Frontieres repertoire doc
+- traduction. boutons load et save
+- controleur de nuages : sauvegarde et recharge des gammes
+
 ## frontieres version 0.11.1
 
 apport du dernier pr :

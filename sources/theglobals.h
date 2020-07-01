@@ -31,7 +31,6 @@
 #ifndef THEGLOBALS_H
 #define THEGLOBALS_H
 
-
 #include <stdlib.h>
 
 enum EnvelopeAction { TriggerEnvelope = 1, ReleaseEnvelope = 2 };
@@ -107,5 +106,6 @@ enum class FileDirection {
 static const char *g_extensionScene = ".scn";
 static const char *g_extensionCloud = ".cld";
 static const char *g_extensionTrajectory = ".trj";
+static const char *g_extensionScale = ".scl";
 
 #endif
