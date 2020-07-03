@@ -109,7 +109,7 @@ void ControlDialog::updateControlPosition()
         updateFromControlPosition(n_shade, n_interval);
     }
     else {
-        updateFromControlPosition(-n_interval, n_shade);
+        updateFromControlPosition(-n_interval, -n_shade);
     }
 }
 
@@ -223,16 +223,8 @@ void ControlDialog::drawScale()
                                                       ampControl + 10,
                                                       graypen);
             }
-           /* myScalePositions[i]->line = controlGraphicScene->addLine((ampControl/2),
-                                                                     -(ampControl + 10),
-                                                                     (ampControl/2),
-                                                                     (ampControl + 10),
-                                                                     graypen);
-            //controlGraphicScene->addLine(vertLine,graypen);
-            //controlGraphicScene->addLine(myScalePositions[i]->line);//,graypen);*/
         }
     }
-//    cout << endl;
 }
 
 double ControlDialog::nearestScalePosition(double c_interval, double c_minInterval, double c_maxInterval)
@@ -296,7 +288,7 @@ void MyQGraphicsView::mouseReleaseEvent(QMouseEvent *eventMouse)
     draging = false;
     if (myControl->scaleAttraction()) {
         double l_interval = myControl->getInterval();
-        double l_nearestPosition = myControl->nearestScalePosition(l_interval, myControl->getMinInterval(),myControl->getMaxInterval());
+        double l_nearestPosition = myControl->nearestScalePosition(l_interval, myControl->getMinInterval(), myControl->getMaxInterval());
         myControl->setInterval(l_nearestPosition);
     }
 }
