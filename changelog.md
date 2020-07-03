@@ -1,3 +1,9 @@
+## frontieres version 0.11.3
+
+apport du dernier pr :
+
+- controleur de nuages : reparation bug d'attraction en contrôle horizontal
+
 ## frontieres version 0.11.2
 
 apport du dernier pr :
