@@ -445,6 +445,20 @@ bool Scene::load(QFile &sceneFile)
             cloudVisToLoad->setGrainPosition(l_numGrain, l_g_x, l_g_y);
         }
 
+        QJsonArray docScalePositions = objCloud["scale"].toArray();
+        for (const QJsonValue &jsonElementScalePosition : docScalePositions) { // scale positions
+            QJsonObject objScalePosition = jsonElementScalePosition.toObject();
+
+            double l_interval = objScalePosition["interval"].toDouble();
+
+            cout << "interval : " << l_interval << endl;
+
+            ScalePosition l_scalePosition;
+            l_scalePosition.pitchInterval = l_interval;
+            cloudToLoad->getScale()->insertScalePosition(l_scalePosition);
+        }
+
+
         //cloudVisToLoad->setTrajectoryType(type);
         if(hasTrajectory) {
             Trajectory *tr=nullptr;
@@ -939,6 +953,27 @@ bool Scene::save(QFile &sceneFile)
             docGrains.append(objGrain);
         }
         objCloud["grains"] = docGrains;
+
+        // scale positions
+
+        QJsonArray docScalePositions;
+        QJsonObject objScalePosition;
+        cout << cloudToSave->getScale()->getSize() << " positions : " << "\n";
+        for (int i = 0, n = cloudToSave->getScale()->getSize(); i < n; ++i) {
+
+            cout << "Scale position " << i << " : ";
+            cout << cloudToSave->getScale()->getScalePosition(i).pitchInterval << "\n";
+    //        cout << "- name : " << myScalePositions[i]->name << "\n";
+
+            QJsonObject objScalePosition;
+
+    //        objPosition["name"] = myScalePositions[i]->name;
+            objScalePosition["interval"] = cloudToSave->getScale()->getScalePosition(i).pitchInterval;
+
+            docScalePositions.append(objScalePosition);
+
+        }
+        objCloud["scale"] = docScalePositions;
 
         //trajectory
         objCloud["has-trajectory"] = cloudVisToSave->hasTrajectory();

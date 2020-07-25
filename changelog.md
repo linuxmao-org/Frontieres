@@ -1,3 +1,9 @@
+## frontieres version 0.11.4
+
+apport du dernier pr :
+
+- sauvegarde de scène : ajout de la sauvegarde et de la recharge des gammes des contrôleurs de nuages
+
 ## frontieres version 0.11.3
 
 apport du dernier pr :
