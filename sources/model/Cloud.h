@@ -254,6 +254,7 @@ public:
     float getCtrlShade();
 
     Scale* getScale();
+    void insertScalePosition(ScalePosition n_scalePosition);
 
 protected:
     // update internal trigger point

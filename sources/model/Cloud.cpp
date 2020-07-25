@@ -885,6 +885,11 @@ Scale *Cloud::getScale()
     return &myScale;
 }
 
+void Cloud::insertScalePosition(ScalePosition n_scalePosition)
+{
+    myScale.insertScalePosition(n_scalePosition);
+}
+
 bool Cloud::getActiveRestartTrajectory()
 {
     return activeRestartTrajectory;

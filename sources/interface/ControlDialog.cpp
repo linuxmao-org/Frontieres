@@ -67,6 +67,7 @@ void ControlDialog::linkCloud(Cloud *cloudLinked)
     if (!cloudRef->getActiveState())
         myNode.setActiveState(false);
     updateFromControlPosition(0, 0);
+    drawScale();
     linking = false;
 }
 
