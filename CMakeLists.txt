@@ -114,7 +114,8 @@ qt5_wrap_ui(Frontieres_UI_SOURCES
   sources/interface/StartDialog.ui
   sources/interface/AboutDialog.ui
   sources/interface/TriggerDialog.ui
-  sources/interface/ControlDialog.ui)
+  sources/interface/ControlDialog.ui
+  sources/interface/PhraseDialog.ui)
 
 target_sources(Frontieres PRIVATE ${Frontieres_UI_SOURCES})
 target_link_libraries(Frontieres PRIVATE Qt5::Widgets Qt5::OpenGL)
