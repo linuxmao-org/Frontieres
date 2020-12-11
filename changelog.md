@@ -1,3 +1,10 @@
+## frontieres version 0.12.1
+
+apport du dernier pr :
+
+- gestion de phrase : ajout de phrase aux nuages, variation de hauteur, de nuances, silence
+
+
 ## frontieres version 0.11.4
 
 apport du dernier pr :

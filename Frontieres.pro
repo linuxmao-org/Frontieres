@@ -14,11 +14,9 @@ DEFINES += __LINUX_ALSA__
 DEFINES += __LINUX_PULSE__
 
 INCLUDEPATH += $$PWD/libraries/QtFont3D
-SOURCES += libraries/QtFont3D/QtFont3D.cpp \
-    sources/model/Scale.cpp
+SOURCES += libraries/QtFont3D/QtFont3D.cpp
 HEADERS += libraries/QtFont3D/QtFont3D.h \
-    sources/Version.h \
-    sources/model/Scale.h
+    sources/Version.h
 
 unix: {
   isEmpty(INSTALL_PREFIX) {
@@ -63,6 +61,7 @@ SOURCES += \
   sources/interface/MonitorWidget.cpp \
   sources/interface/TriggerDialog.cpp \
   sources/interface/ControlDialog.cpp \
+  sources/interface/PhraseDialog.cpp \
   sources/dsp/Window.cpp \
   sources/model/MidiBank.cpp \
   sources/model/MidiCombi.cpp \
@@ -75,6 +74,7 @@ SOURCES += \
   sources/model/ParamAdsr.cpp \
   sources/model/Trigger.cpp \
   sources/model/Phrase.cpp \
+  sources/model/Scale.cpp \
   sources/visual/SampleVis.cpp \
   sources/visual/GrainVis.cpp \
   sources/visual/CloudVis.cpp \
@@ -111,6 +111,7 @@ HEADERS += \
   sources/interface/MonitorWidget.h \
   sources/interface/TriggerDialog.h \
   sources/interface/ControlDialog.h \
+  sources/interface/PhraseDialog.h \
   sources/dsp/Window.h \
   sources/model/MidiBank.h \
   sources/model/MidiCombi.h \
@@ -124,6 +125,7 @@ HEADERS += \
   sources/model/ParamCloud.h \
   sources/model/Trigger.h \
   sources/model/Phrase.h \
+  sources/model/Scale.h \
   sources/visual/SampleVis.h \
   sources/visual/GrainVis.h \
   sources/visual/CloudVis.h \
@@ -152,7 +154,8 @@ FORMS += \
   sources/interface/InstrumDialog.ui \
   sources/interface/AboutDialog.ui \
   sources/interface/TriggerDialog.ui \
-  sources/interface/ControlDialog.ui
+  sources/interface/ControlDialog.ui \
+    sources/interface/PhraseDialog.ui
 
 TRANSLATIONS += \
   translations/Frontieres_fr_FR.ts

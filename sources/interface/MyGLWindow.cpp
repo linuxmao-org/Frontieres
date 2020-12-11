@@ -323,7 +323,9 @@ void MyGLScreen::paintGL()
         // render clouds if they exist
         for (int i = 0, n = scene->m_clouds.size(); i < n; i++) {
             CloudVis &gv = *scene->m_clouds[i]->view;
+            Cloud &gm = *scene->m_clouds[i]->cloud;
             gv.draw();
+            gm.phraseActualise();
         }
 
         // render triggers if they exist
@@ -856,6 +858,16 @@ void MyGLScreen::keyAction_EditControl()
     }
 }
 
+void MyGLScreen::keyAction_EditPhrase()
+{
+    Scene *scene = ::currentScene;
+    SceneCloud *selectedCloud = scene->selectedCloud();
+
+    if (selectedCloud) {
+        theApplication->showPhraseDialog(selectedCloud);
+    }
+}
+
 void MyGLScreen::keyAction_SampleNames()
 {
     // see name of cloud or sample
@@ -893,6 +905,14 @@ void MyGLScreen::contextMenu_control()
     SceneCloud *selectedCloud = scene->selectedCloud();
     if (selectedCloud)
         keyAction_EditControl();
+}
+
+void MyGLScreen::contextMenu_phrase()
+{
+    Scene *scene = ::currentScene;
+    SceneCloud *selectedCloud = scene->selectedCloud();
+    if (selectedCloud)
+        keyAction_EditPhrase();
 }
 
 void MyGLScreen::contextMenu_fixInput()
@@ -1119,17 +1139,23 @@ void MyGLScreen::mousePressEvent(QMouseEvent *event)
                 QAction *separator_2 = contextMenu.addSeparator();
                 addAction(separator_2);
 
+                QAction * pAction_phrase = contextMenu.addAction(icon, QObject::tr("Cloud phrase"));
+                connect(pAction_phrase, SIGNAL(triggered()), this, SLOT(contextMenu_phrase()));
+
+                QAction *separator_3 = contextMenu.addSeparator();
+                addAction(separator_3);
+
                 QAction * pAction_newCloud = contextMenu.addAction(icon, QObject::tr("Create new cloud (G)"));
                 connect(pAction_newCloud, SIGNAL(triggered()), this, SLOT(contextMenu_newCloud()));
 
-                QAction *separator_3 = contextMenu.addSeparator();addAction(separator_2);
-                addAction(separator_3);
+                QAction *separator_4 = contextMenu.addSeparator();addAction(separator_2);
+                addAction(separator_4);
 
                 QAction * pAction_newTrigger = contextMenu.addAction(icon, QObject::tr("Create new trigger (H)"));
                 connect(pAction_newTrigger, SIGNAL(triggered()), this, SLOT(contextMenu_newTrigger()));
 
-                QAction *separator_4 = contextMenu.addSeparator();addAction(separator_2);
-                addAction(separator_4);
+                QAction *separator_5 = contextMenu.addSeparator();addAction(separator_2);
+                addAction(separator_5);
 
                 QAction * pAction_recordTraj = contextMenu.addAction(icon, QObject::tr("Record trajectory"));
                 connect(pAction_recordTraj, SIGNAL(triggered()), this, SLOT(contextMenu_recordTrajectory()));

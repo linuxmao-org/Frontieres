@@ -74,11 +74,12 @@ void Node::setActiveState(bool l_activeSate)
         currentColor = colorActive;
         currentDarkColor = colorDarkActive;
     }
-    else
-    {
+    else {
         currentColor = colorInActive;
         currentDarkColor = colorDarkInActive;
     }
+    this->hide();
+    this->show();
 }
 
 bool Node::getActiveSate()

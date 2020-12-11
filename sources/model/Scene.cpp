@@ -459,6 +459,52 @@ bool Scene::load(QFile &sceneFile)
         }
 
 
+        QJsonArray docPhrase = objCloud["phrase"].toArray();
+        for (const QJsonValue &jsonElementPhrase : docPhrase) {
+            QJsonObject objPhrase = jsonElementPhrase.toObject();
+
+            int l_tempo = objPhrase["tempo"].toInt();
+            cout << "tempo : " << l_tempo << endl;
+            cloudToLoad->getPhrase()->setTempo(l_tempo);
+
+            bool l_active = objPhrase["active"].toBool();
+            cout << "active : " << l_active << endl;
+            cloudToLoad->getPhrase()->setActiveState(l_active);
+
+            QJsonArray docIntervals = objPhrase["intervals"].toArray();
+            for (const QJsonValue &jsonElementInterval : docIntervals) {
+                QJsonObject objInterval = jsonElementInterval.toObject();
+
+                ControlPoint l_interval;
+
+                l_interval.delay = objInterval["delay"].toDouble();
+                l_interval.value = objInterval["value"].toDouble();
+                l_interval.silence = objInterval["silence"].toBool();
+
+                cout << "delay : " << l_interval.delay << endl;
+                cout << "value : " << l_interval.value << endl;
+                cout << "silence : " << l_interval.silence << endl;
+
+                cloudToLoad->getPhrase()->insertControlInterval(l_interval.delay,l_interval.value,l_interval.silence);
+            }
+
+            QJsonArray docShades = objPhrase["shades"].toArray();
+            for (const QJsonValue &jsonElementShade : docShades) {
+                QJsonObject objShade = jsonElementShade.toObject();
+
+                ControlPoint l_shade;
+
+                l_shade.delay = objShade["delay"].toDouble();
+                l_shade.value = objShade["value"].toDouble();
+
+                cout << "delay : " << l_shade.delay << endl;
+                cout << "value : " << l_shade.value << endl;
+
+                cloudToLoad->getPhrase()->insertControlShade(l_shade.delay,l_shade.value);
+            }
+        }
+
+
         //cloudVisToLoad->setTrajectoryType(type);
         if(hasTrajectory) {
             Trajectory *tr=nullptr;
@@ -975,7 +1021,59 @@ bool Scene::save(QFile &sceneFile)
         }
         objCloud["scale"] = docScalePositions;
 
+        // phrase
+
+        QJsonArray docPhrase;
+        QJsonObject objPhrase;
+
+        objPhrase["tempo"] = cloudToSave->getPhrase()->getTempo();
+        objPhrase["active"] = cloudToSave->getPhrase()->getActiveState();
+
+        QJsonArray docIntervals;
+
+        cout << cloudToSave->getPhrase()->getMyControlIntervalSize() << " intervals : " << "\n";
+        for (int i = 1, n = cloudToSave->getPhrase()->getMyControlIntervalSize(); i < n; ++i) {
+
+            cout << "Phrase interval " << i << ", delay : ";
+            cout << cloudToSave->getPhrase()->getControlInterval(i).delay
+                 << ",value :" << cloudToSave->getPhrase()->getControlInterval(i).value
+                 << ", silence :" << cloudToSave->getPhrase()->getControlInterval(i).silence << "\n";
+
+            QJsonObject objInterval;
+
+            objInterval["value"] = cloudToSave->getPhrase()->getControlInterval(i).value;
+            objInterval["delay"] = cloudToSave->getPhrase()->getControlInterval(i).delay;
+            objInterval["silence"] = cloudToSave->getPhrase()->getControlInterval(i).silence;
+
+            docIntervals.append(objInterval);
+        }
+        objPhrase["intervals"] = docIntervals;
+
+        QJsonArray docShades;
+        cout << cloudToSave->getPhrase()->getMyControlShadeSize() << " shades : " << "\n";
+        for (int i = 1, n = cloudToSave->getPhrase()->getMyControlShadeSize(); i < n; ++i) {
+
+            cout << "Shade : " << i << " : ";
+            cout << cloudToSave->getPhrase()->getControlShade(i).value << ", delay = "
+                 << cloudToSave->getPhrase()->getControlShade(i).delay << "\n";
+
+            QJsonObject objShade;
+
+            objShade["value"] = cloudToSave->getPhrase()->getControlShade(i).value;
+            objShade["delay"] = cloudToSave->getPhrase()->getControlShade(i).delay;
+
+            docShades.append(objShade);
+        }
+
+        objPhrase["shades"] = docShades;
+
+        docPhrase.append(objPhrase);
+
+        objCloud["phrase"] = docPhrase;
+
+
         //trajectory
+
         objCloud["has-trajectory"] = cloudVisToSave->hasTrajectory();
         if(cloudVisToSave->hasTrajectory()){
             objCloud["trajectory-type"] = cloudToSave->getTrajectoryType();

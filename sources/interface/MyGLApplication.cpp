@@ -24,6 +24,7 @@
 #include "CloudDialog.h"
 #include "TriggerDialog.h"
 #include "ControlDialog.h"
+#include "PhraseDialog.h"
 #include "OptionsDialog.h"
 #include "Frontieres.h"
 #include "model/Sample.h"
@@ -55,6 +56,9 @@ struct MyGLApplication::Impl {
 
     // control dialogs, according to cloud ID
     std::map<unsigned, ControlDialog *> controlDialogs;
+
+    // phrase dialogs, according to cloud ID
+    std::map<unsigned, PhraseDialog *> phraseDialogs;
 
     void onIdle();
 };
@@ -128,6 +132,7 @@ bool MyGLApplication::loadSceneFile()
     destroyAllCloudDialogs();
     destroyAllTriggerDialogs();
     destroyAllControlDialogs();
+    destroyAllPhraseDialogs();
 
     // load the scene and its samples
     Scene *scene = new Scene;
@@ -345,6 +350,34 @@ void MyGLApplication::showControlDialog(SceneCloud *selectedCloud)
     cout << "showcontroldialog sortie" << endl;
 }
 
+void MyGLApplication::showPhraseDialog(SceneCloud *selectedCloud)
+{
+    cout << "showPhrasedialog entree" << endl;
+    unsigned id = selectedCloud->cloud->getId();
+
+    PhraseDialog *&dlgslot = P->phraseDialogs[id];
+    PhraseDialog *dlg = dlgslot;
+
+    if (!dlg) {
+        // if not existing, create it and insert it in the map
+        dlg = new PhraseDialog;
+        dlg->setWindowTitle(tr("Cloud phrase"));
+        dlgslot = dlg;
+        dlg->show();
+    }
+    else {
+        QPoint posdlg = dlg->pos();
+        dlg->hide();
+        dlg->show();
+        dlg->move(posdlg);
+    }
+    cout << "showPhrasedialog milieu" << endl;
+    //selectedCloud->cloud.get()->changesDone(true);
+    //selectedCloud->view.get()->changesDone(true);
+    dlg->linkCloud(selectedCloud->cloud.get());
+    cout << "showPhrasedialog sortie" << endl;
+}
+
 void MyGLApplication::destroyCloudDialog(unsigned selectedCloudId)
 {
     auto it = P->cloudDialogs.find(selectedCloudId);
@@ -392,6 +425,23 @@ void MyGLApplication::destroyControlDialog(unsigned selectedCloudId)
     cout << "sortie destroycontroldialog" << endl;
 }
 
+void MyGLApplication::destroyPhraseDialog(unsigned selectedCloudId)
+{
+    cout << "entree destroyPhraseDialog" << endl;
+    auto it = P->phraseDialogs.find(selectedCloudId);
+
+    if (it == P->phraseDialogs.end())
+        return;  // not found
+
+    PhraseDialog *dlg = it->second;
+    if (!dlg)
+        return;
+
+    delete dlg;
+    P->phraseDialogs.erase(it);
+    cout << "sortie destroyPhraseDialog" << endl;
+}
+
 void MyGLApplication::midiNoteOn(int midiChannelToPlay, int midiKeyToPlay, int midiVeloToPlay)
 {
     currentScene->midiNoteOn(midiChannelToPlay, midiKeyToPlay, midiVeloToPlay);
@@ -420,6 +470,13 @@ void MyGLApplication::destroyAllControlDialogs()
 {
     while (P->controlDialogs.size() > 0){
         destroyControlDialog(P->controlDialogs.begin()->first);
+    }
+}
+
+void MyGLApplication::destroyAllPhraseDialogs()
+{
+    while (P->phraseDialogs.size() > 0){
+        destroyPhraseDialog(P->phraseDialogs.begin()->first);
     }
 }
 

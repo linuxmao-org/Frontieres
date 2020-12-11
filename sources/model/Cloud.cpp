@@ -203,6 +203,7 @@ Cloud::Cloud(VecSceneSample *sampleSet, float theNumGrains)
     //isActive = g_defaultCloudParams.activateState;
 
     setActiveState(g_defaultCloudParams.activateState);
+    myPhrase.setActiveState(g_defaultCloudParams.activateState);
 
     //midi polyphony
     midiChannel = g_defaultCloudParams.midiChannel;
@@ -242,8 +243,11 @@ void Cloud::setActiveState(bool activateState)
 {
     if (activateState)
        envelopeAction.store(TriggerEnvelope);
+
     else
        envelopeAction.store(ReleaseEnvelope);
+    if (myPhrase.getRestart())
+        myPhrase.setActiveState(activateState);
     isActive = activateState;
 }
 
@@ -803,6 +807,8 @@ void Cloud::changesDone(bool done)
     changed_spatialMode = done;
     changed_trajectoryType = done;
     changed_ActiveRestartTrajectory = done;
+    changed_ctrlInterval = done;
+    changed_ctrlShade = done;
 }
 
 void Cloud::showMessageLocked()
@@ -860,9 +866,10 @@ bool Cloud::changedActiveRestartTrajectory()
     return changed_ActiveRestartTrajectory;
 }
 
-void Cloud::setCtrlInterval(float l_ctrInterval)
+void Cloud::setCtrlInterval(float l_ctrInterval, bool fromOSC)
 {
     ctrlInterval = l_ctrInterval;
+    changed_ctrlInterval = fromOSC;
 }
 
 float Cloud::getCtrlInterval()
@@ -870,9 +877,16 @@ float Cloud::getCtrlInterval()
     return ctrlInterval;
 }
 
-void Cloud::setCtrlShade(float l_ctrShade)
+bool Cloud::changedCtrlInterval()
 {
+    return changed_ctrlInterval;
+}
+
+void Cloud::setCtrlShade(float l_ctrShade, bool fromOSC)
+{
+    //cout << "entre setcontrolshade, " << l_ctrShade << endl;
     ctrlShade = l_ctrShade;
+    changed_ctrlShade = fromOSC;
 }
 
 float Cloud::getCtrlShade()
@@ -880,14 +894,124 @@ float Cloud::getCtrlShade()
     return ctrlShade;
 }
 
+bool Cloud::changedCtrlShade()
+{
+    return changed_ctrlShade;
+}
+
+void Cloud::setCtrlX(int l_x)
+{
+    ctrlX = l_x;
+}
+
+int Cloud::getCtrlX()
+{
+    return ctrlX;
+}
+
+void Cloud::setCtrlY(int l_y)
+{
+    ctrlY = l_y;
+}
+
+int Cloud::getCtrlY()
+{
+    return ctrlY;
+}
+
+void Cloud::setCtrlAutoUpdate(bool n_ctrlAutoUpdate)
+{
+    ctrlAutoUpdate = n_ctrlAutoUpdate;
+}
+
+bool Cloud::getCtrlAutoUpdate()
+{
+    return ctrlAutoUpdate;
+}
+
 Scale *Cloud::getScale()
 {
     return &myScale;
 }
 
+bool Cloud::scaleAttraction()
+{
+    return myScaleAttraction;
+}
+
+void Cloud::setScaleAttraction(bool n_state)
+{
+    myScaleAttraction = n_state;
+}
+
 void Cloud::insertScalePosition(ScalePosition n_scalePosition)
 {
     myScale.insertScalePosition(n_scalePosition);
+}
+
+void Cloud::phraseActualise()
+{
+    if (!myPhrase.getEndedState()) {
+        float l_interval = myPhrase.getInterval();
+        if (scaleAttraction()) {
+            if (scaleAttraction()) {
+                double l_nearestPosition = myScale.nearest(l_interval, -1000000, 1000000);
+                l_interval = l_nearestPosition;
+            }
+        }
+
+        setCtrlInterval(l_interval, false);
+        setCtrlShade(myPhrase.getShade(), false);
+
+        if (myPhrase.getRelease()) {
+            //cout << "getrelease true" << endl;
+//           myNode->setActiveState(false);
+           myPhrase.setRestart(false);
+           setActiveState(false);
+        }
+        if (myPhrase.getAttack()) {
+            //cout << "getattack true" << endl;
+//           myNode->setActiveState(false);
+           myPhrase.setRestart(false);
+           setActiveState(true);
+        }
+/*       else {
+            cout << "getrelease false" << endl;
+           //myNode->setActiveState(true);
+           myPhrase.setRestart(false);
+           //if (!cloudRef->getActiveState())
+
+           setActiveState(false);
+           setActiveState(true);
+        }*/
+
+        setActualiseByPhrase(true);
+    }
+}
+
+unsigned long Cloud::getPhraseIntervalSize()
+{
+    return myPhrase.getMyControlIntervalSize();
+}
+
+unsigned long Cloud::getPhraseShadeSize()
+{
+    return myPhrase.getMyControlShadeSize();
+}
+
+Phrase *Cloud::getPhrase()
+{
+    return &myPhrase;
+}
+
+void Cloud::setActualiseByPhrase(bool n_state)
+{
+    actualiseByPhrase = n_state;
+}
+
+bool Cloud::getActualiseByPhrase()
+{
+    return actualiseByPhrase;
 }
 
 bool Cloud::getActiveRestartTrajectory()
@@ -956,7 +1080,7 @@ void Cloud::nextBuffer(BUFFERPREC *accumBuff, unsigned int numFrames)
     }
     envelopeVolume->generate(envelopeVolumeBuff, numFrames);
 
-    if (envelopeVolume->state() != Env::State::Off) {
+    if ((envelopeVolume->state() != Env::State::Off)){// && (!getPhrase()->getSilenceState())) {
         // initialize play positions array
         double playPositions[theSamples->size()];
         double playVols[theSamples->size()];

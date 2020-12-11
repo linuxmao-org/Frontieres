@@ -248,13 +248,32 @@ public:
     bool getActiveRestartTrajectory ();
     bool changedActiveRestartTrajectory();
 
-    void setCtrlInterval(float l_ctrInterval);
+    void setCtrlInterval(float l_ctrInterval, bool fromOSC);
     float getCtrlInterval();
-    void setCtrlShade(float l_ctrShade);
+    bool changedCtrlInterval ();
+
+    void setCtrlShade(float l_ctrShade, bool fromOSC);
     float getCtrlShade();
+    bool changedCtrlShade ();
+
+    void setCtrlX (int l_x);
+    int getCtrlX();
+    void setCtrlY (int l_y);
+    int getCtrlY();
+    void setCtrlAutoUpdate(bool n_ctrlAutoUpdate);
+    bool getCtrlAutoUpdate();
 
     Scale* getScale();
+    bool scaleAttraction();
+    void setScaleAttraction(bool n_state);
     void insertScalePosition(ScalePosition n_scalePosition);
+
+    void phraseActualise();
+    unsigned long getPhraseIntervalSize();
+    unsigned long getPhraseShadeSize();
+    Phrase* getPhrase();
+    void setActualiseByPhrase(bool n_state);
+    bool getActualiseByPhrase();
 
 protected:
     // update internal trigger point
@@ -297,8 +316,13 @@ private:
     double *intermediateBuff;
     //enum EnvelopeAction { TriggerEnvelope = 1, ReleaseEnvelope = 2 };
     std::atomic<int> envelopeAction;
+
+    // controller
     float ctrlInterval = 0.0f;
     float ctrlShade = 1.0f;
+    int ctrlX = 0;
+    int ctrlY = 0;
+    bool ctrlAutoUpdate = false;
 
 
     // vector of grains
@@ -319,6 +343,8 @@ private:
     bool changed_myDirMode = false;
     bool changed_windowType = false;
     bool changed_trajectoryType = false;
+    bool changed_ctrlInterval = false;
+    bool changed_ctrlShade = false;
 
     // audio files
     VecSceneSample *theSamples;
@@ -344,9 +370,11 @@ private:
     CloudMidi *playedCloudMidi[g_maxMidiVoices];
 
     // sequence actualisation
-    Control myControl;
+    ControlPoint myControlPoint;
     Scale myScale;
     Phrase myPhrase;
+    bool actualiseByPhrase = false;
+    bool myScaleAttraction = false;
 
 };
 

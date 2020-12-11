@@ -107,5 +107,7 @@ static const char *g_extensionScene = ".scn";
 static const char *g_extensionCloud = ".cld";
 static const char *g_extensionTrajectory = ".trj";
 static const char *g_extensionScale = ".scl";
+static const char *g_extensionPhrase = ".phr";
+
 
 #endif

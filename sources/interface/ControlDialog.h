@@ -40,6 +40,7 @@ public:
     void updateFromControlPosition(float l_x, float l_y);
     void updateControlPosition();
     void updateMinMax();
+    void updateValues(float l_interval, float l_shade);
     void setLimits(Node &nodeToLimit, NodeLimits &nodeLimitsToGive,
                    bool t_minX, float valueMinX,
                    bool t_maxX, float valueMaxX,
@@ -85,11 +86,14 @@ private slots:
 
     void on_pushButton_load_pressed();
 
+    void autoUpdate();
+
 private:
     const int ampControl = 240;
     Ui::ControlDialog *ui;
     bool linking = false;
     Cloud *cloudRef;
+    bool autoUpdating = false;
     Node myNode;
     NodeLimits limits_control;
     QGraphicsScene *controlGraphicScene;
@@ -124,6 +128,7 @@ private:
     QGraphicsScene *myScene;
     ControlDialog *myControl;
     bool draging = false;
+    int old_c_x, old_c_y;
 };
 
 #endif // CONTROLDIALOG_H
