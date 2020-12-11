@@ -43,6 +43,7 @@ add_executable(Frontieres WIN32
   sources/interface/MonitorWidget.cpp
   sources/interface/TriggerDialog.cpp
   sources/interface/ControlDialog.cpp
+  sources/interface/PhraseDialog.cpp
   sources/dsp/Window.cpp
   sources/model/MidiBank.cpp
   sources/model/MidiCombi.cpp

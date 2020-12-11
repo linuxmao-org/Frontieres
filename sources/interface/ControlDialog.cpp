@@ -20,11 +20,44 @@ ControlDialog::ControlDialog(QWidget *parent) :
     myNode.setY(0);
 
     zoom = ui->doubleSpinBox_Zoom->value();
+
+    QTimer *tmAutoUpdate = new QTimer(this);
+    connect(tmAutoUpdate, &QTimer::timeout, this, &ControlDialog::autoUpdate);
+    tmAutoUpdate->start(500);
 }
 
 ControlDialog::~ControlDialog()
 {
     delete ui;
+}
+
+void ControlDialog::autoUpdate()
+{
+    autoUpdating = true;
+    if (cloudRef) {
+        if (cloudRef->getCtrlAutoUpdate()) {
+            //cout << "control autoupdate" << endl;
+            updateFromControlPosition(cloudRef->getCtrlX(), cloudRef->getCtrlY());
+            if (scaleAttraction()) {
+                double l_interval = getInterval();
+                double l_nearestPosition = nearestScalePosition(l_interval, getMinInterval(), getMaxInterval());
+                setInterval(l_nearestPosition);
+            }
+            cloudRef->setCtrlAutoUpdate(false);
+        }
+        if (cloudRef->getActualiseByPhrase()) {
+            //out << "actualise by phrase" << endl;
+            updateValues(cloudRef->getCtrlInterval(),cloudRef->getCtrlShade());
+            if (scaleAttraction()) {
+                double l_interval = getInterval();
+                double l_nearestPosition = nearestScalePosition(l_interval, getMinInterval(), getMaxInterval());
+                setInterval(l_nearestPosition);
+            }
+            cloudRef->setActualiseByPhrase(false);
+        }
+
+    }
+    autoUpdating = false;
 }
 
 void ControlDialog::initScene()
@@ -73,6 +106,7 @@ void ControlDialog::linkCloud(Cloud *cloudLinked)
 
 void ControlDialog::updateFromControlPosition(float l_x, float l_y)
 {
+    //cout << "updadefromcontrolpos, l_x = " << l_x <<", l_y = " << l_y << endl;
     bool c_limited = false;
     if ((myNode.getLimits().minX.exist) && (l_x < myNode.getLimits().minX.value))
         c_limited = true;
@@ -85,12 +119,12 @@ void ControlDialog::updateFromControlPosition(float l_x, float l_y)
     if (!c_limited) {
         myNode.moveToPos(l_x, l_y);
         if (orientation == VERTICAL) {
-            cloudRef->setCtrlInterval(-(l_y * zoom));
-            cloudRef->setCtrlShade(float(l_x + ampControl) / ampControl);
+            cloudRef->setCtrlInterval(-(l_y * zoom), false);
+            cloudRef->setCtrlShade(float(l_x + ampControl) / ampControl, false);
         }
         else {
-            cloudRef->setCtrlInterval(l_x * zoom);
-            cloudRef->setCtrlShade(2 - float(l_y + ampControl) / ampControl);
+            cloudRef->setCtrlInterval(l_x * zoom, false);
+            cloudRef->setCtrlShade(2 - float(l_y + ampControl) / ampControl, false);
         }
         ui->doubleSpinBox_Interval->setValue(cloudRef->getCtrlInterval());
         ui->doubleSpinBox_Shade->setValue(cloudRef->getCtrlShade());
@@ -104,7 +138,14 @@ void ControlDialog::updateControlPosition()
         return;
 
     int n_shade = ((ui->doubleSpinBox_Shade->value() - 1) * ampControl);
-    int n_interval = - (ui->doubleSpinBox_Interval->value() / ui->doubleSpinBox_Zoom->value());
+    int n_interval;
+    if (scaleAttraction()) {
+        double l_interval = ui->doubleSpinBox_Interval->value();
+        double l_nearestPosition = nearestScalePosition(l_interval, getMinInterval(), getMaxInterval());
+        n_interval = - l_nearestPosition / ui->doubleSpinBox_Zoom->value();
+    }
+    else
+        n_interval = - (ui->doubleSpinBox_Interval->value() / ui->doubleSpinBox_Zoom->value());
 
     if (orientation == VERTICAL) {
         updateFromControlPosition(n_shade, n_interval);
@@ -119,11 +160,18 @@ void ControlDialog::updateMinMax()
     float n_interval = ui->doubleSpinBox_Interval->value();
     float n_zoom = ui->doubleSpinBox_Zoom->value();
 
-    float n_zoomMin = (n_interval / 240);
+    float n_zoomMin = (n_interval / ampControl);
     ui->doubleSpinBox_Zoom->setMinimum(abs(n_zoomMin));
-    float n_intervalMax = (n_zoom * 240);
+    float n_intervalMax = (n_zoom * ampControl);
     ui->doubleSpinBox_Interval->setMaximum(abs(n_intervalMax));
     ui->doubleSpinBox_Interval->setMinimum(-abs(n_intervalMax));
+}
+
+void ControlDialog::updateValues(float l_interval, float l_shade)
+{
+    ui->doubleSpinBox_Interval->setValue(l_interval);
+    ui->doubleSpinBox_Shade->setValue(l_shade);
+    updateControlPosition();
 }
 
 void ControlDialog::setLimits(Node &nodeToLimit, NodeLimits &nodeLimitsToGive,
@@ -172,7 +220,7 @@ int ControlDialog::getOrientation()
 
 double ControlDialog::getInterval()
 {
-    cout << "getinterval, value = " << ui->doubleSpinBox_Interval->value() << endl;
+    //cout << "getinterval, value = " << ui->doubleSpinBox_Interval->value() << endl;
     return ui->doubleSpinBox_Interval->value();
 }
 
@@ -240,7 +288,7 @@ double ControlDialog::getIntervalFromScale(int l_i)
 
 bool ControlDialog::scaleAttraction()
 {
-    return myScaleAttraction;
+    return cloudRef->scaleAttraction();
 }
 
 MyQGraphicsView::MyQGraphicsView(QWidget *parent, ControlDialog *l_controlDialog, QGraphicsScene *l_graphicsScene, Node *l_Node)
@@ -262,30 +310,39 @@ void MyQGraphicsView::linkCloud(Cloud *cloudLinked, ControlDialog *l_controldial
 
 void MyQGraphicsView::mousePressEvent(QMouseEvent *eventMouse)
 {
-   if (eventMouse->button() == 2) {
+    //cout << "mousepressevent" << endl;
+    if (eventMouse->button() == 2) {
        myNode->setActiveState(false);
+       cloudRef->getPhrase()->setRestart(false);
        cloudRef->setActiveState(false);
    }
    else {
        myNode->setActiveState(true);
-       if (!cloudRef->getActiveState())
-           cloudRef->setActiveState(true);
+       cloudRef->getPhrase()->setRestart(false);
+       //if (!cloudRef->getActiveState())
+
+       cloudRef->setActiveState(false);
+       cloudRef->setActiveState(true);
    }
    int c_x = eventMouse->x() - (ampControl + (myNode->getWidthNodes() + 3));
    int c_y = eventMouse->y() - (ampControl + (myNode->getWidthNodes() + 3));
 
-   if ((c_x > (myNode->x() - (myNode->getWidthNodes()/2 + 2))) && (c_x < (myNode->x() + (myNode->getWidthNodes()/2 + 2))) &&
+   myControl->updateFromControlPosition(c_x, c_y);
+   draging = true;
+
+/*   if ((c_x > (myNode->x() - (myNode->getWidthNodes()/2 + 2))) && (c_x < (myNode->x() + (myNode->getWidthNodes()/2 + 2))) &&
        (c_y > (myNode->y() - (myNode->getWidthNodes()/2 + 2))) && (c_y < (myNode->y() + (myNode->getWidthNodes()/2 + 2)))) {
        draging = true;
    }
    else {
        myControl->updateFromControlPosition(c_x, c_y);
        draging = true;
-   }
+   }*/
 }
 
 void MyQGraphicsView::mouseReleaseEvent(QMouseEvent *eventMouse)
 {
+    //cout << "mouserelease" << endl;
     draging = false;
     if (myControl->scaleAttraction()) {
         double l_interval = myControl->getInterval();
@@ -299,7 +356,11 @@ void MyQGraphicsView::mouseMoveEvent(QMouseEvent *eventMouse)
     if (draging) {
         int c_x = eventMouse->x() - (ampControl + (myNode->getWidthNodes() + 3));
         int c_y = eventMouse->y() - (ampControl + (myNode->getWidthNodes() + 3));
-        myControl->updateFromControlPosition(c_x, c_y);
+        if ((c_x != old_c_x) || (c_y != old_c_y)) {
+            myControl->updateFromControlPosition(c_x, c_y);
+            old_c_x = c_x;
+            old_c_y = c_y;
+        }
     }
 
 }
@@ -365,7 +426,7 @@ void ControlDialog::on_pushButton_reset_pressed()
 
 void ControlDialog::on_pushButton_attraction_toggled(bool checked)
 {
-    myScaleAttraction = checked;
+    cloudRef->setScaleAttraction(checked);
 }
 
 void ControlDialog::on_pushButton_save_pressed()

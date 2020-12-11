@@ -81,6 +81,7 @@ public slots:
     void keyAction_EditCloud();
     void keyAction_EditTrigger();
     void keyAction_EditControl();
+    void keyAction_EditPhrase();
     void keyAction_SampleNames();
     void keyAction_ShowParameters();
 
@@ -93,6 +94,7 @@ private slots:
     void contextMenu_newTrigger();
     void contextMenu_parameters();
     void contextMenu_control();
+    void contextMenu_phrase();
     void contextMenu_fixInput();
 
 protected:

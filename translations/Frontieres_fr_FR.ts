@@ -608,42 +608,47 @@
 <context>
     <name>MyGLApplication</name>
     <message>
-        <location filename="../sources/interface/MyGLApplication.cpp" line="225"/>
+        <location filename="../sources/interface/MyGLApplication.cpp" line="230"/>
         <source>Load sample</source>
         <translation>Charger l&apos;échantillon</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLApplication.cpp" line="226"/>
+        <location filename="../sources/interface/MyGLApplication.cpp" line="231"/>
         <source>Sample files (*.*)</source>
         <translation>Fichiers d&apos;échantillon (*.*)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLApplication.cpp" line="251"/>
+        <location filename="../sources/interface/MyGLApplication.cpp" line="256"/>
         <source>Input number : </source>
         <translation>Numéro d&apos;entrée : </translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLApplication.cpp" line="281"/>
+        <location filename="../sources/interface/MyGLApplication.cpp" line="286"/>
         <source>Cloud parameters</source>
         <translation>Paramètres du nuage</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLApplication.cpp" line="306"/>
+        <location filename="../sources/interface/MyGLApplication.cpp" line="311"/>
         <source>Trigger parameters</source>
         <translation>Paramètres du déclencheur</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLApplication.cpp" line="332"/>
+        <location filename="../sources/interface/MyGLApplication.cpp" line="337"/>
         <source>Cloud controller</source>
         <translation>Contrôleur du nuage</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLApplication.cpp" line="435"/>
+        <location filename="../sources/interface/MyGLApplication.cpp" line="364"/>
+        <source>Cloud phrase</source>
+        <translation>Phrase</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/MyGLApplication.cpp" line="492"/>
         <source>Combinations</source>
         <translation>Combinaisons</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLApplication.cpp" line="444"/>
+        <location filename="../sources/interface/MyGLApplication.cpp" line="501"/>
         <source>Midi instrument</source>
         <translation>Instrument MIDI</translation>
     </message>
@@ -973,6 +978,115 @@
     </message>
 </context>
 <context>
+    <name>PhraseDialog</name>
+    <message>
+        <source>Dialog</source>
+        <translation type="obsolete">Dialogue</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/PhraseDialog.ui" line="14"/>
+        <source>Phrase</source>
+        <translation>Phrase</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/PhraseDialog.ui" line="42"/>
+        <source>&amp;Interval</source>
+        <translation>&amp;Intervalle</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/PhraseDialog.ui" line="168"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="1236"/>
+        <source>Current</source>
+        <translation>Courrant</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/PhraseDialog.ui" line="220"/>
+        <source>&amp;Silence</source>
+        <translation>&amp;Silence</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/PhraseDialog.ui" line="255"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="1267"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2447"/>
+        <source>&amp;Delete</source>
+        <translation>&amp;Supprimer</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/PhraseDialog.ui" line="346"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="1358"/>
+        <source>Number</source>
+        <translation>Numéro</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/PhraseDialog.ui" line="491"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="906"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="1503"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="1912"/>
+        <source>Delay</source>
+        <translation>Delai</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/PhraseDialog.ui" line="636"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="1051"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="1648"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2057"/>
+        <source>Value</source>
+        <translation>Valeur</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/PhraseDialog.ui" line="778"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="1784"/>
+        <source>New</source>
+        <translation>Nouveau</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/PhraseDialog.ui" line="809"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="1815"/>
+        <source>&amp;Add</source>
+        <translation>&amp;Ajouter</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/PhraseDialog.ui" line="1122"/>
+        <source>&amp;Shade</source>
+        <translation>&amp;Nuance</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2242"/>
+        <source>&amp;Active</source>
+        <translation>&amp;Active</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2337"/>
+        <source>Tempo</source>
+        <translation>Tempo</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2478"/>
+        <source>&amp;Load</source>
+        <translation>&amp;Ouvrir</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2515"/>
+        <source>&amp;Save</source>
+        <translation>&amp;Enregistrer</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2603"/>
+        <source>Scale</source>
+        <translation>Echelle</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2697"/>
+        <source>Horizontal</source>
+        <translation>Horizontal</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2842"/>
+        <source>Vertical</source>
+        <translation>Vertical</translation>
+    </message>
+</context>
+<context>
     <name>QObject</name>
     <message>
         <location filename="../sources/Frontieres.cpp" line="461"/>
@@ -1214,27 +1328,27 @@
         <translation>Fichiers de trajectoires (*%1)</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scene.cpp" line="1736"/>
+        <location filename="../sources/model/Scene.cpp" line="1771"/>
         <source>Load samples</source>
         <translation>Charger les échantillons</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scene.cpp" line="1737"/>
+        <location filename="../sources/model/Scene.cpp" line="1772"/>
         <source>Could not find the sample file &quot;%1&quot;.</source>
         <translation>Impossible de trouver le fichier d&apos;échantillon &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scene.cpp" line="1739"/>
+        <location filename="../sources/model/Scene.cpp" line="1774"/>
         <source>Add a different sample directory</source>
         <translation>Ajouter un répertoire d&apos;échantillon différent</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scene.cpp" line="1740"/>
+        <location filename="../sources/model/Scene.cpp" line="1775"/>
         <source>Discard missing samples</source>
         <translation>Abandonner les échantillons manquants</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scene.cpp" line="1754"/>
+        <location filename="../sources/model/Scene.cpp" line="1789"/>
         <source>Add sample directory</source>
         <translation>Ajouter un répertoire d&apos;échantillon</translation>
     </message>
@@ -1262,60 +1376,65 @@
         <translation type="vanished">Nouveau nuage</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1110"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1130"/>
         <source>Cloud parameters (P)</source>
         <translation>Paramètres du nuage (P)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1081"/>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1122"/>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1153"/>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1174"/>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1190"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1101"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1148"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1179"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1200"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1216"/>
         <source>Create new cloud (G)</source>
         <translation>Nouveau nuage (G)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1075"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1095"/>
         <source>Trigger parameters (P)</source>
         <translation>Paramètres du déclencheur (P)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1087"/>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1128"/>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1159"/>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1180"/>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1196"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1107"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1154"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1185"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1206"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1222"/>
         <source>Create new trigger (H)</source>
         <translation>Nouveau déclencheur (H)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1093"/>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1134"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1113"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1160"/>
         <source>Record trajectory</source>
         <translation>Enregistrer la trajectoire</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1096"/>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1137"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1116"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1163"/>
         <location filename="../sources/model/Scene.cpp" line="152"/>
         <source>Load trajectory</source>
         <translation>Charger une trajectoire</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1100"/>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1141"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1120"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1167"/>
         <location filename="../sources/model/Scene.cpp" line="148"/>
         <source>Save trajectory</source>
         <translation>Sauvegarder la trajectoire</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1116"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1136"/>
         <source>Cloud control</source>
         <translation>Contrôleur du nuage</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1165"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1142"/>
+        <source>Cloud phrase</source>
+        <translation>Phrase</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1191"/>
         <source>Turn input into fixed sample</source>
         <translation>Transformer l&apos;entrée en échantillon fixe</translation>
     </message>
@@ -1333,6 +1452,21 @@
         <location filename="../sources/model/Scale.cpp" line="123"/>
         <source>Load scale</source>
         <translation>Ouvrir la gamme</translation>
+    </message>
+    <message>
+        <location filename="../sources/model/Phrase.cpp" line="338"/>
+        <source>Phrase files (*%1)</source>
+        <translation>Fichiers de phrases (*%1)</translation>
+    </message>
+    <message>
+        <location filename="../sources/model/Phrase.cpp" line="344"/>
+        <source>Save phrase</source>
+        <translation>Enregistrer la phrase</translation>
+    </message>
+    <message>
+        <location filename="../sources/model/Phrase.cpp" line="348"/>
+        <source>Load phrase</source>
+        <translation>Ouvrir la phrase</translation>
     </message>
 </context>
 <context>

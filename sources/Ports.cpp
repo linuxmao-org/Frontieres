@@ -149,6 +149,20 @@ rtosc::Ports rtCloud {
          float arg = rtosc_argument(msg, 0).f;
          sceneCloud->cloud->setLockedState(arg);
      }},
+    {"controlh:f", rDoc("Controlh"), nullptr,
+     [](const char *msg, rtosc::RtData &data) {
+         SceneCloud *sceneCloud = (SceneCloud *)data.obj;
+         sceneCloud->cloud->setCtrlX(rtosc_argument(msg, 1).f);
+         sceneCloud->cloud->setCtrlY(rtosc_argument(msg, 0).f);
+         sceneCloud->cloud->setCtrlAutoUpdate(true);
+     }},
+    {"controlv:f", rDoc("Controlv"), nullptr,
+     [](const char *msg, rtosc::RtData &data) {
+         SceneCloud *sceneCloud = (SceneCloud *)data.obj;
+         sceneCloud->cloud->setCtrlX(rtosc_argument(msg, 0).f);
+         sceneCloud->cloud->setCtrlY(rtosc_argument(msg, 1).f);
+         sceneCloud->cloud->setCtrlAutoUpdate(true);
+     }},        
 };
 
 rtosc::Ports nonRtCloud {
@@ -164,6 +178,14 @@ rtosc::Ports nonRtCloud {
          float arg = rtosc_argument(msg, 0).f;
          sceneCloud->view->setY(arg);
      }},
+    {"xy:f", rDoc("xy"), nullptr,
+     [](const char *msg, rtosc::RtData &data) {
+         SceneCloud *sceneCloud = (SceneCloud *)data.obj;
+         float argx = rtosc_argument(msg, 0).f;
+         float argy = rtosc_argument(msg, 1).f;
+         sceneCloud->view->setX(argx);
+         sceneCloud->view->setY(argy);
+     }},
     {"xExtent:f", rDoc("XExtent"), nullptr,
      [](const char *msg, rtosc::RtData &data) {
          SceneCloud *sceneCloud = (SceneCloud *)data.obj;
@@ -175,6 +197,14 @@ rtosc::Ports nonRtCloud {
          SceneCloud *sceneCloud = (SceneCloud *)data.obj;
          float arg = rtosc_argument(msg, 0).f;
          sceneCloud->view->setFixedYRandExtent(arg);
+     }},
+    {"xyExtent:f", rDoc("xyExtent"), nullptr,
+     [](const char *msg, rtosc::RtData &data) {
+         SceneCloud *sceneCloud = (SceneCloud *)data.obj;
+         float argx = rtosc_argument(msg, 0).f;
+         float argy = rtosc_argument(msg, 1).f;
+         sceneCloud->view->setFixedXRandExtent(argx);
+         sceneCloud->view->setFixedYRandExtent(argy);
      }},
 };
 
