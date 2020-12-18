@@ -1,3 +1,9 @@
+## frontieres version 0.12.3
+
+apport du dernier pr :
+
+- copyrights ajoutés sur tous les modules
+
 ## frontieres version 0.12.2
 
 apport du dernier pr :

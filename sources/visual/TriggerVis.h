@@ -1,7 +1,10 @@
+//------------------------------------------------------------------------------
+// FRONTIÈRES:  An interactive granular sampler.
+//------------------------------------------------------------------------------
 // More information is available at
 //     https://github.com/linuxmao-org/Frontieres
 //
-// Copyright (C) 2019  Olivier Flatres
+// Copyright (C) 2020  Olivier Flatres
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,7 +17,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+//
 #ifndef TRIGGERVIS_H
 #define TRIGGERVIS_H
 

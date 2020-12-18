@@ -6,6 +6,7 @@
 //
 //
 // Copyright (C) 2018  Jean Pierre Cimalando
+// Copyright (C) 2020  Olivier Flatres
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
