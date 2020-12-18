@@ -129,6 +129,7 @@ bool Grain::playMe(double *startPositions, double *startVols)
 {
 
     if (playingState == false) {
+    //if (true) {
         // next buffer call will play
         playingState = true;
 
@@ -177,6 +178,11 @@ bool Grain::playMe(double *startPositions, double *startVols)
 bool Grain::isPlaying()
 {
     return playingState;
+}
+
+void Grain::setPlayingState(bool n_playingState)
+{
+    playingState = n_playingState;
 }
 
 
@@ -298,6 +304,11 @@ void Grain::setWindow(unsigned int theType)
         newParam = true;
 }
 
+void Grain::setWindowFirstTime(bool n_firstTime)
+{
+    windowFirstTime = n_firstTime;
+}
+
 //-----------------------------------------------------------------------------
 // Update after a change of sample set
 //-----------------------------------------------------------------------------
@@ -381,6 +392,7 @@ void Grain::nextBuffer(double *accumBuff, unsigned int numFrames,
 
 
         // iterate over requested number of samples
+        //cout << "dbut cout de nu" << endl;
         for (int i = 0; i < numFrames; i++) {
 
             // Window multiplier - Get next val from window and check to see if we've reached the end
@@ -394,9 +406,19 @@ void Grain::nextBuffer(double *accumBuff, unsigned int numFrames,
                 // interpolated read from window buffer
                 flooredIdx = floor(winReader);
                 nu = winReader - flooredIdx;  // interp coeff
+                // set beginning of window to max for the first grain to respect enveloppe attack
+//                cout << "nu = " << nu << endl;
+/*                if (windowFirstTime) {
+                    if (i < (numFrames / 2))
+                        nu = 0;
+                    else
+                        windowFirstTime = false;
+                   cout << "firsttime, nu =" << nu << endl;
+                }*/
                 // interpolated read (lin)
                 nextMult = ((double)1.0 - nu) * window[(unsigned long)flooredIdx] +
                            nu * window[(unsigned long)flooredIdx + 1];
+                //cout << "nextmult = " << nextMult << endl;
                 // increment reader
                 winReader += winInc;
             }

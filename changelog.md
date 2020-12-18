@@ -1,3 +1,10 @@
+## frontieres version 0.12.2
+
+apport du dernier pr :
+
+- boucle de production du son (nuage) : correction de bug : mise d'attente de jeu à faux pour tous les grains à la fin de la release, afin d'éliminer la rémanance du son à la prochaine attaque.
+- phrase : correction de bug (fin de phrase en silence, relance de phrase après fin de phrase silence)
+
 ## frontieres version 0.12.1
 
 apport du dernier pr :

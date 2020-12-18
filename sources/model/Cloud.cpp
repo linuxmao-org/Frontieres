@@ -241,9 +241,25 @@ void Cloud::toggleActive()
 
 void Cloud::setActiveState(bool activateState)
 {
-    if (activateState)
+    if (activateState) {
        envelopeAction.store(TriggerEnvelope);
+       toStop = true;
 
+       // trigger idx
+       nextGrain = 0;
+
+       // intialize timer
+       local_time = 0;
+
+       // playback bool to make sure we precisely time grain triggers
+       awaitingPlay = false;
+
+       myGrains[0]->setWindowFirstTime(true);
+
+
+//       toStop = true;
+
+    }
     else
        envelopeAction.store(ReleaseEnvelope);
     if (myPhrase.getRestart())
@@ -268,6 +284,7 @@ void Cloud::setActiveMidiState(bool activateMidiState, int l_midiNote, int l_mid
         playedCloudMidi[l_midiNote]->envelopeVolume->setParam(envelopeVolume->getParam());
         playedCloudMidi[l_midiNote]->envelopeAction.store(TriggerEnvelope);
         playedCloudMidi[l_midiNote]->isActive = true;
+        playedCloudMidi[l_midiNote]->toStop = true;
         // visual
         myCloudVis->activateMidiVis(l_midiNote, true);
         playedCloudMidi[l_midiNote]->myCloudVis->restartTrajectory();
@@ -951,8 +968,13 @@ void Cloud::insertScalePosition(ScalePosition n_scalePosition)
 
 void Cloud::phraseActualise()
 {
+    float l_interval = myPhrase.getInterval();
     if (!myPhrase.getEndedState()) {
-        float l_interval = myPhrase.getInterval();
+        if (myPhrase.getRelease()) {
+            //cout << "getrelease true" << endl;
+            myPhrase.setRestart(false);
+            setActiveState(false);
+        }
         if (scaleAttraction()) {
             if (scaleAttraction()) {
                 double l_nearestPosition = myScale.nearest(l_interval, -1000000, 1000000);
@@ -976,7 +998,7 @@ void Cloud::phraseActualise()
            setActiveState(true);
         }
 /*       else {
-            cout << "getrelease false" << endl;
+            //cout << "getrelease false" << endl;
            //myNode->setActiveState(true);
            myPhrase.setRestart(false);
            //if (!cloudRef->getActiveState())
@@ -987,6 +1009,16 @@ void Cloud::phraseActualise()
 
         setActualiseByPhrase(true);
     }
+    else {
+        if (myPhrase.getRelease()) {
+            //cout << "getrelease true" << endl;
+//           myNode->setActiveState(false);
+           myPhrase.setRestart(false);
+           setActiveState(false);
+        }
+        //cout << "ended state" << endl;
+    }
+    //cout << "interval = " << l_interval << endl;
 }
 
 unsigned long Cloud::getPhraseIntervalSize()
@@ -1079,8 +1111,10 @@ void Cloud::nextBuffer(BUFFERPREC *accumBuff, unsigned int numFrames)
         break;
     }
     envelopeVolume->generate(envelopeVolumeBuff, numFrames);
+    phraseActualise();
 
     if ((envelopeVolume->state() != Env::State::Off)){// && (!getPhrase()->getSilenceState())) {
+    //if (isActive) {
         // initialize play positions array
         double playPositions[theSamples->size()];
         double playVols[theSamples->size()];
@@ -1091,14 +1125,12 @@ void Cloud::nextBuffer(BUFFERPREC *accumBuff, unsigned int numFrames)
         // compute sub_buffers for reduced function calls
         int frameSkip = numFrames / 2;
 
-
         // fill buffer
         for (int j = 0; j < (numFrames / (frameSkip)); j++) {
 
             // check for bang
             if ((local_time > bang_time) || (awaitingPlay)) {
-
-                // debug cout << "bang " << nextGrain << endl;
+                //cout << "bang " << nextGrain << endl;
                 // reset local
                 if (!awaitingPlay) {
                     local_time = 0;
@@ -1114,6 +1146,7 @@ void Cloud::nextBuffer(BUFFERPREC *accumBuff, unsigned int numFrames)
                 }
 
                 // get next pitch (using LFO) -  eventually generalize to an applyLFOs method (if LFO control will be exerted over multiple params)
+                //cout << "interval = " << ctrlInterval << endl;
                 if ((pitchLFOAmount > 0.0f) && (pitchLFOFreq > 0.0f)) {
                     //float nextPitch = fabsf(pitch + pitchLFOAmount * sinf(2 * PI * pitchLFOFreq * GTime::instance().sec));
                     float pitchPow = pow(2, ((pitch + ctrlInterval) / 12));
@@ -1161,10 +1194,19 @@ void Cloud::nextBuffer(BUFFERPREC *accumBuff, unsigned int numFrames)
             }
             for (int i = 0; i < numFrames; ++i) {
                 //for (int j = 0; j < channelCount; ++j)
-                for (int j = myOutputFirstNumber; j <= myOutputLastNumber; ++j)
-                    accumBuff[i * channelCount + j] += intermediateBuff[i * channelCount + j] * envelopeVolumeBuff[i] * ctrlShade * ((float) midiVelocity / 127);
+                for (int l = myOutputFirstNumber; l <= myOutputLastNumber; ++l)
+                    accumBuff[i * channelCount + l] += intermediateBuff[i * channelCount + l] * envelopeVolumeBuff[i] * ctrlShade;// * ((float) midiVelocity / 127);
             }
         }
+    }
+    else {
+        if (toStop) {
+            for (int i=0;i<myGrains.size();i=i+1)
+                myGrains[i]->setPlayingState(false);
+
+            toStop = false;
+        }
+        //cout << "wait" << endl;
     }
     // midi playing
     //debug : std::cout << "actualyPlayedMidi=" <<actualyPlayedMidi<< std::endl;
@@ -1284,6 +1326,14 @@ void Cloud::nextBuffer(BUFFERPREC *accumBuff, unsigned int numFrames)
                 }
             }
             else {
+                if (playedCloudMidi[ii]->toStop) {
+                    for (int i=0;i<playedCloudMidi[ii]->myGrains.size();i=i+1)
+                        playedCloudMidi[ii]->myGrains[i]->setPlayingState(false);
+
+                    playedCloudMidi[ii]->toStop = false;
+                }
+                //cout << "wait" << endl;
+
                 myCloudVis->activateMidiVis(ii, false);
                 playedCloudMidi[ii]->isActive = false;
             }
@@ -1292,6 +1342,7 @@ void Cloud::nextBuffer(BUFFERPREC *accumBuff, unsigned int numFrames)
     }
     //debug: std::cout<<"sortie nextbuffer cloud"<<std::endl;
 }
+
 
 // pitch lfo methods
 void Cloud::setPitchLFOFreq(float pfreq)

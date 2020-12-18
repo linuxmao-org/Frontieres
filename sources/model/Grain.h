@@ -67,6 +67,7 @@ public:
 
     // report state
     bool isPlaying();
+    void setPlayingState(bool n_playingState);
 
     // queue up params for next grain
     void setDurationMs(float dur);
@@ -89,6 +90,7 @@ public:
 
     // change window type
     void setWindow(unsigned int windowType);
+    void setWindowFirstTime(bool n_firstTime);
 
     // update after a change of sample set
     void updateSampleSet();
@@ -135,6 +137,7 @@ private:
 
     // pointer to audio window (hanning, triangle, etc.)
     double *window;
+    bool windowFirstTime = false;
 
 
     // array of position values (in frames, not samples)
