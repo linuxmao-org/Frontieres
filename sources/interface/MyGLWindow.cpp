@@ -325,7 +325,7 @@ void MyGLScreen::paintGL()
             CloudVis &gv = *scene->m_clouds[i]->view;
             Cloud &gm = *scene->m_clouds[i]->cloud;
             gv.draw();
-            gm.phraseActualise();
+            //gm.phraseActualise();
         }
 
         // render triggers if they exist

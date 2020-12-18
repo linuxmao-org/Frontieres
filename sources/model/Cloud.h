@@ -102,6 +102,7 @@ public:
     vector<Grain *> myGrains;
     bool addFlag, removeFlag;  // add/remove requests submitted?
     unsigned int nextGrain;  // grain index
+    bool toStop =false;
 };
 
 // class interface
@@ -375,6 +376,8 @@ private:
     Phrase myPhrase;
     bool actualiseByPhrase = false;
     bool myScaleAttraction = false;
+
+    bool toStop = false;
 
 };
 

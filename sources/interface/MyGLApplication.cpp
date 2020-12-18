@@ -352,7 +352,7 @@ void MyGLApplication::showControlDialog(SceneCloud *selectedCloud)
 
 void MyGLApplication::showPhraseDialog(SceneCloud *selectedCloud)
 {
-    cout << "showPhrasedialog entree" << endl;
+    //cout << "showPhrasedialog entree" << endl;
     unsigned id = selectedCloud->cloud->getId();
 
     PhraseDialog *&dlgslot = P->phraseDialogs[id];
@@ -371,11 +371,11 @@ void MyGLApplication::showPhraseDialog(SceneCloud *selectedCloud)
         dlg->show();
         dlg->move(posdlg);
     }
-    cout << "showPhrasedialog milieu" << endl;
+    //cout << "showPhrasedialog milieu" << endl;
     //selectedCloud->cloud.get()->changesDone(true);
     //selectedCloud->view.get()->changesDone(true);
     dlg->linkCloud(selectedCloud->cloud.get());
-    cout << "showPhrasedialog sortie" << endl;
+    //cout << "showPhrasedialog sortie" << endl;
 }
 
 void MyGLApplication::destroyCloudDialog(unsigned selectedCloudId)

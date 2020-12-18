@@ -167,7 +167,7 @@ float Phrase::getInterval()
         return myControlInterval[0]->value;
     }
     else {
-        if (myControlInterval[myControlInterval.size() - 1]->delay < l_delay) {
+        if (myControlInterval[myControlInterval.size() - 1]->delay <= l_delay) {
             silenceState = myControlInterval[myControlInterval.size() - 1]->silence;
             intervalEndedState = true;
             if (shadeEndedState)
@@ -191,9 +191,32 @@ float Phrase::getInterval()
                     result = firstInterval + ((lastInterval - firstInterval) * (l_delay - firstDelay) / (lastDelay - firstDelay));
                     silenceState = myControlInterval[i]->silence;
                     actuasiseReleaseAndAttack();
+                    if (silenceState) {
+                        result = firstInterval;
+                    }
                     break;
                 }
             }
+            /*for (unsigned long i=1; i < myControlInterval.size(); i=i+1) {
+                if (l_delay >= myControlInterval[i]->delay) {
+                    if (myControlInterval[i]->silence) {
+                        result = myControlInterval[i]->value;
+                        silenceState = true;
+                        actuasiseReleaseAndAttack();
+                        break;
+                    }
+                    else {
+                        firstDelay = myControlInterval[i]->delay;
+                        lastDelay = myControlInterval[i+1]->delay;
+                        firstInterval = myControlInterval[i]->value;
+                        lastInterval = myControlInterval[i+1]->value;
+                        result = firstInterval + ((lastInterval - firstInterval) * (l_delay - firstDelay) / (lastDelay - firstDelay));
+                        silenceState = false;
+                        actuasiseReleaseAndAttack();
+                        break;
+                    }
+                }
+            }*/
             return result;
         }
     }
@@ -234,9 +257,9 @@ bool Phrase::getActiveState()
 void Phrase::setActiveState(bool l_activeState)
 {
     if (l_activeState) {
-        if (endedState) {
+        //if (endedState) {
             setPhraseStartTime();
-        }
+        //}
     }
     activeState = l_activeState;
 }
@@ -251,6 +274,8 @@ void Phrase::setPhraseStartTime()
     phraseStartTime = GTime::instance().sec;
     intervalEndedState = false;
     shadeEndedState = false;
+    attack = true;
+    attacked = false;
     setEndedState(false);
 }
 
@@ -308,7 +333,7 @@ void Phrase::actuasiseReleaseAndAttack()
 {
     //cout << "actualise release =" << release << "," << released << ",attack =" << attack <<"," << attacked<< endl;
     if (silenceState) {
-      //  cout << "silenstate"<<endl;
+       //cout << "silenstate"<<endl;
        if (released) {
            release = false;
        }
@@ -329,7 +354,7 @@ void Phrase::actuasiseReleaseAndAttack()
         release = false;
         released = false;
     }
-    //  cout << "actualise release =" << release << "," << released << ",attack =" << attack <<"," << attacked<< endl;
+    //cout << "actualise release =" << release << "," << released << ",attack =" << attack <<"," << attacked<< endl;
 }
 
 string Phrase::askNamePhrase(FileDirection direction)

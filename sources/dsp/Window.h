@@ -1,4 +1,4 @@
-//------------------------------------------------------------------------------
+﻿//------------------------------------------------------------------------------
 // FRONTIÈRES:  An interactive granular sampler.
 //------------------------------------------------------------------------------
 // More information is available at
@@ -64,7 +64,6 @@ protected:
     void triangle(double *window, unsigned long length);
     void expdec(double *forWin, double *revWin, unsigned long length);
     void sinc(double *window, unsigned long length, int numZeroCross = 6);
-
 
 private:
     ~Window();

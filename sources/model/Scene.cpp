@@ -1949,7 +1949,7 @@ void Scene::initDefaultCloudParams()
         // L1, L2, L3
         1.0, 0.9, 0.8,
         // TAtk, TSta, TDec, TRel
-        1.0, 0.2, 0.5, 3.0,
+        0.15, 0.2, 0.5, 0.15,
         samp_rate);
     g_defaultCloudParams.envelope.t1 = ParamEnv::Linear;
     g_defaultCloudParams.envelope.t2 = ParamEnv::Linear;

@@ -224,7 +224,6 @@ void Window::sinc(double *window, unsigned long length, int numZeroCross)
     }
 }
 
-
 // return pointer to required window
 double *Window::getWindow(unsigned int windowType)
 {
