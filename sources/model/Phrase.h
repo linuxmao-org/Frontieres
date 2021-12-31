@@ -1,3 +1,23 @@
+//------------------------------------------------------------------------------
+// FRONTIÈRES:  An interactive granular sampler.
+//------------------------------------------------------------------------------
+// More information is available at
+//     https://github.com/linuxmao-org/Frontieres
+//
+// Copyright (C) 2020  Olivier Flatres
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, version 3.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+//
 #ifndef PHRASE_H
 #define PHRASE_H
 
@@ -9,6 +29,9 @@
 #include <QtGui>
 #include <theglobals.h>
 #include "utility/GTime.h"
+#include "model/Scale.h"
+#include "model/Adsr.h"
+
 
 using namespace std;
 
@@ -58,6 +81,10 @@ public:
     bool save(QFile &phraseFile);
     bool load(QFile &phraseFile);
     void reset();
+    Scale* getScale();
+    bool scaleAttraction();
+    void setScaleAttraction(bool n_state);
+    void insertScalePosition(ScalePosition n_scalePosition);
 
 private:
     bool activeState = true;
@@ -79,6 +106,17 @@ private:
     bool intervalEndedState = false;
     bool shadeEndedState = false;
     bool restart = true;
+
+    bool myScaleAttraction = false;
+    Scale myScale;
+
+    // envelope
+
+    float *envelopeVolumeBuff;
+    double *intermediateBuff;
+    std::atomic<int> envelopeAction;
+    Env *envelopeVolume;
+
 
 };
 

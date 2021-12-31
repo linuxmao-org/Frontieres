@@ -6,6 +6,7 @@
 //
 //
 // Copyright (C) 2011  Christopher Carlson
+// Copyright (C) 2020  Olivier Flatres
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -98,10 +99,12 @@ public:
     // print information
     void describe(std::ostream &out);
 
+    bool insideMe(float x, float y);
+
 protected:
     // set upsampling for waveform display (based on rect size/orientation)
     void setUps();
-    bool insideMe(float x, float y);
+    //bool insideMe(float x, float y);
     void setWaveDisplayParams();
     void randColor();
     // update information used for vertices with new width and height

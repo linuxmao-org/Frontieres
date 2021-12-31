@@ -6,6 +6,7 @@
 //
 //
 // Copyright (C) 2011  Christopher Carlson
+// Copyright (C) 2020  Olivier Flatres
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,6 +41,7 @@
 
 // forward declarations
 class Sample;
+class SampleVis;
 class Grain;
 class GrainVis;
 class SceneSample;
@@ -61,6 +63,8 @@ public:
     void nextBuffer(double *accumBuff, unsigned int numFrames,
                     unsigned int bufferPos, int name);
 
+    void nextNewBuffer(double *accumBuff, unsigned int numFrames,
+                    int bufferPos, int name);
 
     // set on
     bool playMe(double *startPositions, double *startVols);
@@ -98,6 +102,18 @@ public:
     //
     void updateWave(unsigned int numFrames);
 
+    void setFristGrain(bool n_firstGrain);
+
+    bool getNewPlayingState();
+    void setNewPlayingState(bool n_newPlayingState);
+
+    unsigned int getCptPlaying ();
+    void setCptPlaying(unsigned int n_CptPlaying);
+    void incCptPlaying();
+
+
+    void setNewPlayPos(int n_playX, int n_playY);
+
 protected:
     // makes temp  params permanent
     void updateParams();
@@ -111,15 +127,15 @@ private:
     bool newParam;
 
     // grain parameters
-    float duration, queuedDuration;
+    double duration, queuedDuration;
     double winDurationSamps;
     double pitch, queuedPitch, pitchCent;
     double direction, queuedDirection;
     double playInc;
 
     // local volume (set by user)
-    float localAtten;
-    float queuedLocalAtten;
+    double localAtten;
+    double queuedLocalAtten;
 
     // panning values
     double *chanMults;
@@ -144,6 +160,14 @@ private:
     //-1 means not in current samplefile
     std::unique_ptr<double[]> playPositions;
     std::unique_ptr<double[]> playVols;
+
+    bool firstGrain = false;
+
+    int playX, playY, nextX, nextY;
+    bool newPlayingState = false;
+    unsigned int cptPlaying = 0;
+    unsigned int maxCptPlaying = 0;
+    int newPlayingPos = 0;
 };
 
 #endif
