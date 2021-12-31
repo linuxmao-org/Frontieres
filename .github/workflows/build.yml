@@ -1,0 +1,66 @@
+name: build
+
+on:
+  push:
+    branches:
+      - '*'
+    tags:
+      - '[0-9]*'
+      - 'v[0-9]*'
+  pull_request:
+    branches:
+      - '*'
+  workflow_dispatch:
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build_for_linux:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        submodules: recursive
+    - name: Set up dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install \
+          build-essential \
+          pkg-config \
+          libasound2-dev \
+          libpulse-dev \
+          libglu1-mesa-dev \
+          libjack-jackd2-dev \
+          libsndfile1-dev \
+          libsoxr-dev \
+          mesa-common-dev \
+          libqt5opengl5-dev \
+          libqt5x11extras5-dev \
+          qtbase5-dev \
+          qttools5-dev \
+          qttools5-dev-tools \
+          qt5-default \
+          liblo-dev \
+          checkinstall
+    - name: Create Build Environment
+      shell: bash
+      working-directory: ${{runner.workspace}}
+      run: cmake -E make_directory build
+    - name: Configure CMake
+      shell: bash
+      working-directory: ${{runner.workspace}}/build
+      run: cmake "$GITHUB_WORKSPACE" -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DCMAKE_INSTALL_PREFIX=/usr
+    - name: Build
+      shell: bash
+      working-directory: ${{runner.workspace}}/build
+      run: cmake --build . --config "$BUILD_TYPE" -j 2
+    - name: Install
+      working-directory: ${{runner.workspace}}/build
+      shell: bash
+      run: |
+        echo "An Interactive Granular Sampler" > description-pak
+        sudo checkinstall --type=debian --install=no --default --pkgname=frontieres --pkgversion="`git describe --abbrev=0 | sed 's/^v//'``git log -n 1 --pretty=format:"+%cd~git%h" --date=short develop | sed 's/-//g'`" --pkgarch=amd64 --pkgrelease=0linuxmao1 --pkglicense=GPL-3.0-only --pkggroup=sound --maintainer="jp-dev@inbox.ru" --nodoc
+    - uses: actions/upload-artifact@v2
+      with:
+        name: Linux amd64 deb
+        path: ${{runner.workspace}}/build/*.deb
