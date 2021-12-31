@@ -207,6 +207,8 @@ private slots:
 
     void on_dial_Grain_Y_valueChanged(int value);
 
+    void on_checkBox_New_toggled(bool checked);
+
 private:
     Ui::CloudDialog *ui;
     bool linking = false;

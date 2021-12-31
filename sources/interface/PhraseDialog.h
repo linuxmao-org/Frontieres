@@ -93,6 +93,8 @@ private slots:
 
     void on_pushButton_pressed();
 
+    void on_pushButton_Envelope_clicked();
+
 private:
     const int ampControl = 120;
     Ui::PhraseDialog *ui;

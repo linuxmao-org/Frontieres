@@ -54,7 +54,6 @@
 #include "dsp/Window.h"
 #include "visual/Trajectory.h"
 #include "model/Phrase.h"
-#include "model/Scale.h"
 
 class Grain;
 struct SceneSample;
@@ -97,6 +96,7 @@ public:
     int velocity;
     float *envelopeVolumeBuff;
     double *intermediateBuff;
+    float *shadeBuff;
     std::atomic<int> envelopeAction;
     Env *envelopeVolume;
     // vector of grains
@@ -118,6 +118,7 @@ public:
 
     // compute next buffer of audio (accumulate from grains)
     void nextBuffer(BUFFERPREC *accumBuff, unsigned int numFrames);
+    void nextNewBuffer(BUFFERPREC *accumBuff, unsigned int numFrames);
 
     // CLOUD PARAMETER accessors/mutators
     // set duration for all grains
@@ -276,6 +277,11 @@ public:
     Phrase* getPhrase();
     void setActualiseByPhrase(bool n_state);
     bool getActualiseByPhrase();
+    
+    void setSilence(bool l_silence);
+    bool getSilence();
+
+    void setNewWay(bool n_NewWay);
 
 protected:
     // update internal trigger point
@@ -316,6 +322,7 @@ private:
     bool changed_volumeDB = false;
     float *envelopeVolumeBuff;
     double *intermediateBuff;
+    float *shadeBuff;
     //enum EnvelopeAction { TriggerEnvelope = 1, ReleaseEnvelope = 2 };
     std::atomic<int> envelopeAction;
 
@@ -373,12 +380,18 @@ private:
 
     // sequence actualisation
     ControlPoint myControlPoint;
-    Scale myScale;
     Phrase myPhrase;
     bool actualiseByPhrase = false;
-    bool myScaleAttraction = false;
+    bool silence = false;
 
     bool toStop = false;
+
+    bool newWay = false;
+    int firstGrain, secondGrain = 0;
+    int ptrFirstGrain = 0;
+    bool firstGrainCalculated, secondGrainCalculated = false;
+    double *firstGrainBuff;
+    double *secondGrainBuff;
 
 };
 

@@ -540,3 +540,23 @@ void Phrase::reset()
         myControlShade.pop_back();
     }
 }
+
+Scale *Phrase::getScale()
+{
+    return &myScale;
+}
+
+bool Phrase::scaleAttraction()
+{
+    return myScaleAttraction;
+}
+
+void Phrase::setScaleAttraction(bool n_state)
+{
+    myScaleAttraction = n_state;
+}
+
+void Phrase::insertScalePosition(ScalePosition n_scalePosition)
+{
+    myScale.insertScalePosition(n_scalePosition);
+}

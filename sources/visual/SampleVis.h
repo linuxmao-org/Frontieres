@@ -99,10 +99,12 @@ public:
     // print information
     void describe(std::ostream &out);
 
+    bool insideMe(float x, float y);
+
 protected:
     // set upsampling for waveform display (based on rect size/orientation)
     void setUps();
-    bool insideMe(float x, float y);
+    //bool insideMe(float x, float y);
     void setWaveDisplayParams();
     void randColor();
     // update information used for vertices with new width and height

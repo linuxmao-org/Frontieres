@@ -2194,7 +2194,7 @@ border-bottom-left-radius: 9px;
                      </property>
                     </widget>
                    </item>
-                   <item row="1" column="0">
+                   <item row="2" column="0">
                     <widget class="QCheckBox" name="checkBox_Active">
                      <property name="font">
                       <font>
@@ -2206,7 +2206,7 @@ border-bottom-left-radius: 9px;
                      </property>
                     </widget>
                    </item>
-                   <item row="3" column="0">
+                   <item row="4" column="0">
                     <widget class="QCheckBox" name="checkBox_Locked">
                      <property name="font">
                       <font>
@@ -2218,7 +2218,7 @@ border-bottom-left-radius: 9px;
                      </property>
                     </widget>
                    </item>
-                   <item row="2" column="0">
+                   <item row="3" column="0">
                     <widget class="QCheckBox" name="checkBox_Restart">
                      <property name="font">
                       <font>
@@ -2227,6 +2227,18 @@ border-bottom-left-radius: 9px;
                      </property>
                      <property name="text">
                       <string>Restart</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item row="1" column="0">
+                    <widget class="QCheckBox" name="checkBox_New">
+                     <property name="font">
+                      <font>
+                       <pointsize>7</pointsize>
+                      </font>
+                     </property>
+                     <property name="text">
+                      <string>New</string>
                      </property>
                     </widget>
                    </item>

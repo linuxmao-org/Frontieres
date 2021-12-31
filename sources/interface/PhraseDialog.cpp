@@ -606,3 +606,12 @@ void PhraseDialog::on_pushButton_pressed()
         deleteShadePositions();
         createShadePositions();
 }
+
+
+void PhraseDialog::on_pushButton_Envelope_clicked()
+{
+    ParamEnv localParamEnv;
+    localParamEnv = cloudRef->getEnvelopeVolumeParam();
+    cloudRef->getEnvelopeVolume().envDialogShow(localParamEnv);
+    cloudRef->setEnvelopeVolumeParam(localParamEnv);
+}

@@ -29,6 +29,9 @@
 #include <QtGui>
 #include <theglobals.h>
 #include "utility/GTime.h"
+#include "model/Scale.h"
+#include "model/Adsr.h"
+
 
 using namespace std;
 
@@ -78,6 +81,10 @@ public:
     bool save(QFile &phraseFile);
     bool load(QFile &phraseFile);
     void reset();
+    Scale* getScale();
+    bool scaleAttraction();
+    void setScaleAttraction(bool n_state);
+    void insertScalePosition(ScalePosition n_scalePosition);
 
 private:
     bool activeState = true;
@@ -99,6 +106,17 @@ private:
     bool intervalEndedState = false;
     bool shadeEndedState = false;
     bool restart = true;
+
+    bool myScaleAttraction = false;
+    Scale myScale;
+
+    // envelope
+
+    float *envelopeVolumeBuff;
+    double *intermediateBuff;
+    std::atomic<int> envelopeAction;
+    Env *envelopeVolume;
+
 
 };
 

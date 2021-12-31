@@ -31,6 +31,7 @@
 #include "model/Grain.h"
 #include "model/Sample.h"
 #include "model/Scene.h"
+#include "visual/SampleVis.h"
 #include "dsp/Window.h"
 #include "theglobals.h"
 extern unsigned int samp_rate;
@@ -56,7 +57,7 @@ Grain::~Grain()
 
 Grain::Grain(VecSceneSample *sampleSet, float durationMs, float thePitch)
 {
-    unsigned channelCount = theOutChannelCount;
+    int channelCount = theOutChannelCount;
 
     // store pointer to external vector of sample files
     theSamples = sampleSet;
@@ -69,7 +70,7 @@ Grain::Grain(VecSceneSample *sampleSet, float durationMs, float thePitch)
 
 
     // direction
-    if (randf() < 0.5)
+    if (randf() < float(0.5))
         direction = 1.0;
     else
         direction = -1.0;
@@ -114,7 +115,7 @@ Grain::Grain(VecSceneSample *sampleSet, float durationMs, float thePitch)
     winReader = 0.0;  // 0 idx
 
     // get duration in samples (fractional)
-    winDurationSamps = ceil(duration * ::samp_rate * (double)0.001);
+    winDurationSamps = ceil(duration * ::samp_rate * (float)0.001);
     winInc = (double)WINDOW_LEN / winDurationSamps;
 }
 
@@ -130,7 +131,9 @@ bool Grain::playMe(double *startPositions, double *startVols)
 {
 
     if (playingState == false) {
-    //if (true) {
+        //cout << "Grain triggered" << endl;
+
+        //if (true) {
         // next buffer call will play
         playingState = true;
 
@@ -167,7 +170,7 @@ bool Grain::playMe(double *startPositions, double *startVols)
     }
     else {
         // debug
-        // cout << "Grain triggered too soon..." << endl;
+        cout << "Grain triggered too soon..." << endl;
         return true;
     }
 }
@@ -236,7 +239,7 @@ void Grain::setPitch(float newPitch)
 {
     // get absolute value
     queuedPitch = pow(2, (float) (newPitch / 12));
-    if (queuedPitch != pitch)
+//    if (queuedPitch != pitch)
         newParam = true;
 }
 
@@ -331,6 +334,56 @@ void Grain::updateSampleSet()
     activeSamples.reserve(numSamples);
 }
 
+void Grain::setFristGrain(bool n_firstGrain)
+{
+    firstGrain = n_firstGrain;
+}
+
+bool Grain::getNewPlayingState()
+{
+    return newPlayingState;
+}
+
+void Grain::setNewPlayingState(bool n_newPlayingState)
+{
+    if (n_newPlayingState) {
+        cptPlaying = 0;
+    }
+    newPlayingState = n_newPlayingState;
+}
+
+unsigned int Grain::getCptPlaying()
+{
+    return cptPlaying;
+}
+
+void Grain::setCptPlaying(unsigned int n_CptPlaying)
+{
+    cptPlaying = n_CptPlaying;
+}
+
+void Grain::incCptPlaying()
+{
+    if (cptPlaying < maxCptPlaying){
+        cptPlaying = cptPlaying + 1;
+    }
+    else {
+        setNewPlayingState(false);
+    }
+}
+
+void Grain::setNewPlayPos(int n_playX, int n_playY)
+{
+    if (newPlayingState) {
+        nextX = n_playX;
+        nextY = n_playY;
+    }
+    else {
+        playX = n_playX;
+        playY = n_playY;
+    }
+}
+
 
 //-----------------------------------------------------------------------------
 // Set direction (effective on next trigger)
@@ -394,11 +447,11 @@ void Grain::nextBuffer(double *accumBuff, unsigned int numFrames,
 
         // iterate over requested number of samples
         //cout << "dbut cout de nu" << endl;
-        for (int i = 0; i < numFrames; i++) {
+        for (unsigned int i = 0; i < numFrames; i++) {
 
             // Window multiplier - Get next val from window and check to see if we've reached the end
             if (winReader > (WINDOW_LEN - 1)) {
-                nextMult = (double)0.0;
+                nextMult = double(0.0);
                 winReader = 0;
                 playingState = false;
                 return;
@@ -408,18 +461,16 @@ void Grain::nextBuffer(double *accumBuff, unsigned int numFrames,
                 flooredIdx = floor(winReader);
                 nu = winReader - flooredIdx;  // interp coeff
                 // set beginning of window to max for the first grain to respect enveloppe attack
-//                cout << "nu = " << nu << endl;
-/*                if (windowFirstTime) {
-                    if (i < (numFrames / 2))
-                        nu = 0;
-                    else
+                if (windowFirstTime) {
+                    nextMult = 1;
+                    if (i > (numFrames / 2))
                         windowFirstTime = false;
-                   cout << "firsttime, nu =" << nu << endl;
-                }*/
-                // interpolated read (lin)
-                nextMult = ((double)1.0 - nu) * window[(unsigned long)flooredIdx] +
-                           nu * window[(unsigned long)flooredIdx + 1];
-                //cout << "nextmult = " << nextMult << endl;
+                }
+                else {
+                    // interpolated read (lin)
+                    nextMult = (double(1.0) - nu) * window[(unsigned long)flooredIdx] +
+                               nu * window[(unsigned long)flooredIdx + 1];
+                }
                 // increment reader
                 winReader += winInc;
             }
@@ -552,4 +603,22 @@ void Grain::nextBuffer(double *accumBuff, unsigned int numFrames,
         // cout << "return - not playing " << endl;
         return;
     }
+}
+
+void Grain::nextNewBuffer(double *accumBuff, unsigned int numFrames, int bufferPos, int name)
+{
+    VecSceneSample &sceneSamples = *theSamples;
+    if (newPlayingState) {
+
+    }
+    float grainX = playX;
+    float grainY = playY;
+
+    for (unsigned long i = 0, n = sceneSamples.size(); i < n; i++) {
+        if (sceneSamples[i]->view->insideMe(grainX, grainY)) {
+
+        }
+
+    }
+
 }

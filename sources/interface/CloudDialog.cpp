@@ -1087,3 +1087,8 @@ void CloudDialog::on_dial_Grain_Y_valueChanged(int value)
 {
     ui->doubleSpinBox_Grain_Y->setValue(value);
 }
+
+void CloudDialog::on_checkBox_New_toggled(bool checked)
+{
+    cloudRef->setNewWay(checked);
+}

@@ -48,6 +48,7 @@ CloudMidi::~CloudMidi()
     delete envelopeVolume;
     delete[] envelopeVolumeBuff;
     delete[] intermediateBuff;
+    delete shadeBuff;
     for (int i = 0; i < myGrains.size(); i++) {
         delete myGrains[i];
     }
@@ -59,6 +60,7 @@ CloudMidi::CloudMidi(VecSceneSample *sampleSet, float theNumGrains, float theDur
     envelopeVolume = new Env;
     envelopeVolumeBuff = new float[g_buffSize];
     intermediateBuff = new double[g_buffSize * theOutChannelCount];
+    shadeBuff = new float[g_buffSize];
     envelopeAction.store(0);
     isActive = false;
     addFlag = false;
@@ -85,6 +87,7 @@ Cloud::~Cloud()
     delete envelopeVolume;
     delete[] envelopeVolumeBuff;
     delete[] intermediateBuff;
+    delete[] shadeBuff;
     for (int i = 0; i < myGrains.size(); i++) {
         delete myGrains[i];
     }
@@ -181,6 +184,7 @@ Cloud::Cloud(VecSceneSample *sampleSet, float theNumGrains)
     envelopeVolume->setParam(g_defaultCloudParams.envelope);
     envelopeVolumeBuff = new float[g_buffSize];
     intermediateBuff = new double[g_buffSize * channelCount];
+    shadeBuff = new float[g_buffSize];
 
     // initialize the envelope trigger flag
     envelopeAction.store(0);
@@ -257,6 +261,11 @@ void Cloud::setActiveState(bool activateState)
 
        myGrains[0]->setWindowFirstTime(true);
 
+       for (int i = 0; i < myGrains.size(); i++) {
+           // cout << "windowtype " << windowType << endl;
+           myGrains[i]->updateSampleSet();
+//           myGrains[i]->setWindowFirstTime(true);
+       }
 
 //       toStop = true;
 
@@ -544,7 +553,7 @@ void Cloud::setPitch(float targetPitch)
     if (targetPitch >= g_cloudValueMin.pitch && targetPitch <= g_cloudValueMax.pitch) {
         pitch = targetPitch;
         for (int i = 0; i < myGrains.size(); i++)
-            myGrains[i]->setPitch(targetPitch);
+            myGrains[i]->setPitch(targetPitch);// + ctrlInterval);
         changed_pitch = true;
     }
 }
@@ -888,6 +897,12 @@ void Cloud::setCtrlInterval(float l_ctrInterval, bool fromOSC)
 {
     ctrlInterval = l_ctrInterval;
     changed_ctrlInterval = fromOSC;
+ //   for (int i = 0; i < myGrains.size(); i++) {
+   //     myGrains[i]->setPitch(pitch);}// + ctrlInterval);}
+   //}
+  //      myGrains[i]->setPlayingState(false);}
+    //nextGrain = 0;
+
 }
 
 float Cloud::getCtrlInterval()
@@ -949,22 +964,22 @@ bool Cloud::getCtrlAutoUpdate()
 
 Scale *Cloud::getScale()
 {
-    return &myScale;
+    return myPhrase.getScale();
 }
 
 bool Cloud::scaleAttraction()
 {
-    return myScaleAttraction;
+    return myPhrase.scaleAttraction();
 }
 
 void Cloud::setScaleAttraction(bool n_state)
 {
-    myScaleAttraction = n_state;
+    myPhrase.setScaleAttraction(n_state);
 }
 
 void Cloud::insertScalePosition(ScalePosition n_scalePosition)
 {
-    myScale.insertScalePosition(n_scalePosition);
+    myPhrase.insertScalePosition(n_scalePosition);
 }
 
 void Cloud::phraseActualise()
@@ -978,7 +993,7 @@ void Cloud::phraseActualise()
         }
         if (scaleAttraction()) {
             if (scaleAttraction()) {
-                double l_nearestPosition = myScale.nearest(l_interval, -1000000, 1000000);
+                double l_nearestPosition = myPhrase.getScale()->nearest(l_interval, -1000000, 1000000);
                 l_interval = l_nearestPosition;
             }
         }
@@ -1047,6 +1062,21 @@ bool Cloud::getActualiseByPhrase()
     return actualiseByPhrase;
 }
 
+void Cloud::setSilence(bool l_silence)
+{
+    silence = l_silence;
+}
+
+bool Cloud::getSilence()
+{
+    return silence;
+}
+
+void Cloud::setNewWay(bool n_NewWay)
+{
+    newWay = n_NewWay;
+}
+
 bool Cloud::getActiveRestartTrajectory()
 {
     return activeRestartTrajectory;
@@ -1096,6 +1126,10 @@ Env Cloud::getEnvelopeVolume()
 // compute audio
 void Cloud::nextBuffer(BUFFERPREC *accumBuff, unsigned int numFrames)
 {
+    if (newWay) {
+        nextNewBuffer(accumBuff,numFrames);
+        return;
+    }
     unsigned channelCount = theOutChannelCount;
 
     // debug std::cout<<"entree nextbuffer cloud"<<std::endl;
@@ -1112,9 +1146,10 @@ void Cloud::nextBuffer(BUFFERPREC *accumBuff, unsigned int numFrames)
         break;
     }
     envelopeVolume->generate(envelopeVolumeBuff, numFrames);
+
     phraseActualise();
 
-    if ((envelopeVolume->state() != Env::State::Off)){// && (!getPhrase()->getSilenceState())) {
+    if ((envelopeVolume->state() != Env::State::Off) && (!silence)) {// && (!getPhrase()->getSilenceState())) {
     //if (isActive) {
         // initialize play positions array
         double playPositions[theSamples->size()];
@@ -1179,25 +1214,27 @@ void Cloud::nextBuffer(BUFFERPREC *accumBuff, unsigned int numFrames)
                     // cout << "playback delayed "<< endl;
                 }
             }
-            // advance time
-            local_time += frameSkip;
+            //if (!awaitingPlay) {
+                // advance time
+                local_time += frameSkip;
 
-            // sample offset (1 sample at a time for now)
-            nextFrame = j * frameSkip;
-            // iterate over all grains
-            //for (int k = 0; k < myGrains.size(); k++) {
-             //  myGrains[k]->nextBuffer(accumBuff, frameSkip, nextFrame, k);
+                // sample offset (1 sample at a time for now)
+                nextFrame = j * frameSkip;
+                // iterate over all grains
+                //for (int k = 0; k < myGrains.size(); k++) {
+                //  myGrains[k]->nextBuffer(accumBuff, frameSkip, nextFrame, k);
+                //}
+                // iterate over all grains
+                memset(intermediateBuff, 0, numFrames * channelCount * sizeof(intermediateBuff[0]));
+                for (int k = 0; k < myGrains.size(); k++) {
+                    myGrains[k]->nextBuffer(intermediateBuff, frameSkip, nextFrame, k);
+                }
+                for (int i = 0; i < numFrames; ++i) {
+                    //for (int j = 0; j < channelCount; ++j)
+                    for (int l = myOutputFirstNumber; l <= myOutputLastNumber; ++l)
+                        accumBuff[i * channelCount + l] += intermediateBuff[i * channelCount + l] * envelopeVolumeBuff[i] * ctrlShade;// * ((float) midiVelocity / 127);
+                }
             //}
-            // iterate over all grains
-            memset(intermediateBuff, 0, numFrames * channelCount * sizeof(intermediateBuff[0]));
-            for (int k = 0; k < myGrains.size(); k++) {
-                myGrains[k]->nextBuffer(intermediateBuff, frameSkip, nextFrame, k);
-            }
-            for (int i = 0; i < numFrames; ++i) {
-                //for (int j = 0; j < channelCount; ++j)
-                for (int l = myOutputFirstNumber; l <= myOutputLastNumber; ++l)
-                    accumBuff[i * channelCount + l] += intermediateBuff[i * channelCount + l] * envelopeVolumeBuff[i] * ctrlShade;// * ((float) midiVelocity / 127);
-            }
         }
     }
     else {
@@ -1342,6 +1379,47 @@ void Cloud::nextBuffer(BUFFERPREC *accumBuff, unsigned int numFrames)
 
     }
     //debug: std::cout<<"sortie nextbuffer cloud"<<std::endl;
+}
+
+void Cloud::nextNewBuffer(BUFFERPREC *accumBuff, unsigned int numFrames)
+{
+    unsigned channelCount = theOutChannelCount;
+    int l_envelopeAction = this->envelopeAction.exchange(0);
+
+    switch (l_envelopeAction) {
+    case TriggerEnvelope:
+        envelopeVolume->trigger();
+        break;
+    case ReleaseEnvelope:
+        envelopeVolume->release();
+        break;
+    default:
+        break;
+    }
+    envelopeVolume->generate(envelopeVolumeBuff, numFrames);
+
+    if (envelopeVolume->state() != Env::State::Off) {
+        if (firstGrain < (myGrains.size() - 1)) {
+            secondGrain = firstGrain + 1;
+        }
+        else {
+            secondGrain = 0;
+        }
+        unsigned int cptNumFrames = 0;
+        while (cptNumFrames < numFrames) {
+
+        }
+        for (int i = 0; i < numFrames; ++i) {
+            if (!firstGrainCalculated) {
+                memset(firstGrainBuff, 0, numFrames * channelCount * sizeof(firstGrainBuff[0]));
+                myGrains[firstGrain]->nextNewBuffer(intermediateBuff, numFrames, i, firstGrain);
+            }
+            if (!secondGrainCalculated) {
+                memset(secondGrainBuff, 0, numFrames * channelCount * sizeof(secondGrainBuff[0]));
+                myGrains[secondGrain]->nextNewBuffer(intermediateBuff, numFrames, i, secondGrain);
+            }
+        }
+    }
 }
 
 
