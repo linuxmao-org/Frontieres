@@ -610,6 +610,7 @@ bool Scene::load(QFile &sceneFile)
         QString triggerName = objTrigger["name"].toString();
         int triggerActiveState = objTrigger["active-state"].toBool();
         int triggerActiveRestartTrajectory = objTrigger["active-restart-trajectory"].toBool();
+        int triggerRestartPhrase = objTrigger["restart-trajectory"].toBool();
         int triggerIn = objTrigger["in"].toInt();
         int triggerOut = objTrigger["out"].toInt();
         int triggerPriority = objTrigger["priority"].toInt();
@@ -695,6 +696,7 @@ bool Scene::load(QFile &sceneFile)
         cout << "priority " << triggerPriority << "\n";
         cout << "active = " << triggerActiveState << "\n";
         cout << "active restart trajectory = " << triggerActiveRestartTrajectory << "\n";
+        cout << "restart phrase = " << triggerRestartPhrase << "\n";
         cout << "in = " << triggerIn << "\n";
         cout << "out = " << triggerOut << "\n";
         cout << "X = " << triggerX << "\n";
@@ -715,6 +717,7 @@ bool Scene::load(QFile &sceneFile)
         triggerToLoad->setPriority(triggerPriority);
         triggerToLoad->setActiveState(triggerActiveState);
         triggerToLoad->setActiveRestartTrajectory(triggerActiveRestartTrajectory);
+        triggerToLoad->setRestartPhrase(triggerRestartPhrase);
         triggerToLoad->setIn(triggerIn);
         triggerToLoad->setOut(triggerOut);
         triggerVisToLoad->setIsPlayed(triggerActiveState);
@@ -1183,6 +1186,7 @@ bool Scene::save(QFile &sceneFile)
         objTrigger["priority"] = triggerToSave->getPriority();
         objTrigger["active-state"] = triggerToSave->getActiveState();
         objTrigger["active-restart-trajectory"] = triggerToSave->getActiveRestartTrajectory();
+        objTrigger["restart-phrase"] = triggerToSave->getRestartPhrase();
         objTrigger["in"] = triggerToSave->getIn();
         objTrigger["out"] = triggerToSave->getOut();
         objTrigger["x"] = triggerVisToSave->getOriginX();

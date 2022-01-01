@@ -128,6 +128,8 @@ private slots:
 
     void on_spinBox_Priority_valueChanged(int arg1);
 
+    void on_checkBox_Phrase_Restart_toggled(bool checked);
+
 private:
     Ui::TriggerDialog *ui;
     bool linking = false;

@@ -118,6 +118,9 @@ public:
     bool changedPriority();
     bool isInListTriggersIn(int l_triggerId);
 
+    void setRestartPhrase(bool n_restartPhrase);
+    bool getRestartPhrase();
+
 private:
 
     unsigned int myId;  // unique id
@@ -154,6 +157,9 @@ private:
     // Priority for trigger action on other triggers
     int priority = 0;
     bool changed_Priority = false;
+
+    // restart phrases when activate clouds
+    bool restartPhrase = false;
 
 };
 
