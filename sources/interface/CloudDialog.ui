@@ -2232,6 +2232,9 @@ border-bottom-left-radius: 9px;
                    </item>
                    <item row="1" column="0">
                     <widget class="QCheckBox" name="checkBox_New">
+                     <property name="enabled">
+                      <bool>false</bool>
+                     </property>
                      <property name="font">
                       <font>
                        <pointsize>7</pointsize>
