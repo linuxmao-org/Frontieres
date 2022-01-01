@@ -114,6 +114,7 @@ void TriggerDialog::linkTrigger(Trigger *triggerLinked, TriggerVis *triggerVisLi
     ui->checkBox_Active->setChecked(triggerLinked->getActiveState());
     ui->checkBox_Locked->setChecked(triggerLinked->getLockedState());
     ui->checkBox_Restart->setChecked(triggerLinked->getActiveRestartTrajectory());
+    ui->checkBox_Phrase_Restart->setChecked(triggerLinked->getRestartPhrase());
     if (triggerLinked->changedIn())
         switch (triggerLinked->getIn()) {
         case NOTHING:
@@ -615,4 +616,9 @@ void TriggerDialog::on_spinBox_Priority_valueChanged(int arg1)
 {
     if (!linking)
         triggerRef->setPriority(arg1);
+}
+
+void TriggerDialog::on_checkBox_Phrase_Restart_toggled(bool checked)
+{
+    triggerRef->setRestartPhrase(checked);
 }

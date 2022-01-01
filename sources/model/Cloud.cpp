@@ -262,6 +262,7 @@ void Cloud::setActiveState(bool activateState)
        myGrains[0]->setWindowFirstTime(true);
 
        for (int i = 0; i < myGrains.size(); i++) {
+           myGrains[i]->setPlayingState(false);
            // cout << "windowtype " << windowType << endl;
            myGrains[i]->updateSampleSet();
 //           myGrains[i]->setWindowFirstTime(true);
@@ -1060,6 +1061,12 @@ void Cloud::setActualiseByPhrase(bool n_state)
 bool Cloud::getActualiseByPhrase()
 {
     return actualiseByPhrase;
+}
+
+void Cloud::phraseRestart()
+{
+    myPhrase.setRestart(false);
+    myPhrase.setActiveState(true);
 }
 
 void Cloud::setSilence(bool l_silence)

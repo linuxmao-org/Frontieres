@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>634</width>
-    <height>349</height>
+    <width>550</width>
+    <height>335</height>
    </rect>
   </property>
   <property name="font">
@@ -2571,7 +2571,7 @@
    <item>
     <widget class="QFrame" name="frame_3">
      <property name="frameShape">
-      <enum>QFrame::StyledPanel</enum>
+      <enum>QFrame::NoFrame</enum>
      </property>
      <property name="frameShadow">
       <enum>QFrame::Raised</enum>
@@ -2684,14 +2684,14 @@
               </property>
              </widget>
             </item>
-            <item row="4" column="0">
+            <item row="5" column="0">
              <widget class="QCheckBox" name="checkBox_Locked">
               <property name="text">
                <string>Locked</string>
               </property>
              </widget>
             </item>
-            <item row="5" column="0">
+            <item row="6" column="0">
              <widget class="QLabel" name="label_Priority">
               <property name="frameShape">
                <enum>QFrame::Panel</enum>
@@ -2704,13 +2704,20 @@
               </property>
              </widget>
             </item>
-            <item row="5" column="1">
+            <item row="6" column="1">
              <widget class="QSpinBox" name="spinBox_Priority"/>
             </item>
             <item row="0" column="1">
              <widget class="QLabel" name="label_Id_Value">
               <property name="text">
                <string/>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0">
+             <widget class="QCheckBox" name="checkBox_Phrase_Restart">
+              <property name="text">
+               <string>Phrases Restart</string>
               </property>
              </widget>
             </item>
@@ -2723,7 +2730,7 @@
       <item>
        <widget class="QFrame" name="frame_2">
         <property name="frameShape">
-         <enum>QFrame::StyledPanel</enum>
+         <enum>QFrame::Box</enum>
         </property>
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
@@ -2829,7 +2836,7 @@
       <item>
        <widget class="QFrame" name="frame_Transports">
         <property name="frameShape">
-         <enum>QFrame::Panel</enum>
+         <enum>QFrame::Box</enum>
         </property>
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>

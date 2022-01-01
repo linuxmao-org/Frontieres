@@ -277,6 +277,7 @@ public:
     Phrase* getPhrase();
     void setActualiseByPhrase(bool n_state);
     bool getActualiseByPhrase();
+    void phraseRestart();
     
     void setSilence(bool l_silence);
     bool getSilence();

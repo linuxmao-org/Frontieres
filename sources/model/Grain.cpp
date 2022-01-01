@@ -170,7 +170,7 @@ bool Grain::playMe(double *startPositions, double *startVols)
     }
     else {
         // debug
-        cout << "Grain triggered too soon..." << endl;
+        // cout << "Grain triggered too soon..." << endl;
         return true;
     }
 }

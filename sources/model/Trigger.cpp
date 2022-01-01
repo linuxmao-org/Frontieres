@@ -280,6 +280,9 @@ void Trigger::computeCloudsIn()
                     //cout << " ON" << endl;
                     cloudToCompute->setActiveState(true);
                     cloudVisToCompute->setIsPlayed(true);
+                    if (restartPhrase) {
+                        cloudToCompute->phraseRestart();
+                    }
                     break;
                 case OFF:
                     //cout << " OFF" << endl;
@@ -288,7 +291,10 @@ void Trigger::computeCloudsIn()
                     break;
                 case COMMUTE:
                     //cout << " COMMUTE" << endl;
-                    cloudToCompute->toggleActive();
+                    cloudToCompute->setActiveState(!cloudToCompute->getActiveState());
+                    if (restartPhrase) {
+                        cloudToCompute->phraseRestart();
+                    }
                     break;
                 default:
                     break;
@@ -334,6 +340,9 @@ void Trigger::computeCloudsOut()
             case ON:
                 //cout << " ON" << endl;
                 cloudToCompute->setActiveState(true);
+                if (restartPhrase) {
+                    cloudToCompute->phraseRestart();
+                }
                 break;
             case OFF:
                 //cout << " OFF" << endl;
@@ -342,6 +351,10 @@ void Trigger::computeCloudsOut()
             case COMMUTE:
                 //cout << " COMMUTE" << endl;
                 cloudToCompute->setActiveState(!cloudToCompute->getActiveState());
+                if (restartPhrase) {
+                    cloudToCompute->phraseRestart();
+                }
+
                 break;
             default:
                 break;
@@ -484,5 +497,15 @@ bool Trigger::isInListTriggersIn(int l_triggerId)
         return false;
     else
         return true;
+}
+
+void Trigger::setRestartPhrase(bool n_restartPhrase)
+{
+    restartPhrase = n_restartPhrase;
+}
+
+bool Trigger::getRestartPhrase()
+{
+    return restartPhrase;
 }
 
