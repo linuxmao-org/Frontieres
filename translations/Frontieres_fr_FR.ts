@@ -103,7 +103,7 @@
         <translation>Dialogue</translation>
     </message>
     <message>
-        <location filename="../sources/interface/BankDialog.cpp" line="66"/>
+        <location filename="../sources/interface/BankDialog.cpp" line="86"/>
         <source>Combination</source>
         <translation>Combinaison</translation>
     </message>
@@ -146,7 +146,7 @@
     </message>
     <message>
         <location filename="../sources/interface/CloudDialog.ui" line="1247"/>
-        <location filename="../sources/interface/CloudDialog.ui" line="6317"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="6332"/>
         <source>X</source>
         <translation>X</translation>
     </message>
@@ -168,27 +168,27 @@
     </message>
     <message>
         <location filename="../sources/interface/CloudDialog.ui" line="1476"/>
-        <location filename="../sources/interface/CloudDialog.ui" line="6537"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="6552"/>
         <source>Y</source>
         <translation>Y</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="3290"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="3305"/>
         <source>Progress</source>
         <translation>Progression</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="3815"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="3830"/>
         <source>Angle</source>
         <translation>Angle</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="4068"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="4083"/>
         <source>Radius Int</source>
         <translation>Rayon interne</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="4267"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="4282"/>
         <source>Expansion</source>
         <translation>Extension</translation>
     </message>
@@ -203,57 +203,62 @@
         <translation>&amp;Nuage</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="2406"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="2244"/>
+        <source>New</source>
+        <translation>Nouveau</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/CloudDialog.ui" line="2421"/>
         <source>Direction (F)</source>
         <translation>Direction (F)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="2820"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="2835"/>
         <source>&amp;Trajectory</source>
         <translation>&amp;Trajectoire</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="4692"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="4707"/>
         <source>Trajectory (I)</source>
         <translation>Trajectoire (I)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="4721"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="4736"/>
         <source>&amp;Circular</source>
         <translation>&amp;Circulaire</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="4731"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="4746"/>
         <source>&amp;Hypotrochoid</source>
         <translation>&amp;Hypotrochoïde</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="4882"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="4897"/>
         <source>&amp;Grains</source>
         <translation>&amp;Grains</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="5074"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="5089"/>
         <source>&amp;Positions</source>
         <translation>&amp;Positions</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="5111"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="5126"/>
         <source>&amp;Manual</source>
         <translation>&amp;Manuel</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="5177"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="5192"/>
         <source>Window (W)</source>
         <translation>Fenêtre (W)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="5224"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="5239"/>
         <source>&amp;Expdec</source>
         <translation>&amp;Expdec</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="6064"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="6079"/>
         <source>Grain</source>
         <translation>Grain</translation>
     </message>
@@ -266,7 +271,7 @@
         <translation type="vanished">Trajectoire (I)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="4701"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="4716"/>
         <source>&amp;Static</source>
         <translation>&amp;Statique</translation>
     </message>
@@ -279,12 +284,12 @@
         <translation type="vanished">Ci&amp;rculaire</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="3531"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="3546"/>
         <source>Radius</source>
         <translation>Rayon</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="3058"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="3073"/>
         <source>Speed</source>
         <translation>Vitesse</translation>
     </message>
@@ -299,7 +304,7 @@
         <translation>Enveloppe (E)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="5850"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="5865"/>
         <source>Grains (V)</source>
         <translation>Grains (V)</translation>
     </message>
@@ -319,7 +324,7 @@
         <translation>X Extension (X)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="5600"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="5615"/>
         <source>Overlap (S)</source>
         <translation>Chevauchement (S)</translation>
     </message>
@@ -329,7 +334,7 @@
         <translation>Amp LFO (K)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="5380"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="5395"/>
         <source>Duration (D)</source>
         <translation>Durée (D)</translation>
     </message>
@@ -339,7 +344,7 @@
         <translation>Extension Y (Y)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="2531"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="2546"/>
         <source>Balance (T)</source>
         <translation>Balance (T)</translation>
     </message>
@@ -348,7 +353,7 @@
         <translation type="vanished">&amp;Mono</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="2547"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="2562"/>
         <source>&amp;Stereo</source>
         <translation>&amp;Stéréo</translation>
     </message>
@@ -368,7 +373,7 @@
         <translation>Verrouillé</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="2307"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="2322"/>
         <source>Midi Note</source>
         <translation>Note MIDI</translation>
     </message>
@@ -377,7 +382,7 @@
         <translation type="vanished">Direction (f)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="2418"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="2433"/>
         <source>&amp;Forward</source>
         <translation>&amp;En avant</translation>
     </message>
@@ -386,14 +391,14 @@
         <translation type="vanished">En arrière (&amp;k)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="2431"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="2446"/>
         <source>&amp;Backward</source>
         <translation>&amp;En arrière</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="2438"/>
-        <location filename="../sources/interface/CloudDialog.ui" line="5098"/>
-        <location filename="../sources/interface/CloudDialog.ui" line="5245"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="2453"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="5113"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="5260"/>
         <source>&amp;Random</source>
         <translation>&amp;Aléatoire</translation>
     </message>
@@ -402,12 +407,12 @@
         <translation type="vanished">Balance (t)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="4490"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="4505"/>
         <source>Stretch</source>
         <translation>Etirement</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="2540"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="2555"/>
         <source>Unit&amp;y</source>
         <translation>&amp;Unité</translation>
     </message>
@@ -416,17 +421,17 @@
         <translation type="vanished">S&amp;téréo</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="2557"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="2572"/>
         <source>&amp;Around</source>
         <translation>&amp;Autour</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="2638"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="2653"/>
         <source>First output</source>
         <translation>Première sortie</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="2755"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="2770"/>
         <source>Last output</source>
         <translation>Dernière sortie</translation>
     </message>
@@ -435,7 +440,7 @@
         <translation type="vanished">&amp;Aléatoire</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="4714"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="4729"/>
         <source>&amp;Bouncing</source>
         <translation>&amp;Rebond</translation>
     </message>
@@ -444,7 +449,7 @@
         <translation type="vanished">H&amp;ypotrochoïde</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="4738"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="4753"/>
         <source>&amp;Recorded</source>
         <translation>En&amp;registrée</translation>
     </message>
@@ -453,12 +458,12 @@
         <translation type="vanished">Fenêtre (w)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="5204"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="5219"/>
         <source>&amp;Hanning</source>
         <translation>&amp;Hanning</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="5211"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="5226"/>
         <source>&amp;Triangle</source>
         <translation>&amp;Triangle</translation>
     </message>
@@ -467,12 +472,12 @@
         <translation type="vanished">E&amp;xpdec</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="5231"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="5246"/>
         <source>&amp;Rexpdec</source>
         <translation>&amp;Rexpdec</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="5238"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="5253"/>
         <source>&amp;Sinc</source>
         <translation>&amp;Syncronisé</translation>
     </message>
@@ -600,7 +605,7 @@
         <translation>Dialogue</translation>
     </message>
     <message>
-        <location filename="../sources/interface/InstrumDialog.cpp" line="49"/>
+        <location filename="../sources/interface/InstrumDialog.cpp" line="69"/>
         <source>Combinations</source>
         <translation>Combinaison</translation>
     </message>
@@ -962,17 +967,17 @@
         <translation>Longueur (en sec) :</translation>
     </message>
     <message>
-        <location filename="../sources/interface/OptionsDialog.cpp" line="40"/>
+        <location filename="../sources/interface/OptionsDialog.cpp" line="60"/>
         <source>Error</source>
         <translation>Erreur</translation>
     </message>
     <message>
-        <location filename="../sources/interface/OptionsDialog.cpp" line="41"/>
+        <location filename="../sources/interface/OptionsDialog.cpp" line="61"/>
         <source>Cannot lanch the program: %1</source>
         <translation>Impossible de lancer le programme : %1</translation>
     </message>
     <message>
-        <location filename="../sources/interface/OptionsDialog.cpp" line="42"/>
+        <location filename="../sources/interface/OptionsDialog.cpp" line="62"/>
         <source>Please ensure the software is installed and the path is correct.</source>
         <translation>Veuillez vous assurer que le logiciel est installé et que le chemin est correct.</translation>
     </message>
@@ -1007,7 +1012,7 @@
     <message>
         <location filename="../sources/interface/PhraseDialog.ui" line="255"/>
         <location filename="../sources/interface/PhraseDialog.ui" line="1267"/>
-        <location filename="../sources/interface/PhraseDialog.ui" line="2447"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2450"/>
         <source>&amp;Delete</source>
         <translation>&amp;Supprimer</translation>
     </message>
@@ -1061,210 +1066,215 @@
         <translation>Tempo</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="2478"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2481"/>
         <source>&amp;Load</source>
         <translation>&amp;Ouvrir</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="2515"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2518"/>
         <source>&amp;Save</source>
         <translation>&amp;Enregistrer</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="2603"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2606"/>
         <source>Scale</source>
         <translation>Echelle</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="2697"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2700"/>
         <source>Horizontal</source>
         <translation>Horizontal</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="2842"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2845"/>
         <source>Vertical</source>
         <translation>Vertical</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2929"/>
+        <source>&amp;Envelope</source>
+        <translation>&amp;Envelope</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="461"/>
+        <location filename="../sources/Frontieres.cpp" line="462"/>
         <source>CLICK TO START</source>
         <translation>CLIQUER POUR DÉMARRER</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="469"/>
+        <location filename="../sources/Frontieres.cpp" line="470"/>
         <source>ESCAPE TO QUIT</source>
         <translation>ÉCHAP POUR QUITTER</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="498"/>
+        <location filename="../sources/Frontieres.cpp" line="499"/>
         <source>Grains: </source>
         <translation>Grains : </translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="505"/>
+        <location filename="../sources/Frontieres.cpp" line="506"/>
         <source>Duration: </source>
         <translation>Durée : </translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="520"/>
+        <location filename="../sources/Frontieres.cpp" line="521"/>
         <source>Window: HANNING</source>
         <translation>Fenêtre : HANNING</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="523"/>
+        <location filename="../sources/Frontieres.cpp" line="524"/>
         <source>Window: TRIANGLE</source>
         <translation>Fenêtre : TRIANGLE</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="526"/>
+        <location filename="../sources/Frontieres.cpp" line="527"/>
         <source>Window: REXPDEC</source>
         <translation>Fenêtre : REXPDEC</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="529"/>
+        <location filename="../sources/Frontieres.cpp" line="530"/>
         <source>Window: EXPDEC</source>
         <translation>Fenêtre : EXPDEC</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="532"/>
+        <location filename="../sources/Frontieres.cpp" line="533"/>
         <source>Window: SINC</source>
         <translation>Fenêtre : SINC</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="535"/>
+        <location filename="../sources/Frontieres.cpp" line="536"/>
         <source>Window: RANDOM_WIN</source>
         <translation>Fenêtre : RANDOM_WIN</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="546"/>
+        <location filename="../sources/Frontieres.cpp" line="547"/>
         <source>X: </source>
         <translation>&gt;X : </translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="553"/>
+        <location filename="../sources/Frontieres.cpp" line="554"/>
         <source>Y: </source>
         <translation>Y : </translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="560"/>
+        <location filename="../sources/Frontieres.cpp" line="561"/>
         <source>X,Y: </source>
         <translation>X, Y : </translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="572"/>
+        <location filename="../sources/Frontieres.cpp" line="573"/>
         <source>Direction: FORWARD</source>
         <translation>Direction : EN AVANT</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="575"/>
+        <location filename="../sources/Frontieres.cpp" line="576"/>
         <source>Direction: BACKWARD</source>
         <translation>Direction : EN ARRIÈRE</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="578"/>
+        <location filename="../sources/Frontieres.cpp" line="579"/>
         <source>Direction: RANDOM</source>
         <translation>Direction : HASARD</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="591"/>
+        <location filename="../sources/Frontieres.cpp" line="592"/>
         <source>Spatial Mode: UNITY</source>
         <translation>Balance panoramique : UNITÉ</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="594"/>
+        <location filename="../sources/Frontieres.cpp" line="595"/>
         <source>Spatial Mode: STEREO</source>
         <translation>Balance panoramique : STÉRÉO</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="597"/>
+        <location filename="../sources/Frontieres.cpp" line="598"/>
         <source>Spatial Mode: AROUND</source>
         <translation>Balance panoramique : AUTOUR</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="607"/>
+        <location filename="../sources/Frontieres.cpp" line="608"/>
         <source>Volume (dB): </source>
         <translation>Volume (dB) : </translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="619"/>
+        <location filename="../sources/Frontieres.cpp" line="620"/>
         <source>Overlap: </source>
         <translation>Chevauchement : </translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="632"/>
+        <location filename="../sources/Frontieres.cpp" line="633"/>
         <source>Pitch: </source>
         <translation>Tonalité : </translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="646"/>
+        <location filename="../sources/Frontieres.cpp" line="647"/>
         <source>Pitch LFO Freq: </source>
         <translation>Fréquence LFO de la tonalité : </translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="659"/>
+        <location filename="../sources/Frontieres.cpp" line="660"/>
         <source>Pitch LFO Amount: </source>
         <translation>Quantité LFO de la tonalité : </translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="672"/>
+        <location filename="../sources/Frontieres.cpp" line="673"/>
         <source>Cloud ID/Num: </source>
         <translation>ID/num nuage : </translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="682"/>
+        <location filename="../sources/Frontieres.cpp" line="683"/>
         <source>Trajectory: STATIC</source>
         <translation>Trajectoire : STATIQUE</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="685"/>
+        <location filename="../sources/Frontieres.cpp" line="686"/>
         <source>Trajectory: BOUNCING</source>
         <translation>Trajectoire : REBOND</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="688"/>
+        <location filename="../sources/Frontieres.cpp" line="689"/>
         <source>Trajectory: CIRCULAR</source>
         <translation>Trajectoire : CIRCULAIRE</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="691"/>
+        <location filename="../sources/Frontieres.cpp" line="692"/>
         <source>Trajectory: HYPOTROCHOID</source>
         <translation>Trajectoire: HYPOTROCHOIDE</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="694"/>
+        <location filename="../sources/Frontieres.cpp" line="695"/>
         <source>Trajectory: RECORDED</source>
         <translation>Trajectoire: ENREGISTRÉE</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="716"/>
+        <location filename="../sources/Frontieres.cpp" line="717"/>
         <source>Sample: </source>
         <translation>Échantillon : </translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="938"/>
+        <location filename="../sources/Frontieres.cpp" line="939"/>
         <source>Interactive granular sampler</source>
         <translation>Échantillonneur granulaire interactif</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="944"/>
+        <location filename="../sources/Frontieres.cpp" line="945"/>
         <source>Set the number of input channels.</source>
         <translation>Choisir le nombre de canaux d&apos;entrées.</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="945"/>
+        <location filename="../sources/Frontieres.cpp" line="946"/>
         <source>input-channel-count</source>
         <translation>nombre de canaux d&apos;entrée</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="950"/>
+        <location filename="../sources/Frontieres.cpp" line="951"/>
         <source>Set the number of output channels.</source>
         <translation>Paramétrer le nombre de canaux de sortie.</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="951"/>
+        <location filename="../sources/Frontieres.cpp" line="952"/>
         <source>output-channel-count</source>
         <translation>nombre de canaux de sortie</translation>
     </message>
@@ -1273,22 +1283,22 @@
         <translation type="vanished">nombre-canaux</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="956"/>
+        <location filename="../sources/Frontieres.cpp" line="957"/>
         <source>Automatically connect audio streams to the output device.</source>
         <translation>Connecte automatiquement les flux audio au périphérique de sortie.</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="961"/>
+        <location filename="../sources/Frontieres.cpp" line="962"/>
         <source>Set the refresh rate in frames per second.</source>
         <translation>Paramétrer le taux de rafraîchissement en trames par seconde.</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="962"/>
+        <location filename="../sources/Frontieres.cpp" line="963"/>
         <source>refresh-rate</source>
         <translation>taux de rafraîchissement</translation>
     </message>
     <message>
-        <location filename="../sources/Frontieres.cpp" line="976"/>
+        <location filename="../sources/Frontieres.cpp" line="977"/>
         <source>Invalid FPS value.</source>
         <translation>Valeur de trames par seconde invalide.</translation>
     </message>
@@ -1328,42 +1338,42 @@
         <translation>Fichiers de trajectoires (*%1)</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scene.cpp" line="1771"/>
+        <location filename="../sources/model/Scene.cpp" line="1873"/>
         <source>Load samples</source>
         <translation>Charger les échantillons</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scene.cpp" line="1772"/>
+        <location filename="../sources/model/Scene.cpp" line="1874"/>
         <source>Could not find the sample file &quot;%1&quot;.</source>
         <translation>Impossible de trouver le fichier d&apos;échantillon &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scene.cpp" line="1774"/>
+        <location filename="../sources/model/Scene.cpp" line="1876"/>
         <source>Add a different sample directory</source>
         <translation>Ajouter un répertoire d&apos;échantillon différent</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scene.cpp" line="1775"/>
+        <location filename="../sources/model/Scene.cpp" line="1877"/>
         <source>Discard missing samples</source>
         <translation>Abandonner les échantillons manquants</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scene.cpp" line="1789"/>
+        <location filename="../sources/model/Scene.cpp" line="1891"/>
         <source>Add sample directory</source>
         <translation>Ajouter un répertoire d&apos;échantillon</translation>
     </message>
     <message>
-        <location filename="../sources/interface/BankDialog.cpp" line="94"/>
+        <location filename="../sources/interface/BankDialog.cpp" line="114"/>
         <source>Copy</source>
         <translation>Copier</translation>
     </message>
     <message>
-        <location filename="../sources/interface/BankDialog.cpp" line="95"/>
+        <location filename="../sources/interface/BankDialog.cpp" line="115"/>
         <source>Paste</source>
         <translation>Coller</translation>
     </message>
     <message>
-        <location filename="../sources/interface/BankDialog.cpp" line="96"/>
+        <location filename="../sources/interface/BankDialog.cpp" line="116"/>
         <source>Delete</source>
         <translation>Supprimer</translation>
     </message>
@@ -1439,32 +1449,32 @@
         <translation>Transformer l&apos;entrée en échantillon fixe</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scale.cpp" line="113"/>
+        <location filename="../sources/model/Scale.cpp" line="133"/>
         <source>Scale files (*%1)</source>
         <translation>Fichiers de gammes (*%1)</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scale.cpp" line="119"/>
+        <location filename="../sources/model/Scale.cpp" line="139"/>
         <source>Save scale</source>
         <translation>Enregistrer la gamme</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scale.cpp" line="123"/>
+        <location filename="../sources/model/Scale.cpp" line="143"/>
         <source>Load scale</source>
         <translation>Ouvrir la gamme</translation>
     </message>
     <message>
-        <location filename="../sources/model/Phrase.cpp" line="338"/>
+        <location filename="../sources/model/Phrase.cpp" line="383"/>
         <source>Phrase files (*%1)</source>
         <translation>Fichiers de phrases (*%1)</translation>
     </message>
     <message>
-        <location filename="../sources/model/Phrase.cpp" line="344"/>
+        <location filename="../sources/model/Phrase.cpp" line="389"/>
         <source>Save phrase</source>
         <translation>Enregistrer la phrase</translation>
     </message>
     <message>
-        <location filename="../sources/model/Phrase.cpp" line="348"/>
+        <location filename="../sources/model/Phrase.cpp" line="393"/>
         <source>Load phrase</source>
         <translation>Ouvrir la phrase</translation>
     </message>
@@ -1609,7 +1619,12 @@
         <translation>Verrouillé</translation>
     </message>
     <message>
-        <location filename="../sources/interface/TriggerDialog.ui" line="2770"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="2720"/>
+        <source>Phrases Restart</source>
+        <translation>Relance des phrases</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/TriggerDialog.ui" line="2777"/>
         <source>S&amp;tatic </source>
         <translation>&amp;Statique </translation>
     </message>
@@ -1624,7 +1639,7 @@
         <translation>Priorité : </translation>
     </message>
     <message>
-        <location filename="../sources/interface/TriggerDialog.ui" line="2761"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="2768"/>
         <source>Trajectory (I)</source>
         <translation>Trajectoire (I)</translation>
     </message>
@@ -1633,22 +1648,22 @@
         <translation type="vanished">&amp;Statique</translation>
     </message>
     <message>
-        <location filename="../sources/interface/TriggerDialog.ui" line="2789"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="2796"/>
         <source>&amp;Bouncing</source>
         <translation>&amp;Rebond</translation>
     </message>
     <message>
-        <location filename="../sources/interface/TriggerDialog.ui" line="2796"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="2803"/>
         <source>&amp;Circular</source>
         <translation>&amp;Circulaire</translation>
     </message>
     <message>
-        <location filename="../sources/interface/TriggerDialog.ui" line="2806"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="2813"/>
         <source>&amp;Hypotrochoid</source>
         <translation>&amp;Hypotrochoïde</translation>
     </message>
     <message>
-        <location filename="../sources/interface/TriggerDialog.ui" line="2813"/>
+        <location filename="../sources/interface/TriggerDialog.ui" line="2820"/>
         <source>&amp;Recorded</source>
         <translation>&amp;Enregistrée</translation>
     </message>
