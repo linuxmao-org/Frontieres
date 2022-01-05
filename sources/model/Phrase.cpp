@@ -84,7 +84,7 @@ int Phrase::insertControlShade(float l_delay, float l_value)
     l_controlPoint->value = l_value;
     int l_result = 0;
     for (unsigned long i = 0; i < myControlShade.size(); i = i + 1){
-        l_result = i;
+        l_result = int(i);
         if (myControlShade[i]->delay > l_delay) {
             myControlShade.insert(myControlShade.begin() + i, l_controlPoint);
             break;
@@ -106,7 +106,7 @@ int Phrase::insertControlInterval(float l_delay, float l_value, bool l_silence)
     l_controlPoint->silence = l_silence;
     int l_result = 0;
     for (unsigned long i = 0; i < myControlInterval.size(); i = i + 1){
-        l_result = i;
+        l_result = int(i);
         //cout << "i=" << i << endl;
         if (myControlInterval[i]->delay > l_delay){
             myControlInterval.insert(myControlInterval.begin() + i, l_controlPoint);
@@ -135,7 +135,7 @@ void Phrase::deleteControlInterval(unsigned long l_num)
 
 float Phrase::getShade()
 {
-    float l_delay = (GTime::instance().sec - phraseStartTime) * tempo / 60;
+    float l_delay = float((GTime::instance().sec - phraseStartTime) * tempo / 60);
     if ((myControlShade.size() == 1) || (!activeState)) {
         shadeEndedState = true;
         if (intervalEndedState)
@@ -176,7 +176,7 @@ float Phrase::getShade()
 float Phrase::getInterval()
 {
     //cout << "getinterval, ";
-    float l_delay = (GTime::instance().sec - phraseStartTime) * tempo / 60;
+    float l_delay = float((GTime::instance().sec - phraseStartTime) * tempo / 60);
     //cout << "l_delay = " << l_delay << endl;
     if ((myControlInterval.size() == 1) || (!activeState)) {
         silenceState = false;
@@ -430,15 +430,15 @@ bool Phrase::save(QFile &phraseFile)
     // Positions
     QJsonArray docIntervals;
     cout << myControlInterval.size() << " intervals : " << "\n";
-    for (int i = 1, n = myControlInterval.size(); i < n; ++i) {
+    for (unsigned long i = 1, n = myControlInterval.size(); i < n; ++i) {
 
         cout << "Phrase interval " << i << ", delay : ";
         cout << myControlInterval[i]->delay << ",value :" << myControlInterval[i]->value << ", silence :" << myControlInterval[i]->silence << "\n";
 
         QJsonObject objInterval;
 
-        objInterval["value"] = myControlInterval[i]->value;
-        objInterval["delay"] = myControlInterval[i]->delay;
+        objInterval["value"] = double(myControlInterval[i]->value);
+        objInterval["delay"] = double(myControlInterval[i]->delay);
         objInterval["silence"] = myControlInterval[i]->silence;
 
         docIntervals.append(objInterval);
@@ -446,15 +446,15 @@ bool Phrase::save(QFile &phraseFile)
     }
     QJsonArray docShades;
     cout << myControlShade.size() << " shades : " << "\n";
-    for (int i = 1, n = myControlShade.size(); i < n; ++i) {
+    for (unsigned long i = 1, n = myControlShade.size(); i < n; ++i) {
 
         cout << "Phrase shade " << i << ", delay : ";
         cout << myControlShade[i]->delay << ",value :" << myControlShade[i]->value << "\n";
 
         QJsonObject objShade;
 
-        objShade["value"] = myControlShade[i]->value;
-        objShade["delay"] = myControlShade[i]->delay;
+        objShade["value"] = double(myControlShade[i]->value);
+        objShade["delay"] = double(myControlShade[i]->delay);
 
 
         docShades.append(objShade);
@@ -505,9 +505,9 @@ bool Phrase::load(QFile &phraseFile)
     for (const QJsonValue &jsonElement : docIntervals) {
         QJsonObject objInterval = jsonElement.toObject();
         ControlPoint l_interval;
-        l_interval.value = objInterval["value"].toDouble();
+        l_interval.value = float(objInterval["value"].toDouble());
         cout << "Interval value : " << l_interval.value << endl;
-        l_interval.delay = objInterval["delay"].toDouble();
+        l_interval.delay = float(objInterval["delay"].toDouble());
         cout << "Interval delay : " << l_interval.delay << endl;
         l_interval.silence = objInterval["silence"].toBool();
         cout << "Interval silence : " << l_interval.silence << endl;
@@ -519,9 +519,9 @@ bool Phrase::load(QFile &phraseFile)
     for (const QJsonValue &jsonElement : docShades) {
         QJsonObject objShade = jsonElement.toObject();
         ControlPoint l_shade;
-        l_shade.value = objShade["value"].toDouble();
+        l_shade.value = float(objShade["value"].toDouble());
         cout << "Shade value : " << l_shade.value << endl;
-        l_shade.delay = objShade["delay"].toDouble();
+        l_shade.delay = float(objShade["delay"].toDouble());
         cout << "Shade delay : " << l_shade.delay << endl;
 
         insertControlShade(l_shade.delay,l_shade.value);
@@ -531,7 +531,7 @@ bool Phrase::load(QFile &phraseFile)
 
 void Phrase::reset()
 {
-    int l_max = myControlInterval .size();
+    unsigned long l_max = myControlInterval .size();
     for (unsigned long i = 0; i < l_max - 1; i++) {
         myControlInterval.pop_back();
     }
@@ -559,4 +559,54 @@ void Phrase::setScaleAttraction(bool n_state)
 void Phrase::insertScalePosition(ScalePosition n_scalePosition)
 {
     myScale.insertScalePosition(n_scalePosition);
+}
+
+void Phrase::shiftControlInterval(unsigned long l_num, float l_value)
+{
+    unsigned long l_max = myControlInterval.size();
+    float l_valueMin = 0;
+    float n_value = 0;
+    if (l_value < 0) {
+        if (l_num > 1) {
+            l_valueMin = myControlInterval[(l_num - 1)]->delay;
+        }
+        if (l_valueMin > (myControlInterval[l_num]->delay + l_value)) {
+            n_value = l_valueMin - myControlInterval[l_num]->delay;
+        }
+        else {
+            n_value = l_value;
+        }
+    }
+    else {
+        n_value = l_value;
+    }
+    //cout << "l_num = "<< l_num << ", l_value = " << l_value << ", n_value = " << n_value << ", l_valueMin = " << l_valueMin << endl;
+    for (unsigned long i = l_num; i < l_max; i++) {
+        myControlInterval[i]->delay = myControlInterval[i]->delay + n_value;
+    }
+}
+
+void Phrase::shiftControlShade(unsigned long l_num, float l_value)
+{
+    unsigned long l_max = myControlShade.size();
+    float l_valueMin = 0;
+    float n_value = 0;
+    if (l_value < 0) {
+        if (l_num > 1) {
+            l_valueMin = myControlShade[(l_num - 1)]->delay;
+        }
+        if (l_valueMin > (myControlShade[l_num]->delay + l_value)) {
+            n_value = l_valueMin - myControlShade[l_num]->delay;
+        }
+        else {
+            n_value = l_value;
+        }
+    }
+    else {
+        n_value = l_value;
+    }
+    //cout << "l_num = "<< l_num << ", l_value = " << l_value << ", n_value = " << n_value << ", l_valueMin = " << l_valueMin << endl;
+    for (unsigned long i = l_num; i < l_max; i++) {
+        myControlShade[i]->delay = myControlShade[i]->delay + n_value;
+    }
 }

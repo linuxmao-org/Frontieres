@@ -999,99 +999,105 @@
         <translation>&amp;Intervalle</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="168"/>
-        <location filename="../sources/interface/PhraseDialog.ui" line="1236"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="217"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="1451"/>
         <source>Current</source>
         <translation>Courrant</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="220"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="269"/>
         <source>&amp;Silence</source>
         <translation>&amp;Silence</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="255"/>
-        <location filename="../sources/interface/PhraseDialog.ui" line="1267"/>
-        <location filename="../sources/interface/PhraseDialog.ui" line="2450"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="304"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="1482"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2810"/>
         <source>&amp;Delete</source>
         <translation>&amp;Supprimer</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="346"/>
-        <location filename="../sources/interface/PhraseDialog.ui" line="1358"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="395"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="1573"/>
         <source>Number</source>
         <translation>Numéro</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="491"/>
-        <location filename="../sources/interface/PhraseDialog.ui" line="906"/>
-        <location filename="../sources/interface/PhraseDialog.ui" line="1503"/>
-        <location filename="../sources/interface/PhraseDialog.ui" line="1912"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="540"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="1106"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="1718"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2272"/>
         <source>Delay</source>
         <translation>Delai</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="636"/>
-        <location filename="../sources/interface/PhraseDialog.ui" line="1051"/>
-        <location filename="../sources/interface/PhraseDialog.ui" line="1648"/>
-        <location filename="../sources/interface/PhraseDialog.ui" line="2057"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="685"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="1251"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="1863"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2417"/>
         <source>Value</source>
         <translation>Valeur</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="778"/>
-        <location filename="../sources/interface/PhraseDialog.ui" line="1784"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="830"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2008"/>
+        <source>Shift</source>
+        <translation>Décaler</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/PhraseDialog.ui" line="972"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2144"/>
         <source>New</source>
         <translation>Nouveau</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="809"/>
-        <location filename="../sources/interface/PhraseDialog.ui" line="1815"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="1009"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2175"/>
         <source>&amp;Add</source>
         <translation>&amp;Ajouter</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="1122"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="1322"/>
         <source>&amp;Shade</source>
         <translation>&amp;Nuance</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="2242"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2602"/>
         <source>&amp;Active</source>
         <translation>&amp;Active</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="2337"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2697"/>
         <source>Tempo</source>
         <translation>Tempo</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="2481"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2841"/>
         <source>&amp;Load</source>
         <translation>&amp;Ouvrir</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="2518"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2878"/>
         <source>&amp;Save</source>
         <translation>&amp;Enregistrer</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="2606"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2966"/>
         <source>Scale</source>
         <translation>Echelle</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="2700"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="3060"/>
         <source>Horizontal</source>
         <translation>Horizontal</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="2845"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="3205"/>
         <source>Vertical</source>
         <translation>Vertical</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="2929"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="3289"/>
         <source>&amp;Envelope</source>
         <translation>&amp;Envelope</translation>
     </message>

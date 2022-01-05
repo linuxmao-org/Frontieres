@@ -504,7 +504,7 @@ void PhraseDialog::on_doubleSpinBox_Shade_Value_editingFinished()
 void PhraseDialog::on_doubleSpinBox_Interval_Number_editingFinished()
 {
     int l_num = int(ui->doubleSpinBox_Interval_Number->value());
-    int l_size = cloudRef->getPhrase()->getMyControlIntervalSize();
+    int l_size = int(cloudRef->getPhrase()->getMyControlIntervalSize());
     if (l_num == l_size - 1) {
         ui->doubleSpinBox_Interval_Delay->setMinimum(cloudRef->getPhrase()->getControlInterval(l_num - 1).delay + 0.001);
         ui->doubleSpinBox_Interval_Delay->setMaximum(1000000);
@@ -614,4 +614,21 @@ void PhraseDialog::on_pushButton_Envelope_clicked()
     localParamEnv = cloudRef->getEnvelopeVolumeParam();
     cloudRef->getEnvelopeVolume().envDialogShow(localParamEnv);
     cloudRef->setEnvelopeVolumeParam(localParamEnv);
+}
+
+
+void PhraseDialog::on_doubleSpinBox_Interval_Shift_editingFinished()
+{
+    unsigned long l_num = int(ui->doubleSpinBox_Interval_Number->value());
+    cloudRef->getPhrase()->shiftControlInterval(l_num, float(ui->doubleSpinBox_Interval_Shift->value()));
+    ui->doubleSpinBox_Interval_Shift->setValue(0);
+    on_doubleSpinBox_Interval_Number_editingFinished();
+}
+
+void PhraseDialog::on_doubleSpinBox_Shade_Shift_editingFinished()
+{
+    unsigned long l_num = int(ui->doubleSpinBox_Shade_Number->value());
+    cloudRef->getPhrase()->shiftControlShade(l_num, float(ui->doubleSpinBox_Shade_Shift->value()));
+    ui->doubleSpinBox_Shade_Shift->setValue(0);
+    on_doubleSpinBox_Shade_Number_editingFinished();
 }
