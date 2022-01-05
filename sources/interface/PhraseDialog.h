@@ -95,6 +95,10 @@ private slots:
 
     void on_pushButton_Envelope_clicked();
 
+    void on_doubleSpinBox_Interval_Shift_editingFinished();
+
+    void on_doubleSpinBox_Shade_Shift_editingFinished();
+
 private:
     const int ampControl = 120;
     Ui::PhraseDialog *ui;

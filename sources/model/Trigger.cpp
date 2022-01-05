@@ -247,7 +247,7 @@ void Trigger::computeCloudsIn()
     if (!isActive)
         return;
     Scene *scene = ::currentScene;
-    for (int i = 0; i < scene->m_clouds.size(); i = i + 1) {
+    for (unsigned long i = 0; i < scene->m_clouds.size(); i = i + 1) {
         //cout << "i=" << i << endl;
         SceneCloud *cloud = scene->m_clouds[i].get();
         Cloud *cloudToCompute = cloud->cloud.get();
@@ -256,15 +256,15 @@ void Trigger::computeCloudsIn()
             //cout << "recherche, id =" << cloudToCompute->getId() << endl;
             int cloudExtent;
             if (cloudVisToCompute->getXRandExtent() > cloudVisToCompute->getYRandExtent())
-                cloudExtent = cloudVisToCompute->getXRandExtent();
+                cloudExtent = int(cloudVisToCompute->getXRandExtent());
             else
-                cloudExtent = cloudVisToCompute->getYRandExtent();
-            int x1 = cloudVisToCompute->getOriginX();
-            int y1 = cloudVisToCompute->getOriginY();
-            int x2 = myTriggerVis->getX();
-            int y2 = myTriggerVis->getY();
+                cloudExtent = int(cloudVisToCompute->getYRandExtent());
+            int x1 = int(cloudVisToCompute->getOriginX());
+            int y1 = int(cloudVisToCompute->getOriginY());
+            int x2 = int(myTriggerVis->getX());
+            int y2 = int(myTriggerVis->getY());
             double distance = (qSqrt((pow((x1 - x2),2)+pow((y1 - y2),2))));
-            double radiusSum = cloudExtent + minZone + myTriggerVis->getZoneExtent() + minZone;
+            double radiusSum = cloudExtent + minZone + double(myTriggerVis->getZoneExtent()) + minZone;
             //cout << "distance =" << distance << ", rayons =" << radiusSum << endl;
             if (distance > radiusSum) {
                 //cout << "dehors" << endl;
@@ -320,15 +320,15 @@ void Trigger::computeCloudsOut()
         //cout << "recherche out, id =" << cloudToCompute->getId() << endl;
         int cloudExtent;
         if (cloudVisToCompute->getXRandExtent() > cloudVisToCompute->getYRandExtent())
-            cloudExtent = cloudVisToCompute->getXRandExtent();
+            cloudExtent = int(cloudVisToCompute->getXRandExtent());
         else
-            cloudExtent = cloudVisToCompute->getYRandExtent();
-        int x1 = cloudVisToCompute->getOriginX();
-        int y1 = cloudVisToCompute->getOriginY();
-        int x2 = myTriggerVis->getX();
-        int y2 = myTriggerVis->getY();
+            cloudExtent = int(cloudVisToCompute->getYRandExtent());
+        int x1 = int(cloudVisToCompute->getOriginX());
+        int y1 = int(cloudVisToCompute->getOriginY());
+        int x2 = int(myTriggerVis->getX());
+        int y2 = int(myTriggerVis->getY());
         double distance = (qSqrt((pow((x1 - x2),2)+pow((y1 - y2),2))));
-        double radiusSum = cloudExtent + minZone + myTriggerVis->getZoneExtent() + minZone;
+        double radiusSum = cloudExtent + minZone + double(myTriggerVis->getZoneExtent()) + minZone;
         //cout << "distance =" << distance << ", rayons =" << radiusSum << endl;
         if (distance > radiusSum) {
             //cout << "dehors" << endl;
@@ -371,19 +371,19 @@ void Trigger::computeTriggersIn()
     if (!isActive)
         return;
     Scene *scene = ::currentScene;
-    for (int i = 0; i < scene->m_triggers.size(); i = i + 1) {
+    for (unsigned long i = 0; i < scene->m_triggers.size(); i = i + 1) {
         //cout << "i=" << i << endl;
         SceneTrigger *trigger = scene->m_triggers[i].get();
         Trigger *triggerToCompute = trigger->trigger.get();
         TriggerVis *triggerVisToCompute = trigger->view.get();
         if ((listTriggersIn.indexOf(triggerToCompute->getId()) == -1) && (triggerToCompute->getId() != getId())) {
             //cout << "recherche, id =" << triggerToCompute->getId() << endl;
-            int x1 = triggerVisToCompute->getOriginX();
-            int y1 = triggerVisToCompute->getOriginY();
-            int x2 = myTriggerVis->getX();
-            int y2 = myTriggerVis->getY();
+            int x1 = int(triggerVisToCompute->getOriginX());
+            int y1 = int(triggerVisToCompute->getOriginY());
+            int x2 = int(myTriggerVis->getX());
+            int y2 = int(myTriggerVis->getY());
             double distance = (qSqrt((pow((x1 - x2),2)+pow((y1 - y2),2))));
-            double radiusSum = minZone + myTriggerVis->getZoneExtent() + minZone;
+            double radiusSum = minZone + double(myTriggerVis->getZoneExtent()) + minZone;
             //cout << "distance =" << distance << ", rayons =" << radiusSum << endl;
             if (distance > radiusSum) {
                 //cout << "dehors" << endl;
@@ -434,12 +434,12 @@ void Trigger::computeTriggersOut()
         TriggerVis *triggerVisToCompute = trigger->view.get();
         //cout << "recherche out, id =" << triggerToCompute->getId() << endl;
         if ((triggerToCompute->getId() != getId()) && (triggerToCompute->getPriority() <= getPriority())) {
-            int x1 = triggerVisToCompute->getOriginX();
-            int y1 = triggerVisToCompute->getOriginY();
-            int x2 = myTriggerVis->getX();
-            int y2 = myTriggerVis->getY();
+            int x1 = int(triggerVisToCompute->getOriginX());
+            int y1 = int(triggerVisToCompute->getOriginY());
+            int x2 = int(myTriggerVis->getX());
+            int y2 = int(myTriggerVis->getY());
             double distance = (qSqrt((pow((x1 - x2),2)+pow((y1 - y2),2))));
-            double radiusSum = minZone + myTriggerVis->getZoneExtent() + minZone;
+            double radiusSum = minZone + double(myTriggerVis->getZoneExtent()) + minZone;
             //cout << "distance =" << distance << ", rayons =" << radiusSum << endl;
             if (distance > radiusSum) {
                 //cout << "dehors" << endl;

@@ -85,6 +85,8 @@ public:
     bool scaleAttraction();
     void setScaleAttraction(bool n_state);
     void insertScalePosition(ScalePosition n_scalePosition);
+    void shiftControlInterval(unsigned long l_num, float l_value);
+    void shiftControlShade(unsigned long l_num, float l_value);
 
 private:
     bool activeState = true;
