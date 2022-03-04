@@ -39,13 +39,13 @@ struct CloudParams
     int outputFirst;
     int outputLast;
     int channelLocation;
-    int midiChannel;
     int midiNote;
     float volumeDB;
     int numGrains;
     bool grainsRandom;
     bool activateState;
     bool activateRestartTrajectory;
+    bool activateRestartPhrase;
     float xRandExtent;
     float yRandExtent;
     ParamEnv envelope;
@@ -61,7 +61,7 @@ struct CloudParams
     float triggerZoneExtent;
     int triggerIn;
     int triggerOut;
-    vector<Position *> myPosition;
+    std::vector<Position *> myPosition;
 };
 struct ValueMax
 {

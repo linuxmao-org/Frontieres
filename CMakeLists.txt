@@ -44,6 +44,7 @@ add_executable(Frontieres WIN32
   sources/interface/TriggerDialog.cpp
   sources/interface/ControlDialog.cpp
   sources/interface/PhraseDialog.cpp
+  sources/interface/ScalesDialog.cpp
   sources/dsp/Window.cpp
   sources/model/MidiBank.cpp
   sources/model/MidiCombi.cpp
@@ -115,7 +116,8 @@ qt5_wrap_ui(Frontieres_UI_SOURCES
   sources/interface/AboutDialog.ui
   sources/interface/TriggerDialog.ui
   sources/interface/ControlDialog.ui
-  sources/interface/PhraseDialog.ui)
+  sources/interface/PhraseDialog.ui
+  sources/interface/ScalesDialog.ui)
 
 target_sources(Frontieres PRIVATE ${Frontieres_UI_SOURCES})
 target_link_libraries(Frontieres PRIVATE Qt5::Widgets Qt5::OpenGL)

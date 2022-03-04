@@ -25,6 +25,8 @@
 #include "CombiDialog.h"
 #include "BankDialog.h"
 #include "InstrumDialog.h"
+#include "PhraseDialog.h"
+#include "ScalesDialog.h"
 #include "model/Scene.h"
 #include "model/MidiCombi.h"
 
@@ -69,10 +71,13 @@ public:
     void destroyAllCloudDialogs();
     void destroyAllTriggerDialogs();
     void destroyAllControlDialogs();
-    void destroyAllPhraseDialogs();
     void showOptionsDialog();
     void showMidiBankDialog();
     void showMidiInstrumentDialog();
+    void showPhrasesDialog();
+    void showScalesDialog();
+    void destroyPhrasesDialog();
+    void destroyScalesDialog();
 
 signals:
     void oscMessageArrived(const QByteArray &message);
@@ -84,6 +89,9 @@ private:
     CombiDialog *combiDialog;
     BankDialog *bankDialog;
     InstrumentDialog *instrumentDialog;
+    PhraseDialog *phraseDialog;
+    ScalesDialog *scaleDialog;
+
     QTimer *idleTimer = nullptr;
 };
 

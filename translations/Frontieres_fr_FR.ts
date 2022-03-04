@@ -146,7 +146,7 @@
     </message>
     <message>
         <location filename="../sources/interface/CloudDialog.ui" line="1247"/>
-        <location filename="../sources/interface/CloudDialog.ui" line="6332"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="6458"/>
         <source>X</source>
         <translation>X</translation>
     </message>
@@ -168,27 +168,33 @@
     </message>
     <message>
         <location filename="../sources/interface/CloudDialog.ui" line="1476"/>
-        <location filename="../sources/interface/CloudDialog.ui" line="6552"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="6678"/>
         <source>Y</source>
         <translation>Y</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="3305"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="2567"/>
+        <source>Phrase</source>
+        <translatorcomment>Phrase</translatorcomment>
+        <translation>Phrase</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/CloudDialog.ui" line="3431"/>
         <source>Progress</source>
         <translation>Progression</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="3830"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="3956"/>
         <source>Angle</source>
         <translation>Angle</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="4083"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="4209"/>
         <source>Radius Int</source>
         <translation>Rayon interne</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="4282"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="4408"/>
         <source>Expansion</source>
         <translation>Extension</translation>
     </message>
@@ -213,52 +219,52 @@
         <translation>Direction (F)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="2835"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="2961"/>
         <source>&amp;Trajectory</source>
         <translation>&amp;Trajectoire</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="4707"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="4833"/>
         <source>Trajectory (I)</source>
         <translation>Trajectoire (I)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="4736"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="4862"/>
         <source>&amp;Circular</source>
         <translation>&amp;Circulaire</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="4746"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="4872"/>
         <source>&amp;Hypotrochoid</source>
         <translation>&amp;Hypotrochoïde</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="4897"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="5023"/>
         <source>&amp;Grains</source>
         <translation>&amp;Grains</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="5089"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="5215"/>
         <source>&amp;Positions</source>
         <translation>&amp;Positions</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="5126"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="5252"/>
         <source>&amp;Manual</source>
         <translation>&amp;Manuel</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="5192"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="5318"/>
         <source>Window (W)</source>
         <translation>Fenêtre (W)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="5239"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="5365"/>
         <source>&amp;Expdec</source>
         <translation>&amp;Expdec</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="6079"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="6205"/>
         <source>Grain</source>
         <translation>Grain</translation>
     </message>
@@ -271,7 +277,7 @@
         <translation type="vanished">Trajectoire (I)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="4716"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="4842"/>
         <source>&amp;Static</source>
         <translation>&amp;Statique</translation>
     </message>
@@ -284,12 +290,12 @@
         <translation type="vanished">Ci&amp;rculaire</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="3546"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="3672"/>
         <source>Radius</source>
         <translation>Rayon</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="3073"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="3199"/>
         <source>Speed</source>
         <translation>Vitesse</translation>
     </message>
@@ -304,7 +310,7 @@
         <translation>Enveloppe (E)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="5865"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="5991"/>
         <source>Grains (V)</source>
         <translation>Grains (V)</translation>
     </message>
@@ -324,7 +330,7 @@
         <translation>X Extension (X)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="5615"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="5741"/>
         <source>Overlap (S)</source>
         <translation>Chevauchement (S)</translation>
     </message>
@@ -334,7 +340,7 @@
         <translation>Amp LFO (K)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="5395"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="5521"/>
         <source>Duration (D)</source>
         <translation>Durée (D)</translation>
     </message>
@@ -344,7 +350,7 @@
         <translation>Extension Y (Y)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="2546"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="2672"/>
         <source>Balance (T)</source>
         <translation>Balance (T)</translation>
     </message>
@@ -353,7 +359,7 @@
         <translation type="vanished">&amp;Mono</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="2562"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="2688"/>
         <source>&amp;Stereo</source>
         <translation>&amp;Stéréo</translation>
     </message>
@@ -364,6 +370,7 @@
     </message>
     <message>
         <location filename="../sources/interface/CloudDialog.ui" line="2205"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="2585"/>
         <source>Active</source>
         <translation>Actif</translation>
     </message>
@@ -397,8 +404,8 @@
     </message>
     <message>
         <location filename="../sources/interface/CloudDialog.ui" line="2453"/>
-        <location filename="../sources/interface/CloudDialog.ui" line="5113"/>
-        <location filename="../sources/interface/CloudDialog.ui" line="5260"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="5239"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="5386"/>
         <source>&amp;Random</source>
         <translation>&amp;Aléatoire</translation>
     </message>
@@ -407,12 +414,12 @@
         <translation type="vanished">Balance (t)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="4505"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="4631"/>
         <source>Stretch</source>
         <translation>Etirement</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="2555"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="2681"/>
         <source>Unit&amp;y</source>
         <translation>&amp;Unité</translation>
     </message>
@@ -421,17 +428,17 @@
         <translation type="vanished">S&amp;téréo</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="2572"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="2698"/>
         <source>&amp;Around</source>
         <translation>&amp;Autour</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="2653"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="2779"/>
         <source>First output</source>
         <translation>Première sortie</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="2770"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="2896"/>
         <source>Last output</source>
         <translation>Dernière sortie</translation>
     </message>
@@ -440,7 +447,7 @@
         <translation type="vanished">&amp;Aléatoire</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="4729"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="4855"/>
         <source>&amp;Bouncing</source>
         <translation>&amp;Rebond</translation>
     </message>
@@ -449,7 +456,7 @@
         <translation type="vanished">H&amp;ypotrochoïde</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="4753"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="4879"/>
         <source>&amp;Recorded</source>
         <translation>En&amp;registrée</translation>
     </message>
@@ -458,12 +465,12 @@
         <translation type="vanished">Fenêtre (w)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="5219"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="5345"/>
         <source>&amp;Hanning</source>
         <translation>&amp;Hanning</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="5226"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="5352"/>
         <source>&amp;Triangle</source>
         <translation>&amp;Triangle</translation>
     </message>
@@ -472,12 +479,12 @@
         <translation type="vanished">E&amp;xpdec</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="5246"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="5372"/>
         <source>&amp;Rexpdec</source>
         <translation>&amp;Rexpdec</translation>
     </message>
     <message>
-        <location filename="../sources/interface/CloudDialog.ui" line="5253"/>
+        <location filename="../sources/interface/CloudDialog.ui" line="5379"/>
         <source>&amp;Sinc</source>
         <translation>&amp;Syncronisé</translation>
     </message>
@@ -656,6 +663,11 @@
         <location filename="../sources/interface/MyGLApplication.cpp" line="501"/>
         <source>Midi instrument</source>
         <translation>Instrument MIDI</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/MyGLApplication.cpp" line="510"/>
+        <source>Phrases</source>
+        <translation>Phrases</translation>
     </message>
 </context>
 <context>
@@ -994,110 +1006,118 @@
         <translation>Phrase</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="42"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="1215"/>
         <source>&amp;Interval</source>
         <translation>&amp;Intervalle</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="217"/>
-        <location filename="../sources/interface/PhraseDialog.ui" line="1451"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="1390"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2624"/>
         <source>Current</source>
         <translation>Courrant</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="269"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="1442"/>
         <source>&amp;Silence</source>
         <translation>&amp;Silence</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="304"/>
-        <location filename="../sources/interface/PhraseDialog.ui" line="1482"/>
-        <location filename="../sources/interface/PhraseDialog.ui" line="2810"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="375"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="710"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="1477"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2655"/>
         <source>&amp;Delete</source>
         <translation>&amp;Supprimer</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="395"/>
-        <location filename="../sources/interface/PhraseDialog.ui" line="1573"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="164"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="1568"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2746"/>
         <source>Number</source>
         <translation>Numéro</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="540"/>
-        <location filename="../sources/interface/PhraseDialog.ui" line="1106"/>
-        <location filename="../sources/interface/PhraseDialog.ui" line="1718"/>
-        <location filename="../sources/interface/PhraseDialog.ui" line="2272"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="1713"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2279"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2891"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="3445"/>
         <source>Delay</source>
         <translation>Delai</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="685"/>
-        <location filename="../sources/interface/PhraseDialog.ui" line="1251"/>
-        <location filename="../sources/interface/PhraseDialog.ui" line="1863"/>
-        <location filename="../sources/interface/PhraseDialog.ui" line="2417"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="1858"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2424"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="3036"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="3590"/>
         <source>Value</source>
         <translation>Valeur</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="830"/>
-        <location filename="../sources/interface/PhraseDialog.ui" line="2008"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2003"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="3181"/>
         <source>Shift</source>
         <translation>Décaler</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="972"/>
-        <location filename="../sources/interface/PhraseDialog.ui" line="2144"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2145"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="3317"/>
         <source>New</source>
         <translation>Nouveau</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="1009"/>
-        <location filename="../sources/interface/PhraseDialog.ui" line="2175"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="340"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2182"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="3348"/>
         <source>&amp;Add</source>
         <translation>&amp;Ajouter</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="1322"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="2495"/>
         <source>&amp;Shade</source>
         <translation>&amp;Nuance</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="2602"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="502"/>
         <source>&amp;Active</source>
         <translation>&amp;Active</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="2697"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="272"/>
+        <source>Name : </source>
+        <translation>Nom : </translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/PhraseDialog.ui" line="597"/>
         <source>Tempo</source>
         <translation>Tempo</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="2841"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="741"/>
         <source>&amp;Load</source>
         <translation>&amp;Ouvrir</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="2878"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="778"/>
         <source>&amp;Save</source>
         <translation>&amp;Enregistrer</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="2966"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="866"/>
         <source>Scale</source>
         <translation>Echelle</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="3060"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="960"/>
         <source>Horizontal</source>
         <translation>Horizontal</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="3205"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="1105"/>
         <source>Vertical</source>
         <translation>Vertical</translation>
     </message>
     <message>
-        <location filename="../sources/interface/PhraseDialog.ui" line="3289"/>
+        <location filename="../sources/interface/PhraseDialog.ui" line="1189"/>
         <source>&amp;Envelope</source>
         <translation>&amp;Envelope</translation>
     </message>
@@ -1309,62 +1329,62 @@
         <translation>Valeur de trames par seconde invalide.</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scene.cpp" line="71"/>
+        <location filename="../sources/model/Scene.cpp" line="72"/>
         <source>Scene files (*%1)</source>
         <translation>Fichiers de scène (*%1)</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scene.cpp" line="77"/>
+        <location filename="../sources/model/Scene.cpp" line="78"/>
         <source>Save scene</source>
         <translation>Sauvegarder la scène</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scene.cpp" line="81"/>
+        <location filename="../sources/model/Scene.cpp" line="82"/>
         <source>Load scene</source>
         <translation>Charger une scène</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scene.cpp" line="113"/>
+        <location filename="../sources/model/Scene.cpp" line="114"/>
         <source>Cloud files (*%1)</source>
         <translation>Fichiers de nuage (*%1)</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scene.cpp" line="119"/>
+        <location filename="../sources/model/Scene.cpp" line="120"/>
         <source>Save cloud</source>
         <translation>Sauvegarder le nuage</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scene.cpp" line="123"/>
+        <location filename="../sources/model/Scene.cpp" line="124"/>
         <source>Load cloud</source>
         <translation>Charger le nuage</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scene.cpp" line="142"/>
+        <location filename="../sources/model/Scene.cpp" line="143"/>
         <source>Trajectory files (*%1)</source>
         <translation>Fichiers de trajectoires (*%1)</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scene.cpp" line="1873"/>
+        <location filename="../sources/model/Scene.cpp" line="1874"/>
         <source>Load samples</source>
         <translation>Charger les échantillons</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scene.cpp" line="1874"/>
+        <location filename="../sources/model/Scene.cpp" line="1875"/>
         <source>Could not find the sample file &quot;%1&quot;.</source>
         <translation>Impossible de trouver le fichier d&apos;échantillon &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scene.cpp" line="1876"/>
+        <location filename="../sources/model/Scene.cpp" line="1877"/>
         <source>Add a different sample directory</source>
         <translation>Ajouter un répertoire d&apos;échantillon différent</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scene.cpp" line="1877"/>
+        <location filename="../sources/model/Scene.cpp" line="1878"/>
         <source>Discard missing samples</source>
         <translation>Abandonner les échantillons manquants</translation>
     </message>
     <message>
-        <location filename="../sources/model/Scene.cpp" line="1891"/>
+        <location filename="../sources/model/Scene.cpp" line="1892"/>
         <source>Add sample directory</source>
         <translation>Ajouter un répertoire d&apos;échantillon</translation>
     </message>
@@ -1392,65 +1412,73 @@
         <translation type="vanished">Nouveau nuage</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1130"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1140"/>
         <source>Cloud parameters (P)</source>
         <translation>Paramètres du nuage (P)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1101"/>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1148"/>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1179"/>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1200"/>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1216"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1104"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1152"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1190"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1217"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1239"/>
         <source>Create new cloud (G)</source>
         <translation>Nouveau nuage (G)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1095"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1098"/>
         <source>Trigger parameters (P)</source>
         <translation>Paramètres du déclencheur (P)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1107"/>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1154"/>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1185"/>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1206"/>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1222"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1110"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1158"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1196"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1223"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1245"/>
         <source>Create new trigger (H)</source>
         <translation>Nouveau déclencheur (H)</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1113"/>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1160"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1116"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1164"/>
         <source>Record trajectory</source>
         <translation>Enregistrer la trajectoire</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1116"/>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1163"/>
-        <location filename="../sources/model/Scene.cpp" line="152"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1119"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1167"/>
+        <location filename="../sources/model/Scene.cpp" line="153"/>
         <source>Load trajectory</source>
         <translation>Charger une trajectoire</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1120"/>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1167"/>
-        <location filename="../sources/model/Scene.cpp" line="148"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1123"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1171"/>
+        <location filename="../sources/model/Scene.cpp" line="149"/>
         <source>Save trajectory</source>
         <translation>Sauvegarder la trajectoire</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1136"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1130"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1178"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1208"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1229"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1251"/>
+        <source>Phrases</source>
+        <translation>Phrases</translation>
+    </message>
+    <message>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1146"/>
         <source>Cloud control</source>
         <translation>Contrôleur du nuage</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1142"/>
         <source>Cloud phrase</source>
-        <translation>Phrase</translation>
+        <translation type="vanished">Phrase</translation>
     </message>
     <message>
-        <location filename="../sources/interface/MyGLWindow.cpp" line="1191"/>
+        <location filename="../sources/interface/MyGLWindow.cpp" line="1202"/>
         <source>Turn input into fixed sample</source>
         <translation>Transformer l&apos;entrée en échantillon fixe</translation>
     </message>
@@ -1470,17 +1498,17 @@
         <translation>Ouvrir la gamme</translation>
     </message>
     <message>
-        <location filename="../sources/model/Phrase.cpp" line="383"/>
+        <location filename="../sources/model/Phrase.cpp" line="409"/>
         <source>Phrase files (*%1)</source>
         <translation>Fichiers de phrases (*%1)</translation>
     </message>
     <message>
-        <location filename="../sources/model/Phrase.cpp" line="389"/>
+        <location filename="../sources/model/Phrase.cpp" line="415"/>
         <source>Save phrase</source>
         <translation>Enregistrer la phrase</translation>
     </message>
     <message>
-        <location filename="../sources/model/Phrase.cpp" line="393"/>
+        <location filename="../sources/model/Phrase.cpp" line="419"/>
         <source>Load phrase</source>
         <translation>Ouvrir la phrase</translation>
     </message>

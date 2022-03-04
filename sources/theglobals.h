@@ -36,6 +36,8 @@
 
 enum EnvelopeAction { TriggerEnvelope = 1, ReleaseEnvelope = 2 };
 
+enum {VERTICAL, HORIZONTAL};
+
 // create BUFFERPREC datatype
 typedef float BUFFERPREC;
 // number of input channels

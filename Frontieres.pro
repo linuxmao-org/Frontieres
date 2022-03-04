@@ -16,7 +16,8 @@ DEFINES += __LINUX_PULSE__
 INCLUDEPATH += $$PWD/libraries/QtFont3D
 SOURCES += libraries/QtFont3D/QtFont3D.cpp
 HEADERS += libraries/QtFont3D/QtFont3D.h \
-    sources/Version.h
+    sources/Version.h \
+    sources/interface/ScalesDialog.h
 
 unix: {
   isEmpty(INSTALL_PREFIX) {
@@ -62,6 +63,7 @@ SOURCES += \
   sources/interface/TriggerDialog.cpp \
   sources/interface/ControlDialog.cpp \
   sources/interface/PhraseDialog.cpp \
+  sources/interface/ScalesDialog.cpp \
   sources/dsp/Window.cpp \
   sources/model/MidiBank.cpp \
   sources/model/MidiCombi.cpp \
@@ -112,6 +114,7 @@ HEADERS += \
   sources/interface/TriggerDialog.h \
   sources/interface/ControlDialog.h \
   sources/interface/PhraseDialog.h \
+  sources/interface/ScalesDialog.h \
   sources/dsp/Window.h \
   sources/model/MidiBank.h \
   sources/model/MidiCombi.h \
@@ -155,7 +158,8 @@ FORMS += \
   sources/interface/AboutDialog.ui \
   sources/interface/TriggerDialog.ui \
   sources/interface/ControlDialog.ui \
-    sources/interface/PhraseDialog.ui
+  sources/interface/PhraseDialog.ui \
+  sources/interface/ScalesDialog.ui
 
 TRANSLATIONS += \
   translations/Frontieres_fr_FR.ts

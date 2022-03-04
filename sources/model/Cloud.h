@@ -54,6 +54,7 @@
 #include "dsp/Window.h"
 #include "visual/Trajectory.h"
 #include "model/Phrase.h"
+#include "model/Scene.h"
 
 class Grain;
 struct SceneSample;
@@ -114,7 +115,7 @@ public:
     virtual ~Cloud();
 
     // constructor
-    Cloud(VecSceneSample *sampleSet, float theNumGrains);
+    Cloud(Scene *l_scene, VecSceneSample *sampleSet, float theNumGrains);
 
     // compute next buffer of audio (accumulate from grains)
     void nextBuffer(BUFFERPREC *accumBuff, unsigned int numFrames);
@@ -220,13 +221,10 @@ public:
     ParamEnv getEnvelopeVolumeParam ();
 
     // midi notes
-    void setMidiChannel(int newMidiChannel);
     void setMidiNote(int newMidiNote);
     void setMidiVelocity(int newMidiVelocity);
-    int getMidiChannel();
     int getMidiNote();
     int getMidiVelocity();
-    bool changedMidiChannel();
     bool changedMidiNote();
 
     void cleanMidiClouds();
@@ -253,7 +251,7 @@ public:
 
     void setCtrlInterval(float l_ctrInterval, bool fromOSC);
     float getCtrlInterval();
-    bool changedCtrlInterval ();
+    bool changedCtrlInterval();
 
     void setCtrlShade(float l_ctrShade, bool fromOSC);
     float getCtrlShade();
@@ -267,22 +265,45 @@ public:
     bool getCtrlAutoUpdate();
 
     Scale* getScale();
-    bool scaleAttraction();
-    void setScaleAttraction(bool n_state);
     void insertScalePosition(ScalePosition n_scalePosition);
+
+    void setPhraseActive(bool n_acttiveState);
+    void setPhraseNum(unsigned int n_PhraseNum);
+    bool getPhraseActive();
+    bool changedPhraseActive();
+    unsigned int getPhraseNum();
+    bool changedPhraseNum();
 
     void phraseActualise();
     unsigned long getPhraseIntervalSize();
     unsigned long getPhraseShadeSize();
     Phrase* getPhrase();
+    LocalPhrase* getLocalPhrase();
     void setActualiseByPhrase(bool n_state);
     bool getActualiseByPhrase();
     void phraseRestart();
+    void phraseReinit();
+    void setTempo(unsigned int n_Tempo);
+    unsigned int getTempo();
+    bool changedTempo();
     
     void setSilence(bool l_silence);
     bool getSilence();
 
+    void setScaleActive(bool n_acttiveState);
+    void setScaleNum(unsigned int n_scaleNum);
+    bool getScaleActive();
+    bool changedScaleActive();
+    unsigned int getScaleNum();
+    bool changedScaleNum();
+    bool changedScaleNumForControl();
+    bool changedScaleActiveForControl();
+    void setChangedScaleNumForControl(bool n_state);
+    void setChangedScaleActiveForControl(bool n_state);
+
     void setNewWay(bool n_NewWay);
+
+    Scene *getScene();
 
 protected:
     // update internal trigger point
@@ -292,6 +313,7 @@ protected:
     void updateSpatialization();
 
 private:
+    Scene *sceneRef;
     unsigned int myId;  // unique id
 
     QString myName;
@@ -363,9 +385,7 @@ private:
     Env *envelopeVolume;
 
     // midi params
-    int midiChannel = 0;
     int midiNote;
-    bool changed_midiChannel = false;
     bool changed_midiNote = false;
     int midiVelocity = 127;
 
@@ -381,7 +401,28 @@ private:
 
     // sequence actualisation
     ControlPoint myControlPoint;
-    Phrase myPhrase;
+
+    //Phrase
+    unsigned int myPhraseNum = 0;
+    bool changed_PhraseNum = false;
+    bool phraseActive = false;
+    bool changed_PhraseActive = false;
+    Phrase *myPhrase;
+    LocalPhrase myLocalPhrase;
+    // envelope
+    Env *envelopePhrase;
+    float *envelopePhraseBuff;
+    bool changed_tempo = false;
+
+    // scale
+    unsigned int myScaleNum = 0;
+    bool changed_ScaleNum = false;
+    bool changed_ScaleNumForControl = false;
+    bool scaleActive = false;
+    bool changed_ScaleActive = false;
+    bool changed_ScaleActiveForControl = false;
+    Scale *myScale;
+
     bool actualiseByPhrase = false;
     bool silence = false;
 

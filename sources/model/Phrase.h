@@ -42,12 +42,45 @@ struct ControlPoint
     bool silence = false;
 };
 
+struct LocalPhrase
+{
+    bool activeState = true;
+    bool silenceState = false;
+    bool release = false;
+    bool released = false;
+    bool attack = false;
+    bool attacked = false;
+    unsigned int tempo = 60;
+    double phraseStartTime = 0;
+    int currentShadeIndice = 0;
+    int currentIntervalIndice = 0;
+    float lastDelay = 0;
+    float lastShade = 1;
+    float lastInterval = 0;
+    bool endedState = true;
+    bool intervalEndedState = false;
+    bool shadeEndedState = false;
+    bool restart = true;
+
+    // envelope
+
+    float *envelopeVolumeBuff;
+    double *intermediateBuff;
+    std::atomic<int> envelopeAction;
+    Env *envelopeVolume;
+};
+
 class Phrase
 {
 public:
     Phrase();
     // destructor
     virtual ~Phrase();
+    void setName(QString newName);
+    QString getName();
+    unsigned int getId();
+    void setId(unsigned int phraseId);
+
     ControlPoint getControlShade(unsigned long l_num);
     ControlPoint getControlInterval(unsigned long l_num);
     void setControlInterval(unsigned long l_num, float l_delay, float l_value);
@@ -56,48 +89,37 @@ public:
     int insertControlInterval(float l_delay, float l_value, bool l_silence);
     void deleteControlShade(unsigned long l_num);
     void deleteControlInterval(unsigned long l_num);
-    float getShade ();
-    float getInterval ();
+    float getShade (LocalPhrase &l_phrase);
+    float getInterval (LocalPhrase &l_phrase);
     unsigned long getMyControlShadeSize();
     unsigned long getMyControlIntervalSize();
     void debugListControlShade ();
     void debugListControlInterval();
-    bool getActiveState();
-    void setActiveState(bool l_activeState);
-    double getPhraseStartTime();
-    void setPhraseStartTime();
-    void setTempo(int l_tempo);
-    int getTempo();
-    bool getEndedState();
-    void setEndedState(bool n_state);
-    bool getSilenceState();
+    void setActiveState(LocalPhrase &l_phrase, bool l_activeState);
+    void setPhraseStartTime(LocalPhrase &l_phrase);
+    void setTempo(LocalPhrase &l_phrase, int l_tempo);
     void setSilence (unsigned long l_num, bool l_silence);
-    void setRestart (bool l_restart);
-    bool getRestart();
-    bool getRelease();
-    bool getAttack();
-    void actuasiseReleaseAndAttack();
+    void actuasiseReleaseAndAttack(LocalPhrase &l_phrase);
     string askNamePhrase(FileDirection direction);
     bool save(QFile &phraseFile);
     bool load(QFile &phraseFile);
     void reset();
-    Scale* getScale();
-    bool scaleAttraction();
-    void setScaleAttraction(bool n_state);
-    void insertScalePosition(ScalePosition n_scalePosition);
     void shiftControlInterval(unsigned long l_num, float l_value);
     void shiftControlShade(unsigned long l_num, float l_value);
 
 private:
-    bool activeState = true;
+
+    unsigned int myId;  // unique id
+    QString myName;
+
+    LocalPhrase myPhrase;
+/*    bool activeState = true;
     bool silenceState = false;
     bool release = false;
     bool released = false;
     bool attack = false;
     bool attacked = false;
     int tempo = 60;
-    vector<ControlPoint *> myControlShade;
-    vector<ControlPoint *> myControlInterval;
     double phraseStartTime = 0;
     int currentShadeIndice = 0;
     int currentIntervalIndice = 0;
@@ -117,7 +139,10 @@ private:
     float *envelopeVolumeBuff;
     double *intermediateBuff;
     std::atomic<int> envelopeAction;
-    Env *envelopeVolume;
+    Env *envelopeVolume;*/
+    vector<ControlPoint *> myControlShade;
+    vector<ControlPoint *> myControlInterval;
+
 
 
 };

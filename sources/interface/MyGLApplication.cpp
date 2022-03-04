@@ -132,7 +132,6 @@ bool MyGLApplication::loadSceneFile()
     destroyAllCloudDialogs();
     destroyAllTriggerDialogs();
     destroyAllControlDialogs();
-    destroyAllPhraseDialogs();
 
     // load the scene and its samples
     Scene *scene = new Scene;
@@ -325,7 +324,7 @@ void MyGLApplication::showTriggerDialog(SceneTrigger *selectedTrigger)
 
 void MyGLApplication::showControlDialog(SceneCloud *selectedCloud)
 {
-    cout << "showcontroldialog entree" << endl;
+//    cout << "showcontroldialog entree" << endl;
     unsigned id = selectedCloud->cloud->getId();
 
     ControlDialog *&dlgslot = P->controlDialogs[id];
@@ -347,7 +346,7 @@ void MyGLApplication::showControlDialog(SceneCloud *selectedCloud)
     //selectedCloud->cloud.get()->changesDone(true);
     //selectedCloud->view.get()->changesDone(true);
     dlg->linkCloud(selectedCloud->cloud.get());
-    cout << "showcontroldialog sortie" << endl;
+    //cout << "showcontroldialog sortie" << endl;
 }
 
 void MyGLApplication::showPhraseDialog(SceneCloud *selectedCloud)
@@ -410,7 +409,7 @@ void MyGLApplication::destroyTriggerDialog(unsigned selectedTriggerId)
 
 void MyGLApplication::destroyControlDialog(unsigned selectedCloudId)
 {
-    cout << "entree destroycontroldialog" << endl;
+    //cout << "entree destroycontroldialog" << endl;
     auto it = P->controlDialogs.find(selectedCloudId);
 
     if (it == P->controlDialogs.end())
@@ -422,7 +421,7 @@ void MyGLApplication::destroyControlDialog(unsigned selectedCloudId)
 
     delete dlg;
     P->controlDialogs.erase(it);
-    cout << "sortie destroycontroldialog" << endl;
+    // cout << "sortie destroycontroldialog" << endl;
 }
 
 void MyGLApplication::destroyPhraseDialog(unsigned selectedCloudId)
@@ -473,13 +472,6 @@ void MyGLApplication::destroyAllControlDialogs()
     }
 }
 
-void MyGLApplication::destroyAllPhraseDialogs()
-{
-    while (P->phraseDialogs.size() > 0){
-        destroyPhraseDialog(P->phraseDialogs.begin()->first);
-    }
-}
-
 void MyGLApplication::showOptionsDialog()
 {
     OptionsDialog optionsDlg;
@@ -503,6 +495,35 @@ void MyGLApplication::showMidiInstrumentDialog()
     instrumentDialog->setModal(true);
     instrumentDialog->exec();
 }
+
+void MyGLApplication::showPhrasesDialog()
+{
+    phraseDialog = new PhraseDialog;
+    phraseDialog->setWindowTitle(tr("Phrases"));
+    phraseDialog->init(currentScene);
+    phraseDialog->setModal(false);
+    phraseDialog->show();
+}
+
+void MyGLApplication::showScalesDialog()
+{
+    scaleDialog = new ScalesDialog;
+    scaleDialog->setWindowTitle(tr("Scales"));
+    scaleDialog->init(currentScene);
+    scaleDialog->setModal(false);
+    scaleDialog->show();
+}
+
+void MyGLApplication::destroyPhrasesDialog()
+{
+    delete phraseDialog;
+}
+
+void MyGLApplication::destroyScalesDialog()
+{
+    delete scaleDialog;
+}
+
 
 void MyGLApplication::Impl::onIdle()
 {

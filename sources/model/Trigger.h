@@ -99,6 +99,10 @@ public:
     bool getActiveRestartTrajectory ();
     bool changedActiveRestartTrajectory();
 
+    void setActiveRestartPhrase (bool l_choice);
+    bool getActiveRestartPhrase ();
+    bool changedActiveRestartPhrase();
+
     void setIn(int n_In);
     int getIn();
     bool changedIn();
@@ -117,9 +121,6 @@ public:
     int getPriority ();
     bool changedPriority();
     bool isInListTriggersIn(int l_triggerId);
-
-    void setRestartPhrase(bool n_restartPhrase);
-    bool getRestartPhrase();
 
 private:
 
@@ -143,6 +144,10 @@ private:
     bool activeRestartTrajectory = false;
     bool changed_ActiveRestartTrajectory = false;
 
+    // active restart phrase
+    bool activeRestartPhrase = false;
+    bool changed_ActiveRestartPhrase = false;
+
     // In and Out actions
     int actionIn, actionOut;
     bool changed_In = false;
@@ -157,9 +162,6 @@ private:
     // Priority for trigger action on other triggers
     int priority = 0;
     bool changed_Priority = false;
-
-    // restart phrases when activate clouds
-    bool restartPhrase = false;
 
 };
 

@@ -123,12 +123,12 @@ private slots:
     void on_radioButton_Out_Off_toggled(bool checked);
     
     void on_radioButton_Out_Commute_toggled(bool checked);
-    
-    void on_checkBox_Restart_toggled(bool checked);
 
     void on_spinBox_Priority_valueChanged(int arg1);
 
     void on_checkBox_Phrase_Restart_toggled(bool checked);
+
+    void on_checkBox_Restart_toggled(bool checked);
 
 private:
     Ui::TriggerDialog *ui;

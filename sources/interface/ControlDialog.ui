@@ -586,28 +586,16 @@
        </widget>
       </item>
       <item>
-       <widget class="QFrame" name="frame">
-        <property name="minimumSize">
-         <size>
-          <width>100</width>
-          <height>150</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>100</width>
-          <height>150</height>
-         </size>
-        </property>
+       <widget class="QFrame" name="frame_4">
         <property name="frameShape">
          <enum>QFrame::Box</enum>
         </property>
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_5">
+        <layout class="QVBoxLayout" name="verticalLayout_6">
          <item>
-          <widget class="QLabel" name="label">
+          <widget class="QLabel" name="label_2">
            <property name="font">
             <font>
              <pointsize>7</pointsize>
@@ -623,88 +611,14 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton_add">
-           <property name="font">
-            <font>
-             <pointsize>7</pointsize>
-             <italic>false</italic>
-            </font>
-           </property>
-           <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
-           </property>
-           <property name="text">
-            <string>&amp;Add</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButton_reset">
-           <property name="font">
-            <font>
-             <pointsize>7</pointsize>
-             <italic>false</italic>
-            </font>
-           </property>
-           <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
-           </property>
-           <property name="text">
-            <string>&amp;Reset</string>
-           </property>
-           <property name="default">
-            <bool>false</bool>
-           </property>
-           <property name="flat">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButton_attraction">
+          <widget class="QCheckBox" name="checkBox_scale_attraction">
            <property name="font">
             <font>
              <pointsize>7</pointsize>
             </font>
-           </property>
-           <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
            </property>
            <property name="text">
             <string>&amp;Attraction</string>
-           </property>
-           <property name="checkable">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButton_save">
-           <property name="font">
-            <font>
-             <pointsize>7</pointsize>
-            </font>
-           </property>
-           <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
-           </property>
-           <property name="text">
-            <string>&amp;Save</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="pushButton_load">
-           <property name="font">
-            <font>
-             <pointsize>7</pointsize>
-            </font>
-           </property>
-           <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
-           </property>
-           <property name="text">
-            <string>&amp;Load</string>
            </property>
           </widget>
          </item>
@@ -712,13 +626,26 @@
        </widget>
       </item>
       <item>
-       <widget class="QFrame" name="frame_4">
+       <widget class="QFrame" name="frame">
+        <property name="minimumSize">
+         <size>
+          <width>100</width>
+          <height>200</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>100</width>
+          <height>200</height>
+         </size>
+        </property>
         <property name="frameShape">
          <enum>QFrame::Box</enum>
         </property>
         <property name="frameShadow">
          <enum>QFrame::Raised</enum>
         </property>
+        <layout class="QVBoxLayout" name="verticalLayout_5"/>
        </widget>
       </item>
      </layout>

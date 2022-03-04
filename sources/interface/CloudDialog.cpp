@@ -35,95 +35,95 @@ CloudDialog::CloudDialog(QWidget *parent) :
     setModal(false);
     ui->setupUi(this);
 
-    ui->doubleSpinBox_Volume->setMinimum(g_cloudValueMin.volumeDB);
-    ui->doubleSpinBox_Volume->setMaximum(g_cloudValueMax.volumeDB);
-    ui->verticalSlider_Volume->setMinimum(g_cloudValueMin.volumeDB * 1000);
-    ui->verticalSlider_Volume->setMaximum(g_cloudValueMax.volumeDB * 1000);
+    ui->doubleSpinBox_Volume->setMinimum(double(g_cloudValueMin.volumeDB));
+    ui->doubleSpinBox_Volume->setMaximum(double(g_cloudValueMax.volumeDB));
+    ui->verticalSlider_Volume->setMinimum(int(g_cloudValueMin.volumeDB * 1000));
+    ui->verticalSlider_Volume->setMaximum(int(g_cloudValueMax.volumeDB * 1000));
 
-    ui->doubleSpinBox_Grains->setMinimum(g_cloudValueMin.numGrains);
-    ui->doubleSpinBox_Grains->setMaximum(g_cloudValueMax.numGrains);
-    ui->dial_Grains->setMinimum(g_cloudValueMin.numGrains);
-    ui->dial_Grains->setMaximum(g_cloudValueMax.numGrains);
+    ui->doubleSpinBox_Grains->setMinimum(double(g_cloudValueMin.numGrains));
+    ui->doubleSpinBox_Grains->setMaximum(double(g_cloudValueMax.numGrains));
+    ui->dial_Grains->setMinimum(int(g_cloudValueMin.numGrains));
+    ui->dial_Grains->setMaximum(int(g_cloudValueMax.numGrains));
 
-    ui->doubleSpinBox_Duration->setMinimum(g_cloudValueMin.duration);
-    ui->doubleSpinBox_Duration->setMaximum(g_cloudValueMax.duration);
-    ui->dial_Duration->setMinimum(g_cloudValueMin.duration);
-    ui->dial_Duration->setMaximum(g_cloudValueMax.duration);
+    ui->doubleSpinBox_Duration->setMinimum(double(g_cloudValueMin.duration));
+    ui->doubleSpinBox_Duration->setMaximum(double(g_cloudValueMax.duration));
+    ui->dial_Duration->setMinimum(int(g_cloudValueMin.duration));
+    ui->dial_Duration->setMaximum(int(g_cloudValueMax.duration));
 
-    ui->doubleSpinBox_Overlap->setMinimum(g_cloudValueMin.overlap);
-    ui->doubleSpinBox_Overlap->setMaximum(g_cloudValueMax.overlap);
-    ui->dial_Overlap->setMaximum(g_cloudValueMax.overlap * 100);
-    ui->dial_Overlap->setMinimum(g_cloudValueMin.overlap * 100);
+    ui->doubleSpinBox_Overlap->setMinimum(double(g_cloudValueMin.overlap));
+    ui->doubleSpinBox_Overlap->setMaximum(double(g_cloudValueMax.overlap));
+    ui->dial_Overlap->setMaximum(int(g_cloudValueMax.overlap * 100));
+    ui->dial_Overlap->setMinimum(int(g_cloudValueMin.overlap * 100));
 
-    ui->doubleSpinBox_Pitch->setMinimum(g_cloudValueMin.pitch);
-    ui->doubleSpinBox_Pitch->setMaximum(g_cloudValueMax.pitch);
-    ui->dial_Pitch->setMaximum(g_cloudValueMax.pitch * 100);
-    ui->dial_Pitch->setMinimum(g_cloudValueMin.pitch * 100);
+    ui->doubleSpinBox_Pitch->setMinimum(double(g_cloudValueMin.pitch));
+    ui->doubleSpinBox_Pitch->setMaximum(double(g_cloudValueMax.pitch));
+    ui->dial_Pitch->setMaximum(int(g_cloudValueMax.pitch * 100));
+    ui->dial_Pitch->setMinimum(int(g_cloudValueMin.pitch * 100));
 
-    ui->doubleSpinBox_LFO_Freq->setMinimum(g_cloudValueMin.pitchLFOFreq);
-    ui->doubleSpinBox_LFO_Freq->setMaximum(g_cloudValueMax.pitchLFOFreq);
-    ui->dial_LFO_Freq->setMaximum(g_cloudValueMax.pitchLFOFreq * 100);
-    ui->dial_LFO_Freq->setMinimum(g_cloudValueMin.pitchLFOFreq * 100);
+    ui->doubleSpinBox_LFO_Freq->setMinimum(double(g_cloudValueMin.pitchLFOFreq));
+    ui->doubleSpinBox_LFO_Freq->setMaximum(double(g_cloudValueMax.pitchLFOFreq));
+    ui->dial_LFO_Freq->setMaximum(int(g_cloudValueMax.pitchLFOFreq * 100));
+    ui->dial_LFO_Freq->setMinimum(int(g_cloudValueMin.pitchLFOFreq * 100));
 
-    ui->doubleSpinBox_LFO_Amp->setMinimum(g_cloudValueMin.pitchLFOAmount);
-    ui->doubleSpinBox_LFO_Amp->setMaximum(g_cloudValueMax.pitchLFOAmount);
-    ui->dial_LFO_Amp->setMaximum(g_cloudValueMax.pitchLFOAmount * 1000);
-    ui->dial_LFO_Amp->setMinimum(g_cloudValueMin.pitchLFOAmount * 1000);
+    ui->doubleSpinBox_LFO_Amp->setMinimum(double(g_cloudValueMin.pitchLFOAmount));
+    ui->doubleSpinBox_LFO_Amp->setMaximum(double(g_cloudValueMax.pitchLFOAmount));
+    ui->dial_LFO_Amp->setMaximum(int(g_cloudValueMax.pitchLFOAmount * 1000));
+    ui->dial_LFO_Amp->setMinimum(int(g_cloudValueMin.pitchLFOAmount * 1000));
 
-    ui->doubleSpinBox_X->setMinimum(g_cloudValueMin.x);
-    ui->doubleSpinBox_X->setMaximum(g_cloudValueMax.x);
-    ui->dial_X->setMaximum(g_cloudValueMax.x);
-    ui->dial_X->setMinimum(g_cloudValueMin.x);
+    ui->doubleSpinBox_X->setMinimum(double(g_cloudValueMin.x));
+    ui->doubleSpinBox_X->setMaximum(double(g_cloudValueMax.x));
+    ui->dial_X->setMaximum(int(g_cloudValueMax.x));
+    ui->dial_X->setMinimum(int(g_cloudValueMin.x));
 
-    ui->doubleSpinBox_Y->setMinimum(g_cloudValueMin.y);
-    ui->doubleSpinBox_Y->setMaximum(g_cloudValueMax.y);
-    ui->dial_Y->setMaximum(g_cloudValueMax.y);
-    ui->dial_Y->setMinimum(g_cloudValueMin.y);
+    ui->doubleSpinBox_Y->setMinimum(double(g_cloudValueMin.y));
+    ui->doubleSpinBox_Y->setMaximum(double(g_cloudValueMax.y));
+    ui->dial_Y->setMaximum(int(g_cloudValueMax.y));
+    ui->dial_Y->setMinimum(int(g_cloudValueMin.y));
 
-    ui->doubleSpinBox_X_Extent->setMinimum(g_cloudValueMin.xRandExtent);
-    ui->doubleSpinBox_X_Extent->setMaximum(g_cloudValueMax.xRandExtent);
-    ui->dial_X_Extent->setMaximum(g_cloudValueMax.xRandExtent);
-    ui->dial_X_Extent->setMinimum(g_cloudValueMin.xRandExtent);
+    ui->doubleSpinBox_X_Extent->setMinimum(double(g_cloudValueMin.xRandExtent));
+    ui->doubleSpinBox_X_Extent->setMaximum(double(g_cloudValueMax.xRandExtent));
+    ui->dial_X_Extent->setMaximum(int(g_cloudValueMax.xRandExtent));
+    ui->dial_X_Extent->setMinimum(int(g_cloudValueMin.xRandExtent));
 
-    ui->doubleSpinBox_Y_Extent->setMinimum(g_cloudValueMin.yRandExtent);
-    ui->doubleSpinBox_Y_Extent->setMaximum(g_cloudValueMax.yRandExtent);
-    ui->dial_Y_Extent->setMaximum(g_cloudValueMax.yRandExtent);
-    ui->dial_X_Extent->setMinimum(g_cloudValueMin.yRandExtent);
+    ui->doubleSpinBox_Y_Extent->setMinimum(double(g_cloudValueMin.yRandExtent));
+    ui->doubleSpinBox_Y_Extent->setMaximum(double(g_cloudValueMax.yRandExtent));
+    ui->dial_Y_Extent->setMaximum(int(g_cloudValueMax.yRandExtent));
+    ui->dial_X_Extent->setMinimum(int(g_cloudValueMin.yRandExtent));
 
-    ui->doubleSpinBox_Angle->setMinimum(g_cloudValueMin.angle);
-    ui->doubleSpinBox_Angle->setMaximum(g_cloudValueMax.angle);
-    ui->dial_Angle->setMaximum(g_cloudValueMax.angle);
-    ui->dial_Angle->setMinimum(g_cloudValueMin.angle);
+    ui->doubleSpinBox_Angle->setMinimum(double(g_cloudValueMin.angle));
+    ui->doubleSpinBox_Angle->setMaximum(double(g_cloudValueMax.angle));
+    ui->dial_Angle->setMaximum(int(g_cloudValueMax.angle));
+    ui->dial_Angle->setMinimum(int(g_cloudValueMin.angle));
 
-    ui->doubleSpinBox_Stretch->setMinimum(g_cloudValueMin.stretch);
-    ui->doubleSpinBox_Stretch->setMaximum(g_cloudValueMax.stretch);
-    ui->dial_Stretch->setMaximum(g_cloudValueMax.stretch * 1000);
-    ui->dial_Stretch->setMinimum(g_cloudValueMin.stretch * 1000);
+    ui->doubleSpinBox_Stretch->setMinimum(double(g_cloudValueMin.stretch));
+    ui->doubleSpinBox_Stretch->setMaximum(double(g_cloudValueMax.stretch));
+    ui->dial_Stretch->setMaximum(int(g_cloudValueMax.stretch * 1000));
+    ui->dial_Stretch->setMinimum(int(g_cloudValueMin.stretch * 1000));
 
-    ui->doubleSpinBox_Speed->setMinimum(g_cloudValueMin.speed);
-    ui->doubleSpinBox_Speed->setMaximum(g_cloudValueMax.speed);
-    ui->dial_Speed->setMaximum(g_cloudValueMax.speed);
-    ui->dial_Speed->setMinimum(g_cloudValueMin.speed);
+    ui->doubleSpinBox_Speed->setMinimum(double(g_cloudValueMin.speed));
+    ui->doubleSpinBox_Speed->setMaximum(double(g_cloudValueMax.speed));
+    ui->dial_Speed->setMaximum(int(g_cloudValueMax.speed));
+    ui->dial_Speed->setMinimum(int(g_cloudValueMin.speed));
 
-    ui->doubleSpinBox_Radius->setMinimum(g_cloudValueMin.radius);
-    ui->doubleSpinBox_Radius->setMaximum(g_cloudValueMax.radius);
-    ui->dial_Radius->setMaximum(g_cloudValueMax.radius);
-    ui->dial_Radius->setMinimum(g_cloudValueMin.radius);
+    ui->doubleSpinBox_Radius->setMinimum(double(g_cloudValueMin.radius));
+    ui->doubleSpinBox_Radius->setMaximum(double(g_cloudValueMax.radius));
+    ui->dial_Radius->setMaximum(int(g_cloudValueMax.radius));
+    ui->dial_Radius->setMinimum(int(g_cloudValueMin.radius));
 
-    ui->doubleSpinBox_RadiusInt->setMinimum(g_cloudValueMin.radiusInt);
-    ui->doubleSpinBox_RadiusInt->setMaximum(g_cloudValueMax.radiusInt);
-    ui->dial_RadiusInt->setMaximum(g_cloudValueMax.radiusInt);
-    ui->dial_RadiusInt->setMinimum(g_cloudValueMin.radiusInt);
+    ui->doubleSpinBox_RadiusInt->setMinimum(double(g_cloudValueMin.radiusInt));
+    ui->doubleSpinBox_RadiusInt->setMaximum(double(g_cloudValueMax.radiusInt));
+    ui->dial_RadiusInt->setMaximum(int(g_cloudValueMax.radiusInt));
+    ui->dial_RadiusInt->setMinimum(int(g_cloudValueMin.radiusInt));
 
-    ui->doubleSpinBox_Expansion->setMinimum(g_cloudValueMin.expansion);
-    ui->doubleSpinBox_Expansion->setMaximum(g_cloudValueMax.expansion);
-    ui->dial_Expansion->setMaximum(g_cloudValueMax.expansion);
-    ui->dial_Expansion->setMinimum(g_cloudValueMin.expansion);
+    ui->doubleSpinBox_Expansion->setMinimum(double(g_cloudValueMin.expansion));
+    ui->doubleSpinBox_Expansion->setMaximum(double(g_cloudValueMax.expansion));
+    ui->dial_Expansion->setMaximum(int(g_cloudValueMax.expansion));
+    ui->dial_Expansion->setMinimum(int(g_cloudValueMin.expansion));
 
-    ui->doubleSpinBox_Progress->setMinimum(g_cloudValueMin.progress);
-    ui->doubleSpinBox_Progress->setMaximum(g_cloudValueMax.progress);
-    ui->dial_Progress->setMaximum(g_cloudValueMax.progress);
-    ui->dial_Progress->setMinimum(g_cloudValueMin.progress);
+    ui->doubleSpinBox_Progress->setMinimum(double(g_cloudValueMin.progress));
+    ui->doubleSpinBox_Progress->setMaximum(double(g_cloudValueMax.progress));
+    ui->dial_Progress->setMaximum(int(g_cloudValueMax.progress));
+    ui->dial_Progress->setMinimum(int(g_cloudValueMin.progress));
 
     ui->doubleSpinBox_Output_First->setMinimum(0);
     ui->doubleSpinBox_Output_Last->setMinimum(0);
@@ -161,8 +161,8 @@ CloudDialog::CloudDialog(QWidget *parent) :
 
 CloudDialog::~CloudDialog()
 {
-    int lastGrain = myGrainPositions.size();
-    for (int i = 0;i < lastGrain;i = i + 1) {
+    unsigned long lastGrain = myGrainPositions.size();
+    for (unsigned long i = 0;i < lastGrain;i = i + 1) {
         delete myGrainPositions.back();
         myGrainPositions.pop_back();
     }
@@ -182,43 +182,61 @@ void CloudDialog::linkCloud(Cloud *cloudLinked, CloudVis *cloudVisLinked)
     linking = true;
     cloudRef = cloudLinked;
     cloudVisRef = cloudVisLinked;
-    if (!autoUpdating)
-        if (cloudRef->getGrainsRandom())
+    if (!autoUpdating) {
+        if (cloudRef->getGrainsRandom()) {
             ui->radioButton_PositionRandom->setChecked(true);
-        else
+        }
+        else {
             ui->radioButton_PositionManual->setChecked(true);
+        }
+    }
     if (cloudLinked->changedDurationMs())
-        ui->doubleSpinBox_Duration->setValue(cloudLinked->getDurationMs());
+        ui->doubleSpinBox_Duration->setValue(double(cloudLinked->getDurationMs()));
     if (cloudLinked->changedNumGrains())
         ui->doubleSpinBox_Grains ->setValue(cloudLinked->getNumGrains());
     if (cloudLinked->changedPitchLFOAmount())
-        ui->doubleSpinBox_LFO_Amp->setValue(cloudLinked->getPitchLFOAmount());
+        ui->doubleSpinBox_LFO_Amp->setValue(double(cloudLinked->getPitchLFOAmount()));
     if (cloudLinked->changedPitchLFOFreq())
-        ui->doubleSpinBox_LFO_Freq->setValue(cloudLinked->getPitchLFOFreq());
+        ui->doubleSpinBox_LFO_Freq->setValue(double(cloudLinked->getPitchLFOFreq()));
     if (cloudLinked->changedOverlap()) {
-        ui->doubleSpinBox_Overlap->setValue(cloudLinked->getOverlap());
+        ui->doubleSpinBox_Overlap->setValue(double(cloudLinked->getOverlap()));
     }
     if (cloudLinked->changedVolumeDb())
-        ui->doubleSpinBox_Volume->setValue(cloudLinked->getVolumeDb());
+        ui->doubleSpinBox_Volume->setValue(double(cloudLinked->getVolumeDb()));
     if (cloudLinked->changedPitch())
-        ui->doubleSpinBox_Pitch->setValue(cloudLinked->getPitch());
+        ui->doubleSpinBox_Pitch->setValue(double(cloudLinked->getPitch()));
     if (cloudVisLinked->changedXRandExtent())
-        ui->doubleSpinBox_X_Extent->setValue(cloudVisLinked->getXRandExtent());
+        ui->doubleSpinBox_X_Extent->setValue(double(cloudVisLinked->getXRandExtent()));
     if (cloudVisLinked->changedYRandExtent())
-        ui->doubleSpinBox_Y_Extent->setValue(cloudVisLinked->getYRandExtent());
+        ui->doubleSpinBox_Y_Extent->setValue(double(cloudVisLinked->getYRandExtent()));
     if (cloudVisLinked->changedGcX())
-        ui->doubleSpinBox_X->setValue(cloudVisLinked->getOriginX());
+        ui->doubleSpinBox_X->setValue(double(cloudVisLinked->getOriginX()));
     if (cloudVisLinked->changedGcY())
-        ui->doubleSpinBox_Y->setValue(cloudVisLinked->getOriginY());
+        ui->doubleSpinBox_Y->setValue(double(cloudVisLinked->getOriginY()));
     if (cloudLinked->changedMidiNote())
         ui->doubleSpinBox_Midi_Note->setValue(cloudLinked->getMidiNote());
     ui->label_Id_Value->setText(QString::number(cloudLinked->getId()));
   //  if (cloudLinked->changedName())
     if (autoUpdating == false)
         ui->lineEdit_Name->setText(cloudLinked->getName());
-    ui->checkBox_Active->setChecked(cloudLinked->getActiveState());
-    ui->checkBox_Locked->setChecked(cloudLinked->getLockedState());
-    ui->checkBox_Restart->setChecked(cloudLinked->getActiveRestartTrajectory());
+//    if (cloudLinked->changedActiveState())
+        ui->checkBox_Active->setChecked(cloudLinked->getActiveState());
+//    if (cloudLinked->changedLockedState())
+        ui->checkBox_Locked->setChecked(cloudLinked->getLockedState());
+//    if (cloudLinked->changedRestartTrajectory())
+        ui->checkBox_Trajectory_Restart->setChecked(cloudLinked->getActiveRestartTrajectory());
+    if (cloudLinked->changedPhraseActive())
+        ui->checkBox_Phrase_Active->setChecked(cloudLinked->getPhraseActive());
+    if (cloudLinked->changedScaleActive())
+        ui->checkBox_Scale_Active->setChecked(cloudLinked->getScaleActive());
+    if (cloudLinked->changedPhraseNum())
+        ui->doubleSpinBox_Phrase_Number->setValue(cloudLinked->getPhraseNum());
+    if (cloudLinked->changedScaleNum())
+        ui->doubleSpinBox_Scale_Number->setValue(cloudLinked->getScaleNum());
+    if (cloudLinked->changedTempo())
+        ui->doubleSpinBox_Tempo->setValue(cloudLinked->getTempo());
+    ui->doubleSpinBox_Phrase_Number->setMaximum(cloudRef->getScene()->getPhrasesSize());
+    ui->doubleSpinBox_Scale_Number->setMaximum(cloudRef->getScene()->getScalesSize());
     if (cloudLinked->changedDirection())
         switch (cloudLinked->getDirection()) {
         case FORWARD:
@@ -645,7 +663,7 @@ void CloudDialog::on_doubleSpinBox_Y_Extent_valueChanged(double arg1)
 
 void CloudDialog::on_dial_LFO_Freq_valueChanged(int value)
 {
-    ui->doubleSpinBox_LFO_Freq->setValue((double) value / 100);
+    ui->doubleSpinBox_LFO_Freq->setValue(double (value / 100));
 }
 
 void CloudDialog::on_doubleSpinBox_LFO_Freq_valueChanged(double arg1)
@@ -657,7 +675,7 @@ void CloudDialog::on_doubleSpinBox_LFO_Freq_valueChanged(double arg1)
 
 void CloudDialog::on_dial_LFO_Amp_valueChanged(int value)
 {
-    ui->doubleSpinBox_LFO_Amp->setValue((double) value / 1000);
+    ui->doubleSpinBox_LFO_Amp->setValue(double (value / 1000));
 }
 
 void CloudDialog::on_doubleSpinBox_LFO_Amp_valueChanged(double arg1)
@@ -669,7 +687,7 @@ void CloudDialog::on_doubleSpinBox_LFO_Amp_valueChanged(double arg1)
 
 void CloudDialog::on_dial_Duration_valueChanged(int value)
 {
-    ui->doubleSpinBox_Duration->setValue((double) value);
+    ui->doubleSpinBox_Duration->setValue(double (value));
 }
 
 void CloudDialog::on_doubleSpinBox_Duration_valueChanged(double arg1)
@@ -681,7 +699,7 @@ void CloudDialog::on_doubleSpinBox_Duration_valueChanged(double arg1)
 
 void CloudDialog::on_dial_Pitch_valueChanged(int value)
 {
-    ui->doubleSpinBox_Pitch->setValue((double) value / 100);
+    ui->doubleSpinBox_Pitch->setValue(double (value / 100));
 }
 
 void CloudDialog::on_doubleSpinBox_Pitch_valueChanged(double arg1)
@@ -693,7 +711,7 @@ void CloudDialog::on_doubleSpinBox_Pitch_valueChanged(double arg1)
 
 void CloudDialog::on_verticalSlider_Volume_valueChanged(int value)
 {
-    ui->doubleSpinBox_Volume->setValue((double) value / 1000);
+    ui->doubleSpinBox_Volume->setValue(double (value / 1000));
 }
 
 void CloudDialog::on_doubleSpinBox_Volume_valueChanged(double arg1)
@@ -810,29 +828,31 @@ void CloudDialog::on_lineEdit_Name_textEdited(const QString &arg1)
 
 void CloudDialog::on_doubleSpinBox_Output_First_valueChanged(double arg1)
 {
-    if (!linking)
+    if (!linking) {
         if (ui->doubleSpinBox_Output_Last->value() >= arg1)
-            cloudRef->setOutputFirst(arg1);
+            cloudRef->setOutputFirst(int(arg1));
         else {
             ui->doubleSpinBox_Output_First->setValue(ui->doubleSpinBox_Output_Last->value());
-            cloudRef->setOutputFirst(ui->doubleSpinBox_Output_Last->value());
+            cloudRef->setOutputFirst(int(ui->doubleSpinBox_Output_Last->value()));
         }
+    }
 }
 
 void CloudDialog::on_doubleSpinBox_Output_Last_valueChanged(double arg1)
 {
-    if (!linking)
+    if (!linking) {
         if (ui->doubleSpinBox_Output_First->value() <= arg1)
-            cloudRef->setOutputLast(arg1);
+            cloudRef->setOutputLast(int(arg1));
         else {
             ui->doubleSpinBox_Output_Last->setValue(ui->doubleSpinBox_Output_First->value());
-            cloudRef->setOutputLast(ui->doubleSpinBox_Output_First->value());
+            cloudRef->setOutputLast(int(ui->doubleSpinBox_Output_First->value()));
         }
+    }
 }
 
 void CloudDialog::on_dial_Speed_valueChanged(int value)
 {
-    ui->doubleSpinBox_Speed->setValue((double) value);
+    ui->doubleSpinBox_Speed->setValue(double (value));
 }
 
 void CloudDialog::on_doubleSpinBox_Speed_valueChanged(double arg1)
@@ -846,7 +866,7 @@ void CloudDialog::on_doubleSpinBox_Speed_valueChanged(double arg1)
 
 void CloudDialog::on_dial_Radius_valueChanged(int value)
 {
-    ui->doubleSpinBox_Radius->setValue((double) value);
+    ui->doubleSpinBox_Radius->setValue(double (value));
 }
 
 void CloudDialog::on_doubleSpinBox_Radius_valueChanged(double arg1)
@@ -882,7 +902,7 @@ void CloudDialog::on_doubleSpinBox_Stretch_valueChanged(double arg1)
     ui->dial_Stretch->setValue(int(arg1 * 1000));
     if (!linking) {
         if (cloudVisRef->getTrajectory() != nullptr)
-            cloudVisRef->trajectoryChangeStretch((double) arg1);
+            cloudVisRef->trajectoryChangeStretch(double (arg1));
 
     }
 }
@@ -1033,11 +1053,6 @@ void CloudDialog::on_radioButton_Trajectory_Recorded_toggled(bool checked)
     }
 }
 
-void CloudDialog::on_checkBox_Restart_toggled(bool checked)
-{
-    cloudRef->setActiveRestartTrajectory(checked);
-}
-
 void CloudDialog::on_radioButton_PositionManual_toggled(bool checked)
 {
     if (checked) {
@@ -1088,7 +1103,33 @@ void CloudDialog::on_dial_Grain_Y_valueChanged(int value)
     ui->doubleSpinBox_Grain_Y->setValue(value);
 }
 
-void CloudDialog::on_checkBox_New_toggled(bool checked)
+
+void CloudDialog::on_doubleSpinBox_Phrase_Number_editingFinished()
 {
-    cloudRef->setNewWay(checked);
+    cloudRef->setPhraseNum(ui->doubleSpinBox_Phrase_Number->value());
+}
+
+void CloudDialog::on_doubleSpinBox_Scale_Number_editingFinished()
+{
+    cloudRef->setScaleNum(ui->doubleSpinBox_Scale_Number->value());
+}
+
+void CloudDialog::on_checkBox_Phrase_Active_toggled(bool checked)
+{
+    cloudRef->setPhraseActive(checked);
+}
+
+void CloudDialog::on_checkBox_Scale_Active_toggled(bool checked)
+{
+    cloudRef->setScaleActive(checked);
+}
+
+void CloudDialog::on_checkBox_Trajectory_Restart_toggled(bool checked)
+{
+    cloudRef->setActiveRestartTrajectory(checked);
+}
+
+void CloudDialog::on_doubleSpinBox_Tempo_editingFinished()
+{
+    cloudRef->setTempo(ui->doubleSpinBox_Tempo->value());
 }

@@ -27,6 +27,8 @@
 #include <QFile>
 
 extern int version_major, version_minor, version_patch;
+// ids
+static unsigned int phraseId = 0;
 
 Phrase::Phrase()
 {
@@ -38,6 +40,10 @@ Phrase::Phrase()
     l_controlShade->value = 1;
     l_controlShade->delay = 0;
     myControlShade.push_back(l_controlShade);
+    // phrase id
+    myId = ++phraseId;
+    cout << "new phrase, id =" << myId << endl;
+
 }
 
 Phrase::~Phrase()
@@ -48,6 +54,26 @@ Phrase::~Phrase()
     for (unsigned long i = 0; i < myControlInterval.size(); i++) {
         delete myControlInterval[i];
     }
+}
+
+void Phrase::setName(QString newName)
+{
+    myName = newName;
+}
+
+QString Phrase::getName()
+{
+    return myName;
+}
+
+unsigned int Phrase::getId()
+{
+    return myId;
+}
+
+void Phrase::setId(unsigned int phraseId)
+{
+    myId = phraseId;
 }
 
 ControlPoint Phrase::getControlShade(unsigned long l_num)
@@ -133,19 +159,19 @@ void Phrase::deleteControlInterval(unsigned long l_num)
     myControlInterval.erase(myControlInterval.begin() + l_num);
 }
 
-float Phrase::getShade()
+float Phrase::getShade(LocalPhrase &l_phrase)
 {
-    float l_delay = float((GTime::instance().sec - phraseStartTime) * tempo / 60);
-    if ((myControlShade.size() == 1) || (!activeState)) {
-        shadeEndedState = true;
-        if (intervalEndedState)
-            setEndedState(true);
+    float l_delay = float((GTime::instance().sec - l_phrase.phraseStartTime) * l_phrase.tempo / 60);
+    if ((myControlShade.size() == 1) || (!l_phrase.activeState)) {
+        l_phrase.shadeEndedState = true;
+        if (l_phrase.intervalEndedState)
+            l_phrase.endedState = true;
         return myControlShade[0]->value;
     }
     else if (myControlShade[myControlShade.size() - 1]->delay < l_delay) {
-        shadeEndedState = true;
-        if (intervalEndedState)
-            setEndedState(true);
+        l_phrase.shadeEndedState = true;
+        if (l_phrase.intervalEndedState)
+                l_phrase.endedState = true;
         return myControlShade[myControlShade.size() - 1]->value;
     }
     else {
@@ -162,7 +188,7 @@ float Phrase::getShade()
                 firstShade = myControlShade[i]->value;
                 lastShade = myControlShade[i+1]->value;
 
-                if (silenceState)
+                if (l_phrase.silenceState)
                     result = 0;
                 else
                     result = firstShade + ((lastShade - firstShade) * (l_delay - firstDelay) / (lastDelay - firstDelay));
@@ -173,26 +199,26 @@ float Phrase::getShade()
     }
 }
 
-float Phrase::getInterval()
+float Phrase::getInterval(LocalPhrase &l_phrase)
 {
-    //cout << "getinterval, ";
-    float l_delay = float((GTime::instance().sec - phraseStartTime) * tempo / 60);
-    //cout << "l_delay = " << l_delay << endl;
-    if ((myControlInterval.size() == 1) || (!activeState)) {
-        silenceState = false;
-        intervalEndedState = true;
-        if (shadeEndedState)
-            setEndedState(true);
-        actuasiseReleaseAndAttack();
+//    cout << "getinterval, ";
+    float l_delay = float((GTime::instance().sec - l_phrase.phraseStartTime) * l_phrase.tempo / 60);
+//    cout << "l_delay = " << l_delay << endl;
+    if ((myControlInterval.size() == 1) || (!l_phrase.activeState)) {
+        l_phrase.silenceState = false;
+        l_phrase.intervalEndedState = true;
+        if (l_phrase.shadeEndedState)
+            l_phrase.endedState = true;
+        actuasiseReleaseAndAttack(l_phrase);
         return myControlInterval[0]->value;
     }
     else {
         if (myControlInterval[myControlInterval.size() - 1]->delay <= l_delay) {
-            silenceState = myControlInterval[myControlInterval.size() - 1]->silence;
-            intervalEndedState = true;
-            if (shadeEndedState)
-                setEndedState(true);
-            actuasiseReleaseAndAttack();
+            l_phrase.silenceState = myControlInterval[myControlInterval.size() - 1]->silence;
+            l_phrase.intervalEndedState = true;
+            if (l_phrase.shadeEndedState)
+                l_phrase.endedState = true;
+            actuasiseReleaseAndAttack(l_phrase);
             return myControlInterval[myControlInterval.size() - 1]->value;
         }
         else {
@@ -209,9 +235,9 @@ float Phrase::getInterval()
                     firstInterval = myControlInterval[i]->value;
                     lastInterval = myControlInterval[i+1]->value;
                     result = firstInterval + ((lastInterval - firstInterval) * (l_delay - firstDelay) / (lastDelay - firstDelay));
-                    silenceState = myControlInterval[i]->silence;
-                    actuasiseReleaseAndAttack();
-                    if (silenceState) {
+                    l_phrase.silenceState = myControlInterval[i]->silence;
+                    actuasiseReleaseAndAttack(l_phrase);
+                    if (l_phrase.silenceState) {
                         result = firstInterval;
                     }
                     break;
@@ -249,7 +275,8 @@ unsigned long Phrase::getMyControlShadeSize()
 
 unsigned long Phrase::getMyControlIntervalSize()
 {
-    //cout << "entree getMyControlIntervalSize, myControlInterval.size()=" << myControlInterval.size() << endl;
+    //cout << "entree getMyControlIntervalSize, ";
+    //cout << "myControlInterval.size()=" << myControlInterval.size() << endl;
     return myControlInterval.size();
 }
 
@@ -269,59 +296,31 @@ void Phrase::debugListControlInterval()
     }
 }
 
-bool Phrase::getActiveState()
+void Phrase::setActiveState(LocalPhrase &l_phrase, bool l_activeState)
 {
-    return activeState;
-}
-
-void Phrase::setActiveState(bool l_activeState)
-{
+    //cout << "entree phrase::setactivestate" << endl;
     if (l_activeState) {
         //if (endedState) {
-            setPhraseStartTime();
+            setPhraseStartTime(l_phrase);
         //}
     }
-    activeState = l_activeState;
+    l_phrase.activeState = l_activeState;
 }
 
-double Phrase::getPhraseStartTime()
+
+void Phrase::setPhraseStartTime(LocalPhrase &l_phrase)
 {
-    return phraseStartTime;
+    l_phrase.phraseStartTime = GTime::instance().sec;
+    l_phrase.intervalEndedState = false;
+    l_phrase.shadeEndedState = false;
+    l_phrase.attack = true;
+    l_phrase.attacked = false;
+    l_phrase.endedState = false;
 }
 
-void Phrase::setPhraseStartTime()
+void Phrase::setTempo(LocalPhrase &l_phrase, int l_tempo)
 {
-    phraseStartTime = GTime::instance().sec;
-    intervalEndedState = false;
-    shadeEndedState = false;
-    attack = true;
-    attacked = false;
-    setEndedState(false);
-}
-
-void Phrase::setTempo(int l_tempo)
-{
-    tempo = l_tempo;
-}
-
-int Phrase::getTempo()
-{
-    return tempo;
-}
-
-bool Phrase::getEndedState()
-{
-    return endedState;
-}
-
-void Phrase::setEndedState(bool n_state)
-{
-    endedState = n_state;
-}
-
-bool Phrase::getSilenceState()
-{
-    return silenceState;
+    l_phrase.tempo = l_tempo;
 }
 
 void Phrase::setSilence(unsigned long l_num, bool l_silence)
@@ -329,50 +328,30 @@ void Phrase::setSilence(unsigned long l_num, bool l_silence)
     myControlInterval[l_num]->silence = l_silence;
 }
 
-void Phrase::setRestart(bool l_restart)
-{
-    restart = l_restart;
-}
-
-bool Phrase::getRestart()
-{
-    return restart;
-}
-
-bool Phrase::getRelease()
-{
-    return release;
-}
-
-bool Phrase::getAttack()
-{
-    return attack;
-}
-
-void Phrase::actuasiseReleaseAndAttack()
+void Phrase::actuasiseReleaseAndAttack(LocalPhrase &l_phrase)
 {
     //cout << "actualise release =" << release << "," << released << ",attack =" << attack <<"," << attacked<< endl;
-    if (silenceState) {
+    if (l_phrase.silenceState) {
        //cout << "silenstate"<<endl;
-       if (released) {
-           release = false;
+       if (l_phrase.released) {
+           l_phrase.release = false;
        }
        else {
-           release = true;
-           released = true;
-           attacked = false;
+           l_phrase.release = true;
+           l_phrase.released = true;
+           l_phrase.attacked = false;
        }
     }
     else {
-        if (attacked) {
-            attack = false;
+        if (l_phrase.attacked) {
+            l_phrase.attack = false;
         }
         else {
-            attacked = true;
-            attack = true;
+            l_phrase.attacked = true;
+            l_phrase.attack = true;
         }
-        release = false;
-        released = false;
+        l_phrase.release = false;
+        l_phrase.released = false;
     }
     //cout << "actualise release =" << release << "," << released << ",attack =" << attack <<"," << attacked<< endl;
 }
@@ -427,6 +406,10 @@ bool Phrase::save(QFile &phraseFile)
     docRoot["version"] = objVersion;
     docVersion.append(objVersion);
 
+    QJsonArray docPhrase;
+    QJsonObject objPhrase;
+    objPhrase["name"] = myName;
+
     // Positions
     QJsonArray docIntervals;
     cout << myControlInterval.size() << " intervals : " << "\n";
@@ -461,6 +444,7 @@ bool Phrase::save(QFile &phraseFile)
 
     }
 
+    docRoot["phrase"] = docPhrase;
     docRoot["version"] = docVersion;
     docRoot["intervals"] = docIntervals;
     docRoot["shades"] = docShades;
@@ -539,26 +523,6 @@ void Phrase::reset()
     for (unsigned long i = 0; i < l_max - 1; i++) {
         myControlShade.pop_back();
     }
-}
-
-Scale *Phrase::getScale()
-{
-    return &myScale;
-}
-
-bool Phrase::scaleAttraction()
-{
-    return myScaleAttraction;
-}
-
-void Phrase::setScaleAttraction(bool n_state)
-{
-    myScaleAttraction = n_state;
-}
-
-void Phrase::insertScalePosition(ScalePosition n_scalePosition)
-{
-    myScale.insertScalePosition(n_scalePosition);
 }
 
 void Phrase::shiftControlInterval(unsigned long l_num, float l_value)

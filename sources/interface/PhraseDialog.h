@@ -22,6 +22,7 @@
 #define PHRASEDIALOG_H
 
 #include <QDialog>
+#include "model/Scene.h"
 #include "model/Cloud.h"
 #include "interface/Node.h"
 
@@ -45,6 +46,9 @@ public:
     explicit PhraseDialog(QWidget *parent = nullptr);
     ~PhraseDialog();
     void linkCloud (Cloud *cloudLinked);
+    void linkPhrase (Phrase *phraseLinked);
+
+    void init(Scene *currentScene);
     void createShadePositions();
     void deleteShadePositions();
     void updateShadePosition(unsigned long l_numShade, int new_x, int new_y);
@@ -99,7 +103,17 @@ private slots:
 
     void on_doubleSpinBox_Shade_Shift_editingFinished();
 
+    void on_pushButton_Phrase_Delete_pressed();
+
+    void on_pushButton_Phrase_Add_pressed();
+
+    void on_doubleSpinBox_Phrase_Number_editingFinished();
+
+    void on_lineEdit_Name_editingFinished();
+
 private:
+    Scene *sceneRef;
+    Phrase *phraseRef;
     const int ampControl = 120;
     Ui::PhraseDialog *ui;
     Cloud *cloudRef;

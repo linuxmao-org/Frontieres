@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>550</width>
-    <height>335</height>
+    <height>347</height>
    </rect>
   </property>
   <property name="font">
@@ -822,7 +822,7 @@
                <item>
                 <widget class="QRadioButton" name="radioButton_In_Commute">
                  <property name="text">
-                  <string>&amp;Commute</string>
+                  <string>Co&amp;mmute</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
@@ -2680,7 +2680,7 @@
             <item row="3" column="0">
              <widget class="QCheckBox" name="checkBox_Restart">
               <property name="text">
-               <string>Restart</string>
+               <string>Trajectories Restart</string>
               </property>
              </widget>
             </item>
