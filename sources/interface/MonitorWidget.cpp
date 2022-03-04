@@ -68,7 +68,7 @@ void MonitorWidget::paintEvent(QPaintEvent *event)
 
     for (unsigned i = 0; i < n; ++i) {
         float s = history_[(historyIndex_ + i) % n];
-        QPoint xy = QPoint(r.x() + i, (int)lroundf((1 - s) * r.height()));
+        QPoint xy = QPoint(r.x() + i, int(lroundf((1 - s) * r.height())));
         p.setPen(QColor(0x20, 0x4A, 0x87));
         p.drawLine(QPoint(xy.x(), r.height()), xy);
         p.setPen(QColor(0x72, 0x9F, 0xCF));

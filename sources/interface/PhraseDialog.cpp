@@ -61,12 +61,12 @@ PhraseDialog::PhraseDialog(QWidget *parent) :
 
 PhraseDialog::~PhraseDialog()
 {
-    int lastShade = myShadePositions.size();
+    int lastShade = int(myShadePositions.size());
     for (int i = 0;i < lastShade;i = i + 1) {
         delete myShadePositions.back();
         myShadePositions.pop_back();
     }
-    int lastInterval = myIntervalPositions.size();
+    int lastInterval = int(myIntervalPositions.size());
     for (int i = 0;i < lastInterval;i = i + 1) {
         delete myIntervalPositions.back();
         myIntervalPositions.pop_back();
@@ -125,7 +125,7 @@ void PhraseDialog::createShadePositions()
         myShadePositions[i]->myPointNode.setX(currentX);
         myShadePositions[i]->myPointNode.setY(currentY);
 
-        if (i == ui->doubleSpinBox_Shade_Number->value())
+        if (i == unsigned(ui->doubleSpinBox_Shade_Number->value()))
             myShadePositions[i]->myNode.setActiveState(false);
         else
             myShadePositions[i]->myNode.setActiveState(true);
@@ -161,7 +161,7 @@ void PhraseDialog::createShadePositions()
         }
         else if (i == l_size - 1) {
             l_nodeLimits.minX.exist = true;
-            l_nodeLimits.minX.value = myShadePositions[i-1]->myNode.x() + 0.001;
+            l_nodeLimits.minX.value = float(myShadePositions[i-1]->myNode.x() + 0.001);
             l_nodeLimits.maxX.exist = false;
             l_nodeLimits.minY.exist = true;
             l_nodeLimits.minY.value = -ampControl;
@@ -172,9 +172,9 @@ void PhraseDialog::createShadePositions()
         }
         else {
             l_nodeLimits.minX.exist = true;
-            l_nodeLimits.minX.value = myShadePositions[i-1]->myNode.x() + 0.001;
+            l_nodeLimits.minX.value = float(myShadePositions[i-1]->myNode.x() + 0.001);
             l_nodeLimits.maxX.exist = true;
-            l_nodeLimits.maxX.value = phraseRef->getControlShade(i + 1).delay * 100 * ui->doubleSpinBox_Horizontal->value() - 0.001;
+            l_nodeLimits.maxX.value = float(phraseRef->getControlShade(i + 1).delay * 100 * ui->doubleSpinBox_Horizontal->value() - 0.001);
             l_nodeLimits.minY.exist = true;
             l_nodeLimits.minY.value = -ampControl;
             l_nodeLimits.maxY.exist = true;
@@ -182,7 +182,7 @@ void PhraseDialog::createShadePositions()
 
             myShadePositions[i]->myNode.setLimits(l_nodeLimits);
         }
-        if (i == ui->doubleSpinBox_Shade_Number->value())
+        if (i == unsigned(ui->doubleSpinBox_Shade_Number->value()))
             ui->graphicsView_Shade->centerOn(&myShadePositions[i]->myNode);
     }
     if (l_size == 1)
@@ -201,11 +201,6 @@ void PhraseDialog::deleteShadePositions()
         delete myShadePositions.back();
         myShadePositions.pop_back();
     }
-}
-
-void PhraseDialog::updateShadePosition(unsigned long l_numShade, int new_x, int new_y)
-{
-
 }
 
 void PhraseDialog::createIntervalPositions()
@@ -320,11 +315,6 @@ void PhraseDialog::deleteIntervalPositions()
     }
 }
 
-void PhraseDialog::updateIntervalPosition(unsigned long l_numInterval, int new_x, int new_y)
-{
-
-}
-
 void PhraseDialog::updateIntervalFromGraph()
 {
     //cout << "entree updatefromgraph" << endl;
@@ -351,7 +341,7 @@ void PhraseDialog::updateIntervalFromGraph()
 
             if (i == myIntervalPositions.size() - 1) {
                 l_nodeLimits.minX.exist = true;
-                l_nodeLimits.minX.value = myIntervalPositions[i-1]->myNode.x() + 0.001;
+                l_nodeLimits.minX.value = float(myIntervalPositions[i-1]->myNode.x() + 0.001);
                 l_nodeLimits.maxX.exist = false;
                 l_nodeLimits.minY.exist = true;
                 l_nodeLimits.minY.value = -ampControl;
@@ -364,9 +354,9 @@ void PhraseDialog::updateIntervalFromGraph()
             else {
                 //cout << "i=" << i <<endl;
                 l_nodeLimits.minX.exist = true;
-                l_nodeLimits.minX.value = myIntervalPositions[i-1]->myNode.x() + 0.001;
+                l_nodeLimits.minX.value = float(myIntervalPositions[i-1]->myNode.x() + 0.001);
                 l_nodeLimits.maxX.exist = true;
-                l_nodeLimits.maxX.value = phraseRef->getControlInterval(i + 1).delay * 100 * ui->doubleSpinBox_Horizontal->value() - 0.001;
+                l_nodeLimits.maxX.value = float(phraseRef->getControlInterval(i + 1).delay * 100 * ui->doubleSpinBox_Horizontal->value() - 0.001);
                 l_nodeLimits.minY.exist = true;
                 l_nodeLimits.minY.value = -ampControl;
                 l_nodeLimits.maxY.exist = true;
@@ -377,8 +367,8 @@ void PhraseDialog::updateIntervalFromGraph()
 
             myIntervalPositions[i]->myNode.endMove();
             ui->doubleSpinBox_Interval_Number->setValue(i);
-            ui->doubleSpinBox_Interval_Delay->setValue(phraseRef->getControlInterval(i).delay);
-            ui->doubleSpinBox_Interval_Value->setValue(phraseRef->getControlInterval(i).value);
+            ui->doubleSpinBox_Interval_Delay->setValue(double(phraseRef->getControlInterval(i).delay));
+            ui->doubleSpinBox_Interval_Value->setValue(double(phraseRef->getControlInterval(i).value));
             break;
         }
     }
@@ -412,7 +402,7 @@ void PhraseDialog::updateShadeFromGraph()
 
             if (i == myShadePositions.size() - 1) {
                 l_nodeLimits.minX.exist = true;
-                l_nodeLimits.minX.value = myShadePositions[i-1]->myNode.x() + 0.001;
+                l_nodeLimits.minX.value = float(myShadePositions[i-1]->myNode.x() + 0.001);
                 l_nodeLimits.maxX.exist = false;
                 l_nodeLimits.minY.exist = true;
                 l_nodeLimits.minY.value = -ampControl;
@@ -425,9 +415,9 @@ void PhraseDialog::updateShadeFromGraph()
             else {
                 //cout << "i=" << i <<endl;
                 l_nodeLimits.minX.exist = true;
-                l_nodeLimits.minX.value = myShadePositions[i-1]->myNode.x() + 0.001;
+                l_nodeLimits.minX.value = float(myShadePositions[i-1]->myNode.x() + 0.001);
                 l_nodeLimits.maxX.exist = true;
-                l_nodeLimits.maxX.value = phraseRef->getControlShade(i + 1).delay * 100 * ui->doubleSpinBox_Horizontal->value() - 0.001;
+                l_nodeLimits.maxX.value = float(phraseRef->getControlShade(i + 1).delay * 100 * ui->doubleSpinBox_Horizontal->value() - 0.001);
                 l_nodeLimits.minY.exist = true;
                 l_nodeLimits.minY.value = -ampControl;
                 l_nodeLimits.maxY.exist = true;
@@ -491,7 +481,7 @@ void PhraseDialog::on_checkBox_Active_toggled(bool checked)
 
 void PhraseDialog::on_doubleSpinBox_Interval_Delay_editingFinished()
 {
-    unsigned long l_num = int(ui->doubleSpinBox_Interval_Number->value());
+    unsigned long l_num = unsigned(ui->doubleSpinBox_Interval_Number->value());
     phraseRef->setControlInterval(l_num,
                                               ui->doubleSpinBox_Interval_Delay->value(),
                                               ui->doubleSpinBox_Interval_Value->value());
@@ -501,7 +491,7 @@ void PhraseDialog::on_doubleSpinBox_Interval_Delay_editingFinished()
 
 void PhraseDialog::on_doubleSpinBox_Shade_Delay_editingFinished()
 {
-    unsigned long l_num = int(ui->doubleSpinBox_Shade_Number->value());
+    unsigned long l_num = unsigned(ui->doubleSpinBox_Shade_Number->value());
     phraseRef->setControlShade(l_num,
                                            ui->doubleSpinBox_Shade_Delay->value(),
                                            ui->doubleSpinBox_Shade_Value->value());
@@ -511,7 +501,7 @@ void PhraseDialog::on_doubleSpinBox_Shade_Delay_editingFinished()
 
 void PhraseDialog::on_doubleSpinBox_Interval_Value_editingFinished()
 {
-    unsigned long l_num = int(ui->doubleSpinBox_Interval_Number->value());
+    unsigned long l_num = unsigned(ui->doubleSpinBox_Interval_Number->value());
     phraseRef->setControlInterval(l_num,
                                               ui->doubleSpinBox_Interval_Delay->value(),
                                               ui->doubleSpinBox_Interval_Value->value());
@@ -521,7 +511,7 @@ void PhraseDialog::on_doubleSpinBox_Interval_Value_editingFinished()
 
 void PhraseDialog::on_doubleSpinBox_Shade_Value_editingFinished()
 {
-    unsigned long l_num = int(ui->doubleSpinBox_Shade_Number->value());
+    unsigned long l_num = unsigned(ui->doubleSpinBox_Shade_Number->value());
     phraseRef->setControlShade(l_num,
                                            ui->doubleSpinBox_Shade_Delay->value(),
                                            ui->doubleSpinBox_Shade_Value->value());
@@ -573,7 +563,7 @@ void PhraseDialog::on_doubleSpinBox_Tempo_editingFinished()
 
 void PhraseDialog::on_pushButton_Interval_Delete_pressed()
 {
-    unsigned long l_num = int(ui->doubleSpinBox_Interval_Number->value());
+    unsigned long l_num = unsigned(ui->doubleSpinBox_Interval_Number->value());
     if ((l_num != 0) & (l_num < phraseRef->getMyControlIntervalSize())) {
         phraseRef->deleteControlInterval(l_num);
         deleteIntervalPositions();
@@ -583,7 +573,7 @@ void PhraseDialog::on_pushButton_Interval_Delete_pressed()
 
 void PhraseDialog::on_pushButton_Shade_Delete_pressed()
 {
-    unsigned long l_num = int(ui->doubleSpinBox_Shade_Number->value());
+    unsigned long l_num = unsigned(ui->doubleSpinBox_Shade_Number->value());
     if ((l_num != 0) & (l_num < phraseRef->getMyControlShadeSize())) {
         phraseRef->deleteControlShade(l_num);
         deleteShadePositions();
@@ -593,7 +583,7 @@ void PhraseDialog::on_pushButton_Shade_Delete_pressed()
 
 void PhraseDialog::on_checkBox_Silence_toggled(bool checked)
 {
-    int l_num =ui->doubleSpinBox_Interval_Number->value();
+    unsigned long l_num = unsigned(ui->doubleSpinBox_Interval_Number->value());
     phraseRef->setSilence(l_num, checked);
     deleteIntervalPositions();
     createIntervalPositions();
@@ -647,7 +637,7 @@ void PhraseDialog::on_pushButton_Envelope_clicked()
 
 void PhraseDialog::on_doubleSpinBox_Interval_Shift_editingFinished()
 {
-    unsigned long l_num = int(ui->doubleSpinBox_Interval_Number->value());
+    unsigned long l_num = unsigned(ui->doubleSpinBox_Interval_Number->value());
     phraseRef->shiftControlInterval(l_num, float(ui->doubleSpinBox_Interval_Shift->value()));
     ui->doubleSpinBox_Interval_Shift->setValue(0);
     on_doubleSpinBox_Interval_Number_editingFinished();
@@ -655,7 +645,7 @@ void PhraseDialog::on_doubleSpinBox_Interval_Shift_editingFinished()
 
 void PhraseDialog::on_doubleSpinBox_Shade_Shift_editingFinished()
 {
-    unsigned long l_num = int(ui->doubleSpinBox_Shade_Number->value());
+    unsigned long l_num = unsigned(ui->doubleSpinBox_Shade_Number->value());
     phraseRef->shiftControlShade(l_num, float(ui->doubleSpinBox_Shade_Shift->value()));
     ui->doubleSpinBox_Shade_Shift->setValue(0);
     on_doubleSpinBox_Shade_Number_editingFinished();
@@ -674,7 +664,7 @@ void PhraseDialog::on_pushButton_Phrase_Add_pressed()
 
 void PhraseDialog::on_doubleSpinBox_Phrase_Number_editingFinished()
 {
-    int l_num = int(ui->doubleSpinBox_Phrase_Number->value());
+    //int l_num = int(ui->doubleSpinBox_Phrase_Number->value());
 
     //cout << "phrase num =" << l_num << endl;
 

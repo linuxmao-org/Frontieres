@@ -115,7 +115,7 @@ private:
     float zoom = 0.05f;
     bool orientation = VERTICAL;
     bool myScaleAttraction = false;
-    Scale *scaleRef;
+    Scale *scaleRef = nullptr;
 //    vector<ScalePosition *> myScalePositions;
 };
 
