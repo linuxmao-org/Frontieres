@@ -136,7 +136,7 @@
              </size>
             </property>
             <property name="frameShape">
-             <enum>QFrame::Box</enum>
+             <enum>QFrame::NoFrame</enum>
             </property>
             <property name="frameShadow">
              <enum>QFrame::Raised</enum>
@@ -2562,7 +2562,7 @@ border-bottom-left-radius: 9px;
                          <bool>false</bool>
                         </property>
                         <property name="frameShape">
-                         <enum>QFrame::StyledPanel</enum>
+                         <enum>QFrame::NoFrame</enum>
                         </property>
                         <property name="frameShadow">
                          <enum>QFrame::Raised</enum>
@@ -4132,24 +4132,20 @@ border-bottom-left-radius: 9px;
                         <property name="frameShadow">
                          <enum>QFrame::Raised</enum>
                         </property>
-                        <widget class="QCheckBox" name="checkBox_Trajectory_Restart">
-                         <property name="geometry">
-                          <rect>
-                           <x>10</x>
-                           <y>10</y>
-                           <width>57</width>
-                           <height>19</height>
-                          </rect>
-                         </property>
-                         <property name="font">
-                          <font>
-                           <pointsize>7</pointsize>
-                          </font>
-                         </property>
-                         <property name="text">
-                          <string>Restart</string>
-                         </property>
-                        </widget>
+                        <layout class="QVBoxLayout" name="verticalLayout_83">
+                         <item>
+                          <widget class="QCheckBox" name="checkBox_Trajectory_Restart">
+                           <property name="font">
+                            <font>
+                             <pointsize>7</pointsize>
+                            </font>
+                           </property>
+                           <property name="text">
+                            <string>Restart</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
                        </widget>
                       </item>
                      </layout>

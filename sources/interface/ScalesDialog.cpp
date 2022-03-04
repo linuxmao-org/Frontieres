@@ -206,7 +206,7 @@ void ScalesDialog::drawScale()
 
     QPen graypen (Qt::gray);
 
-    for (unsigned long i = 0; int(i) < scaleRef->getSize(); i = i + 1) {
+    for (unsigned long i = 0; i < scaleRef->getSize(); i = i + 1) {
         int l_y = int(- (scaleRef->getScalePosition(i).pitchInterval / ui->doubleSpinBox_Zoom->value()));
         if ((l_y >= - ampControl) && (l_y <= ampControl)) {
             QGraphicsItem *l_line;
@@ -242,7 +242,7 @@ void ScalesDialog::resetTreeScales()
 
     //itm->setText(0, tr("Interval"));
     //ui->treeWidget_Scale->addTopLevelItem(itm);
-    for (int i=0; i < scaleRef->getSize() ; i++) {
+    for (unsigned long i=0; i < scaleRef->getSize() ; i++) {
        // QTreeWidgetItem *itmChild = new QTreeWidgetItem();
        // itmChild->setText(0, QString::number(scaleRef->getScalePosition(scaleRef->getSize()-(i+1)).pitchInterval));
        // itm->addChild(itmChild);
@@ -269,7 +269,7 @@ MyQGraphicsView::MyQGraphicsView(QWidget *parent, ScalesDialog *l_ScalesDialog, 
 void MyQGraphicsView::mousePressEvent(QMouseEvent *eventMouse)
 {
     return;
-    cout << "mousepressevent" << endl;
+    //cout << "mousepressevent" << endl;
 
     if (eventMouse->button() == 2) {
        myNode->setActiveState(false);
@@ -280,7 +280,7 @@ void MyQGraphicsView::mousePressEvent(QMouseEvent *eventMouse)
    int c_x = eventMouse->x() - (ampControl + (myNode->getWidthNodes() + 3));
    int c_y = eventMouse->y() - (ampControl + (myNode->getWidthNodes() + 3));
 
-       cout << "mousepressevent avant update" << endl;
+       //cout << "mousepressevent avant update" << endl;
    myControl->updateFromControlPosition(c_x, c_y);
    draging = true;
 
@@ -376,11 +376,11 @@ void ScalesDialog::on_pushButton_load_pressed()
 
 void ScalesDialog::on_doubleSpinBox_Scale_Number_editingFinished()
 {
-    int l_num = int(ui->doubleSpinBox_Scale_Number->value());
+    //int l_num = int(ui->doubleSpinBox_Scale_Number->value());
 
     //cout << "scale num =" << l_num << endl;
 
-    linkScale(sceneRef->findScaleById(int(ui->doubleSpinBox_Scale_Number->value()))->scale.get());
+    linkScale(sceneRef->findScaleById(unsigned(ui->doubleSpinBox_Scale_Number->value()))->scale.get());
     ui->lineEdit_Name->setText(scaleRef->getName());
 
     drawScale();

@@ -283,12 +283,17 @@ void ControlDialog::drawScale()
     controlGraphicScene->clear();
     initScene();
 
+    if (cloudRef->getScaleNum() == 0) {
+        //cout << "pas de gamme" << endl;
+        return;
+    }
+
     QPen graypen (Qt::gray);
 
     //cout << "interne drawscale 1" << endl;
     //cout << "scaleRef->getSize()=" << scaleRef->getSize() << endl;
 
-    for (int i = 0; i < scaleRef->getSize(); i = i + 1) {
+    for (unsigned long i = 0; i < scaleRef->getSize(); i = i + 1) {
         if (orientation == VERTICAL) {
             int l_y = - int(scaleRef->getScalePosition(i).pitchInterval / ui->doubleSpinBox_Zoom->value());
             if ((l_y >= - ampControl) && (l_y <= ampControl)) {
@@ -317,7 +322,7 @@ void ControlDialog::drawScale()
 
 double ControlDialog::nearestScalePosition(double c_interval, double c_minInterval, double c_maxInterval)
 {
-    return scaleRef->nearest(c_interval, c_minInterval, c_maxInterval);
+    return double(scaleRef->nearest(c_interval, c_minInterval, c_maxInterval));
 }
 
 double ControlDialog::getIntervalFromScale(int l_i)
@@ -448,5 +453,10 @@ void ControlDialog::on_doubleSpinBox_Zoom_editingFinished()
 
 void ControlDialog::on_checkBox_scale_attraction_clicked(bool checked)
 {
-    cloudRef->setScaleActive(checked);
+    if (cloudRef->getScaleNum() != 0) {
+        cloudRef->setScaleActive(checked);
+    }
+    else {
+        ui->checkBox_scale_attraction->toggle();
+    }
 }

@@ -283,7 +283,7 @@ void MyGLScreen::initializeGL()
     text_renderer->setFont(font, glyphThickness, numGlyphs);
 
     // initial state
-    glClearColor(0.15, 0.15, 0.15, 1.0f);
+    glClearColor(0.15f, 0.15f, 0.15f, 1.0f);
     // enable depth buffer updates
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
@@ -324,13 +324,13 @@ void MyGLScreen::paintGL()
         SceneTrigger *selectedTrigger = scene->selectedTrigger();
 
         // render rectangles
-        for (int i = 0, n = scene->m_samples.size(); i < n; i++) {
+        for (unsigned long i = 0, n = scene->m_samples.size(); i < n; i++) {
             SampleVis &sv = *scene->m_samples[i]->view;
             sv.draw();
         }
 
         // render clouds if they exist
-        for (int i = 0, n = scene->m_clouds.size(); i < n; i++) {
+        for (unsigned long i = 0, n = scene->m_clouds.size(); i < n; i++) {
             CloudVis &gv = *scene->m_clouds[i]->view;
             Cloud &gm = *scene->m_clouds[i]->cloud;
             gv.draw();
@@ -338,7 +338,7 @@ void MyGLScreen::paintGL()
         }
 
         // render triggers if they exist
-        for (int i = 0, n = scene->m_triggers.size(); i < n; i++) {
+        for (unsigned long i = 0, n = scene->m_triggers.size(); i < n; i++) {
             TriggerVis &tv = *scene->m_triggers[i]->view;
             tv.draw();
         }
@@ -362,15 +362,15 @@ void MyGLScreen::paintGL()
     // automatic frame skipping in case of lag
     double duration = std::chrono::duration<double>(t_end - t_begin).count();
     double durationAllowed = 1e-3 * theApplication->idleCallbackInterval();
-    P->framesToSkip = (unsigned)(1.1 * duration / durationAllowed);
+    P->framesToSkip = unsigned(1.1 * duration / durationAllowed);
 }
 
 void MyGLScreen::resizeGL(int w, int h)
 {
-    glViewport(0, 0, (GLsizei)w, (GLsizei)h);
+    glViewport(0, 0, GLsizei(w), GLsizei(h));
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(0.0, (GLdouble)w, 0.0, (GLdouble)h, -10.0, 10.0);
+    glOrtho(0.0, GLdouble(w), 0.0, GLdouble(h), -10.0, 10.0);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glTranslatef(-position.x, -position.y, -position.z);  // translate the screen to the position of our camera
@@ -525,7 +525,7 @@ void MyGLScreen::keyAction_Cloud(int dir)
         }
         else {
             // still have a cloud so select
-            scene->m_selectedCloud = scene->m_clouds.size() - 1;
+            scene->m_selectedCloud = int(scene->m_clouds.size() - 1);
             scene->m_clouds.back()->view->setSelectState(true);
         }
     }
@@ -536,7 +536,7 @@ void MyGLScreen::keyAction_Cloud(int dir)
             }
         }
         scene->addNewCloud(g_defaultCloudParams.numGrains);
-        scene->m_selectedCloud = scene->m_clouds.size() - 1;
+        scene->m_selectedCloud = int(scene->m_clouds.size() - 1);
     }
 }
 
@@ -558,7 +558,7 @@ void MyGLScreen::keyAction_Trigger(int dir)
         }
         else {
             // still have a trigger so select
-            scene->m_selectedTrigger = scene->m_triggers.size() - 1;
+            scene->m_selectedTrigger = int(scene->m_triggers.size() - 1);
             scene->m_triggers.back()->view->setSelectState(true);
         }
     }
@@ -569,7 +569,7 @@ void MyGLScreen::keyAction_Trigger(int dir)
             }
         }
         scene->addNewTrigger();
-        scene->m_selectedTrigger = scene->m_triggers.size() - 1;
+        scene->m_selectedTrigger = int(scene->m_triggers.size() - 1);
     }
 }
 
@@ -893,8 +893,8 @@ void MyGLScreen::keyAction_SampleNames()
 void MyGLScreen::keyAction_ShowParameters()
 {
     Scene *scene = ::currentScene;
-    SceneCloud *selectedCloud = scene->selectedCloud();
-    SceneTrigger *selectedTrigger = scene->selectedTrigger();
+//    SceneCloud *selectedCloud = scene->selectedCloud();
+//    SceneTrigger *selectedTrigger = scene->selectedTrigger();
 
     if (scene->selectedTrigger())
         scene->selectedTrigger()->trigger->showParameters();

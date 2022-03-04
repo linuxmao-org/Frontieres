@@ -51,10 +51,8 @@ public:
     void init(Scene *currentScene);
     void createShadePositions();
     void deleteShadePositions();
-    void updateShadePosition(unsigned long l_numShade, int new_x, int new_y);
     void createIntervalPositions();
     void deleteIntervalPositions();
-    void updateIntervalPosition(unsigned long l_numInterval, int new_x, int new_y);
 
 public slots:
     void updateIntervalFromGraph();
