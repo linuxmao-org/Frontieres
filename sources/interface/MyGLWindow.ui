@@ -38,7 +38,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>22</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -57,7 +57,12 @@
      <string>&amp;Edit</string>
     </property>
     <addaction name="action_Add_sample"/>
+    <addaction name="separator"/>
     <addaction name="action_Add_input"/>
+    <addaction name="separator"/>
+    <addaction name="action_Phrases"/>
+    <addaction name="separator"/>
+    <addaction name="action_Scales"/>
     <addaction name="separator"/>
     <addaction name="action_Options"/>
    </widget>
@@ -225,7 +230,7 @@
     <string>Grains (&amp;V)</string>
    </property>
    <property name="iconText">
-    <string>Grains (V)</string>
+    <string>Grains</string>
    </property>
    <property name="toolTip">
     <string>Grains (V)</string>
@@ -293,7 +298,17 @@
   </action>
   <action name="action_Add_input">
    <property name="text">
-    <string>&amp;Add input...</string>
+    <string>Add &amp;input...</string>
+   </property>
+  </action>
+  <action name="action_Phrases">
+   <property name="text">
+    <string>&amp;Phrases</string>
+   </property>
+  </action>
+  <action name="action_Scales">
+   <property name="text">
+    <string>&amp;Scales</string>
    </property>
   </action>
  </widget>

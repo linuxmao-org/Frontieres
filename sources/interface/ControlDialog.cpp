@@ -27,10 +27,11 @@ ControlDialog::ControlDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ControlDialog)
 {
+    //cout << "entree creation controleur" << endl;
     ui->setupUi(this);
 
     controlGraphicScene = new QGraphicsScene(this);
-    controlGraphicsView = new MyQGraphicsView(ui->frameGraphicsView, this, controlGraphicScene, &myNode);
+    controlGraphicsView = new MyControlQGraphicsView(ui->frameGraphicsView, this, controlGraphicScene, &myNode);
 
     setMouseTracking(true);
 
@@ -39,11 +40,13 @@ ControlDialog::ControlDialog(QWidget *parent) :
     myNode.setX(0);
     myNode.setY(0);
 
-    zoom = ui->doubleSpinBox_Zoom->value();
+    zoom = float(ui->doubleSpinBox_Zoom->value());
 
     QTimer *tmAutoUpdate = new QTimer(this);
     connect(tmAutoUpdate, &QTimer::timeout, this, &ControlDialog::autoUpdate);
     tmAutoUpdate->start(500);
+
+    //cout << "sortie creation controleur" << endl;
 }
 
 ControlDialog::~ControlDialog()
@@ -53,6 +56,7 @@ ControlDialog::~ControlDialog()
 
 void ControlDialog::autoUpdate()
 {
+    //cout << "entree autoupdate" << endl;
     autoUpdating = true;
     if (cloudRef) {
         if (cloudRef->getCtrlAutoUpdate()) {
@@ -75,9 +79,17 @@ void ControlDialog::autoUpdate()
             }
             cloudRef->setActualiseByPhrase(false);
         }
-
+        if (cloudRef->changedScaleNumForControl()) {
+            scaleRef = cloudRef->getScale();
+            drawScale();
+            cloudRef->setChangedScaleNumForControl(false);
+        }
+        if (cloudRef->changedScaleActiveForControl()) {
+            ui->checkBox_scale_attraction->setChecked(cloudRef->getScaleActive());
+        }
     }
     autoUpdating = false;
+    //cout << "sortie autoupdate" << endl;
 }
 
 void ControlDialog::initScene()
@@ -113,6 +125,7 @@ void ControlDialog::initScene()
 
 void ControlDialog::linkCloud(Cloud *cloudLinked)
 {
+    //cout << "entree linkcloud" << endl;
     linking = true;
     cloudRef = cloudLinked;
     scaleRef = cloudLinked->getScale();
@@ -122,6 +135,7 @@ void ControlDialog::linkCloud(Cloud *cloudLinked)
     updateFromControlPosition(0, 0);
     drawScale();
     linking = false;
+    //cout << "sortie linkcloud" << endl;
 }
 
 void ControlDialog::updateFromControlPosition(float l_x, float l_y)
@@ -146,8 +160,8 @@ void ControlDialog::updateFromControlPosition(float l_x, float l_y)
             cloudRef->setCtrlInterval(l_x * zoom, false);
             cloudRef->setCtrlShade(2 - float(l_y + ampControl) / ampControl, false);
         }
-        ui->doubleSpinBox_Interval->setValue(cloudRef->getCtrlInterval());
-        ui->doubleSpinBox_Shade->setValue(cloudRef->getCtrlShade());
+        ui->doubleSpinBox_Interval->setValue(double(cloudRef->getCtrlInterval()));
+        ui->doubleSpinBox_Shade->setValue(double(cloudRef->getCtrlShade()));
         updateMinMax();
     }
 }
@@ -157,15 +171,15 @@ void ControlDialog::updateControlPosition()
     if (linking)
         return;
 
-    int n_shade = ((ui->doubleSpinBox_Shade->value() - 1) * ampControl);
+    int n_shade = int((ui->doubleSpinBox_Shade->value() - 1) * ampControl);
     int n_interval;
     if (scaleAttraction()) {
         double l_interval = ui->doubleSpinBox_Interval->value();
         double l_nearestPosition = nearestScalePosition(l_interval, getMinInterval(), getMaxInterval());
-        n_interval = - l_nearestPosition / ui->doubleSpinBox_Zoom->value();
+        n_interval = int(- l_nearestPosition / ui->doubleSpinBox_Zoom->value());
     }
     else
-        n_interval = - (ui->doubleSpinBox_Interval->value() / ui->doubleSpinBox_Zoom->value());
+        n_interval = int(- (ui->doubleSpinBox_Interval->value() / ui->doubleSpinBox_Zoom->value()));
 
     if (orientation == VERTICAL) {
         updateFromControlPosition(n_shade, n_interval);
@@ -177,20 +191,20 @@ void ControlDialog::updateControlPosition()
 
 void ControlDialog::updateMinMax()
 {
-    float n_interval = ui->doubleSpinBox_Interval->value();
-    float n_zoom = ui->doubleSpinBox_Zoom->value();
+    float n_interval = float(ui->doubleSpinBox_Interval->value());
+    float n_zoom = float(ui->doubleSpinBox_Zoom->value());
 
     float n_zoomMin = (n_interval / ampControl);
-    ui->doubleSpinBox_Zoom->setMinimum(abs(n_zoomMin));
+    ui->doubleSpinBox_Zoom->setMinimum(abs(double(n_zoomMin)));
     float n_intervalMax = (n_zoom * ampControl);
-    ui->doubleSpinBox_Interval->setMaximum(abs(n_intervalMax));
-    ui->doubleSpinBox_Interval->setMinimum(-abs(n_intervalMax));
+    ui->doubleSpinBox_Interval->setMaximum(abs(double(n_intervalMax)));
+    ui->doubleSpinBox_Interval->setMinimum(-abs(double(n_intervalMax)));
 }
 
 void ControlDialog::updateValues(float l_interval, float l_shade)
 {
-    ui->doubleSpinBox_Interval->setValue(l_interval);
-    ui->doubleSpinBox_Shade->setValue(l_shade);
+    ui->doubleSpinBox_Interval->setValue(double(l_interval));
+    ui->doubleSpinBox_Shade->setValue(double(l_shade));
     updateControlPosition();
 }
 
@@ -263,6 +277,7 @@ double ControlDialog::getMaxInterval()
 
 void ControlDialog::drawScale()
 {
+    //cout << "entree drawscale" << endl;
 
     controlGraphicScene->removeItem(&myNode);
     controlGraphicScene->clear();
@@ -270,9 +285,12 @@ void ControlDialog::drawScale()
 
     QPen graypen (Qt::gray);
 
+    //cout << "interne drawscale 1" << endl;
+    //cout << "scaleRef->getSize()=" << scaleRef->getSize() << endl;
+
     for (int i = 0; i < scaleRef->getSize(); i = i + 1) {
         if (orientation == VERTICAL) {
-            int l_y = - (scaleRef->getScalePosition(i).pitchInterval / ui->doubleSpinBox_Zoom->value());
+            int l_y = - int(scaleRef->getScalePosition(i).pitchInterval / ui->doubleSpinBox_Zoom->value());
             if ((l_y >= - ampControl) && (l_y <= ampControl)) {
                 QGraphicsItem *l_line;
                 l_line = controlGraphicScene->addLine(-(ampControl + 10),
@@ -283,7 +301,7 @@ void ControlDialog::drawScale()
             }
         }
         else {
-            int l_y = (scaleRef->getScalePosition(i).pitchInterval / ui->doubleSpinBox_Zoom->value());
+            int l_y = int(scaleRef->getScalePosition(i).pitchInterval / ui->doubleSpinBox_Zoom->value());
             if ((l_y >= - ampControl) && (l_y <= ampControl)) {
                 QGraphicsItem *l_line;
                 l_line = controlGraphicScene->addLine(l_y,
@@ -294,6 +312,7 @@ void ControlDialog::drawScale()
             }
         }
     }
+    //cout << "sortie drawscale" << endl;
 }
 
 double ControlDialog::nearestScalePosition(double c_interval, double c_minInterval, double c_maxInterval)
@@ -308,10 +327,10 @@ double ControlDialog::getIntervalFromScale(int l_i)
 
 bool ControlDialog::scaleAttraction()
 {
-    return cloudRef->scaleAttraction();
+    return cloudRef->getScaleActive();
 }
 
-MyQGraphicsView::MyQGraphicsView(QWidget *parent, ControlDialog *l_controlDialog, QGraphicsScene *l_graphicsScene, Node *l_Node)
+MyControlQGraphicsView::MyControlQGraphicsView(QWidget *parent, ControlDialog *l_controlDialog, QGraphicsScene *l_graphicsScene, Node *l_Node)
 {
     this->setParent(parent);
     this->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum );
@@ -322,23 +341,23 @@ MyQGraphicsView::MyQGraphicsView(QWidget *parent, ControlDialog *l_controlDialog
     myNode = l_Node;
 }
 
-void MyQGraphicsView::linkCloud(Cloud *cloudLinked, ControlDialog *l_controldialog)
+void MyControlQGraphicsView::linkCloud(Cloud *cloudLinked, ControlDialog *l_controldialog)
 {
     cloudRef = cloudLinked;
     myControl = l_controldialog;
 }
 
-void MyQGraphicsView::mousePressEvent(QMouseEvent *eventMouse)
+void MyControlQGraphicsView::mousePressEvent(QMouseEvent *eventMouse)
 {
     //cout << "mousepressevent" << endl;
     if (eventMouse->button() == 2) {
        myNode->setActiveState(false);
-       cloudRef->getPhrase()->setRestart(false);
+       cloudRef->getLocalPhrase()->restart = false;
        cloudRef->setActiveState(false);
    }
    else {
        myNode->setActiveState(true);
-       cloudRef->getPhrase()->setRestart(false);
+       cloudRef->getLocalPhrase()->restart = false;
        //if (!cloudRef->getActiveState())
 
        cloudRef->setActiveState(false);
@@ -360,7 +379,7 @@ void MyQGraphicsView::mousePressEvent(QMouseEvent *eventMouse)
    }*/
 }
 
-void MyQGraphicsView::mouseReleaseEvent(QMouseEvent *eventMouse)
+void MyControlQGraphicsView::mouseReleaseEvent(QMouseEvent *eventMouse)
 {
     //cout << "mouserelease" << endl;
     draging = false;
@@ -371,7 +390,7 @@ void MyQGraphicsView::mouseReleaseEvent(QMouseEvent *eventMouse)
     }
 }
 
-void MyQGraphicsView::mouseMoveEvent(QMouseEvent *eventMouse)
+void MyControlQGraphicsView::mouseMoveEvent(QMouseEvent *eventMouse)
 {
     if (draging) {
         int c_x = eventMouse->x() - (ampControl + (myNode->getWidthNodes() + 3));
@@ -387,7 +406,7 @@ void MyQGraphicsView::mouseMoveEvent(QMouseEvent *eventMouse)
 
 void ControlDialog::on_doubleSpinBox_Zoom_valueChanged(double arg1)
 {
-    zoom = arg1;
+    zoom = float(arg1);
 }
 
 void ControlDialog::on_radioButton_orientation_vertical_toggled(bool checked)
@@ -421,57 +440,13 @@ void ControlDialog::on_doubleSpinBox_Interval_editingFinished()
 
 void ControlDialog::on_doubleSpinBox_Zoom_editingFinished()
 {
-    zoom = ui->doubleSpinBox_Zoom->value();
+    zoom = float(ui->doubleSpinBox_Zoom->value());
     updateControlPosition();
     updateMinMax();
     drawScale();
 }
 
-void ControlDialog::on_pushButton_add_pressed()
+void ControlDialog::on_checkBox_scale_attraction_clicked(bool checked)
 {
-    ScalePosition l_scalePosition;
-    l_scalePosition.pitchInterval = ui->doubleSpinBox_Interval->value();
-    scaleRef->insertScalePosition(l_scalePosition);
-
-    drawScale();
-}
-
-void ControlDialog::on_pushButton_reset_pressed()
-{
-    controlGraphicScene->removeItem(&myNode);
-    controlGraphicScene->clear();
-    scaleRef->reset();
-    initScene();
-}
-
-void ControlDialog::on_pushButton_attraction_toggled(bool checked)
-{
-    cloudRef->setScaleAttraction(checked);
-}
-
-void ControlDialog::on_pushButton_save_pressed()
-{
-    std::string nameScaleFile = scaleRef->askNameScale(FileDirection::Save);
-    if (nameScaleFile.empty())
-        return;
-
-    QFile scaleFile(QString::fromStdString(nameScaleFile));
-    scaleRef->save(scaleFile);
-}
-
-void ControlDialog::on_pushButton_load_pressed()
-{
-    std::string nameScaleFile = scaleRef->askNameScale(FileDirection::Load);
-    if (nameScaleFile.empty())
-        return;
-    
-    controlGraphicScene->removeItem(&myNode);
-    controlGraphicScene->clear();
-    scaleRef->reset();
-    
-    QFile scaleFile(QString::fromStdString(nameScaleFile));
-    scaleRef->load(scaleFile);
-
-    initScene();
-    drawScale();
+    cloudRef->setScaleActive(checked);
 }

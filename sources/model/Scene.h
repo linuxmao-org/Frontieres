@@ -33,18 +33,24 @@
 struct SceneSample;
 struct SceneCloud;
 struct SceneTrigger;
+struct ScenePhrase;
+struct SceneScale;
 struct Sample;
 struct SampleVis;
 struct Cloud;
 struct CloudVis;
 struct Trigger;
 struct TriggerVis;
+struct Phrase;
+struct Scale;
 class SampleSet;
 class QFile;
 
 typedef std::vector<std::unique_ptr<SceneSample>> VecSceneSample;
 typedef std::vector<std::unique_ptr<SceneCloud>> VecSceneCloud;
 typedef std::vector<std::unique_ptr<SceneTrigger>> VecSceneTrigger;
+typedef std::vector<std::unique_ptr<ScenePhrase>> VecScenePhrase;
+typedef std::vector<std::unique_ptr<SceneScale>> VecSceneScale;
 
 extern unsigned int samp_rate;
 
@@ -82,6 +88,8 @@ public:
     void addSampleVis(Sample *sampleToAdd);
     void addNewCloud(int numGrains);
     void addNewTrigger();
+    void addNewPhrase();
+    void addNewScale();
 
     // init default cloud params
     void initDefaultCloudParams();
@@ -97,6 +105,11 @@ public:
 
     SceneTrigger *findTriggerById(unsigned id);
     SceneCloud *findCloudById(unsigned id);
+    ScenePhrase *findPhraseById(unsigned id);
+    SceneScale *findScaleById(unsigned id);
+
+    unsigned long getPhrasesSize();
+    unsigned long getScalesSize();
 
     // handle deselections
     void deselect(int shapeType);
@@ -106,6 +119,8 @@ public:
     VecSceneSample m_samples;
     VecSceneCloud m_clouds;
     VecSceneTrigger m_triggers;
+    VecScenePhrase m_phrases;
+    VecSceneScale m_scales;
 
     // Samples
     std::unique_ptr<SampleSet> m_sampleSet;
@@ -148,5 +163,14 @@ struct SceneTrigger {
 
     ~SceneTrigger();
 };
+
+struct ScenePhrase {
+    std::unique_ptr<Phrase> phrase;
+};
+
+struct SceneScale {
+    std::unique_ptr<Scale> scale;
+};
+
 
 #endif // SCENE_H

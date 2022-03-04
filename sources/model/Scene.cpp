@@ -20,6 +20,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+
 #include "Scene.h"
 #include "Frontieres.h"
 #include "Cloud.h"
@@ -224,18 +225,107 @@ bool Scene::load(QFile &sceneFile)
         SampleVis *sv = new SampleVis();
         sceneSample->view.reset(sv);
 
-        if ((bool)objSample["orientation"].toInt() != sv->getOrientation())
+        if (bool(objSample["orientation"].toInt()) != sv->getOrientation())
             sv->toggleOrientation();
         double heightSample = objSample["height"].toDouble();
         double widthSample = objSample["width"].toDouble();
         double xSample = objSample["x"].toDouble();
         double ySample = objSample["y"].toDouble();
-        sv->setWidthHeight(widthSample, heightSample);
-        sv->setXY(xSample, ySample);
+        sv->setWidthHeight(float(widthSample), float(heightSample));
+        sv->setXY(float(xSample), float(ySample));
         cout << ", heigth : " << heightSample
              << ", width : " << widthSample
              << ", x : " << xSample
              << ", y : " << ySample << "\n";
+    }
+
+    // Phrases
+
+    QJsonArray docPhrases = docRoot["phrases"].toArray();
+    m_phrases.clear();
+    m_phrases.reserve(docPhrases.size());
+
+    for (const QJsonValue &jsonElementPhrase : docPhrases) {
+        Phrase l_phrase;
+
+        QJsonObject objPhrase = jsonElementPhrase.toObject();
+        ScenePhrase *scenePhrase = new ScenePhrase;
+        m_phrases.emplace_back(scenePhrase);
+        Phrase *phraseToLoad = new Phrase();
+        scenePhrase->phrase.reset(phraseToLoad);
+
+        int phraseId = objPhrase["id"].toInt();
+        QString phraseName = objPhrase["name"].toString();
+
+
+        phraseToLoad->setId(phraseId);
+        phraseToLoad->setName(phraseName);
+
+        QJsonArray docIntervals = objPhrase["intervals"].toArray();
+        for (const QJsonValue &jsonElementInterval : docIntervals) {
+            QJsonObject objInterval = jsonElementInterval.toObject();
+            ControlPoint l_interval;
+
+            l_interval.delay = float(objInterval["delay"].toDouble());
+            l_interval.value = float(objInterval["value"].toDouble());
+            l_interval.silence = objInterval["silence"].toBool();
+
+            cout << "delay : " << l_interval.delay << endl;
+            cout << "value : " << l_interval.value << endl;
+            cout << "silence : " << l_interval.silence << endl;
+
+            phraseToLoad->insertControlInterval(l_interval.delay,l_interval.value,l_interval.silence);
+        }
+
+        QJsonArray docShades = objPhrase["shades"].toArray();
+        for (const QJsonValue &jsonElementShade : docShades) {
+            QJsonObject objShade = jsonElementShade.toObject();
+
+            ControlPoint l_shade;
+
+            l_shade.delay = float(objShade["delay"].toDouble());
+            l_shade.value = float(objShade["value"].toDouble());
+
+            cout << "delay : " << l_shade.delay << endl;
+            cout << "value : " << l_shade.value << endl;
+
+            phraseToLoad->insertControlShade(l_shade.delay,l_shade.value);
+        }
+    }
+
+    // Scales
+
+    QJsonArray docScales = docRoot["scales"].toArray();
+    m_scales.clear();
+    m_scales.reserve(docScales.size());
+
+    for (const QJsonValue &jsonElementScale : docScales) {
+        Scale l_scale;
+
+        QJsonObject objScale = jsonElementScale.toObject();
+        SceneScale *sceneScale = new SceneScale;
+        m_scales.emplace_back(sceneScale);
+        Scale *scaleToLoad = new Scale();
+        sceneScale->scale.reset(scaleToLoad);
+
+        int scaleId = objScale["id"].toInt();
+        QString scaleName = objScale["name"].toString();
+
+        scaleToLoad->setId(scaleId);
+        scaleToLoad->setName(scaleName);
+
+        QJsonArray docScaleIntervals = objScale["intervals"].toArray();
+        for (const QJsonValue &jsonElementScalePosition : docScaleIntervals) { // scale positions
+            QJsonObject objScaleInterval = jsonElementScalePosition.toObject();
+
+            double l_interval = objScaleInterval["interval"].toDouble();
+
+            cout << "interval : " << l_interval << endl;
+
+            ScalePosition l_scalePosition;
+            l_scalePosition.pitchInterval = l_interval;
+            scaleToLoad->insertScalePosition(l_scalePosition);
+        }
     }
 
     // clouds
@@ -261,9 +351,14 @@ bool Scene::load(QFile &sceneFile)
         int cloudOutputFirst = objCloud["output-first"].toInt();
         int cloudOutputLast = objCloud["output-last"].toInt();
         int cloudSpatialChannel = objCloud["spatial-channel"].toInt();
-        int cloudMidiChannel = objCloud["midi-channel"].toInt();
         int cloudMidiNote = objCloud["midi-note"].toInt();
         double cloudVolumeDb = objCloud["volume"].toDouble();
+        int cloudNumPhrase = objCloud["NumPhrase"].toInt();
+        int cloudNumScale = objCloud["NumScale"].toInt();
+        bool cloudPhraseActive = objCloud["PhraseActive"].toBool();
+        bool cloudScaleActive = objCloud["ScaleActive"].toBool();
+        int cloudTempo = objCloud["Tempo"].toInt();
+
         ParamEnv cloudEnvelopeVolume;
         {
             double l1 = objCloud["volume-envelope-L1"].toDouble();
@@ -377,7 +472,6 @@ bool Scene::load(QFile &sceneFile)
         cout << "spatial channel = " << cloudSpatialChannel << "\n";
         cout << "output first = " << cloudOutputFirst << "\n";
         cout << "output last = " << cloudOutputLast << "\n";
-        cout << "midi channel = " << cloudMidiChannel << "\n";
         cout << "midi note = " << cloudMidiNote << "\n";
         cout << "volume = " << cloudVolumeDb << "\n";
         cout << "volume envelope L1 = " << cloudEnvelopeVolume.l1 << "\n";
@@ -399,10 +493,10 @@ bool Scene::load(QFile &sceneFile)
         cout << "X extent = " << cloudXRandExtent << "\n";
         cout << "Y extent = " << cloudYRandExtent << "\n";
         // create audio
-        Cloud *cloudToLoad = new Cloud(&m_samples, cloudNumGrains);
+        Cloud *cloudToLoad = new Cloud(this, &m_samples, cloudNumGrains);
         sceneCloud->cloud.reset(cloudToLoad);
         // create visualization
-        CloudVis *cloudVisToLoad = new CloudVis(cloudX, cloudY, cloudNumGrains, &m_samples,false);
+        CloudVis *cloudVisToLoad = new CloudVis(float(cloudX), float(cloudY), cloudNumGrains, &m_samples,false);
         sceneCloud->view.reset(cloudVisToLoad);
         // register visualization with audio
         cloudVisToLoad->setSelectState(true);
@@ -410,27 +504,31 @@ bool Scene::load(QFile &sceneFile)
         cloudVisToLoad->registerCloud(cloudToLoad);
         cloudToLoad->setId(cloudId);
         cloudToLoad->setName(cloudName);
-        cloudToLoad->setDurationMs(cloudDuration);
-        cloudToLoad->setOverlap(cloudOverlap);
-        cloudToLoad->setPitch(cloudPitch);
-        cloudToLoad->setPitchLFOFreq(cloudPitchLFOFreq);
-        cloudToLoad->setPitchLFOAmount(cloudPitchLFOAmount);
+        cloudToLoad->setDurationMs(float(cloudDuration));
+        cloudToLoad->setOverlap(float(cloudOverlap));
+        cloudToLoad->setPitch(float(cloudPitch));
+        cloudToLoad->setPitchLFOFreq(float(cloudPitchLFOFreq));
+        cloudToLoad->setPitchLFOAmount(float(cloudPitchLFOAmount));
         cloudToLoad->setDirection(cloudDirection);
         cloudToLoad->setWindowType(cloudWindowType);
         cloudToLoad->setSpatialMode(cloudSpatialMode,cloudSpatialChannel);
         cloudToLoad->setOutputFirst(cloudOutputFirst);
         cloudToLoad->setOutputLast(cloudOutputLast);
-        cloudToLoad->setMidiChannel(cloudMidiChannel);
         cloudToLoad->setMidiNote(cloudMidiNote);
-        cloudToLoad->setVolumeDb(cloudVolumeDb);
+        cloudToLoad->setVolumeDb(float(cloudVolumeDb));
         cloudToLoad->setActiveState(cloudActiveState);
         cloudToLoad->setActiveRestartTrajectory(cloudActiveRestartTrajectory);
         cloudVisToLoad->setIsPlayed(cloudActiveState);
-        cloudVisToLoad->setFixedXRandExtent(cloudXRandExtent);
-        cloudVisToLoad->setFixedYRandExtent(cloudYRandExtent);
+        cloudVisToLoad->setFixedXRandExtent(float(cloudXRandExtent));
+        cloudVisToLoad->setFixedYRandExtent(float(cloudYRandExtent));
         cloudVisToLoad->setSelectState(false);
         cloudToLoad->setEnvelopeVolumeParam(cloudEnvelopeVolume);
         cloudToLoad->setGrainsRandom(cloudRandomGrains);
+        cloudToLoad->setPhraseNum(int(cloudNumPhrase));
+        cloudToLoad->setScaleNum(int(cloudNumScale));
+        cloudToLoad->setPhraseActive(cloudPhraseActive);
+        cloudToLoad->setScaleActive(cloudScaleActive);
+        cloudToLoad->setTempo(cloudTempo);
 
         QJsonArray docGrains = objCloud["grains"].toArray();
         for (const QJsonValue &jsonElementGrain : docGrains) { // grains
@@ -444,66 +542,6 @@ bool Scene::load(QFile &sceneFile)
 
             cloudVisToLoad->setGrainPosition(l_numGrain, l_g_x, l_g_y);
         }
-
-        QJsonArray docScalePositions = objCloud["scale"].toArray();
-        for (const QJsonValue &jsonElementScalePosition : docScalePositions) { // scale positions
-            QJsonObject objScalePosition = jsonElementScalePosition.toObject();
-
-            double l_interval = objScalePosition["interval"].toDouble();
-
-            cout << "interval : " << l_interval << endl;
-
-            ScalePosition l_scalePosition;
-            l_scalePosition.pitchInterval = l_interval;
-            cloudToLoad->getScale()->insertScalePosition(l_scalePosition);
-        }
-
-
-        QJsonArray docPhrase = objCloud["phrase"].toArray();
-        for (const QJsonValue &jsonElementPhrase : docPhrase) {
-            QJsonObject objPhrase = jsonElementPhrase.toObject();
-
-            int l_tempo = objPhrase["tempo"].toInt();
-            cout << "tempo : " << l_tempo << endl;
-            cloudToLoad->getPhrase()->setTempo(l_tempo);
-
-            bool l_active = objPhrase["active"].toBool();
-            cout << "active : " << l_active << endl;
-            cloudToLoad->getPhrase()->setActiveState(l_active);
-
-            QJsonArray docIntervals = objPhrase["intervals"].toArray();
-            for (const QJsonValue &jsonElementInterval : docIntervals) {
-                QJsonObject objInterval = jsonElementInterval.toObject();
-
-                ControlPoint l_interval;
-
-                l_interval.delay = objInterval["delay"].toDouble();
-                l_interval.value = objInterval["value"].toDouble();
-                l_interval.silence = objInterval["silence"].toBool();
-
-                cout << "delay : " << l_interval.delay << endl;
-                cout << "value : " << l_interval.value << endl;
-                cout << "silence : " << l_interval.silence << endl;
-
-                cloudToLoad->getPhrase()->insertControlInterval(l_interval.delay,l_interval.value,l_interval.silence);
-            }
-
-            QJsonArray docShades = objPhrase["shades"].toArray();
-            for (const QJsonValue &jsonElementShade : docShades) {
-                QJsonObject objShade = jsonElementShade.toObject();
-
-                ControlPoint l_shade;
-
-                l_shade.delay = objShade["delay"].toDouble();
-                l_shade.value = objShade["value"].toDouble();
-
-                cout << "delay : " << l_shade.delay << endl;
-                cout << "value : " << l_shade.value << endl;
-
-                cloudToLoad->getPhrase()->insertControlShade(l_shade.delay,l_shade.value);
-            }
-        }
-
 
         //cloudVisToLoad->setTrajectoryType(type);
         if(hasTrajectory) {
@@ -717,7 +755,7 @@ bool Scene::load(QFile &sceneFile)
         triggerToLoad->setPriority(triggerPriority);
         triggerToLoad->setActiveState(triggerActiveState);
         triggerToLoad->setActiveRestartTrajectory(triggerActiveRestartTrajectory);
-        triggerToLoad->setRestartPhrase(triggerRestartPhrase);
+        triggerToLoad->setActiveRestartPhrase(triggerRestartPhrase);
         triggerToLoad->setIn(triggerIn);
         triggerToLoad->setOut(triggerOut);
         triggerVisToLoad->setIsPlayed(triggerActiveState);
@@ -866,6 +904,7 @@ bool Scene::load(QFile &sceneFile)
 
 bool Scene::save(QFile &sceneFile)
 {
+    cout << "entree save scene" << endl;
     QString sceneFileName = sceneFile.fileName();
     QDir sceneFileDir = QFileInfo(sceneFileName).dir();
 
@@ -904,7 +943,7 @@ bool Scene::save(QFile &sceneFile)
     // samples
     QJsonArray docSamples;
     cout << m_samples.size() << "samples : " << "\n";
-    for (int i = 0, n = m_samples.size(); i < n; ++i) {
+    for (unsigned long i = 0, n = m_samples.size(); i < n; ++i) {
         SceneSample *sceneSample = m_samples[i].get();
         SampleVis *sv = sceneSample->view.get();
 
@@ -918,19 +957,110 @@ bool Scene::save(QFile &sceneFile)
         if (sceneSample->sample->isInput)
            objSample["input"] = sceneSample->sample->myInputNumber;
         else
-           objSample["input"] = (int) 0;
+           objSample["input"] = int(0);
         objSample["name"] = QString::fromStdString(sceneSample->name);
-        objSample["orientation"] = (int)sv->getOrientation();
-        objSample["height"] = sv->getHeight();
-        objSample["width"] = sv->getWidth();
-        objSample["x"] = sv->getX();
-        objSample["y"] = sv->getY();
+        objSample["orientation"] = int(sv->getOrientation());
+        objSample["height"] = double(sv->getHeight());
+        objSample["width"] = double(sv->getWidth());
+        objSample["x"] = double(sv->getX());
+        objSample["y"] = double(sv->getY());
         docSamples.append(objSample);
     }
 
+    // phrases
+
+    //cout << "phrases (" << m_phrases.size() << ")" << endl;
+    QJsonArray docPhrases;
+    QJsonObject objPhrase;
+
+    for (unsigned long i = 0, n = m_phrases.size(); i < n; i++) {
+        ScenePhrase *phrase = m_phrases[i].get();
+        Phrase *phraseToSave = phrase->phrase.get();
+
+        QJsonObject objPhrase;
+        objPhrase["id"] = int(phraseToSave->getId());
+        objPhrase["name"] = phraseToSave->getName();
+
+        QJsonArray docIntervals;
+        //cout << "name:" << phraseToSave->getName().toStdString() << endl;
+
+        //cout << phraseToSave->getMyControlIntervalSize() << " intervals : " << "\n";
+        for (unsigned long j = 0, m = phraseToSave->getMyControlIntervalSize(); j < m; j++) {
+            cout << "Phrase interval " << j << ", delay : ";
+            cout << phraseToSave->getControlInterval(j).delay
+                 << ",value :" << phraseToSave->getControlInterval(j).value
+                 << ", silence :" << phraseToSave->getControlInterval(j).silence << "\n";
+
+            QJsonObject objInterval;
+
+            objInterval["value"] = double(phraseToSave->getControlInterval(j).value);
+            objInterval["delay"] = double(phraseToSave->getControlInterval(j).delay);
+            objInterval["silence"] = phraseToSave->getControlInterval(j).silence;
+
+            docIntervals.append(objInterval);
+        }
+
+        objPhrase["intervals"] = docIntervals;
+
+        QJsonArray docShades;
+        cout << phraseToSave->getMyControlShadeSize() << " shades : " << "\n";
+        for (unsigned long j = 1, m = phraseToSave->getMyControlShadeSize(); j < m; j++) {
+
+            cout << "Shade : " << j << " : ";
+            cout << phraseToSave->getControlShade(j).value << ", delay = "
+                 << phraseToSave->getControlShade(j).delay << "\n";
+
+            QJsonObject objShade;
+
+            objShade["value"] = double(phraseToSave->getControlShade(j).value);
+            objShade["delay"] = double(phraseToSave->getControlShade(j).delay);
+
+            docShades.append(objShade);
+        }
+
+        objPhrase["shades"] = docShades;
+
+        docPhrases.append(objPhrase);
+
+    }
+
+    // Scales
+
+    //cout << "scales" << endl;
+    QJsonArray docScales;
+    QJsonObject objScale;
+
+    for (unsigned long i = 0, n = m_scales.size(); i < n; i++) {
+        SceneScale *scale = m_scales[i].get();
+        Scale *scaleToSave = scale->scale.get();
+
+        QJsonObject objScale;
+        objScale["id"] = int(scaleToSave->getId());
+        objScale["name"] = scaleToSave->getName();
+
+        QJsonArray docScaleIntervals;
+
+        cout << scaleToSave->getSize() << " intervals : " << "\n";
+        for (unsigned long j = 0, m = scaleToSave->getSize(); j < m; j++) {
+            cout << "Scale interval " << j << ", value : ";
+            cout << scaleToSave->getScalePosition(j).pitchInterval;
+
+            QJsonObject objScaleInterval;
+
+            objScaleInterval["interval"] = double(scaleToSave->getScalePosition(j).pitchInterval);
+
+            docScaleIntervals.append(objScaleInterval);
+        }
+
+        objScale["intervals"] = docScaleIntervals;
+
+        docScales.append(objScale);
+    }
+
+
     // clouds
     QJsonArray docClouds;
-    for (int i = 0, n = m_clouds.size(); i < n; i++) {
+    for (unsigned long i = 0, n = m_clouds.size(); i < n; i++) {
         SceneCloud *cloud = m_clouds[i].get();
         Cloud *cloudToSave = cloud->cloud.get();
         CloudVis *cloudVisToSave = cloud->view.get();
@@ -942,33 +1072,36 @@ bool Scene::save(QFile &sceneFile)
         cloudVisToSave->describe(out);
 
         QJsonObject objCloud;
-        objCloud["id"] = (int)cloudToSave->getId();
+        objCloud["id"] = int(cloudToSave->getId());
         objCloud["name"] = cloudToSave->getName();
-        objCloud["duration"] = cloudToSave->getDurationMs();
-        objCloud["overlap"] = cloudToSave->getOverlap();
-        objCloud["pitch"] = cloudToSave->getPitch();
-        objCloud["pitch-lfo-freq"] = cloudToSave->getPitchLFOFreq();
-        objCloud["pitch-lfo-amount"] = cloudToSave->getPitchLFOAmount();
+        objCloud["duration"] = double(cloudToSave->getDurationMs());
+        objCloud["overlap"] = double(cloudToSave->getOverlap());
+        objCloud["pitch"] = double(cloudToSave->getPitch());
+        objCloud["pitch-lfo-freq"] = double(cloudToSave->getPitchLFOFreq());
+        objCloud["pitch-lfo-amount"] = double(cloudToSave->getPitchLFOAmount());
         objCloud["direction"] = cloudToSave->getDirection();
         objCloud["window-type"] = cloudToSave->getWindowType();
         objCloud["spatial-mode"] = cloudToSave->getSpatialMode();
         objCloud["output-first"] = cloudToSave->getOutputFirst();
         objCloud["output-last"] = cloudToSave->getOutputLast();
-        objCloud["spatial-channel"] = cloudToSave->getSpatialChannel();
-        objCloud["midi-channel"] = cloudToSave->getMidiChannel();
         objCloud["midi-note"] = cloudToSave->getMidiNote();
-        objCloud["volume"] = cloudToSave->getVolumeDb();
+        objCloud["volume"] = double(cloudToSave->getVolumeDb());
+        objCloud["NumPhrase"] = int(cloudToSave->getPhraseNum());
+        objCloud["PhraseActive"] = cloudToSave->getPhraseActive();
+        objCloud["Tempo"] = int(cloudToSave->getTempo());
+        objCloud["NumScale"] = int(cloudToSave->getScaleNum());
+        objCloud["ScaleActive"] = cloudToSave->getScaleActive();
         const ParamEnv &cloudEnvelopeVolumeParam = cloudToSave->getEnvelopeVolumeParam();
         {
             float tAtk, tSta, tDec, tRel;
             cloudEnvelopeVolumeParam.getTimeBasedParameters(tAtk, tSta, tDec, tRel, samp_rate);
-            objCloud["volume-envelope-L1"] = cloudEnvelopeVolumeParam.l1;
-            objCloud["volume-envelope-L2"] = cloudEnvelopeVolumeParam.l2;
-            objCloud["volume-envelope-L3"] = cloudEnvelopeVolumeParam.l3;
-            objCloud["volume-envelope-TAtk"] = tAtk;
-            objCloud["volume-envelope-TSta"] = tSta;
-            objCloud["volume-envelope-TDec"] = tDec;
-            objCloud["volume-envelope-TRel"] = tRel;
+            objCloud["volume-envelope-L1"] = double(cloudEnvelopeVolumeParam.l1);
+            objCloud["volume-envelope-L2"] = double(cloudEnvelopeVolumeParam.l2);
+            objCloud["volume-envelope-L3"] = double(cloudEnvelopeVolumeParam.l3);
+            objCloud["volume-envelope-TAtk"] = double(tAtk);
+            objCloud["volume-envelope-TSta"] = double(tSta);
+            objCloud["volume-envelope-TDec"] = double(tDec);
+            objCloud["volume-envelope-TRel"] = double(tRel);
         }
         objCloud["volume-envelope-T1"] = cloudEnvelopeVolumeParam.t1;
         objCloud["volume-envelope-T2"] = cloudEnvelopeVolumeParam.t2;
@@ -976,23 +1109,23 @@ bool Scene::save(QFile &sceneFile)
         objCloud["volume-envelope-T4"] = cloudEnvelopeVolumeParam.t4;
         objCloud["active-state"] = cloudToSave->getActiveState();
         objCloud["active-restart-trajectory"] = cloudToSave->getActiveRestartTrajectory();
-        objCloud["x"] = cloudVisToSave->getOriginX();
-        objCloud["y"] = cloudVisToSave->getOriginY();
-        objCloud["x-rand-extent"] = cloudVisToSave->getXRandExtent();
-        objCloud["y-rand-extent"] = cloudVisToSave->getYRandExtent();
-        objCloud["num-grains"] = (int)cloudToSave->getNumGrains();
+        objCloud["x"] = double(cloudVisToSave->getOriginX());
+        objCloud["y"] = double(cloudVisToSave->getOriginY());
+        objCloud["x-rand-extent"] = double(cloudVisToSave->getXRandExtent());
+        objCloud["y-rand-extent"] = double(cloudVisToSave->getYRandExtent());
+        objCloud["num-grains"] = int(cloudToSave->getNumGrains());
         objCloud["random-grains"] = cloudToSave->getGrainsRandom();
 
-        int l_numGrains = cloudToSave->getNumGrains();
+        unsigned long l_numGrains = cloudToSave->getNumGrains();
 
         // grains
         QJsonArray docGrains;
         QJsonObject objGrain;
-        for (int j = 0; j < l_numGrains; j = j + 1) {
+        for (unsigned long j = 0; j < l_numGrains; j = j + 1) {
             std::ostream &out = std::cout;
             out << "Grain " << j << ":\n";
 
-            objGrain["num"] = j;
+            objGrain["num"] = int(j);
             objGrain["x"] = cloudVisToSave->getGrainPositionX(j);
             objGrain["y"] = cloudVisToSave->getGrainPositionY(j);
 
@@ -1002,78 +1135,6 @@ bool Scene::save(QFile &sceneFile)
             docGrains.append(objGrain);
         }
         objCloud["grains"] = docGrains;
-
-        // scale positions
-
-        QJsonArray docScalePositions;
-        QJsonObject objScalePosition;
-        cout << cloudToSave->getScale()->getSize() << " positions : " << "\n";
-        for (int i = 0, n = cloudToSave->getScale()->getSize(); i < n; ++i) {
-
-            cout << "Scale position " << i << " : ";
-            cout << cloudToSave->getScale()->getScalePosition(i).pitchInterval << "\n";
-    //        cout << "- name : " << myScalePositions[i]->name << "\n";
-
-            QJsonObject objScalePosition;
-
-    //        objPosition["name"] = myScalePositions[i]->name;
-            objScalePosition["interval"] = cloudToSave->getScale()->getScalePosition(i).pitchInterval;
-
-            docScalePositions.append(objScalePosition);
-
-        }
-        objCloud["scale"] = docScalePositions;
-
-        // phrase
-
-        QJsonArray docPhrase;
-        QJsonObject objPhrase;
-
-        objPhrase["tempo"] = cloudToSave->getPhrase()->getTempo();
-        objPhrase["active"] = cloudToSave->getPhrase()->getActiveState();
-
-        QJsonArray docIntervals;
-
-        cout << cloudToSave->getPhrase()->getMyControlIntervalSize() << " intervals : " << "\n";
-        for (int i = 1, n = cloudToSave->getPhrase()->getMyControlIntervalSize(); i < n; ++i) {
-
-            cout << "Phrase interval " << i << ", delay : ";
-            cout << cloudToSave->getPhrase()->getControlInterval(i).delay
-                 << ",value :" << cloudToSave->getPhrase()->getControlInterval(i).value
-                 << ", silence :" << cloudToSave->getPhrase()->getControlInterval(i).silence << "\n";
-
-            QJsonObject objInterval;
-
-            objInterval["value"] = cloudToSave->getPhrase()->getControlInterval(i).value;
-            objInterval["delay"] = cloudToSave->getPhrase()->getControlInterval(i).delay;
-            objInterval["silence"] = cloudToSave->getPhrase()->getControlInterval(i).silence;
-
-            docIntervals.append(objInterval);
-        }
-        objPhrase["intervals"] = docIntervals;
-
-        QJsonArray docShades;
-        cout << cloudToSave->getPhrase()->getMyControlShadeSize() << " shades : " << "\n";
-        for (int i = 1, n = cloudToSave->getPhrase()->getMyControlShadeSize(); i < n; ++i) {
-
-            cout << "Shade : " << i << " : ";
-            cout << cloudToSave->getPhrase()->getControlShade(i).value << ", delay = "
-                 << cloudToSave->getPhrase()->getControlShade(i).delay << "\n";
-
-            QJsonObject objShade;
-
-            objShade["value"] = cloudToSave->getPhrase()->getControlShade(i).value;
-            objShade["delay"] = cloudToSave->getPhrase()->getControlShade(i).delay;
-
-            docShades.append(objShade);
-        }
-
-        objPhrase["shades"] = docShades;
-
-        docPhrase.append(objPhrase);
-
-        objCloud["phrase"] = docPhrase;
-
 
         //trajectory
 
@@ -1157,8 +1218,8 @@ bool Scene::save(QFile &sceneFile)
 
             }
 
-            objCloud["xTrajectoryOrigin"] = cloudVisToSave->getTrajectory()->getOrigin().x;
-            objCloud["yTrajectoryOrigin"] = cloudVisToSave->getTrajectory()->getOrigin().y;
+            objCloud["xTrajectoryOrigin"] = double(cloudVisToSave->getTrajectory()->getOrigin().x);
+            objCloud["yTrajectoryOrigin"] = double(cloudVisToSave->getTrajectory()->getOrigin().y);
             objCloud["phase"] = cloudVisToSave->getTrajectory()->getPhase();
             objCloud["move"] = cloudVisToSave->getIsMoving();
             objCloud["speed"] = cloudVisToSave->getTrajectory()->getSpeed();
@@ -1169,7 +1230,7 @@ bool Scene::save(QFile &sceneFile)
 
     // triggers
     QJsonArray docTriggers;
-    for (int i = 0, n = m_triggers.size(); i < n; i++) {
+    for (unsigned long i = 0, n = m_triggers.size(); i < n; i++) {
         SceneTrigger *trigger = m_triggers[i].get();
         Trigger *triggerToSave = trigger->trigger.get();
         TriggerVis *triggerVisToSave = trigger->view.get();
@@ -1181,17 +1242,17 @@ bool Scene::save(QFile &sceneFile)
         triggerVisToSave->describe(out);
 
         QJsonObject objTrigger;
-        objTrigger["id"] = (int)triggerToSave->getId();
+        objTrigger["id"] = int (triggerToSave->getId());
         objTrigger["name"] = triggerToSave->getName();
         objTrigger["priority"] = triggerToSave->getPriority();
         objTrigger["active-state"] = triggerToSave->getActiveState();
         objTrigger["active-restart-trajectory"] = triggerToSave->getActiveRestartTrajectory();
-        objTrigger["restart-phrase"] = triggerToSave->getRestartPhrase();
+        objTrigger["restart-phrase"] = triggerToSave->getActiveRestartPhrase();
         objTrigger["in"] = triggerToSave->getIn();
         objTrigger["out"] = triggerToSave->getOut();
-        objTrigger["x"] = triggerVisToSave->getOriginX();
-        objTrigger["y"] = triggerVisToSave->getOriginY();
-        objTrigger["extent"] = triggerVisToSave->getZoneExtent();
+        objTrigger["x"] = double(triggerVisToSave->getOriginX());
+        objTrigger["y"] = double(triggerVisToSave->getOriginY());
+        objTrigger["extent"] = double(triggerVisToSave->getZoneExtent());
 
         //trajectory
         objTrigger["has-trajectory"] = triggerVisToSave->hasTrajectory();
@@ -1274,8 +1335,8 @@ bool Scene::save(QFile &sceneFile)
 
             }
 
-            objTrigger["xTrajectoryOrigin"] = triggerVisToSave->getTrajectory()->getOrigin().x;
-            objTrigger["yTrajectoryOrigin"] = triggerVisToSave->getTrajectory()->getOrigin().y;
+            objTrigger["xTrajectoryOrigin"] = double(triggerVisToSave->getTrajectory()->getOrigin().x);
+            objTrigger["yTrajectoryOrigin"] = double(triggerVisToSave->getTrajectory()->getOrigin().y);
             objTrigger["phase"] = triggerVisToSave->getTrajectory()->getPhase();
             objTrigger["move"] = triggerVisToSave->getIsMoving();
             objTrigger["speed"] = triggerVisToSave->getTrajectory()->getSpeed();
@@ -1294,14 +1355,14 @@ bool Scene::save(QFile &sceneFile)
             objCombi["name"] = m_midiBank.findCombi(i).getName();
             QJsonArray docNotes;
             for (int j = 0; j <= 127; j++){
-                int n_layers = m_midiBank.findCombi(i).getNote(j).cloudLayer.size();
+                int n_layers = int(m_midiBank.findCombi(i).getNote(j).cloudLayer.size());
                 if (n_layers > 0) {
                     QJsonObject objNote;
                     objNote["num"] = j;
                     QJsonArray docLayers;
-                    for (int k = 0; k < n_layers; k++) {
+                    for (unsigned long k = 0; int(k) < n_layers; k++) {
                         QJsonObject objLayer;
-                        objLayer["num"] = k;
+                        objLayer["num"] = int(k);
                         objLayer["cloud id"] = m_midiBank.findCombi(i).getNote(j).cloudLayer[k].cloudId;
                         objLayer["velocity min"] = m_midiBank.findCombi(i).getNote(j).cloudLayer[k].velocity.min;
                         objLayer["velocity max"] = m_midiBank.findCombi(i).getNote(j).cloudLayer[k].velocity.max;
@@ -1337,6 +1398,8 @@ bool Scene::save(QFile &sceneFile)
     docRoot["triggers"] = docTriggers;
     docRoot["combis"] = docCombis;
     docRoot["instruments"] = docInstruments;
+    docRoot["phrases"] = docPhrases;
+    docRoot["scales"] = docScales;
 
     QJsonDocument document;
     document.setObject(docRoot);
@@ -1363,20 +1426,19 @@ bool Scene::loadCloudDefault(QFile &cloudFile)
     QJsonObject docRoot = doc.object();
 
     QJsonObject objCloud = docRoot["cloud"].toObject();
-    g_defaultCloudParams.duration = objCloud["duration"].toDouble();
-    g_defaultCloudParams.overlap = objCloud["overlap"].toDouble();
-    g_defaultCloudParams.pitch = objCloud["pitch"].toDouble();
-    g_defaultCloudParams.pitchLFOFreq = objCloud["pitch-lfo-freq"].toDouble();
-    g_defaultCloudParams.pitchLFOAmount = objCloud["pitch-lfo-amount"].toDouble();
+    g_defaultCloudParams.duration = float(objCloud["duration"].toDouble());
+    g_defaultCloudParams.overlap = float(objCloud["overlap"].toDouble());
+    g_defaultCloudParams.pitch = float(objCloud["pitch"].toDouble());
+    g_defaultCloudParams.pitchLFOFreq = float(objCloud["pitch-lfo-freq"].toDouble());
+    g_defaultCloudParams.pitchLFOAmount = float(objCloud["pitch-lfo-amount"].toDouble());
     g_defaultCloudParams.dirMode = objCloud["direction"].toInt();
     g_defaultCloudParams.windowType = objCloud["window-type"].toInt();
     g_defaultCloudParams.outputFirst = objCloud["output-first"].toInt();
     g_defaultCloudParams.outputLast = objCloud["output-last"].toInt();
     g_defaultCloudParams.spatialMode = objCloud["spatial-mode"].toInt();
     g_defaultCloudParams.channelLocation = objCloud["spatial-channel"].toInt();
-    g_defaultCloudParams.midiChannel = objCloud["midi-channel"].toInt();
     g_defaultCloudParams.midiNote = objCloud["midi-note"].toInt();
-    g_defaultCloudParams.volumeDB = objCloud["volume"].toDouble();
+    g_defaultCloudParams.volumeDB = float(objCloud["volume"].toDouble());
     g_defaultCloudParams.grainsRandom = objCloud["random-grains"].toBool();
     ParamEnv cloudEnvelopeVolume;
     {
@@ -1459,7 +1521,6 @@ bool Scene::loadCloudDefault(QFile &cloudFile)
     cout << "spatial channel = " << g_defaultCloudParams.channelLocation << "\n";
     cout << "output first = " << g_defaultCloudParams.outputFirst << "\n";
     cout << "output last = " << g_defaultCloudParams.outputLast << "\n";
-    cout << "midi channel = " << g_defaultCloudParams.midiChannel << "\n";
     cout << "midi note = " << g_defaultCloudParams.midiNote << "\n";
     cout << "volume = " << g_defaultCloudParams.volumeDB << "\n";
     cout << "grains = " << g_defaultCloudParams.numGrains << "\n";
@@ -1529,9 +1590,14 @@ bool Scene::saveCloud(QFile &cloudFile, SceneCloud *selectedCloudSave)
     objCloud["spatial-channel"] = cloudToSave->getSpatialChannel();
     objCloud["output-first"] = cloudToSave->getOutputFirst();
     objCloud["output-last"] = cloudToSave->getOutputLast();
-    objCloud["midi-channel"] = cloudToSave->getMidiChannel();
     objCloud["midi-note"] = cloudToSave->getMidiNote();
     objCloud["volume"] = cloudToSave->getVolumeDb();
+    objCloud["NumPhrase"] = int(cloudToSave->getPhraseNum());
+    objCloud["PhraseActive"] = cloudToSave->getPhraseActive();
+    objCloud["Tempo"] = int(cloudToSave->getTempo());
+    objCloud["NumScale"] = int(cloudToSave->getScaleNum());
+    objCloud["ScaleActive"] = cloudToSave->getScaleActive();
+
     const ParamEnv &cloudEnvelopeVolumeParam = cloudToSave->getEnvelopeVolumeParam();
     {
         float tAtk, tSta, tDec, tRel;
@@ -1945,7 +2011,6 @@ void Scene::initDefaultCloudParams()
     g_defaultCloudParams.grainsRandom = true;
     g_defaultCloudParams.activateState = true;
     g_defaultCloudParams.activateRestartTrajectory = true;
-    g_defaultCloudParams.midiChannel = 0;
     g_defaultCloudParams.midiNote = 69;
     g_defaultCloudParams.xRandExtent = 3.0f;
     g_defaultCloudParams.yRandExtent = 3.0f;
@@ -2064,7 +2129,7 @@ void Scene::addNewCloud(int numGrains)
     // create audio
     SceneCloud *sceneCloud = new SceneCloud;
     m_clouds.emplace_back(sceneCloud);
-    sceneCloud->cloud.reset(new Cloud(&m_samples, numGrains));
+    sceneCloud->cloud.reset(new Cloud(this, &m_samples, numGrains));
     // create visualization
     sceneCloud->view.reset(new CloudVis(mouseX, mouseY, numGrains, &m_samples,false));
     // select new cloud
@@ -2091,6 +2156,20 @@ void Scene::addNewTrigger()
     sceneTrigger->view->registerTrigger(sceneTrigger->trigger.get());
     std::ostream &out = std::cout;
     sceneTrigger->trigger->describe(out);
+}
+
+void Scene::addNewPhrase()
+{
+    ScenePhrase *scenePhrase = new ScenePhrase;
+    m_phrases.emplace_back(scenePhrase);
+    scenePhrase->phrase.reset(new Phrase());
+}
+
+void Scene::addNewScale()
+{
+    SceneScale *sceneScale = new SceneScale;
+    m_scales.emplace_back(sceneScale);
+    sceneScale->scale.reset(new Scale());
 }
 
 
@@ -2136,6 +2215,38 @@ SceneCloud *Scene::findCloudById(unsigned id)
     return nullptr;
 }
 
+ScenePhrase *Scene::findPhraseById(unsigned id)
+{
+    for (unsigned int i = 0; i < m_phrases.size(); i++) {
+        ScenePhrase &phrase = *m_phrases[i];
+        if (phrase.phrase->getId() == id){
+            return &phrase;
+        }
+    }
+    return nullptr;
+}
+
+SceneScale *Scene::findScaleById(unsigned id)
+{
+    for (unsigned int i = 0; i < m_scales.size(); i++) {
+        SceneScale &scale = *m_scales[i];
+        if (scale.scale->getId() == id){
+            return &scale;
+        }
+    }
+    return nullptr;
+}
+
+unsigned long Scene::getPhrasesSize()
+{
+    return m_phrases.size();
+}
+
+unsigned long Scene::getScalesSize()
+{
+    return m_scales.size();
+}
+
 // handle deselections
 void Scene::deselect(int shapeType)
 {
@@ -2171,7 +2282,7 @@ void Scene::midiNoteOn(int midiChannelToPlay, int midiNoteToPlay, int midiVeloTo
     int l_numCombi = m_midiInstrument.getMidiCombi(midiChannelToPlay + 1);
     if (l_numCombi != -1){
         Note l_note = m_midiBank.findCombi(l_numCombi).getNote(midiNoteToPlay);
-        for (int i = 0; i < l_note.cloudLayer.size(); i++){
+        for (unsigned long i = 0; i < l_note.cloudLayer.size(); i++){
             if ((midiVeloToPlay >= l_note.cloudLayer[i].velocity.min) && (midiVeloToPlay <= l_note.cloudLayer[i].velocity.max)){
                 findCloudById(l_note.cloudLayer[i].cloudId)->cloud.get()->setActiveMidiState(true, midiNoteToPlay, midiVeloToPlay);
             }
@@ -2186,7 +2297,7 @@ void Scene::midiNoteOff(int midiChannelToStop, int midiNoteToStop)
 //    std::cout << "l_numCombi=" << l_numCombi << std::endl;
     if (l_numCombi != -1){
         Note l_note = m_midiBank.findCombi(l_numCombi).getNote(midiNoteToStop);
-        for (int i = 0; i < l_note.cloudLayer.size(); i++){
+        for (unsigned long i = 0; i < l_note.cloudLayer.size(); i++){
             findCloudById(l_note.cloudLayer[i].cloudId)->cloud.get()->setActiveMidiState(false, midiNoteToStop, 127);
         }
     }
@@ -2195,22 +2306,22 @@ void Scene::midiNoteOff(int midiChannelToStop, int midiNoteToStop)
 // get num of a cloud in current scene
 int Scene::getNumCloud(SceneCloud *cloudCurrent)
 {
-    for (int i = 0, n = m_clouds.size(); i < n; i++) {
+    for (unsigned long i = 0, n = m_clouds.size(); i < n; i++) {
         Cloud *cloudForNum = cloudCurrent->cloud.get();
         Cloud *cloudToExplore = m_clouds[i]->cloud.get();
         if (cloudForNum->getId() == cloudToExplore->getId())
-            return i;
+            return int(i);
     }
     return -1;
 }
 
 int Scene::getNumTrigger(SceneTrigger *triggerCurrent)
 {
-    for (int i = 0, n = m_triggers.size(); i < n; i++) {
+    for (unsigned long i = 0, n = m_triggers.size(); i < n; i++) {
         Trigger *triggerForNum = triggerCurrent->trigger.get();
         Trigger *triggerToExplore = m_triggers[i]->trigger.get();
         if (triggerForNum->getId() == triggerToExplore->getId())
-            return i;
+            return int(i);
     }
     return -1;
 }

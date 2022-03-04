@@ -189,8 +189,6 @@ private slots:
 
     void on_radioButton_Trajectory_Recorded_toggled(bool checked);
 
-    void on_checkBox_Restart_toggled(bool checked);
-
     void on_radioButton_PositionManual_toggled(bool checked);
 
     void on_radioButton_PositionRandom_toggled(bool checked);
@@ -207,7 +205,17 @@ private slots:
 
     void on_dial_Grain_Y_valueChanged(int value);
 
-    void on_checkBox_New_toggled(bool checked);
+    void on_doubleSpinBox_Phrase_Number_editingFinished();
+
+    void on_doubleSpinBox_Scale_Number_editingFinished();
+
+    void on_checkBox_Phrase_Active_toggled(bool checked);
+
+    void on_checkBox_Scale_Active_toggled(bool checked);
+
+    void on_checkBox_Trajectory_Restart_toggled(bool checked);
+
+    void on_doubleSpinBox_Tempo_editingFinished();
 
 private:
     Ui::CloudDialog *ui;

@@ -94,6 +94,12 @@ void MyGLWindow::initialize()
             this, []() { theApplication->showMidiBankDialog(); });
     connect(P->ui.action_Instrument, &QAction::triggered,
             this, []() { theApplication->showMidiInstrumentDialog(); });
+    connect(P->ui.action_Phrases, &QAction::triggered,
+            this, []() { theApplication->showPhrasesDialog(); });
+    connect(P->ui.action_Scales, &QAction::triggered,
+            this, []() { theApplication->showScalesDialog(); });
+
+
 
     connect(P->ui.actionCloud, &QAction::triggered,
             screen, &MyGLScreen::keyAction_Cloud);
@@ -147,6 +153,9 @@ void MyGLWindow::closeEvent(QCloseEvent *e)
 {
     theApplication->destroyAllTriggerDialogs();
     theApplication->destroyAllCloudDialogs();
+    theApplication->destroyAllControlDialogs();
+    theApplication->destroyPhrasesDialog();
+    theApplication->destroyScalesDialog();
 }
 
 void MyGLWindow::setMenuBarVisible(bool visible)
@@ -860,12 +869,18 @@ void MyGLScreen::keyAction_EditControl()
 
 void MyGLScreen::keyAction_EditPhrase()
 {
-    Scene *scene = ::currentScene;
-    SceneCloud *selectedCloud = scene->selectedCloud();
-
-    if (selectedCloud) {
-        theApplication->showPhraseDialog(selectedCloud);
+    if (currentScene->getPhrasesSize() == 0) {
+        currentScene->addNewPhrase();
     }
+    theApplication->showPhrasesDialog();
+}
+
+void MyGLScreen::keyAction_EditScale()
+{
+    if (currentScene->getScalesSize() == 0) {
+        currentScene->addNewScale();
+    }
+    theApplication->showScalesDialog();
 }
 
 void MyGLScreen::keyAction_SampleNames()
@@ -909,10 +924,12 @@ void MyGLScreen::contextMenu_control()
 
 void MyGLScreen::contextMenu_phrase()
 {
-    Scene *scene = ::currentScene;
-    SceneCloud *selectedCloud = scene->selectedCloud();
-    if (selectedCloud)
-        keyAction_EditPhrase();
+    keyAction_EditPhrase();
+}
+
+void MyGLScreen::contextMenu_scale()
+{
+    keyAction_EditScale();
 }
 
 void MyGLScreen::contextMenu_fixInput()
@@ -1120,6 +1137,16 @@ void MyGLScreen::mousePressEvent(QMouseEvent *event)
                 QAction * pAction_saveTraj = contextMenu.addAction(icon, QObject::tr("Save trajectory"));
                 connect(pAction_saveTraj, SIGNAL(triggered()), this, SLOT(contextMenu_saveTrajectory()));
             }
+
+            QAction *separator_4 = contextMenu.addSeparator();
+            addAction(separator_4);
+
+            QAction * pAction_phrase = contextMenu.addAction(icon, QObject::tr("Phrases"));
+            connect(pAction_phrase, SIGNAL(triggered()), this, SLOT(contextMenu_phrase()));
+
+            QAction * pAction_scale = contextMenu.addAction(icon, QObject::tr("Scales"));
+            connect(pAction_scale, SIGNAL(triggered()), this, SLOT(contextMenu_scale()));
+
             contextMenu.exec(QCursor::pos());
         }
         else {
@@ -1138,12 +1165,6 @@ void MyGLScreen::mousePressEvent(QMouseEvent *event)
 
                 QAction *separator_2 = contextMenu.addSeparator();
                 addAction(separator_2);
-
-                QAction * pAction_phrase = contextMenu.addAction(icon, QObject::tr("Cloud phrase"));
-                connect(pAction_phrase, SIGNAL(triggered()), this, SLOT(contextMenu_phrase()));
-
-                QAction *separator_3 = contextMenu.addSeparator();
-                addAction(separator_3);
 
                 QAction * pAction_newCloud = contextMenu.addAction(icon, QObject::tr("Create new cloud (G)"));
                 connect(pAction_newCloud, SIGNAL(triggered()), this, SLOT(contextMenu_newCloud()));
@@ -1167,6 +1188,16 @@ void MyGLScreen::mousePressEvent(QMouseEvent *event)
                     QAction * pAction_saveTraj = contextMenu.addAction(icon, QObject::tr("Save trajectory"));
                     connect(pAction_saveTraj, SIGNAL(triggered()), this, SLOT(contextMenu_saveTrajectory()));
                 }
+
+                QAction *separator_3 = contextMenu.addSeparator();
+                addAction(separator_3);
+
+                QAction * pAction_phrase = contextMenu.addAction(icon, QObject::tr("Phrases"));
+                connect(pAction_phrase, SIGNAL(triggered()), this, SLOT(contextMenu_phrase()));
+
+                QAction * pAction_scale = contextMenu.addAction(icon, QObject::tr("Scales"));
+                connect(pAction_scale, SIGNAL(triggered()), this, SLOT(contextMenu_scale()));
+
                 contextMenu.exec(QCursor::pos());
 
             }
@@ -1191,6 +1222,15 @@ void MyGLScreen::mousePressEvent(QMouseEvent *event)
                         QAction * pAction_FixInput = contextMenu.addAction(icon, QObject::tr("Turn input into fixed sample"));
                         connect(pAction_FixInput, SIGNAL(triggered()), this, SLOT(contextMenu_fixInput()));
 
+                        QAction *separator_3 = contextMenu.addSeparator();
+                        addAction(separator_3);
+
+                        QAction * pAction_phrase = contextMenu.addAction(icon, QObject::tr("Phrases"));
+                        connect(pAction_phrase, SIGNAL(triggered()), this, SLOT(contextMenu_phrase()));
+
+                        QAction * pAction_scale = contextMenu.addAction(icon, QObject::tr("Scales"));
+                        connect(pAction_scale, SIGNAL(triggered()), this, SLOT(contextMenu_scale()));
+
                         contextMenu.exec(QCursor::pos());
                     }
                     else {
@@ -1205,6 +1245,15 @@ void MyGLScreen::mousePressEvent(QMouseEvent *event)
 
                         QAction * pAction_newTrigger = contextMenu.addAction(icon, QObject::tr("Create new trigger (H)"));
                         connect(pAction_newTrigger, SIGNAL(triggered()), this, SLOT(contextMenu_newTrigger()));
+
+                        QAction *separator_3 = contextMenu.addSeparator();
+                        addAction(separator_3);
+
+                        QAction * pAction_phrase = contextMenu.addAction(icon, QObject::tr("Phrases"));
+                        connect(pAction_phrase, SIGNAL(triggered()), this, SLOT(contextMenu_phrase()));
+
+                        QAction * pAction_scale = contextMenu.addAction(icon, QObject::tr("Scales"));
+                        connect(pAction_scale, SIGNAL(triggered()), this, SLOT(contextMenu_scale()));
 
                         contextMenu.exec(QCursor::pos());
                     }
@@ -1221,6 +1270,15 @@ void MyGLScreen::mousePressEvent(QMouseEvent *event)
 
                     QAction * pAction_newTrigger = contextMenu.addAction(icon, QObject::tr("Create new trigger (H)"));
                     connect(pAction_newTrigger, SIGNAL(triggered()), this, SLOT(contextMenu_newTrigger()));
+
+                    QAction *separator_3 = contextMenu.addSeparator();
+                    addAction(separator_3);
+
+                    QAction * pAction_phrase = contextMenu.addAction(icon, QObject::tr("Phrases"));
+                    connect(pAction_phrase, SIGNAL(triggered()), this, SLOT(contextMenu_phrase()));
+
+                    QAction * pAction_scale = contextMenu.addAction(icon, QObject::tr("Scales"));
+                    connect(pAction_scale, SIGNAL(triggered()), this, SLOT(contextMenu_scale()));
 
                     contextMenu.exec(QCursor::pos());
                 }

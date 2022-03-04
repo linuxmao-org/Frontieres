@@ -27,9 +27,19 @@
 #include <QFile>
 
 extern int version_major, version_minor, version_patch;
+// ids
+static unsigned int scaleId = 0;
+
 
 Scale::Scale()
 {
+    // scale id
+    myId = ++scaleId;
+    ScalePosition *l_scalePosition = new ScalePosition;
+    l_scalePosition->pitchInterval = 0;
+    myScalePositions.push_back(l_scalePosition);
+
+    cout << "new scale, id =" << myId << endl;
 
 }
 
@@ -38,13 +48,52 @@ Scale::~Scale()
     reset();
 }
 
+void Scale::setName(QString newName)
+{
+    myName = newName;
+}
+
+QString Scale::getName()
+{
+    return myName;
+}
+
+unsigned int Scale::getId()
+{
+    return myId;
+}
+
+void Scale::setId(unsigned int phraseId)
+{
+    myId = phraseId;
+}
+
 void Scale::insertScalePosition(ScalePosition n_scalePosition)
 {
+    //cout << "entree insertscaleposition" << endl;
     seePositions();
 
-    unsigned long i = myScalePositions.size();
-    myScalePositions.push_back(new ScalePosition);
-    setScalePosition(i, n_scalePosition);
+    ScalePosition *l_scalePosition = new ScalePosition;
+    l_scalePosition->pitchInterval = n_scalePosition.pitchInterval;
+
+    if (myScalePositions.size() == 0) {
+        myScalePositions.push_back(l_scalePosition);
+    }
+    else {
+        for (unsigned long i = 0; i < myScalePositions.size(); i = i + 1){
+            //cout << "i=" << i << endl;
+            if (myScalePositions[i]->pitchInterval > n_scalePosition.pitchInterval){
+                myScalePositions.insert(myScalePositions.begin() + long(i), l_scalePosition);
+                break;
+            }
+            if (myScalePositions[i]->pitchInterval < n_scalePosition.pitchInterval){
+                if (i == myScalePositions.size() - 1) {
+                    myScalePositions.push_back(l_scalePosition);
+                    break;
+                }
+            }
+        }
+    }
 
     seePositions();
 }
@@ -68,29 +117,29 @@ void Scale::setScalePosition(unsigned long i, ScalePosition n_scalePosition)
     myScalePositions[i]->pitchInterval = n_scalePosition.pitchInterval;
 }
 
-int Scale::getSize()
+unsigned long Scale::getSize()
 {
     return myScalePositions.size();
 }
 
 void Scale::reset()
 {
-    int l_max = myScalePositions.size();
+    unsigned long l_max = myScalePositions.size();
     for (unsigned long i = 0; i < l_max; i++) {
         myScalePositions.pop_back();
     }
 }
 
-double Scale::nearest(double c_interval, double c_minInterval, double c_maxInterval)
+float Scale::nearest(double c_interval, double c_minInterval, double c_maxInterval)
 {
-    int l_num = 0;
+    unsigned long l_num = 0;
     double l_interval = c_interval;
     if (myScalePositions.size() != 0) {
         l_num = 1;
         l_interval = myScalePositions[0]->pitchInterval;
         double n_proxi = abs(c_interval - myScalePositions[0]->pitchInterval);
         double a_proxi = n_proxi;
-        for (int i = 0; i < myScalePositions.size(); i = i + 1) {
+        for (unsigned long i = 0; i < myScalePositions.size(); i = i + 1) {
             n_proxi = abs(c_interval - myScalePositions[i]->pitchInterval);
             if ((n_proxi < a_proxi) &&
                 (c_minInterval <= myScalePositions[i]->pitchInterval) &&
@@ -101,25 +150,26 @@ double Scale::nearest(double c_interval, double c_minInterval, double c_maxInter
             }
         }
     }
-    return l_interval;
+    return float(l_interval);
 }
 
 void Scale::seePositions()
 {
-/*    for (int i = 0; i < myScalePositions.size(); i=i+1) {
+    cout << "scale (size=" << myScalePositions.size() << ")" << endl;
+    for (unsigned long i = 0; i < myScalePositions.size(); i=i+1) {
         cout << "i=" << i ;
         cout << " , interval ="<< myScalePositions[i]->pitchInterval << endl;
-    }*/
+    }
 }
 
 bool Scale::saveScale()
 {
-    /*std::string nameScaleFile = askNameScale(FileDirection::Save);
+    std::string nameScaleFile = askNameScale(FileDirection::Save);
     if (nameScaleFile.empty())
         return false;
 
     QFile scaleFile(QString::fromStdString(nameScaleFile));
-    return save(scaleFile);*/
+    return save(scaleFile);
 }
 
 bool Scale::loadScale()
@@ -177,10 +227,14 @@ bool Scale::save(QFile &scaleFile)
     docRoot["version"] = objVersion;
     docVersion.append(objVersion);
 
+    QJsonArray docScale;
+    QJsonObject objScale;
+    objScale["name"] = myName;
+
     // Positions
     QJsonArray docScalePositions;
     cout << myScalePositions.size() << " positions : " << "\n";
-    for (int i = 0, n = myScalePositions.size(); i < n; ++i) {
+    for (unsigned long i = 0, n = myScalePositions.size(); i < n; ++i) {
 
         cout << "Scale position " << i << " : ";
         cout << myScalePositions[i]->pitchInterval << "\n";
@@ -195,6 +249,7 @@ bool Scale::save(QFile &scaleFile)
 
     }
 
+    docRoot["scale"] = docScale;
     docRoot["version"] = docVersion;
     docRoot["positions"] = docScalePositions;
 

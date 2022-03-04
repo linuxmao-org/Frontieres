@@ -51,6 +51,8 @@ Trigger::Trigger()
     setActiveState(g_defaultCloudParams.activateState);
 
     setActiveRestartTrajectory(g_defaultCloudParams.activateRestartTrajectory);
+    setActiveRestartPhrase(g_defaultCloudParams.activateRestartPhrase);
+
 
     setIn(g_defaultCloudParams.triggerIn);
     setOut(g_defaultCloudParams.triggerOut);
@@ -210,6 +212,23 @@ bool Trigger::changedActiveRestartTrajectory()
     return changed_ActiveRestartTrajectory;
 }
 
+void Trigger::setActiveRestartPhrase(bool l_choice)
+{
+    if (activeRestartPhrase != l_choice)
+        changed_ActiveRestartPhrase = true;
+    activeRestartPhrase = l_choice;
+}
+
+bool Trigger::getActiveRestartPhrase()
+{
+    return changed_ActiveRestartPhrase;
+}
+
+bool Trigger::changedActiveRestartPhrase()
+{
+    return changed_ActiveRestartPhrase;
+}
+
 void Trigger::setIn(int n_In)
 {
     actionIn = n_In;
@@ -280,7 +299,7 @@ void Trigger::computeCloudsIn()
                     //cout << " ON" << endl;
                     cloudToCompute->setActiveState(true);
                     cloudVisToCompute->setIsPlayed(true);
-                    if (restartPhrase) {
+                    if (activeRestartPhrase) {
                         cloudToCompute->phraseRestart();
                     }
                     break;
@@ -288,12 +307,21 @@ void Trigger::computeCloudsIn()
                     //cout << " OFF" << endl;
                     cloudToCompute->setActiveState(false);
                     cloudVisToCompute->setIsPlayed(false);
+                    /*if (activeRestartPhrase) {
+                        cloudToCompute->phraseReinit();
+                    }*/
                     break;
                 case COMMUTE:
                     //cout << " COMMUTE" << endl;
-                    cloudToCompute->setActiveState(!cloudToCompute->getActiveState());
-                    if (restartPhrase) {
-                        cloudToCompute->phraseRestart();
+                    if (cloudToCompute->getActiveState()) {
+                        cloudToCompute->setActiveState(false);
+                        cloudVisToCompute->setIsPlayed(false);
+                    }
+                    else {
+                        if (activeRestartPhrase) {
+                            cloudToCompute->phraseRestart();
+                        cloudToCompute->setActiveState(true);
+                        }
                     }
                     break;
                 default:
@@ -339,22 +367,31 @@ void Trigger::computeCloudsOut()
                 break;
             case ON:
                 //cout << " ON" << endl;
-                cloudToCompute->setActiveState(true);
-                if (restartPhrase) {
+                if (activeRestartPhrase) {
                     cloudToCompute->phraseRestart();
+                cloudToCompute->setActiveState(true);
                 }
                 break;
             case OFF:
                 //cout << " OFF" << endl;
+                cloudToCompute->setPhraseActive(false);
                 cloudToCompute->setActiveState(false);
+                /*if (activeRestartPhrase) {
+                    cloudToCompute->phraseReinit();
+                }*/
                 break;
             case COMMUTE:
                 //cout << " COMMUTE" << endl;
-                cloudToCompute->setActiveState(!cloudToCompute->getActiveState());
-                if (restartPhrase) {
-                    cloudToCompute->phraseRestart();
+                if (cloudToCompute->getActiveState()) {
+                    cloudToCompute->setActiveState(false);
+                    cloudVisToCompute->setIsPlayed(false);
                 }
-
+                else {
+                    if (activeRestartPhrase) {
+                        cloudToCompute->phraseRestart();
+                    cloudToCompute->setActiveState(true);
+                    }
+                }
                 break;
             default:
                 break;
@@ -499,13 +536,4 @@ bool Trigger::isInListTriggersIn(int l_triggerId)
         return true;
 }
 
-void Trigger::setRestartPhrase(bool n_restartPhrase)
-{
-    restartPhrase = n_restartPhrase;
-}
-
-bool Trigger::getRestartPhrase()
-{
-    return restartPhrase;
-}
 

@@ -49,7 +49,7 @@ CloudMidi::~CloudMidi()
     delete[] envelopeVolumeBuff;
     delete[] intermediateBuff;
     delete shadeBuff;
-    for (int i = 0; i < myGrains.size(); i++) {
+    for (unsigned long i = 0; i < myGrains.size(); i++) {
         delete myGrains[i];
     }
 
@@ -101,9 +101,12 @@ Cloud::~Cloud()
 
 
 // Constructor
-Cloud::Cloud(VecSceneSample *sampleSet, float theNumGrains)
+Cloud::Cloud(Scene *l_scene, VecSceneSample *sampleSet, float theNumGrains)
 {
-    //cout << "creation cloud" << endl;
+
+    // cout << "creation cloud" << endl;
+
+    sceneRef = l_scene;
     unsigned channelCount = theOutChannelCount;
 
     // cloud id
@@ -183,6 +186,9 @@ Cloud::Cloud(VecSceneSample *sampleSet, float theNumGrains)
     envelopeVolume = new Env;
     envelopeVolume->setParam(g_defaultCloudParams.envelope);
     envelopeVolumeBuff = new float[g_buffSize];
+    envelopePhrase = new Env;
+    envelopePhrase->setParam(g_defaultCloudParams.envelope);
+    envelopePhraseBuff = new float[g_buffSize];
     intermediateBuff = new double[g_buffSize * channelCount];
     shadeBuff = new float[g_buffSize];
 
@@ -207,14 +213,9 @@ Cloud::Cloud(VecSceneSample *sampleSet, float theNumGrains)
     // state - (user can remove cloud from "play" for editing)
     //isActive = g_defaultCloudParams.activateState;
 
-    setActiveState(g_defaultCloudParams.activateState);
-    myPhrase.setActiveState(g_defaultCloudParams.activateState);
-
     //midi polyphony
-    midiChannel = g_defaultCloudParams.midiChannel;
     midiNote = g_defaultCloudParams.midiNote;
 
-    //cout << "creation cloud, avant midiclouds" << endl;
 
     for (int i = 0; i < g_maxMidiVoices; i++){
         CloudMidi *l_CloudMidi = new CloudMidi(sampleSet, numGrains, duration, pitch, windowType);
@@ -222,7 +223,15 @@ Cloud::Cloud(VecSceneSample *sampleSet, float theNumGrains)
     }
 
     trajectoryType = STATIC;
+    setPhraseNum(1);
+    setScaleNum(1);
+
+    setActiveState(g_defaultCloudParams.activateState);
+    myLocalPhrase.activeState = g_defaultCloudParams.activateState;
+
+
     //cout << "fin creation cloud" << endl;
+
 
 }
 // register controller for communication with view
@@ -246,6 +255,7 @@ void Cloud::toggleActive()
 
 void Cloud::setActiveState(bool activateState)
 {
+    //cout << "setactivestate : " << activateState << endl;
     if (activateState) {
        envelopeAction.store(TriggerEnvelope);
        toStop = true;
@@ -261,7 +271,7 @@ void Cloud::setActiveState(bool activateState)
 
        myGrains[0]->setWindowFirstTime(true);
 
-       for (int i = 0; i < myGrains.size(); i++) {
+       for (unsigned long i = 0; i < myGrains.size(); i++) {
            myGrains[i]->setPlayingState(false);
            // cout << "windowtype " << windowType << endl;
            myGrains[i]->updateSampleSet();
@@ -273,9 +283,12 @@ void Cloud::setActiveState(bool activateState)
     }
     else
        envelopeAction.store(ReleaseEnvelope);
-    if (myPhrase.getRestart())
-        myPhrase.setActiveState(activateState);
+
+    if (myLocalPhrase.restart) {
+        myPhrase->setActiveState(myLocalPhrase, activateState);
+    }
     isActive = activateState;
+//cout << "sortie setactivestate" << endl;
 }
 
 void Cloud::setActiveMidiState(bool activateMidiState, int l_midiNote, int l_midiVelo)
@@ -329,18 +342,18 @@ void Cloud::setWindowType(int winType)
     if (windowType == RANDOM_WIN) {
         for (unsigned long i = 0; i < myGrains.size(); i++) {
             myGrains[i]->setWindow(
-                (int)floor(randf() * Window::Instance().numWindows() - 1));
+                int(floor(randf() * Window::Instance().numWindows() - 1)));
         }
     }
     else {
 
-        for (int i = 0; i < myGrains.size(); i++) {
+        for (unsigned long i = 0; i < myGrains.size(); i++) {
             // cout << "windowtype " << windowType << endl;
             myGrains[i]->setWindow(windowType);
         }
     }
-    for (int i = 0; i < g_maxMidiVoices; i++){
-        for (int j = 0; j < playedCloudMidi[i]->myGrains.size(); j++)
+    for (unsigned long i = 0; i < g_maxMidiVoices; i++){
+        for (unsigned long j = 0; j < playedCloudMidi[i]->myGrains.size(); j++)
             playedCloudMidi[i]->myGrains[j]->setWindow(windowType);
     }
     changed_windowType = true;
@@ -736,16 +749,6 @@ ParamEnv Cloud::getEnvelopeVolumeParam ()
     return envelopeVolume->getParam();
 }
 
-void Cloud::setMidiChannel(int newMidiChannel)
-{
-    if (locked) {
-        showMessageLocked();
-        return;
-    }
-    midiChannel = newMidiChannel;
-    changed_midiChannel = true;
-}
-
 void Cloud::setMidiNote(int newMidiNote)
 {
     if (locked) {
@@ -761,11 +764,6 @@ void Cloud::setMidiVelocity(int newMidiVelocity)
     midiVelocity = newMidiVelocity;
 }
 
-int Cloud::getMidiChannel()
-{
-    return midiChannel;
-}
-
 int Cloud::getMidiNote()
 {
     return midiNote;
@@ -774,11 +772,6 @@ int Cloud::getMidiNote()
 int Cloud::getMidiVelocity()
 {
     return midiVelocity;
-}
-
-bool Cloud::changedMidiChannel()
-{
-    return changed_midiChannel;
 }
 
 bool Cloud::changedMidiNote()
@@ -822,7 +815,6 @@ bool Cloud::dialogLocked()
 void Cloud::changesDone(bool done)
 {
     changed_duration = done;
-    changed_midiChannel = done;
     changed_midiNote = done;
     changed_numGrains = done;
     changed_overlap = done;
@@ -837,6 +829,10 @@ void Cloud::changesDone(bool done)
     changed_ActiveRestartTrajectory = done;
     changed_ctrlInterval = done;
     changed_ctrlShade = done;
+    changed_PhraseActive = done;
+    changed_ScaleActive = done;
+    changed_PhraseNum = done;
+    changed_ScaleNum = done;
 }
 
 void Cloud::showMessageLocked()
@@ -887,6 +883,11 @@ void Cloud::setActiveRestartTrajectory(bool l_choice)
     if (activeRestartTrajectory != l_choice)
         changed_ActiveRestartTrajectory = true;
     activeRestartTrajectory = l_choice;
+}
+
+bool Cloud::getActiveRestartTrajectory()
+{
+    return activeRestartTrajectory;
 }
 
 bool Cloud::changedActiveRestartTrajectory()
@@ -965,73 +966,108 @@ bool Cloud::getCtrlAutoUpdate()
 
 Scale *Cloud::getScale()
 {
-    return myPhrase.getScale();
-}
-
-bool Cloud::scaleAttraction()
-{
-    return myPhrase.scaleAttraction();
-}
-
-void Cloud::setScaleAttraction(bool n_state)
-{
-    myPhrase.setScaleAttraction(n_state);
+    return myScale;
 }
 
 void Cloud::insertScalePosition(ScalePosition n_scalePosition)
 {
-    myPhrase.insertScalePosition(n_scalePosition);
+    myScale->insertScalePosition(n_scalePosition);
+}
+
+void Cloud::setPhraseActive(bool n_acttiveState)
+{
+    phraseActive = n_acttiveState;
+    myPhrase->setActiveState(myLocalPhrase, n_acttiveState);
+    changed_PhraseActive = true;
+}
+
+void Cloud::setPhraseNum(unsigned int n_PhraseNum)
+{
+    //cout << "entree setphrasenum" << endl;
+    if (n_PhraseNum == 0) {
+        myPhraseNum = n_PhraseNum;
+        changed_PhraseNum = true;
+        return;
+    }
+
+    if (sceneRef->findPhraseById(n_PhraseNum) != nullptr) {
+        myPhraseNum = n_PhraseNum;
+        myPhrase = sceneRef->findPhraseById(myPhraseNum)->phrase.get();
+       // cout << "phrase num = " << myPhraseNum << ", name = " << myPhrase->getName().toStdString() << endl;
+        changed_PhraseNum = true;
+    }
+    else {
+        cout << "phrase num = " << n_PhraseNum << ", phase not found" << endl;
+    }
+}
+
+bool Cloud::getPhraseActive()
+{
+    return phraseActive;
+}
+
+bool Cloud::changedPhraseActive()
+{
+    return changed_PhraseActive;
+}
+
+unsigned int Cloud::getPhraseNum()
+{
+    return myPhraseNum;
+}
+
+bool Cloud::changedPhraseNum()
+{
+    return changed_PhraseNum;
 }
 
 void Cloud::phraseActualise()
 {
-    float l_interval = myPhrase.getInterval();
-    if (!myPhrase.getEndedState()) {
-        if (myPhrase.getRelease()) {
+    if (myPhraseNum == 0) {
+        setCtrlInterval(0, false);
+        setCtrlShade(1, false);
+        silence = false;
+        return;
+    }
+    float l_interval = myPhrase->getInterval(myLocalPhrase);
+    float l_shade = myPhrase->getShade(myLocalPhrase);
+    if (!myLocalPhrase.activeState) {
+//        cout << " inactif" << endl;
+        l_interval = 0;
+        l_shade = 0;
+        setCtrlInterval(l_interval, false);
+        setCtrlShade(l_shade, false);
+        return;
+    }
+    if (!myLocalPhrase.endedState) {
+        if (myLocalPhrase.release) {
             //cout << "getrelease true" << endl;
-            myPhrase.setRestart(false);
+            myLocalPhrase.restart = false;
             setActiveState(false);
         }
-        if (scaleAttraction()) {
-            if (scaleAttraction()) {
-                double l_nearestPosition = myPhrase.getScale()->nearest(l_interval, -1000000, 1000000);
-                l_interval = l_nearestPosition;
-            }
+        if (getScaleActive()) {
+            float l_nearestPosition = myScale->nearest(l_interval, -1000000, 1000000);
+            l_interval = l_nearestPosition;
         }
 
         setCtrlInterval(l_interval, false);
-        setCtrlShade(myPhrase.getShade(), false);
+        setCtrlShade(myPhrase->getShade(myLocalPhrase), false);
 
-        if (myPhrase.getRelease()) {
-            //cout << "getrelease true" << endl;
-//           myNode->setActiveState(false);
-           myPhrase.setRestart(false);
-           setActiveState(false);
+        if (myLocalPhrase.release) {
+            myLocalPhrase.restart = false;
+            setActiveState(false);
         }
-        if (myPhrase.getAttack()) {
-            //cout << "getattack true" << endl;
-//           myNode->setActiveState(false);
-           myPhrase.setRestart(false);
-           setActiveState(true);
+        if (myLocalPhrase.attack) {
+            myLocalPhrase.restart = false;
+            setActiveState(true);
         }
-/*       else {
-            //cout << "getrelease false" << endl;
-           //myNode->setActiveState(true);
-           myPhrase.setRestart(false);
-           //if (!cloudRef->getActiveState())
-
-           setActiveState(false);
-           setActiveState(true);
-        }*/
 
         setActualiseByPhrase(true);
     }
     else {
-        if (myPhrase.getRelease()) {
-            //cout << "getrelease true" << endl;
-//           myNode->setActiveState(false);
-           myPhrase.setRestart(false);
-           setActiveState(false);
+        if (myLocalPhrase.release) {
+            myLocalPhrase.restart = false;
+            setActiveState(false);
         }
         //cout << "ended state" << endl;
     }
@@ -1040,17 +1076,22 @@ void Cloud::phraseActualise()
 
 unsigned long Cloud::getPhraseIntervalSize()
 {
-    return myPhrase.getMyControlIntervalSize();
+    return myPhrase->getMyControlIntervalSize();
 }
 
 unsigned long Cloud::getPhraseShadeSize()
 {
-    return myPhrase.getMyControlShadeSize();
+    return myPhrase->getMyControlShadeSize();
 }
 
 Phrase *Cloud::getPhrase()
 {
-    return &myPhrase;
+    return myPhrase;
+}
+
+LocalPhrase *Cloud::getLocalPhrase()
+{
+    return &myLocalPhrase;
 }
 
 void Cloud::setActualiseByPhrase(bool n_state)
@@ -1065,8 +1106,34 @@ bool Cloud::getActualiseByPhrase()
 
 void Cloud::phraseRestart()
 {
-    myPhrase.setRestart(false);
-    myPhrase.setActiveState(true);
+    myLocalPhrase.restart = false;
+    myLocalPhrase.activeState = true;
+    myPhrase->setActiveState(myLocalPhrase, true);
+}
+
+void Cloud::phraseReinit()
+{
+    myPhrase->setPhraseStartTime(myLocalPhrase);
+    myLocalPhrase.activeState = false;
+    myPhrase->setActiveState(myLocalPhrase, false);
+    phraseActive = false;
+    setPhraseActive(false);
+    setActiveState(false);
+}
+
+void Cloud::setTempo(unsigned int n_Tempo)
+{
+    myLocalPhrase.tempo = n_Tempo;
+}
+
+unsigned int Cloud::getTempo()
+{
+    return myLocalPhrase.tempo;
+}
+
+bool Cloud::changedTempo()
+{
+    return changed_tempo;
 }
 
 void Cloud::setSilence(bool l_silence)
@@ -1079,14 +1146,80 @@ bool Cloud::getSilence()
     return silence;
 }
 
+void Cloud::setScaleActive(bool n_acttiveState)
+{
+    scaleActive = n_acttiveState;
+    changed_ScaleActive = true;
+}
+
+void Cloud::setScaleNum(unsigned int n_scaleNum)
+{
+    if (n_scaleNum == 0) {
+        myScaleNum = n_scaleNum;
+        changed_ScaleNum = true;
+        return;
+    }
+    if (sceneRef->findScaleById(n_scaleNum) != nullptr) {
+        myScaleNum = n_scaleNum;
+        myScale = sceneRef->findScaleById(myScaleNum)->scale.get();
+        //cout << "scale num = " << myScaleNum << ", name = " << myScale->getName().toStdString() << endl;
+        changed_ScaleNum = true;
+        changed_ScaleNumForControl = true;
+        changed_ScaleActiveForControl = true;
+    }
+    else {
+        cout << "scale num = " << n_scaleNum << ", scale not found" << endl;
+    }
+}
+
+bool Cloud::getScaleActive()
+{
+    return scaleActive;
+}
+
+bool Cloud::changedScaleActive()
+{
+    return changed_ScaleActive;
+}
+
+unsigned int Cloud::getScaleNum()
+{
+    return myScaleNum;
+}
+
+bool Cloud::changedScaleNum()
+{
+    return changed_ScaleNum;
+}
+
+bool Cloud::changedScaleNumForControl()
+{
+    return changed_ScaleNumForControl;
+}
+
+bool Cloud::changedScaleActiveForControl()
+{
+    return changed_ScaleActiveForControl;
+}
+
+void Cloud::setChangedScaleNumForControl(bool n_state)
+{
+    changed_ScaleNumForControl = n_state;
+}
+
+void Cloud::setChangedScaleActiveForControl(bool n_state)
+{
+    changed_ScaleActiveForControl = n_state;
+}
+
 void Cloud::setNewWay(bool n_NewWay)
 {
     newWay = n_NewWay;
 }
 
-bool Cloud::getActiveRestartTrajectory()
+Scene *Cloud::getScene()
 {
-    return activeRestartTrajectory;
+    return sceneRef;
 }
 
 // print information
@@ -1101,7 +1234,6 @@ void Cloud::describe(std::ostream &out)
     out << "- window type : " << getWindowType() << "\n";
     out << "- spatial mode : " << getSpatialMode() << "\n";
     out << "- spatial channel : " << getSpatialChannel() << "\n";
-    out << "- midi channel : " << getMidiChannel() << "\n";
     out << "- midi note : " << getMidiNote() << "\n";
     out << "- volume DB : " << getVolumeDb() << "\n";
     out << "- volume envelope L1 : " << getEnvelopeVolumeParam().l1 << "\n";

@@ -16,6 +16,7 @@
 
 #include <QList>
 #include <QPainter>
+#include <qpainterpath.h>
 #include <QRectF>
 #include <QDebug>
 

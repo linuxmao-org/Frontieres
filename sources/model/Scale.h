@@ -46,13 +46,18 @@ public:
     Scale();
     // destructor
     virtual ~Scale();
+    void setName(QString newName);
+    QString getName();
+    unsigned int getId();
+    void setId(unsigned int phraseId);
+
     void insertScalePosition(ScalePosition n_scalePosition);
     void deleteScalePosition(unsigned long i);
     ScalePosition getScalePosition(unsigned long i);
     void setScalePosition(unsigned long i, ScalePosition n_scalePosition);
-    int getSize();
+    unsigned long getSize();
     void reset();
-    double nearest(double c_interval, double c_minInterval, double c_maxInterval);
+    float nearest(double c_interval, double c_minInterval, double c_maxInterval);
     void seePositions();
     bool saveScale();
     bool loadScale();
@@ -62,6 +67,9 @@ public:
 
 
 private:
+    unsigned int myId;  // unique id
+    QString myName;
+
     vector<ScalePosition *> myScalePositions;
 
 };
